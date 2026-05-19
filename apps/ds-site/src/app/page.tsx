@@ -715,9 +715,6 @@ export default function HomePage() {
                 <div className="stack-row"><div className="stack-marker" /><div className="stack-label">Handover docs</div><div className="stack-tag">—</div></div>
                 <div className="stack-row"><div className="stack-marker" /><div className="stack-label">Stewardship</div><div className="stack-tag">add-on</div></div>
               </div>
-              <div className="mode-foot">
-                <ContactCTA size="sm" onOpen={() => setChatOpen(true)} />
-              </div>
             </article>
 
             <article className="mode m2">
@@ -735,9 +732,6 @@ export default function HomePage() {
                 <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">Build &amp; delivery</div><div className="stack-tag">included</div></div>
                 <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">Handover docs</div><div className="stack-tag">included</div></div>
                 <div className="stack-row"><div className="stack-marker" /><div className="stack-label">Stewardship</div><div className="stack-tag">add-on</div></div>
-              </div>
-              <div className="mode-foot">
-                <ContactCTA size="sm" onOpen={() => setChatOpen(true)} />
               </div>
             </article>
 
@@ -757,14 +751,15 @@ export default function HomePage() {
                 <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">Handover docs</div><div className="stack-tag">included</div></div>
                 <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">Stewardship</div><div className="stack-tag">included</div></div>
               </div>
-              <div className="mode-foot">
-                <ContactCTA size="sm" onOpen={() => setChatOpen(true)} />
-              </div>
             </article>
           </div>
           <div className="stewardship">
             <span className="stewardship-tag">Optional</span>
             <p><strong>Stewardship.</strong> A monthly retainer after delivery. We keep eyes on what we built. Patching, monitoring, and the occasional honest call when something's drifting.</p>
+          </div>
+          <div className="engage-cta">
+            <p>Not sure which one fits? Tell us what you're trying to do and we'll point you straight.</p>
+            <ContactCTA onOpen={() => setChatOpen(true)} />
           </div>
         </div>
       </section>
