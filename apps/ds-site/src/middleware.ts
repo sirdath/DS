@@ -154,10 +154,18 @@ export async function middleware(request: NextRequest) {
     pathname === '/$ecretAnalytics' || pathname.startsWith('/$ecretAnalytics/')
 
   if (isAdminPath || isAnalyticsPath) {
+    // Normalise trailing slash so /admin/login/ and /admin/login both match.
+    // trailingSlash:true in next.config causes Next.js to 308-redirect bare
+    // paths to their slash-suffixed equivalents, so pathname here will often
+    // carry a trailing slash that must be stripped before comparison.
+    const normalizedPath =
+      pathname.length > 1 && pathname.endsWith('/')
+        ? pathname.slice(0, -1)
+        : pathname
+
     // Allow login and logout pages through without a session check.
-    // NOTE: pathname never contains a query string — the /admin/login? branch
-    // was dead code and has been removed (Fix 8).
-    if (pathname === '/admin/login' || pathname === '/admin/logout') {
+    // Uses normalizedPath so both /admin/login and /admin/login/ are exempt.
+    if (normalizedPath === '/admin/login' || normalizedPath === '/admin/logout') {
       return NextResponse.next()
     }
 
@@ -171,7 +179,7 @@ export async function middleware(request: NextRequest) {
     // the mock data source remains accessible without a live Supabase project.
     if (!supabaseUrl || !supabaseAnonKey) {
       if (process.env.NODE_ENV === 'production') {
-        const loginUrl = new URL('/admin/login', request.url)
+        const loginUrl = new URL('/admin/login/', request.url)
         loginUrl.searchParams.set('redirect', pathname)
         return NextResponse.redirect(loginUrl)
       }
@@ -209,7 +217,9 @@ export async function middleware(request: NextRequest) {
     } = await supabase.auth.getUser()
 
     if (!user || !isAdminEmail(user.email)) {
-      const loginUrl = new URL('/admin/login', request.url)
+      // Redirect to /admin/login/ (with trailing slash) so trailingSlash:true
+      // does not incur an extra 308 hop before the exempt check fires.
+      const loginUrl = new URL('/admin/login/', request.url)
       loginUrl.searchParams.set('redirect', pathname)
       return NextResponse.redirect(loginUrl)
     }

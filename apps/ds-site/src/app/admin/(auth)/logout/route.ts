@@ -15,7 +15,9 @@ import { getSupabaseServerClient } from '../../lib/supabase-server'
 
 function loginUrl(request: NextRequest, params?: string): string {
   const origin = request.nextUrl.origin
-  return `${origin}/admin/login${params ? `?${params}` : ''}`
+  // Include trailing slash so trailingSlash:true does not incur an extra 308
+  // hop; the middleware exempt check then matches /admin/login/ directly.
+  return `${origin}/admin/login/${params ? `?${params}` : ''}`
 }
 
 /**
