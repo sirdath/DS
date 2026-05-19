@@ -553,13 +553,303 @@
   }
 }
 
+/* ── Card + Lead wrappers ──────────────────────── */
+/* Wrappers let the action footer / repo link sit outside the <a> */
+.admin-card-wrapper,
+.admin-lead-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+/* When a footer follows the card, flatten the bottom radius so they join cleanly */
+.admin-card-wrapper:has(.admin-card__footer) .admin-card,
+.admin-lead-wrapper:has(.admin-lead-card__actions) .admin-card {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* ── Card header right cluster ─────────────────── */
+.admin-card__header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* ── Retainer badge ────────────────────────────── */
+.admin-retainer-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.07em;
+  font-weight: 500;
+  white-space: nowrap;
+  background: var(--admin-amber-dim);
+  border: 1px solid var(--admin-amber-border);
+  color: var(--admin-amber);
+}
+
+/* ── Repo link ─────────────────────────────────── */
+.admin-card__footer {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-top: none;
+  border-bottom-left-radius: var(--admin-radius);
+  border-bottom-right-radius: var(--admin-radius);
+  padding: 7px 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-repo-link {
+  font-size: 11px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--admin-text-dim);
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+
+.admin-repo-link:hover {
+  color: var(--admin-amber);
+}
+
+/* ── Section headings ──────────────────────────── */
+.admin-section {
+  margin-bottom: 52px;
+}
+
+.admin-section__header {
+  margin-bottom: 20px;
+}
+
+.admin-section__eyebrow {
+  font-family: var(--admin-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--admin-text-dim);
+  margin: 0 0 6px;
+}
+
+.admin-section__title {
+  font-size: 20px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: var(--admin-text);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-section__count {
+  font-family: var(--admin-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--admin-text-dim);
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: 20px;
+  padding: 2px 9px;
+  font-weight: 400;
+}
+
+/* ── Pipeline total cell variant ───────────────── */
+.admin-total--pipeline {
+  border-color: var(--admin-amber-border);
+}
+
+.admin-total--pipeline .admin-total__label {
+  color: var(--admin-amber);
+}
+
+/* ── Lead card ─────────────────────────────────── */
+.admin-lead-card {
+  /* Inherits all .admin-card styles; override glow to cooler neutral */
+}
+
+.admin-lead-card::before {
+  background: radial-gradient(
+    circle 260px at var(--card-mx, 50%) var(--card-my, 50%),
+    rgba(255, 255, 255, 0.05),
+    transparent 60%
+  );
+}
+
+.admin-lead-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-lead-card__why {
+  font-size: 12px;
+  color: var(--admin-text-muted);
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.admin-lead-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.admin-lead-card__meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.admin-lead-card__meta-label {
+  font-family: var(--admin-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--admin-text-dim);
+}
+
+.admin-lead-card__meta-value {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--admin-text);
+}
+
+.admin-lead-card__demo-link {
+  align-self: flex-start;
+  font-size: 12px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--admin-amber);
+  text-decoration: none;
+  border-bottom: 1px solid var(--admin-amber-border);
+  padding-bottom: 1px;
+  transition: border-color 0.18s ease, color 0.18s ease;
+}
+
+.admin-lead-card__demo-link:hover {
+  border-color: var(--admin-amber);
+}
+
+.admin-lead-card__no-demo {
+  font-size: 11px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.06em;
+  color: var(--admin-text-dim);
+}
+
+/* ── Lead card action footer ───────────────────── */
+.admin-lead-card__actions {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-top: 1px solid var(--admin-border);
+  border-bottom-left-radius: var(--admin-radius);
+  border-bottom-right-radius: var(--admin-radius);
+  padding: 8px 14px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.admin-lead-card__btn {
+  background: transparent;
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  font-size: 11px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+}
+
+.admin-lead-card__btn--convert {
+  color: var(--admin-amber);
+  border-color: var(--admin-amber-border);
+}
+
+.admin-lead-card__btn--convert:hover {
+  background: var(--admin-amber-dim);
+  border-color: var(--admin-amber);
+}
+
+.admin-lead-card__btn--lost {
+  color: var(--admin-text-dim);
+}
+
+.admin-lead-card__btn--lost:hover {
+  border-color: var(--admin-border-hover);
+  color: var(--admin-text-muted);
+}
+
+/* ── Outreach stage pills ──────────────────────── */
+/* Reuse admin-status-pill base; add outreach-specific variants */
+.admin-outreach-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  line-height: 1.6;
+}
+
+/* identified: muted — just spotted, no action yet */
+.admin-outreach-pill.is-identified {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--admin-text-dim);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* demo_built: amber — we've done work, nudge to send */
+.admin-outreach-pill.is-demo_built {
+  background: var(--admin-amber-dim);
+  color: var(--admin-amber);
+  border-color: var(--admin-amber-border);
+}
+
+/* pitched: bright amber + subtle pulse ring — "awaiting reply" */
+.admin-outreach-pill.is-pitched {
+  background: rgba(232, 180, 106, 0.22);
+  color: #f2cc88;
+  border-color: rgba(232, 180, 106, 0.55);
+  box-shadow: 0 0 0 0 rgba(232, 180, 106, 0.40);
+  animation: outreach-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes outreach-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232, 180, 106, 0.40); }
+  50%       { box-shadow: 0 0 0 5px rgba(232, 180, 106, 0); }
+}
+
 /* ── Reduced Motion ────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .admin-card,
   .admin-total,
   .admin-topbar__link,
   .admin-filter-link,
-  .admin-topbar__signout {
+  .admin-topbar__signout,
+  .admin-lead-card__btn,
+  .admin-repo-link,
+  .admin-lead-card__demo-link {
     transition: none;
     animation: none;
   }
@@ -582,5 +872,11 @@
   /* Grain animation off */
   .admin-shell::after {
     animation: none;
+  }
+
+  /* Pitched pill: no pulse ring */
+  .admin-outreach-pill.is-pitched {
+    animation: none;
+    box-shadow: none;
   }
 }
