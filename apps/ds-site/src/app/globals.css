@@ -1296,6 +1296,22 @@ footer a:hover { color: var(--silver); }
   content: ""; position: absolute; left: 0; top: 9px;
   width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4);
 }
+.case-tag {
+  display: inline-block; margin-bottom: 14px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--silver);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  padding: 4px 11px; border-radius: 999px;
+}
+.case-link {
+  display: inline-block; margin-top: 18px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 13px; color: var(--silver); text-decoration: none;
+  border-bottom: 1px solid var(--hairline-strong);
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.case-link:hover { color: var(--white); border-color: var(--white); }
 @media (max-width: 760px) {
   .section--first { padding-top: 104px; }
   .case { grid-template-columns: 1fr; }

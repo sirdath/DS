@@ -24,6 +24,7 @@ function PortfolioBody() {
               <span>Preview coming soon</span>
             </div>
             <div className="case-body">
+              <span className="case-tag">Websites</span>
               <div className="case-meta">Medical exam prep · UK · Consulting</div>
               <h3 className="case-title">
                 A leading UK platform helping doctors prepare for their exams.
@@ -40,6 +41,76 @@ function PortfolioBody() {
                 <li>Hiring plan and sourcing support</li>
                 <li>High-quality design prototype for pricing leverage and UI direction</li>
               </ul>
+            </div>
+          </article>
+
+          <article className="case reveal">
+            <div className="case-media" aria-hidden="true">
+              <span>Preview coming soon</span>
+            </div>
+            <div className="case-body">
+              <span className="case-tag">Data solutions</span>
+              <div className="case-meta">Geospatial · Data science</div>
+              <h3 className="case-title">
+                A geospatial node network from two million points of interest.
+              </h3>
+              <p className="case-text">
+                A data and AI company handed us a dataset of around two million points of interest.
+                We turned it into a geospatial network of nodes they could use directly inside one
+                of their production products.
+              </p>
+              <ul className="case-list">
+                <li>Ingested and cleaned roughly 2M POIs</li>
+                <li>Built a connected geospatial node network</li>
+                <li>Delivered for use inside their live product</li>
+              </ul>
+            </div>
+          </article>
+
+          <article className="case reveal">
+            <div className="case-media" aria-hidden="true">
+              <span>Preview coming soon</span>
+            </div>
+            <div className="case-body">
+              <span className="case-tag">Websites</span>
+              <div className="case-meta">SaaS · Product build</div>
+              <h3 className="case-title">A SaaS for building portfolios.</h3>
+              <p className="case-text">
+                The client wanted to launch a product that lets people build portfolios. We took it
+                from idea to a working SaaS: the application itself and the site around it.
+              </p>
+              <ul className="case-list">
+                <li>Product and UX build</li>
+                <li>Full SaaS application</li>
+                <li>Marketing site around the product</li>
+              </ul>
+              <a className="case-link" href="https://dataportfolio.co.uk" target="_blank" rel="noopener noreferrer">
+                dataportfolio.co.uk ↗
+              </a>
+            </div>
+          </article>
+
+          <article className="case reveal">
+            <div className="case-media" aria-hidden="true">
+              <span>Preview coming soon</span>
+            </div>
+            <div className="case-body">
+              <span className="case-tag">Websites</span>
+              <div className="case-meta">Website · SEO · Google Ads</div>
+              <h3 className="case-title">A focused marketing site, built to be found.</h3>
+              <p className="case-text">
+                We designed and built the site end to end, then made sure it would actually get
+                traffic: technical and on-page SEO, plus a Google Ads account set up and launched so
+                it started reaching people from day one.
+              </p>
+              <ul className="case-list">
+                <li>Website design and build</li>
+                <li>Technical and on-page SEO</li>
+                <li>Google Ads setup and launch</li>
+              </ul>
+              <a className="case-link" href="https://globalteamplans.com" target="_blank" rel="noopener noreferrer">
+                globalteamplans.com ↗
+              </a>
             </div>
           </article>
         </div>
