@@ -6,11 +6,11 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getDataSource } from '../../lib/get-data-source'
 import { STATUS_LABELS, OUTREACH_LABELS, PROJECT_TYPE_LABELS } from '../../types'
-import { updateProjectAction } from '../../actions'
+import { updateProjectAction, archiveProjectAction, unarchiveProjectAction, deleteProjectAction } from '../../actions'
 import { ProjectForm } from '../../project-form'
 import { ProjectDetailView } from '../../project-detail-view'
 import { ActivityFeed } from '../../activity-feed'
-import { DeleteButton } from '../../delete-button'
+import { ConfirmButton } from '../../confirm-button'
 
 export const dynamic = 'force-dynamic'
 
@@ -31,6 +31,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   const p = project
   const isLead = p.status === 'lead'
   const updateBound = updateProjectAction.bind(null, id)
+  const archiveBound = archiveProjectAction.bind(null, id)
+  const unarchiveBound = unarchiveProjectAction.bind(null, id)
+  const deleteBound = deleteProjectAction.bind(null, id)
 
   const statusLabel = isLead && p.outreachStage
     ? OUTREACH_LABELS[p.outreachStage]
@@ -51,6 +54,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         <div className="admin-detail__tags">
           <span className="admin-type-tag">{PROJECT_TYPE_LABELS[p.projectType]}</span>
           <span className={statusClass}>{statusLabel}</span>
+          {p.archived && (
+            <span className="admin-archived-badge">Archived</span>
+          )}
           {p.retainerMonthly !== null && (
             <span className="admin-retainer-detail-badge">
               &#8364;{p.retainerMonthly}/mo
@@ -67,20 +73,50 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       {/* Activity feed */}
       <ActivityFeed projectId={id} activity={activity} />
 
-      {/* Edit section — collapsible */}
-      <details className="admin-edit-details">
-        <summary>Edit project</summary>
+      {/* Edit section — prominent collapsible */}
+      <details className="admin-edit-details admin-edit-details--prominent">
+        <summary className="admin-edit-details__summary--prominent">Edit project</summary>
         <div className="admin-edit-details__body">
           <ProjectForm
             action={updateBound}
             project={p}
-            submitLabel="Save changes"
+            submitLabel="Save changes — update record"
           />
         </div>
       </details>
 
-      {/* Delete */}
-      <DeleteButton id={id} name={p.name} />
+      {/* Archive / Restore / Delete zone */}
+      <div className="admin-danger-zone">
+        {p.archived ? (
+          <>
+            <p className="admin-danger-zone__label">Archived project</p>
+            <div className="admin-danger-zone__actions">
+              <ConfirmButton
+                action={unarchiveBound}
+                label="Restore project"
+                confirmText=""
+                variant="neutral"
+              />
+              <ConfirmButton
+                action={deleteBound}
+                label="Delete permanently"
+                confirmText="Permanently delete? This cannot be undone."
+                variant="danger"
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="admin-danger-zone__label">Archive this project</p>
+            <ConfirmButton
+              action={archiveBound}
+              label="Archive project"
+              confirmText="Archive this project? You can restore it later."
+              variant="neutral"
+            />
+          </>
+        )}
+      </div>
     </div>
   )
 }
