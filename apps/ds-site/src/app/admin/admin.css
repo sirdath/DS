@@ -5,6 +5,12 @@
  * Only pure neutral grays (R=G=B). One warm amber accent.
  * Ported and adapted from packages/frontendmaxxing-reference/components/cards.css
  * and animations/stagger.js — restyled for the dark DS admin aesthetic.
+ *
+ * Visual enhancements (2026-05-19):
+ *  - Film grain overlay on .admin-shell (ported from noise-grain.css .grain-light)
+ *  - Cursor spotlight glow on .admin-card (adapted from spotlight-reveal.js/css)
+ *  - GSAP progress sweep & hover lift wired in project-grid.tsx
+ *  - GSAP count-up totals wired in count-up.tsx + page.tsx
  */
 
 /* ── Custom Properties ─────────────────────────── */
@@ -65,6 +71,31 @@
   background: var(--admin-bg);
   color: var(--admin-text);
   font-family: var(--font-inter), ui-sans-serif, sans-serif;
+  position: relative;
+}
+
+/* ── Film Grain Overlay (ported from noise-grain.css .grain-light) ── */
+/* Using ::after on .admin-shell; fixed to viewport so it covers the whole page */
+.admin-shell::after {
+  content: '';
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  opacity: 0.035;
+  pointer-events: none;
+  z-index: 9999;
+  animation: admin-grain-shift 8s steps(4) infinite;
+}
+
+@keyframes admin-grain-shift {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(-5%, -5%); }
+  50%  { transform: translate(5%, 5%); }
+  75%  { transform: translate(-5%, 5%); }
+  100% { transform: translate(5%, -5%); }
 }
 
 /* ── Topbar ────────────────────────────────────── */
@@ -239,6 +270,8 @@
 /* ── Project Card ─────────────────────────────────
    Adapted from frontendmaxxing-reference card-hover-lift.
    Restyled: neutral dark palette, 10px radius, 1px border.
+   Hover lift is now GSAP-driven (project-grid.tsx).
+   CSS transition kept as fallback for pointer-unaware contexts.
    ─────────────────────────────────────────────── */
 .admin-card {
   background: var(--admin-surface);
@@ -252,38 +285,59 @@
   color: inherit;
   position: relative;
   overflow: hidden;
+  /* Transform handled by GSAP; keep border/shadow transitions */
   transition:
-    transform var(--admin-duration-base) var(--admin-ease),
     border-color var(--admin-duration-base) var(--admin-ease),
     box-shadow var(--admin-duration-base) var(--admin-ease);
+  /* Glow position defaults */
+  --card-mx: 50%;
+  --card-my: 50%;
 }
 
 .admin-card:hover {
-  transform: translateY(-4px);
   border-color: var(--admin-border-hover);
   box-shadow:
     0 12px 32px rgba(0, 0, 0, 0.4),
     0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Subtle top-edge highlight on hover, ported from glass card technique */
+/* ── Cursor spotlight glow layer (::before)
+   Adapted from spotlight-reveal.js — pointer-tracked radial warm glow.
+   Neutral/amber tint; no cool colours (B never > R).
+   ─────────────────────────────────────────────── */
 .admin-card::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: var(--admin-radius);
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.03) 0%,
-    transparent 40%
+  background: radial-gradient(
+    circle 260px at var(--card-mx, 50%) var(--card-my, 50%),
+    rgba(255, 255, 255, 0.06),
+    transparent 60%
   );
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s ease;
+  z-index: 0;
 }
 
 .admin-card:hover::before {
   opacity: 1;
+}
+
+/* Retainer cards: warm amber tint on the spotlight glow */
+.admin-card.is-retainer::before {
+  background: radial-gradient(
+    circle 260px at var(--card-mx, 50%) var(--card-my, 50%),
+    rgba(232, 180, 106, 0.10),
+    transparent 60%
+  );
+}
+
+/* Ensure card content sits above the glow layer */
+.admin-card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .admin-card__header {
@@ -388,7 +442,7 @@
   height: 100%;
   background: var(--progress-fill-base);
   border-radius: 2px;
-  transition: width var(--admin-duration-base) var(--admin-ease-out);
+  /* Width is animated by GSAP on card entrance; no CSS transition needed here */
 }
 
 /* Retainer projects — accent fill since it's the "win" state */
@@ -475,14 +529,17 @@
 /* ── Reduced Motion ────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .admin-card,
-  .admin-card::before,
   .admin-total,
   .admin-topbar__link,
   .admin-filter-link,
-  .admin-topbar__signout,
-  .admin-progress__fill {
+  .admin-topbar__signout {
     transition: none;
     animation: none;
+  }
+
+  /* Glow layer: never show under reduced motion */
+  .admin-card::before {
+    display: none;
   }
 
   .admin-card:hover {
@@ -490,7 +547,13 @@
     box-shadow: none;
   }
 
-  .admin-card:hover::before {
-    opacity: 0;
+  /* Progress bars render at final width immediately (GSAP gated in JS) */
+  .admin-progress__fill {
+    transition: none;
+  }
+
+  /* Grain animation off */
+  .admin-shell::after {
+    animation: none;
   }
 }
