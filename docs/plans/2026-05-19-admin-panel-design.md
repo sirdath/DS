@@ -145,3 +145,25 @@ swap touches zero components.
 - Roles/permissions (both users are full admins).
 - Real-time collaboration / websockets.
 - Multi-tenant / client-facing views.
+
+---
+
+## Addendum 1 (2026-05-19) — Potential Leads / speculative-build pitch motion
+
+DS approaches prospects by building a proposal/demo site *before* they are a
+client, then showing it to win them. Approved delta:
+
+- **Model:** extend `Project`, do NOT add a parallel entity. New optional
+  fields: `outreachStage` (`identified|demo_built|pitched|won|lost|null`),
+  `proposalUrl`, `estimatedValue`, `whyThem`, `source`. Target-client data
+  reuses existing `clientCompany/clientContact/clientEmail/clientPhone`.
+- **A potential lead** = `status:'lead'` + an `outreachStage`.
+- **Won** = convert: set `status:'in_progress'`, keep `outreachStage:'won'`
+  for history → it leaves the Leads section and enters Active Projects.
+- **Lost** = `outreachStage:'lost'`, stays `status:'lead'`, hidden from the
+  main Leads list (archived view only).
+- **UI:** dashboard splits into a "Potential Leads" section (outreach-stage
+  pill, View-demo link, estimated value) above "Active Projects". Lead cards
+  get a Convert (Won) and Mark Lost action.
+- Phase-4 Supabase schema (Task 11) must include these columns + an
+  `outreach_stage` enum.
