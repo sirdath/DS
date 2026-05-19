@@ -119,34 +119,56 @@ function ProjectCard({ project: p }: { project: Project }) {
   const isRetainer = p.status === 'retainer'
 
   return (
-    <Link
-      href={`/admin/project/${p.id}`}
-      className={`admin-card${isRetainer ? ' is-retainer' : ''}`}
-      data-stagger
-      ref={cardRef}
-    >
-      <div className="admin-card__header">
-        <div>
-          <div className="admin-card__name">{p.name}</div>
-          <div className="admin-card__lead">{p.lead}</div>
+    <div className="admin-card-wrapper" data-stagger>
+      <Link
+        href={`/admin/project/${p.id}`}
+        className={`admin-card${isRetainer ? ' is-retainer' : ''}`}
+        ref={cardRef}
+      >
+        <div className="admin-card__header">
+          <div>
+            <div className="admin-card__name">{p.name}</div>
+            <div className="admin-card__lead">{p.lead}</div>
+          </div>
+          <div className="admin-card__header-right">
+            {isRetainer && p.retainerMonthly !== null && (
+              <span className="admin-retainer-badge">
+                €{p.retainerMonthly}/mo
+              </span>
+            )}
+            <StatusPill status={p.status} />
+          </div>
         </div>
-        <StatusPill status={p.status} />
-      </div>
 
-      <ProgressBar pct={p.completionPct} status={p.status} />
+        <ProgressBar pct={p.completionPct} status={p.status} />
 
-      <div className="admin-card__money">
-        <span className="admin-card__money-paid">{formatMoney(p.amountPaid)} paid</span>
-        <span>/</span>
-        <span>{formatMoney(owed)} outstanding</span>
-      </div>
+        <div className="admin-card__money">
+          <span className="admin-card__money-paid">{formatMoney(p.amountPaid)} paid</span>
+          <span>/</span>
+          <span>{formatMoney(owed)} outstanding</span>
+        </div>
 
-      {overdue && (
-        <div className="admin-card__meta">
-          <span className="admin-overdue">Overdue</span>
+        {overdue && (
+          <div className="admin-card__meta">
+            <span className="admin-overdue">Overdue</span>
+          </div>
+        )}
+      </Link>
+
+      {/* Repo link — sibling of the card Link so it doesn't nest anchors */}
+      {p.repoUrl && (
+        <div className="admin-card__footer">
+          <a
+            href={p.repoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="admin-repo-link"
+          >
+            Repo &#8599;
+          </a>
         </div>
       )}
-    </Link>
+    </div>
   )
 }
 
