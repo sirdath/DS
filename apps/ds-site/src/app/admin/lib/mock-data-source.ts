@@ -78,7 +78,8 @@ export class MockDataSource implements ProjectDataSource {
         // two entries share the same ISO timestamp (common in fast unit tests).
         return byTime !== 0 ? byTime : b._seq - a._seq
       })
-      .map(({ _seq: _ignored, ...rest }) => rest)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .map(({ _seq, ...rest }) => rest)
   }
 
   async addActivity(projectId: string, body: string, author: string): Promise<ProjectActivity> {
@@ -91,7 +92,8 @@ export class MockDataSource implements ProjectDataSource {
       _seq: ++this.seq,
     }
     this.activity = [...this.activity, entry]
-    const { _seq: _ignored, ...pub } = entry
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { _seq, ...pub } = entry
     return { ...pub }
   }
 }
