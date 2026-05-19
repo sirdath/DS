@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { outstanding, isOverdue, portfolioTotals } from './derive'
+import { outstanding, isOverdue, portfolioTotals, isPotentialLead, splitProjects } from './derive'
 import type { Project } from '../types'
 
 function mk(p: Partial<Project>): Project {
@@ -51,5 +51,69 @@ describe('portfolioTotals', () => {
     expect(t.countByStatus.retainer).toBe(1)
     expect(t.countByStatus.lead).toBe(1)
     expect(t.countByStatus.delivered).toBe(0)
+  })
+})
+
+describe('isPotentialLead', () => {
+  it('should be true for a pitched lead', () => {
+    expect(isPotentialLead(mk({ status: 'lead', outreachStage: 'pitched' }))).toBe(true)
+  })
+  it('should be true for an identified lead', () => {
+    expect(isPotentialLead(mk({ status: 'lead', outreachStage: 'identified' }))).toBe(true)
+  })
+  it('should be true for a demo_built lead', () => {
+    expect(isPotentialLead(mk({ status: 'lead', outreachStage: 'demo_built' }))).toBe(true)
+  })
+  it('should be false for a lost lead', () => {
+    expect(isPotentialLead(mk({ status: 'lead', outreachStage: 'lost' }))).toBe(false)
+  })
+  it('should be false for a won project (status in_progress, outreachStage won)', () => {
+    expect(isPotentialLead(mk({ status: 'in_progress', outreachStage: 'won' }))).toBe(false)
+  })
+  it('should be false for a plain in_progress project', () => {
+    expect(isPotentialLead(mk({ status: 'in_progress', outreachStage: null }))).toBe(false)
+  })
+  it('should be true for a status lead with null outreachStage (legacy lead)', () => {
+    expect(isPotentialLead(mk({ status: 'lead', outreachStage: null }))).toBe(true)
+  })
+})
+
+describe('splitProjects', () => {
+  it('should put a pitched lead in leads, not active', () => {
+    const { leads, active } = splitProjects([mk({ id: 'a', status: 'lead', outreachStage: 'pitched' })])
+    expect(leads).toHaveLength(1)
+    expect(active).toHaveLength(0)
+  })
+  it('should put an in_progress project in active, not leads', () => {
+    const { leads, active } = splitProjects([mk({ id: 'b', status: 'in_progress', outreachStage: null })])
+    expect(leads).toHaveLength(0)
+    expect(active).toHaveLength(1)
+  })
+  it('should exclude a lost lead from both lists', () => {
+    const { leads, active } = splitProjects([mk({ id: 'c', status: 'lead', outreachStage: 'lost' })])
+    expect(leads).toHaveLength(0)
+    expect(active).toHaveLength(0)
+  })
+  it('should put a won project (status in_progress, outreachStage won) in active', () => {
+    const { leads, active } = splitProjects([mk({ id: 'd', status: 'in_progress', outreachStage: 'won' })])
+    expect(leads).toHaveLength(0)
+    expect(active).toHaveLength(1)
+  })
+  it('should put a status lead with null outreachStage in leads (legacy)', () => {
+    const { leads, active } = splitProjects([mk({ id: 'e', status: 'lead', outreachStage: null })])
+    expect(leads).toHaveLength(1)
+    expect(active).toHaveLength(0)
+  })
+  it('should correctly split a mixed set', () => {
+    const projects = [
+      mk({ id: '1', status: 'lead', outreachStage: 'demo_built' }),
+      mk({ id: '2', status: 'in_progress', outreachStage: null }),
+      mk({ id: '3', status: 'lead', outreachStage: 'lost' }),
+      mk({ id: '4', status: 'in_progress', outreachStage: 'won' }),
+      mk({ id: '5', status: 'retainer', outreachStage: null }),
+    ]
+    const { leads, active } = splitProjects(projects)
+    expect(leads.map(p => p.id)).toEqual(['1'])
+    expect(active.map(p => p.id)).toEqual(['2', '4', '5'])
   })
 })
