@@ -24,16 +24,45 @@ import { getServiceRoleClient, getSupabaseServerClient, isAllowedEmail } from '.
 
 const GENERIC_ERROR = 'Incorrect username or password.'
 
-function sanitiseRedirect(raw: string): string {
-  if (typeof raw === 'string' && raw.startsWith('/admin') && !raw.startsWith('//')) {
-    return raw
-  }
-  return '/admin'
+// Minimum response time (ms) applied to ALL failure paths to resist timing
+// oracles — an attacker cannot distinguish "user not found" from "wrong
+// password" by measuring elapsed time (Fix 9).
+const MIN_RESPONSE_MS = 300
+
+/**
+ * URL-parse–confined redirect sanitiser (Fix 4).
+ * Rejects anything with a real host (absolute URLs, protocol-relative paths),
+ * any path that does not start with /admin, and backslash paths to prevent
+ * bypass tricks.  Returns the safe pathname+search only.
+ */
+function sanitiseRedirect(raw: unknown): string {
+  if (typeof raw !== 'string' || raw === '') return '/admin'
+  try {
+    const u = new URL(raw, 'https://invalid.local')
+    if (u.host !== 'invalid.local') return '/admin'           // had a real host → reject
+    if (!u.pathname.startsWith('/admin')) return '/admin'
+    if (u.pathname.startsWith('/admin//') || u.pathname.includes('\\')) return '/admin'
+    return u.pathname + u.search
+  } catch { return '/admin' }
 }
 
 export async function loginAction(
   formData: FormData,
 ): Promise<{ ok: false; error: string }> {
+  // Start the clock for the constant-time floor (Fix 9).
+  const startMs = Date.now()
+
+  /**
+   * Await the remaining time so all failure paths take at least MIN_RESPONSE_MS
+   * total before returning.  Success may return immediately.
+   */
+  async function failWithDelay(): Promise<{ ok: false; error: string }> {
+    const elapsed = Date.now() - startMs
+    const remaining = MIN_RESPONSE_MS - elapsed
+    if (remaining > 0) await new Promise(resolve => setTimeout(resolve, remaining))
+    return { ok: false, error: GENERIC_ERROR }
+  }
+
   const username = (formData.get('username') as string | null)?.trim().toLowerCase() ?? ''
   const password = (formData.get('password') as string | null) ?? ''
   const redirectTo = (formData.get('redirect') as string | null) ?? '/admin'
@@ -46,11 +75,11 @@ export async function loginAction(
     !process.env.SUPABASE_SERVICE_ROLE_KEY ||
     !process.env.ADMIN_ALLOWED_EMAILS
   ) {
-    return { ok: false, error: GENERIC_ERROR }
+    return failWithDelay()
   }
 
   if (!username || !password) {
-    return { ok: false, error: GENERIC_ERROR }
+    return failWithDelay()
   }
 
   const safeRedirect = sanitiseRedirect(redirectTo)
@@ -64,9 +93,7 @@ export async function loginAction(
     .maybeSingle()
 
   if (rowError || !adminRow) {
-    // Run a dummy constant-time operation to avoid trivial timing oracle.
-    await new Promise(resolve => setTimeout(resolve, 50))
-    return { ok: false, error: GENERIC_ERROR }
+    return failWithDelay()
   }
 
   // ── Step 2: resolve auth_user_id → email via admin API ───────────────────
@@ -74,14 +101,14 @@ export async function loginAction(
     await serviceClient.auth.admin.getUserById(adminRow.auth_user_id)
 
   if (userError || !userRecord?.user?.email) {
-    return { ok: false, error: GENERIC_ERROR }
+    return failWithDelay()
   }
 
   const accountEmail = userRecord.user.email
 
   // ── Step 3: allowlist check (defence in depth) ────────────────────────────
   if (!isAllowedEmail(accountEmail)) {
-    return { ok: false, error: GENERIC_ERROR }
+    return failWithDelay()
   }
 
   // ── Step 4: sign in with Supabase Auth (writes session cookie) ───────────
@@ -92,7 +119,7 @@ export async function loginAction(
   })
 
   if (signInError) {
-    return { ok: false, error: GENERIC_ERROR }
+    return failWithDelay()
   }
 
   // Success: redirect (throws internally in Next.js, do not catch it here).
