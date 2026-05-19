@@ -11,6 +11,10 @@ export interface ProjectDataSource {
   getProject(id: string): Promise<Project | null>
   createProject(input: NewProject): Promise<Project>
   updateProject(id: string, patch: ProjectPatch): Promise<Project>
+  /** Convert a lead to an active project: sets status in_progress + outreachStage won. */
+  convertLead(id: string): Promise<Project>
+  /** Archive a lead as lost: sets outreachStage lost, keeps status lead. */
+  markLeadLost(id: string): Promise<Project>
   listActivity(projectId: string): Promise<ProjectActivity[]>
   addActivity(projectId: string, body: string, author: string): Promise<ProjectActivity>
 }

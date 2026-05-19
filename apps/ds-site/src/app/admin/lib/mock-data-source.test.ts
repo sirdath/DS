@@ -42,4 +42,54 @@ describe('MockDataSource', () => {
     const log = await ds.listActivity(p!.id)
     expect(log[0]!.body).toBe('client approved')
   })
+
+  describe('convertLead', () => {
+    it('should set status in_progress and outreachStage won', async () => {
+      const before = await ds.getProject('seed-helios')
+      expect(before?.status).toBe('lead')
+      const updated = await ds.convertLead('seed-helios')
+      expect(updated.status).toBe('in_progress')
+      expect(updated.outreachStage).toBe('won')
+    })
+    it('should bump updatedAt', async () => {
+      const before = await ds.getProject('seed-helios')
+      const updated = await ds.convertLead('seed-helios')
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      expect(updated.updatedAt >= before!.updatedAt).toBe(true)
+    })
+    it('should persist the change via getProject', async () => {
+      await ds.convertLead('seed-helios')
+      const fetched = await ds.getProject('seed-helios')
+      expect(fetched?.status).toBe('in_progress')
+      expect(fetched?.outreachStage).toBe('won')
+    })
+    it('should throw when id is not found', async () => {
+      await expect(ds.convertLead('no-such-id')).rejects.toThrow()
+    })
+  })
+
+  describe('markLeadLost', () => {
+    it('should set outreachStage lost and keep status lead', async () => {
+      const before = await ds.getProject('seed-aegean')
+      expect(before?.status).toBe('lead')
+      const updated = await ds.markLeadLost('seed-aegean')
+      expect(updated.outreachStage).toBe('lost')
+      expect(updated.status).toBe('lead')
+    })
+    it('should bump updatedAt', async () => {
+      const before = await ds.getProject('seed-aegean')
+      const updated = await ds.markLeadLost('seed-aegean')
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      expect(updated.updatedAt >= before!.updatedAt).toBe(true)
+    })
+    it('should persist the change via getProject', async () => {
+      await ds.markLeadLost('seed-aegean')
+      const fetched = await ds.getProject('seed-aegean')
+      expect(fetched?.outreachStage).toBe('lost')
+      expect(fetched?.status).toBe('lead')
+    })
+    it('should throw when id is not found', async () => {
+      await expect(ds.markLeadLost('no-such-id')).rejects.toThrow()
+    })
+  })
 })

@@ -1,6 +1,5 @@
 import type { Project, ProjectActivity } from '../types'
 import type { ProjectDataSource, NewProject, ProjectPatch } from './data-source'
-// OutreachStage values are string literals — used in SEED only
 
 function uid(): string {
   return globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2)
@@ -239,6 +238,18 @@ export class MockDataSource implements ProjectDataSource {
     const project: Project = { ...input, id: uid(), createdAt: now, updatedAt: now }
     this.projects = [project, ...this.projects]
     return { ...project }
+  }
+
+  async convertLead(id: string): Promise<Project> {
+    const idx = this.projects.findIndex(p => p.id === id)
+    if (idx === -1) throw new Error(`Project ${id} not found`)
+    return this.updateProject(id, { status: 'in_progress', outreachStage: 'won' })
+  }
+
+  async markLeadLost(id: string): Promise<Project> {
+    const idx = this.projects.findIndex(p => p.id === id)
+    if (idx === -1) throw new Error(`Project ${id} not found`)
+    return this.updateProject(id, { outreachStage: 'lost' })
   }
 
   async updateProject(id: string, patch: ProjectPatch): Promise<Project> {
