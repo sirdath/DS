@@ -192,3 +192,20 @@ client, then showing it to win them. Approved delta:
   "gate in place"; Task 14 matcher must include `/$ecretAnalytics/:path*`.
 - Phase-4 Supabase schema (Task 11) must add `current_website_url` and a
   `project_type` enum/column.
+
+## Addendum 3 (2026-05-19) — Archive workflow (soft delete)
+
+- Every project/lead carries the full field set and is fully editable; the
+  edit form's Save button is the "update backend" action (mock now, Supabase
+  in Phase 4 — unchanged signature).
+- **Replace hard delete with archive.** Add `archived: boolean` (default
+  false) to `Project`. Add `archiveProject(id)` + `unarchiveProject(id)` to
+  ProjectDataSource (+ actions). Keep `deleteProject` ONLY for permanent
+  deletion, reachable solely from the archived view after archiving.
+- Archived projects are excluded from Potential Leads AND Active Projects
+  (like lost leads). A collapsible "Archived (n)" section at the bottom of
+  `/admin` lists them with **Restore** and **Delete permanently** (confirm).
+- Derive: add a partition helper returning `{ leads, active, archived }`.
+- Phase-4 Supabase schema (Task 11) adds an `archived boolean not null
+  default false` column; archive/unarchive are updates, permanent delete is
+  a real row delete (RLS still applies).
