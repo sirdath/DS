@@ -187,6 +187,12 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
         if (e.target === e.currentTarget && !maximized) onClose();
       }}
     >
+      {maximized && (
+        <div className="cpanel-logo-top">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logos/ds2-logo.png" alt="DS2" />
+        </div>
+      )}
       <div
         className={`cpanel${maximized ? " cpanel--max" : ""}`}
         ref={cardRef}
@@ -194,10 +200,6 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
         aria-modal="true"
         aria-label="Message DS2"
       >
-        <div className="cpanel-logo" aria-hidden="true">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logos/ds2-logo.png" alt="" />
-        </div>
         <div className="cpanel-bar">
           <div className="cpanel-lights">
             <button type="button" className="cpl cpl--red" aria-label="Close" title="Close" onClick={onClose} />

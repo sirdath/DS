@@ -154,7 +154,7 @@ nav.top {
 /* ── Contact panel (in-app message → Telegram) — v2 ── */
 .cpanel-overlay {
   position: fixed; inset: 0; z-index: 300;
-  display: flex; align-items: center; justify-content: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: 24px;
   background: rgba(8,8,8,0.66);
   backdrop-filter: blur(8px) saturate(120%);
@@ -163,6 +163,7 @@ nav.top {
 .cpanel {
   position: relative;
   width: 100%; max-width: 540px;
+  max-height: calc(100dvh - 48px);
   display: flex; flex-direction: column;
   background: #161618;
   border: 1px solid rgba(255,255,255,0.09);
@@ -173,20 +174,23 @@ nav.top {
     0 50px 100px -30px rgba(0,0,0,0.85),
     0 0 40px -10px rgba(255,255,255,0.06);
 }
-/* keep all content above the maximised logo watermark */
-.cpanel > *:not(.cpanel-logo) { position: relative; z-index: 1; }
-/* full-screen (green button) */
-.cpanel-overlay--max { padding: 0; }
-.cpanel--max { max-width: none; width: 100vw; height: 100vh; border-radius: 0; }
-.cpanel--max .cpanel-body { max-height: none; flex: 1; }
-/* DS2 logo watermark — only when maximised */
-.cpanel-logo {
-  position: absolute; inset: 0; z-index: 0;
-  display: none; align-items: center; justify-content: center;
-  pointer-events: none;
+/* Green button → spotlight: gray out the rest, keep the card ~same size
+   (a touch bigger), put the DS2 wordmark top-middle. Not a literal full-bleed. */
+.cpanel-overlay--max {
+  background: rgba(36,36,36,0.95);
+  backdrop-filter: none; -webkit-backdrop-filter: none;
 }
-.cpanel--max .cpanel-logo { display: flex; }
-.cpanel-logo img { width: min(420px, 46vw); height: auto; opacity: 0.06; filter: grayscale(1); }
+.cpanel--max {
+  max-width: 600px;
+  max-height: calc(100dvh - 140px);
+}
+.cpanel-logo-top {
+  display: flex; justify-content: center; flex-shrink: 0;
+  margin-bottom: 22px;
+}
+.cpanel-logo-top img {
+  height: clamp(30px, 5vw, 46px); width: auto; opacity: 0.95;
+}
 /* minimised tab (yellow button) */
 .cpanel-tab {
   position: fixed; right: 20px; bottom: 20px; z-index: 300;
@@ -232,7 +236,8 @@ nav.top {
 .cpanel-body {
   padding: 22px 24px;
   display: flex; flex-direction: column; gap: 14px;
-  max-height: 52vh; overflow-y: auto;
+  flex: 1; min-height: 0; overflow-y: auto;
+  overscroll-behavior: contain;
 }
 .cpanel-intro { font-size: 14px; line-height: 1.55; color: var(--silver); }
 .cpanel-intro strong { color: var(--white); font-weight: 600; }
@@ -290,10 +295,23 @@ nav.top {
 }
 .cpanel-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 10px rgba(74,222,128,0.6); }
 .cpanel-dot.err { background: #f87171; box-shadow: 0 0 10px rgba(248,113,113,0.6); }
-@media (max-width: 540px) {
+@media (max-width: 600px) {
+  .cpanel-overlay { padding: 14px; }
+  .cpanel, .cpanel--max {
+    max-width: 100%; width: 100%;
+    max-height: calc(100dvh - 28px);
+    border-radius: 16px;
+  }
+  .cpanel--max { max-height: calc(100dvh - 92px); }
+  .cpanel-logo-top { margin-bottom: 14px; }
+  .cpanel-logo-top img { height: 28px; }
+  .cpanel-body { padding: 18px 18px; }
+  .cpanel-bar { height: 44px; }
+  .cpl { width: 14px; height: 14px; }
+}
+@media (max-width: 380px) {
   .cpanel-overlay { padding: 0; }
-  .cpanel { max-width: 100%; height: 100%; border-radius: 0; }
-  .cpanel-body { max-height: none; flex: 1; }
+  .cpanel, .cpanel--max { border-radius: 0; max-height: 100dvh; }
 }
 
 .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
