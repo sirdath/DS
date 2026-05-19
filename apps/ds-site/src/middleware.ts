@@ -148,26 +148,34 @@ export async function middleware(request: NextRequest) {
 
   // ── Branch 2: Admin + Analytics gate ──────────────────────────────────────
 
-  const isAdminPath = pathname.startsWith('/admin')
-  const isAnalyticsPath = pathname.startsWith('/$ecretAnalytics')
+  // Covers both bare paths (e.g. /admin) and sub-paths (e.g. /admin/project/x).
+  const isAdminPath = pathname === '/admin' || pathname.startsWith('/admin/')
+  const isAnalyticsPath =
+    pathname === '/$ecretAnalytics' || pathname.startsWith('/$ecretAnalytics/')
 
   if (isAdminPath || isAnalyticsPath) {
     // Allow login and logout pages through without a session check.
-    if (
-      pathname === '/admin/login' ||
-      pathname.startsWith('/admin/login?') ||
-      pathname === '/admin/logout'
-    ) {
+    // NOTE: pathname never contains a query string — the /admin/login? branch
+    // was dead code and has been removed (Fix 8).
+    if (pathname === '/admin/login' || pathname === '/admin/logout') {
       return NextResponse.next()
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-    // DEV-ONLY: if Supabase env vars are absent, skip the gate so the mock
-    // dev workflow (no keys) is not locked out. In production, env vars are
-    // always set and this block is never reached — the gate is always active.
+    // PRODUCTION FAIL-CLOSED (Fix 3): if Supabase env vars are absent in
+    // production, protected paths must NOT be allowed through — redirect to
+    // login so the gate stays enforced even if env vars are misconfigured.
+    // In non-production (local dev / keyless dev workflow), fall through so
+    // the mock data source remains accessible without a live Supabase project.
     if (!supabaseUrl || !supabaseAnonKey) {
+      if (process.env.NODE_ENV === 'production') {
+        const loginUrl = new URL('/admin/login', request.url)
+        loginUrl.searchParams.set('redirect', pathname)
+        return NextResponse.redirect(loginUrl)
+      }
+      // Non-production + no env vars: allow through (keyless local dev).
       return NextResponse.next()
     }
 
@@ -217,7 +225,9 @@ export const config = {
   matcher: [
     '/clients/:path*',
     '/MegaGym-Website/:path*',
+    '/admin',
     '/admin/:path*',
+    '/$ecretAnalytics',
     '/$ecretAnalytics/:path*',
   ],
 }
