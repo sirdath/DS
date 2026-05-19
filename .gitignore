@@ -16,6 +16,11 @@ coverage/
 .env
 .env.*
 !.env.example
+# Catch any stray notes-with-secrets at any depth
+**/*secret*.txt
+**/*password*.txt
+**/passwords*
+**/secrets*
 
 # OS / editor
 .DS_Store
