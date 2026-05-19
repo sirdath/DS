@@ -65,9 +65,14 @@ create table public.admin_users (
 );
 
 -- ── updated_at trigger ───────────────────────────────────────────────
+-- security definer + set search_path = public mirrors is_admin() so the
+-- function runs with a fixed search_path and cannot be subverted by a
+-- malicious schema placed earlier in the search path (Fix 6).
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
+security definer
+set search_path = public
 as $$
 begin
   new.updated_at = now();
@@ -115,6 +120,22 @@ create policy activity_admin_all on public.project_activity
 create policy admin_users_read_self on public.admin_users
   for select to authenticated
   using (auth_user_id = auth.uid());
+
+-- Explicit write-deny policies — authenticated users (including admins
+-- acting via the anon/session client) cannot insert, update, or delete
+-- admin_users rows via the application layer (Fix 13).
+-- Seeding and management must go through the service-role key (SQL/migration).
+create policy admin_users_no_insert on public.admin_users
+  for insert to authenticated
+  with check (false);
+
+create policy admin_users_no_update on public.admin_users
+  for update to authenticated
+  using (false);
+
+create policy admin_users_no_delete on public.admin_users
+  for delete to authenticated
+  using (false);
 
 -- ── Seed note (manual, NOT in this migration — secrets) ──────────────
 -- After this migration:
