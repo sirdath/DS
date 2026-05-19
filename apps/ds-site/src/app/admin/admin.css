@@ -554,21 +554,16 @@
 }
 
 /* ── Card + Lead wrappers ──────────────────────── */
-/* Wrappers let the action footer / repo link sit outside the <a> */
 .admin-card-wrapper,
-.admin-lead-wrapper {
-  display: flex;
-  flex-direction: column;
-}
+.admin-lead-wrapper { display: flex; flex-direction: column; }
 
-/* When a footer follows the card, flatten the bottom radius so they join cleanly */
+/* Flatten bottom radius when a footer follows the card */
 .admin-card-wrapper:has(.admin-card__footer) .admin-card,
 .admin-lead-wrapper:has(.admin-lead-card__actions) .admin-card {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 
-/* ── Card header right cluster ─────────────────── */
 .admin-card__header-right {
   display: flex;
   flex-direction: column;
@@ -577,7 +572,7 @@
   flex-shrink: 0;
 }
 
-/* ── Retainer badge ────────────────────────────── */
+/* ── Retainer badge + Repo link ────────────────── */
 .admin-retainer-badge {
   display: inline-flex;
   align-items: center;
@@ -593,7 +588,6 @@
   color: var(--admin-amber);
 }
 
-/* ── Repo link ─────────────────────────────────── */
 .admin-card__footer {
   background: var(--admin-surface);
   border: 1px solid var(--admin-border);
@@ -603,7 +597,6 @@
   padding: 7px 22px;
   display: flex;
   align-items: center;
-  gap: 8px;
 }
 
 .admin-repo-link {
@@ -615,19 +608,11 @@
   text-decoration: none;
   transition: color 0.18s ease;
 }
+.admin-repo-link:hover { color: var(--admin-amber); }
 
-.admin-repo-link:hover {
-  color: var(--admin-amber);
-}
-
-/* ── Section headings ──────────────────────────── */
-.admin-section {
-  margin-bottom: 52px;
-}
-
-.admin-section__header {
-  margin-bottom: 20px;
-}
+/* ── Sections + Pipeline stat ──────────────────── */
+.admin-section { margin-bottom: 52px; }
+.admin-section__header { margin-bottom: 20px; }
 
 .admin-section__eyebrow {
   font-family: var(--admin-mono);
@@ -661,20 +646,11 @@
   font-weight: 400;
 }
 
-/* ── Pipeline total cell variant ───────────────── */
-.admin-total--pipeline {
-  border-color: var(--admin-amber-border);
-}
-
-.admin-total--pipeline .admin-total__label {
-  color: var(--admin-amber);
-}
+.admin-total--pipeline { border-color: var(--admin-amber-border); }
+.admin-total--pipeline .admin-total__label { color: var(--admin-amber); }
 
 /* ── Lead card ─────────────────────────────────── */
-.admin-lead-card {
-  /* Inherits all .admin-card styles; override glow to cooler neutral */
-}
-
+/* Inherits all .admin-card styles; ::before overrides glow tint */
 .admin-lead-card::before {
   background: radial-gradient(
     circle 260px at var(--card-mx, 50%) var(--card-my, 50%),
@@ -755,7 +731,7 @@
 .admin-lead-card__actions {
   background: var(--admin-surface);
   border: 1px solid var(--admin-border);
-  border-top: 1px solid var(--admin-border);
+  border-top: none;
   border-bottom-left-radius: var(--admin-radius);
   border-bottom-right-radius: var(--admin-radius);
   padding: 8px 14px;
@@ -781,23 +757,18 @@
   color: var(--admin-amber);
   border-color: var(--admin-amber-border);
 }
-
 .admin-lead-card__btn--convert:hover {
   background: var(--admin-amber-dim);
   border-color: var(--admin-amber);
 }
-
-.admin-lead-card__btn--lost {
-  color: var(--admin-text-dim);
-}
-
+.admin-lead-card__btn--lost { color: var(--admin-text-dim); }
 .admin-lead-card__btn--lost:hover {
   border-color: var(--admin-border-hover);
   color: var(--admin-text-muted);
 }
 
 /* ── Outreach stage pills ──────────────────────── */
-/* Reuse admin-status-pill base; add outreach-specific variants */
+/* Shares base shape with .admin-status-pill */
 .admin-outreach-pill {
   display: inline-flex;
   align-items: center;
@@ -811,6 +782,7 @@
   white-space: nowrap;
   line-height: 1.6;
 }
+
 
 /* identified: muted — just spotted, no action yet */
 .admin-outreach-pill.is-identified {
