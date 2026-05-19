@@ -6,8 +6,15 @@ export const runtime = "nodejs";
 
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
-const SIGNING_SECRET = process.env.CONTACT_SIGNING_SECRET ?? "dev-only-insecure-secret";
+const INSECURE_DEFAULT = "dev-only-insecure-secret";
+const SIGNING_SECRET = process.env.CONTACT_SIGNING_SECRET ?? INSECURE_DEFAULT;
 const DEV_MODE = !BOT_TOKEN || !CHAT_ID;
+// Real secret present? In production a missing secret must NOT silently fall
+// back to a known string (that would make thread signatures forgeable).
+const SECURE_SECRET = SIGNING_SECRET !== INSECURE_DEFAULT;
+if (!DEV_MODE && !SECURE_SECRET) {
+  console.warn("[contact] CONTACT_SIGNING_SECRET unset in production — thread continuity disabled until it is set.");
+}
 
 const NAME_MAX = 80;
 const EMAIL_MAX = 160;
@@ -15,18 +22,31 @@ const COMPANY_MAX = 100;
 const COUNTRY_MAX = 64;
 const MESSAGE_MAX = 2000;
 
-// Best-effort per-instance rate limit. Honest limitation: serverless instances
-// don't share this map — a hard global limit would need Upstash/Supabase.
-const RATE_WINDOW_MS = 30_000;
-const RATE_MAX = 6;
-const hits = new Map<string, number[]>();
+// Simple in-memory limits. Honest limitation: serverless instances don't share
+// these counters, so the effective global ceiling is higher under scale — a
+// hard global limit would need Upstash/Supabase. Still bounds abuse a lot.
+const IP_SHORT_MS = 60_000;
+const IP_SHORT_MAX = 5; // messages / minute / IP
+const IP_HOUR_MS = 3_600_000;
+const IP_HOUR_MAX = 25; // messages / hour / IP
+const TOPIC_HOUR_MAX = 40; // new conversations / hour / instance — caps group flooding
+const ipHits = new Map<string, number[]>();
+const topicTimes: number[] = [];
 
 function rateLimited(ip: string): boolean {
   const now = Date.now();
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
-  recent.push(now);
-  hits.set(ip, recent);
-  return recent.length > RATE_MAX;
+  if (ipHits.size > 5000) ipHits.clear(); // crude memory guard
+  const arr = (ipHits.get(ip) ?? []).filter((t) => now - t < IP_HOUR_MS);
+  arr.push(now);
+  ipHits.set(ip, arr);
+  const inShort = arr.filter((t) => now - t < IP_SHORT_MS).length;
+  return inShort > IP_SHORT_MAX || arr.length > IP_HOUR_MAX;
+}
+
+function topicCapReached(): boolean {
+  const now = Date.now();
+  while (topicTimes.length && now - topicTimes[0] > IP_HOUR_MS) topicTimes.shift();
+  return topicTimes.length >= TOPIC_HOUR_MAX;
 }
 
 // Drop C0/C1 control chars (keep tab=9, newline=10), trim, cap length.
@@ -46,6 +66,9 @@ function signThread(id: number): string {
 }
 
 function verifyThread(id: unknown, sig: unknown): number | null {
+  // Fail closed: with no trustworthy secret in production, never honour a
+  // client-supplied thread (forgeable → could inject into others' topics).
+  if (!SECURE_SECRET && !DEV_MODE) return null;
   if (typeof id !== "number" || !Number.isFinite(id) || typeof sig !== "string") return null;
   const expected = signThread(id);
   const a = Buffer.from(expected);
@@ -124,13 +147,19 @@ export async function POST(request: Request): Promise<Response> {
   try {
     let threadId = validThread;
 
-    if (threadId === null && firstMessage) {
+    // Only spin up a new topic if under the hourly ceiling. Over it, the
+    // message still gets through as a plain grouped message — we just stop
+    // creating unbounded topics, so a flood can't bury the group.
+    if (threadId === null && firstMessage && !topicCapReached()) {
       try {
         const topic = await tg("createForumTopic", {
           chat_id: CHAT_ID,
           name: `🌐 ${name}${company ? ` · ${company}` : ""} · ${stamp}`.slice(0, 128),
         });
-        if (typeof topic.message_thread_id === "number") threadId = topic.message_thread_id;
+        if (typeof topic.message_thread_id === "number") {
+          threadId = topic.message_thread_id;
+          topicTimes.push(Date.now());
+        }
       } catch {
         threadId = null; // group has no Topics → graceful fallback to plain messages
       }
