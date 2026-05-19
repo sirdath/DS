@@ -40,7 +40,8 @@ function sanitiseRedirect(raw: unknown): string {
   try {
     const u = new URL(raw, 'https://invalid.local')
     if (u.host !== 'invalid.local') return '/admin'           // had a real host → reject
-    if (!u.pathname.startsWith('/admin')) return '/admin'
+    // Confine strictly to /admin or /admin/* — reject siblings like /adminevil
+    if (u.pathname !== '/admin' && !u.pathname.startsWith('/admin/')) return '/admin'
     if (u.pathname.startsWith('/admin//') || u.pathname.includes('\\')) return '/admin'
     return u.pathname + u.search
   } catch { return '/admin' }
