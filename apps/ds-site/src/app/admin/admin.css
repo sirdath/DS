@@ -1515,6 +1515,94 @@
   flex-shrink: 0;
 }
 
+/* ── Admin login ───────────────────────────────── */
+
+/* Full-screen overlay: sit above the admin topbar (z-index 100) */
+.admin-login-shell {
+  z-index: 200;
+}
+
+/* Override lock-bg to use pure matte black (no megagym background image) */
+.admin-login-bg {
+  background: var(--admin-bg) !important;
+}
+
+/* Faint film-grain behind the card (reuses admin-shell grain data-URI) */
+.admin-login-shell::after {
+  content: '';
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 1;
+  animation: admin-grain-shift 8s steps(4) infinite;
+}
+
+/* Card: slightly narrower + admin surface color */
+.admin-login-card {
+  background: var(--admin-surface) !important;
+  max-width: 460px;
+  border-color: var(--admin-border) !important;
+}
+
+/* Brand eyebrow: monospace, letter-spaced, amber */
+.admin-login-brand {
+  margin-top: 28px;
+  font-family: var(--admin-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--admin-amber);
+  opacity: 0.9;
+}
+
+/* Title: lighter weight to match admin panel aesthetic */
+.admin-login-title {
+  font-size: clamp(20px, 2.6vw, 28px) !important;
+  font-weight: 300 !important;
+  margin-top: 16px !important;
+}
+
+/* Gap between username and password inputs */
+.admin-login-input-wrap--gap {
+  margin-top: 10px;
+}
+
+/* Submit arrow: amber accent */
+.admin-login-submit:not(:disabled) {
+  color: var(--admin-amber) !important;
+}
+.admin-login-submit:not(:disabled):hover {
+  color: #f2cc88 !important;
+}
+
+/* Subtle loading spinner */
+.admin-login-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid rgba(232, 180, 106, 0.25);
+  border-top-color: var(--admin-amber);
+  border-radius: 50%;
+  animation: admin-spin 0.7s linear infinite;
+}
+@keyframes admin-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Signed-out confirmation state */
+.admin-login-signedout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
 /* ── Reduced Motion ────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .admin-card,
@@ -1557,5 +1645,15 @@
   .admin-outreach-pill.is-pitched {
     animation: none;
     box-shadow: none;
+  }
+
+  /* Login: disable grain + spinner animation */
+  .admin-login-shell::after {
+    animation: none;
+  }
+  .admin-login-spinner {
+    animation: none;
+    border-top-color: var(--admin-amber);
+    opacity: 0.8;
   }
 }
