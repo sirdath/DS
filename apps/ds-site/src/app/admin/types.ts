@@ -1,6 +1,31 @@
 // The admin-domain Project. Unrelated to $ecretAnalytics/projects.ts
 // (that one is a visit-tracking path list).
 
+export const OUTREACH_STAGES = [
+  'identified',
+  'demo_built',
+  'pitched',
+  'won',
+  'lost',
+] as const
+
+export type OutreachStage = (typeof OUTREACH_STAGES)[number]
+
+export const OUTREACH_LABELS: Record<OutreachStage, string> = {
+  identified: 'Identified',
+  demo_built: 'Demo built',
+  pitched: 'Pitched',
+  won: 'Won',
+  lost: 'Lost',
+}
+
+// Stages that still count as an open potential lead (not converted, not dead)
+export const OPEN_OUTREACH_STAGES: OutreachStage[] = [
+  'identified',
+  'demo_built',
+  'pitched',
+]
+
 export const PROJECT_STATUSES = [
   'lead',
   'in_progress',
@@ -43,6 +68,11 @@ export interface Project {
   clientEmail: string | null
   clientPhone: string | null
   notes: string
+  outreachStage: OutreachStage | null
+  proposalUrl: string | null
+  estimatedValue: number | null
+  whyThem: string | null
+  source: string | null
   createdAt: string
   updatedAt: string
 }

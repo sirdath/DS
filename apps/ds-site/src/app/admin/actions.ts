@@ -2,8 +2,8 @@
 
 import { revalidatePath } from 'next/cache'
 import { getDataSource } from './lib/get-data-source'
-import { PROJECT_STATUSES } from './types'
-import type { ProjectStatus } from './types'
+import { PROJECT_STATUSES, OUTREACH_STAGES } from './types'
+import type { ProjectStatus, OutreachStage } from './types'
 import type { NewProject, ProjectPatch } from './lib/data-source'
 
 function str(v: FormDataEntryValue | null): string {
@@ -22,6 +22,18 @@ function asStatus(v: FormDataEntryValue | null): ProjectStatus {
   return (PROJECT_STATUSES as readonly string[]).includes(s)
     ? (s as ProjectStatus)
     : 'lead'
+}
+function asOutreachStage(v: FormDataEntryValue | null): OutreachStage | null {
+  const s = str(v)
+  return (OUTREACH_STAGES as readonly string[]).includes(s)
+    ? (s as OutreachStage)
+    : null
+}
+function nullableNum(v: FormDataEntryValue | null): number | null {
+  const s = str(v)
+  if (s === '') return null
+  const n = Number(s)
+  return Number.isFinite(n) ? n : null
 }
 
 function parseProject(fd: FormData): NewProject {
@@ -45,6 +57,11 @@ function parseProject(fd: FormData): NewProject {
     clientEmail: nullableStr(fd.get('clientEmail')),
     clientPhone: nullableStr(fd.get('clientPhone')),
     notes: str(fd.get('notes')),
+    outreachStage: asOutreachStage(fd.get('outreachStage')),
+    proposalUrl: nullableStr(fd.get('proposalUrl')),
+    estimatedValue: nullableNum(fd.get('estimatedValue')),
+    whyThem: nullableStr(fd.get('whyThem')),
+    source: nullableStr(fd.get('source')),
   }
 }
 

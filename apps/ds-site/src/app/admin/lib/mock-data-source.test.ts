@@ -16,6 +16,8 @@ describe('MockDataSource', () => {
       startDate: null, targetDate: null, deliveredDate: null,
       clientCompany: 'Acme', clientContact: null, clientEmail: null,
       clientPhone: null, notes: '',
+      outreachStage: null, proposalUrl: null, estimatedValue: null,
+      whyThem: null, source: null,
     })
     expect(created.id).toBeTruthy()
     expect(await ds.getProject(created.id)).toMatchObject({ name: 'Acme' })
