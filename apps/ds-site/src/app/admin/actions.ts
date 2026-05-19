@@ -72,6 +72,7 @@ function parseProject(fd: FormData): NewProject {
     repoUrl: nullableStr(fd.get('repoUrl')),
     currentWebsiteUrl: nullableStr(fd.get('currentWebsiteUrl')),
     projectType: asProjectType(fd.get('projectType')),
+    archived: false,
   }
 }
 
@@ -110,6 +111,20 @@ export async function markLeadLostAction(id: string): Promise<void> {
   if (!id) throw new Error('Missing project id')
   await getDataSource().markLeadLost(id)
   revalidatePath('/admin')
+}
+
+export async function archiveProjectAction(id: string): Promise<void> {
+  if (!id) throw new Error('Missing project id')
+  await getDataSource().archiveProject(id)
+  revalidatePath('/admin')
+  revalidatePath(`/admin/project/${id}`)
+}
+
+export async function unarchiveProjectAction(id: string): Promise<void> {
+  if (!id) throw new Error('Missing project id')
+  await getDataSource().unarchiveProject(id)
+  revalidatePath('/admin')
+  revalidatePath(`/admin/project/${id}`)
 }
 
 export async function deleteProjectAction(id: string): Promise<void> {
