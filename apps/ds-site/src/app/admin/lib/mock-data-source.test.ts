@@ -23,17 +23,21 @@ describe('MockDataSource', () => {
 
   it('should patch a project and bump updatedAt', async () => {
     const [p] = await ds.listProjects()
-    const before = p.updatedAt
-    const updated = await ds.updateProject(p.id, { completionPct: 55 })
+    // p is guaranteed by the seeded data; non-null assertion is safe here
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const before = p!.updatedAt
+    const updated = await ds.updateProject(p!.id, { completionPct: 55 })
     expect(updated.completionPct).toBe(55)
     expect(updated.updatedAt >= before).toBe(true)
   })
 
   it('should append and list activity newest-first', async () => {
     const [p] = await ds.listProjects()
-    await ds.addActivity(p.id, 'sent proposal', 'Dimitris')
-    await ds.addActivity(p.id, 'client approved', 'Stelios')
-    const log = await ds.listActivity(p.id)
-    expect(log[0].body).toBe('client approved')
+    // p is guaranteed by the seeded data; non-null assertion is safe here
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    await ds.addActivity(p!.id, 'sent proposal', 'Dimitris')
+    await ds.addActivity(p!.id, 'client approved', 'Stelios')
+    const log = await ds.listActivity(p!.id)
+    expect(log[0]!.body).toBe('client approved')
   })
 })
