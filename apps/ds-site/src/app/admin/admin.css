@@ -50,9 +50,21 @@
   --pill-retainer-text:  #dcd2be;
   --pill-retainer-border:rgba(220, 210, 190, 0.35);
 
-  /* Progress */
-  --progress-track:      rgba(255, 255, 255, 0.07);
-  --progress-fill-base:  rgba(255, 255, 255, 0.30);
+  /* Progress — status-keyed, distinctive fills */
+  --progress-track:        rgba(255, 255, 255, 0.07);
+  --progress-fill-base:    rgba(255, 255, 255, 0.30);
+  /* lead: barely any progress — keep low-key neutral */
+  --progress-lead:         linear-gradient(90deg, #5c5c5c, #7a7a7a);
+  --progress-lead-glow:    transparent;
+  /* in progress: active warm amber */
+  --progress-inprogress:   linear-gradient(90deg, #d98f3c, #f2bd6b);
+  --progress-inprogress-glow: rgba(232, 180, 106, 0.45);
+  /* delivered: clear, confident green */
+  --progress-delivered:    linear-gradient(90deg, #2f9e6e, #57c98f);
+  --progress-delivered-glow: rgba(70, 190, 135, 0.40);
+  /* retainer: the win — richest gold with a glow */
+  --progress-retainer:     linear-gradient(90deg, #e0a23f, #f7d98a);
+  --progress-retainer-glow: rgba(244, 205, 130, 0.55);
 
   /* Motion */
   --admin-duration-base: 0.5s;
@@ -432,23 +444,38 @@
 
 .admin-progress__track {
   flex: 1;
-  height: 3px;
+  height: 5px;
   background: var(--progress-track);
-  border-radius: 2px;
+  border-radius: 3px;
   overflow: hidden;
 }
 
 .admin-progress__fill {
   height: 100%;
   background: var(--progress-fill-base);
-  border-radius: 2px;
+  border-radius: 3px;
   /* Width is animated by GSAP on card entrance; no CSS transition needed here */
 }
 
-/* Retainer projects — accent fill since it's the "win" state */
+/* Status-keyed fills — each stage reads at a glance */
+.admin-card:has(.is-lead) .admin-progress__fill {
+  background: var(--progress-lead);
+}
+
+.admin-card:has(.is-in_progress) .admin-progress__fill {
+  background: var(--progress-inprogress);
+  box-shadow: 0 0 8px var(--progress-inprogress-glow);
+}
+
+.admin-card:has(.is-delivered) .admin-progress__fill {
+  background: var(--progress-delivered);
+  box-shadow: 0 0 8px var(--progress-delivered-glow);
+}
+
+/* Retainer — the "win" state: richest gold + strongest glow */
 .admin-card:has(.is-retainer) .admin-progress__fill {
-  background: var(--admin-amber);
-  opacity: 0.7;
+  background: var(--progress-retainer);
+  box-shadow: 0 0 10px var(--progress-retainer-glow);
 }
 
 .admin-progress__label {
