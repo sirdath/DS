@@ -2,8 +2,8 @@
 
 import { revalidatePath } from 'next/cache'
 import { getDataSource } from './lib/get-data-source'
-import { PROJECT_STATUSES, OUTREACH_STAGES } from './types'
-import type { ProjectStatus, OutreachStage } from './types'
+import { PROJECT_STATUSES, OUTREACH_STAGES, PROJECT_TYPES } from './types'
+import type { ProjectStatus, OutreachStage, ProjectType } from './types'
 import type { NewProject, ProjectPatch } from './lib/data-source'
 
 function str(v: FormDataEntryValue | null): string {
@@ -28,6 +28,12 @@ function asOutreachStage(v: FormDataEntryValue | null): OutreachStage | null {
   return (OUTREACH_STAGES as readonly string[]).includes(s)
     ? (s as OutreachStage)
     : null
+}
+function asProjectType(v: FormDataEntryValue | null): ProjectType {
+  const s = str(v)
+  return (PROJECT_TYPES as readonly string[]).includes(s)
+    ? (s as ProjectType)
+    : 'website'
 }
 function nullableNum(v: FormDataEntryValue | null): number | null {
   const s = str(v)
@@ -63,6 +69,8 @@ function parseProject(fd: FormData): NewProject {
     whyThem: nullableStr(fd.get('whyThem')),
     source: nullableStr(fd.get('source')),
     repoUrl: nullableStr(fd.get('repoUrl')),
+    currentWebsiteUrl: nullableStr(fd.get('currentWebsiteUrl')),
+    projectType: asProjectType(fd.get('projectType')),
   }
 }
 
@@ -99,5 +107,11 @@ export async function convertLeadAction(id: string): Promise<void> {
 export async function markLeadLostAction(id: string): Promise<void> {
   if (!id) throw new Error('Missing project id')
   await getDataSource().markLeadLost(id)
+  revalidatePath('/admin')
+}
+
+export async function deleteProjectAction(id: string): Promise<void> {
+  if (!id) throw new Error('Missing project id')
+  await getDataSource().deleteProject(id)
   revalidatePath('/admin')
 }
