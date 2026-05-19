@@ -87,3 +87,16 @@ export async function addActivityAction(projectId: string, fd: FormData): Promis
   await getDataSource().addActivity(projectId, body, author)
   revalidatePath(`/admin/project/${projectId}`)
 }
+
+export async function convertLeadAction(id: string): Promise<void> {
+  if (!id) throw new Error('Missing project id')
+  await getDataSource().convertLead(id)
+  revalidatePath('/admin')
+  revalidatePath(`/admin/project/${id}`)
+}
+
+export async function markLeadLostAction(id: string): Promise<void> {
+  if (!id) throw new Error('Missing project id')
+  await getDataSource().markLeadLost(id)
+  revalidatePath('/admin')
+}

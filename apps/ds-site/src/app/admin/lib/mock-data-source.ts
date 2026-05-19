@@ -255,7 +255,6 @@ export class MockDataSource implements ProjectDataSource {
   async updateProject(id: string, patch: ProjectPatch): Promise<Project> {
     const idx = this.projects.findIndex(p => p.id === id)
     if (idx === -1) throw new Error(`Project ${id} not found`)
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const existing = this.projects[idx]!
     const next: Project = {
       ...existing,
