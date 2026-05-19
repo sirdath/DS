@@ -49,6 +49,8 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
   const [sent, setSent] = useState<string[]>([]);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
+  const [minimized, setMinimized] = useState(false);
+  const [maximized, setMaximized] = useState(false);
   const sessionId = useRef<string>("");
   const thread = useRef<Thread | null>(null);
   const hp = useRef<HTMLInputElement>(null); // honeypot (named "website" in the DOM)
@@ -65,7 +67,10 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
 
   // Visible by default via CSS; GSAP only adds polish, never gates visibility.
   useEffect(() => {
-    if (!open) return;
+    if (!open || minimized) {
+      document.body.style.overflow = "";
+      return;
+    }
     document.body.style.overflow = "hidden";
     const t = window.setTimeout(() => firstFieldRef.current?.focus(), 120);
     const onKey = (e: KeyboardEvent) => {
@@ -97,7 +102,7 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, [open]);
+  }, [open, minimized]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -165,17 +170,52 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
     }
   }
 
+  if (minimized) {
+    return (
+      <button type="button" className="cpanel-tab" onClick={() => setMinimized(false)} aria-label="Reopen your message to DS2">
+        <span className="cpanel-tab-dot" />
+        Message DS2
+      </button>
+    );
+  }
+
   return (
     <div
-      className="cpanel-overlay"
+      className={`cpanel-overlay${maximized ? " cpanel-overlay--max" : ""}`}
       ref={overlayRef}
       onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onClose();
+        if (e.target === e.currentTarget && !maximized) onClose();
       }}
     >
-      <div className="cpanel" ref={cardRef} role="dialog" aria-modal="true" aria-label="Message DS2">
+      <div
+        className={`cpanel${maximized ? " cpanel--max" : ""}`}
+        ref={cardRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Message DS2"
+      >
+        <div className="cpanel-logo" aria-hidden="true">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logos/ds2-logo.png" alt="" />
+        </div>
         <div className="cpanel-bar">
-          <div className="cpanel-lights"><span /><span /><span /></div>
+          <div className="cpanel-lights">
+            <button type="button" className="cpl cpl--red" aria-label="Close" title="Close" onClick={onClose} />
+            <button
+              type="button"
+              className="cpl cpl--yellow"
+              aria-label="Minimise"
+              title="Minimise"
+              onClick={() => setMinimized(true)}
+            />
+            <button
+              type="button"
+              className="cpl cpl--green"
+              aria-label={maximized ? "Restore" : "Maximise"}
+              title={maximized ? "Restore" : "Maximise"}
+              onClick={() => setMaximized((m) => !m)}
+            />
+          </div>
           <div className="cpanel-bar-title">Message DS2</div>
           <button type="button" className="cpanel-x" aria-label="Close" onClick={onClose}>✕</button>
         </div>
