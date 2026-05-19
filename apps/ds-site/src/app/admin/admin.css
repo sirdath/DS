@@ -1,0 +1,496 @@
+/**
+ * admin.css — DS Admin panel styles
+ *
+ * Palette is defined via custom properties at the top.
+ * Only pure neutral grays (R=G=B). One warm amber accent.
+ * Ported and adapted from packages/frontendmaxxing-reference/components/cards.css
+ * and animations/stagger.js — restyled for the dark DS admin aesthetic.
+ */
+
+/* ── Custom Properties ─────────────────────────── */
+:root {
+  /* Backgrounds */
+  --admin-bg:            #0a0a0a;
+  --admin-surface:       #141414;
+  --admin-surface-raise: #1c1c1c;
+  --admin-border:        rgba(255, 255, 255, 0.07);
+  --admin-border-hover:  rgba(255, 255, 255, 0.13);
+
+  /* Text */
+  --admin-text:          #f5f5f5;
+  --admin-text-muted:    #888888;
+  --admin-text-dim:      #444444;
+  --admin-mono:          ui-monospace, 'SF Mono', 'Fira Code', monospace;
+
+  /* Accent — warm amber only */
+  --admin-amber:         #e8b46a;
+  --admin-amber-dim:     rgba(232, 180, 106, 0.15);
+  --admin-amber-border:  rgba(232, 180, 106, 0.30);
+
+  /* Status pills */
+  --pill-lead-bg:        rgba(255, 255, 255, 0.06);
+  --pill-lead-text:      #888888;
+  --pill-lead-border:    rgba(255, 255, 255, 0.10);
+
+  --pill-progress-bg:    rgba(232, 180, 106, 0.12);
+  --pill-progress-text:  #e8b46a;
+  --pill-progress-border:rgba(232, 180, 106, 0.28);
+
+  --pill-delivered-bg:   rgba(160, 180, 155, 0.10);
+  --pill-delivered-text: #a0b49b;
+  --pill-delivered-border:rgba(160, 180, 155, 0.22);
+
+  --pill-retainer-bg:    rgba(220, 210, 190, 0.13);
+  --pill-retainer-text:  #dcd2be;
+  --pill-retainer-border:rgba(220, 210, 190, 0.35);
+
+  /* Progress */
+  --progress-track:      rgba(255, 255, 255, 0.07);
+  --progress-fill-base:  rgba(255, 255, 255, 0.30);
+
+  /* Motion */
+  --admin-duration-base: 0.5s;
+  --admin-ease:          cubic-bezier(0.4, 0, 0.2, 1);
+  --admin-ease-out:      cubic-bezier(0, 0, 0.2, 1);
+
+  /* Layout */
+  --admin-radius:        10px;
+  --admin-topbar-h:      52px;
+  --admin-max-w:         1200px;
+}
+
+/* ── Shell ─────────────────────────────────────── */
+.admin-shell {
+  min-height: 100vh;
+  background: var(--admin-bg);
+  color: var(--admin-text);
+  font-family: var(--font-inter), ui-sans-serif, sans-serif;
+}
+
+/* ── Topbar ────────────────────────────────────── */
+.admin-topbar {
+  height: var(--admin-topbar-h);
+  border-bottom: 1px solid var(--admin-border);
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 0 28px;
+  position: sticky;
+  top: 0;
+  background: rgba(10, 10, 10, 0.90);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 100;
+}
+
+.admin-topbar__eyebrow {
+  font-family: var(--admin-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--admin-text-dim);
+  white-space: nowrap;
+  margin-right: 8px;
+}
+
+.admin-topbar__nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.admin-topbar__link {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--admin-text-muted);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: color 0.18s ease, background 0.18s ease;
+}
+
+.admin-topbar__link:hover {
+  color: var(--admin-text);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.admin-topbar__link.is-active {
+  color: var(--admin-text);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.admin-topbar__actions {
+  margin-left: auto;
+}
+
+.admin-topbar__signout {
+  background: transparent;
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  color: var(--admin-text-muted);
+  font-size: 12px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: border-color 0.18s ease, color 0.18s ease;
+}
+
+.admin-topbar__signout:hover {
+  border-color: var(--admin-border-hover);
+  color: var(--admin-text);
+}
+
+/* ── Page Container ────────────────────────────── */
+.admin-container {
+  max-width: var(--admin-max-w);
+  margin: 0 auto;
+  padding: 40px 28px 80px;
+}
+
+/* ── Totals Bar ────────────────────────────────── */
+.admin-totals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.admin-total {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color var(--admin-duration-base) var(--admin-ease);
+}
+
+.admin-total:hover {
+  border-color: var(--admin-border-hover);
+}
+
+.admin-total__label {
+  font-family: var(--admin-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--admin-text-dim);
+}
+
+.admin-total__value {
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  color: var(--admin-text);
+  line-height: 1;
+}
+
+.admin-total__sub {
+  font-size: 11px;
+  color: var(--admin-text-muted);
+  margin-top: 2px;
+}
+
+/* ── Filter Row ────────────────────────────────── */
+.admin-filters {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.admin-filter-link {
+  font-size: 12px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--admin-text-muted);
+  text-decoration: none;
+  padding: 5px 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.admin-filter-link:hover {
+  color: var(--admin-text);
+  border-color: var(--admin-border-hover);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.admin-filter-link.is-active {
+  color: var(--admin-text);
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* ── Project Grid ──────────────────────────────── */
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
+  gap: 12px;
+}
+
+/* ── Project Card ─────────────────────────────────
+   Adapted from frontendmaxxing-reference card-hover-lift.
+   Restyled: neutral dark palette, 10px radius, 1px border.
+   ─────────────────────────────────────────────── */
+.admin-card {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  padding: 22px 22px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform var(--admin-duration-base) var(--admin-ease),
+    border-color var(--admin-duration-base) var(--admin-ease),
+    box-shadow var(--admin-duration-base) var(--admin-ease);
+}
+
+.admin-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--admin-border-hover);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Subtle top-edge highlight on hover, ported from glass card technique */
+.admin-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--admin-radius);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03) 0%,
+    transparent 40%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.admin-card:hover::before {
+  opacity: 1;
+}
+
+.admin-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-card__name {
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  color: var(--admin-text);
+  line-height: 1.25;
+}
+
+.admin-card__lead {
+  font-size: 11px;
+  color: var(--admin-text-dim);
+  margin-top: 3px;
+}
+
+.admin-card__money {
+  font-size: 12px;
+  color: var(--admin-text-muted);
+  font-family: var(--admin-mono);
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-card__money-paid {
+  color: var(--admin-text);
+}
+
+.admin-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── Status Pills ──────────────────────────────── */
+.admin-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  line-height: 1.6;
+}
+
+.admin-status-pill.is-lead {
+  background: var(--pill-lead-bg);
+  color: var(--pill-lead-text);
+  border-color: var(--pill-lead-border);
+}
+
+.admin-status-pill.is-in_progress {
+  background: var(--pill-progress-bg);
+  color: var(--pill-progress-text);
+  border-color: var(--pill-progress-border);
+}
+
+.admin-status-pill.is-delivered {
+  background: var(--pill-delivered-bg);
+  color: var(--pill-delivered-text);
+  border-color: var(--pill-delivered-border);
+}
+
+.admin-status-pill.is-retainer {
+  background: var(--pill-retainer-bg);
+  color: var(--pill-retainer-text);
+  border-color: var(--pill-retainer-border);
+  font-weight: 500;
+}
+
+/* ── Progress Bar ──────────────────────────────── */
+.admin-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-progress__track {
+  flex: 1;
+  height: 3px;
+  background: var(--progress-track);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.admin-progress__fill {
+  height: 100%;
+  background: var(--progress-fill-base);
+  border-radius: 2px;
+  transition: width var(--admin-duration-base) var(--admin-ease-out);
+}
+
+/* Retainer projects — accent fill since it's the "win" state */
+.admin-card:has(.is-retainer) .admin-progress__fill {
+  background: var(--admin-amber);
+  opacity: 0.7;
+}
+
+.admin-progress__label {
+  font-size: 11px;
+  font-family: var(--admin-mono);
+  color: var(--admin-text-dim);
+  min-width: 32px;
+  text-align: right;
+}
+
+/* ── Overdue Badge ─────────────────────────────── */
+.admin-overdue {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--admin-amber-dim);
+  border: 1px solid var(--admin-amber-border);
+  color: var(--admin-amber);
+  font-size: 10px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ── Section Header ────────────────────────────── */
+.admin-page-header {
+  margin-bottom: 32px;
+}
+
+.admin-page-eyebrow {
+  font-family: var(--admin-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--admin-text-dim);
+  margin-bottom: 10px;
+}
+
+.admin-page-title {
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  color: var(--admin-text);
+  margin: 0 0 6px;
+}
+
+.admin-page-sub {
+  font-size: 13px;
+  color: var(--admin-text-muted);
+  line-height: 1.5;
+}
+
+/* ── Responsive ────────────────────────────────── */
+@media (max-width: 768px) {
+  .admin-topbar {
+    padding: 0 16px;
+    gap: 16px;
+  }
+
+  .admin-container {
+    padding: 24px 16px 60px;
+  }
+
+  .admin-totals {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-total__value {
+    font-size: 18px;
+  }
+
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Reduced Motion ────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .admin-card,
+  .admin-card::before,
+  .admin-total,
+  .admin-topbar__link,
+  .admin-filter-link,
+  .admin-topbar__signout,
+  .admin-progress__fill {
+    transition: none;
+    animation: none;
+  }
+
+  .admin-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .admin-card:hover::before {
+    opacity: 0;
+  }
+}
