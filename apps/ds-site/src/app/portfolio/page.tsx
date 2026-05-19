@@ -21,6 +21,8 @@ function PortfolioBody() {
         <div className="cases">
           <article className="case reveal">
             <div className="case-media" aria-hidden="true">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="ph-logo" src="/logos/ds2-logo.png" alt="" />
               <span>Preview coming soon</span>
             </div>
             <div className="case-body">
@@ -46,6 +48,8 @@ function PortfolioBody() {
 
           <article className="case reveal">
             <div className="case-media" aria-hidden="true">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="ph-logo" src="/logos/ds2-logo.png" alt="" />
               <span>Preview coming soon</span>
             </div>
             <div className="case-body">
@@ -69,6 +73,8 @@ function PortfolioBody() {
 
           <article className="case reveal">
             <div className="case-media" aria-hidden="true">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="ph-logo" src="/logos/ds2-logo.png" alt="" />
               <span>Preview coming soon</span>
             </div>
             <div className="case-body">
@@ -92,6 +98,8 @@ function PortfolioBody() {
 
           <article className="case reveal">
             <div className="case-media" aria-hidden="true">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="ph-logo" src="/logos/ds2-logo.png" alt="" />
               <span>Preview coming soon</span>
             </div>
             <div className="case-body">

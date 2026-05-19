@@ -56,6 +56,8 @@ function AboutBody() {
 
         <div className="founder-photo reveal">
           <div className="founder-photo-inner" role="img" aria-label="Photo of the two co-founders, coming soon">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="ph-logo ph-logo--lg" src="/logos/ds2-logo.png" alt="" />
             <span className="founder-photo-tag">Photo coming soon</span>
           </div>
           <div className="founder-photo-cap">Dimitris and Stelios, co-founders · Athens</div>

@@ -1238,7 +1238,7 @@ footer a:hover { color: var(--silver); }
 .founder-photo-inner {
   position: relative; aspect-ratio: 16 / 10; border-radius: 18px;
   border: 1px solid var(--hairline); overflow: hidden;
-  display: flex; align-items: center; justify-content: center;
+  display: flex; flex-direction: column; gap: 20px; align-items: center; justify-content: center;
   background:
     radial-gradient(120% 120% at 50% 0%, rgba(255,255,255,0.06), transparent 60%),
     linear-gradient(180deg, #161616, #0e0e0e);
@@ -1268,7 +1268,8 @@ footer a:hover { color: var(--silver); }
   background: rgba(255,255,255,0.02);
 }
 .case-media {
-  min-height: 260px; display: flex; align-items: center; justify-content: center;
+  min-height: 260px; display: flex; flex-direction: column; gap: 16px;
+  align-items: center; justify-content: center;
   border-right: 1px solid var(--hairline);
   background:
     radial-gradient(120% 120% at 50% 0%, rgba(255,255,255,0.06), transparent 60%),
@@ -1312,6 +1313,13 @@ footer a:hover { color: var(--silver); }
   transition: color 0.2s ease, border-color 0.2s ease;
 }
 .case-link:hover { color: var(--white); border-color: var(--white); }
+/* faint DS2 wordmark as a tasteful 'image coming' placeholder */
+.ph-logo {
+  width: 140px; height: auto; display: block;
+  opacity: 0.12; filter: grayscale(1) brightness(1.7);
+  pointer-events: none; user-select: none;
+}
+.ph-logo--lg { width: clamp(180px, 26vw, 260px); }
 @media (max-width: 760px) {
   .section--first { padding-top: 104px; }
   .case { grid-template-columns: 1fr; }

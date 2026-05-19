@@ -514,10 +514,6 @@ export default function HomePage() {
           </a>
           <div className="nav-right">
             <ul className="nav-links">
-              <li><a href="#services">Services</a></li>
-              <li><a href="#how">How we work</a></li>
-              <li><a href="#engage">Engage</a></li>
-              <li><a href="#founders">Team</a></li>
               <li><a href="/portfolio">Portfolio</a></li>
               <li><a href="/about">About</a></li>
             </ul>
