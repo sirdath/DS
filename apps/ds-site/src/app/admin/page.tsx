@@ -4,7 +4,7 @@ import { portfolioTotals } from './lib/derive'
 import { PROJECT_STATUSES, STATUS_LABELS } from './types'
 import type { ProjectStatus } from './types'
 import { ProjectGrid } from './project-grid'
-import { formatMoney } from './format'
+import { CountUp } from './count-up'
 
 export const dynamic = 'force-dynamic'
 
@@ -39,13 +39,14 @@ export default async function AdminPage({ searchParams }: PageProps) {
       </div>
 
       <div className="admin-totals">
-        <TotalCell label="Contract value" value={formatMoney(totals.totalContractValue)} />
-        <TotalCell label="Collected" value={formatMoney(totals.totalCollected)} />
-        <TotalCell label="Outstanding" value={formatMoney(totals.totalOutstanding)} />
-        <TotalCell
-          label="MRR"
-          value={totals.monthlyRecurringRevenue > 0 ? formatMoney(totals.monthlyRecurringRevenue) : '—'}
-        />
+        <MoneyCell label="Contract value" value={totals.totalContractValue} />
+        <MoneyCell label="Collected" value={totals.totalCollected} />
+        <MoneyCell label="Outstanding" value={totals.totalOutstanding} />
+        {totals.monthlyRecurringRevenue > 0 ? (
+          <MoneyCell label="MRR" value={totals.monthlyRecurringRevenue} />
+        ) : (
+          <TotalCell label="MRR" value="—" />
+        )}
         {PROJECT_STATUSES.map((s) => (
           <TotalCell
             key={s}
@@ -93,6 +94,17 @@ function TotalCell({
       <span className="admin-total__label">{label}</span>
       <span className="admin-total__value">{value}</span>
       {sub && <span className="admin-total__sub">{sub}</span>}
+    </div>
+  )
+}
+
+function MoneyCell({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="admin-total">
+      <span className="admin-total__label">{label}</span>
+      <span className="admin-total__value">
+        <CountUp value={value} prefix="€" />
+      </span>
     </div>
   )
 }
