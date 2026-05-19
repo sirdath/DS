@@ -1,11 +1,14 @@
 import Link from 'next/link'
 import { getDataSource } from './lib/get-data-source'
-import { portfolioTotals, splitProjects } from './lib/derive'
-import { PROJECT_STATUSES, STATUS_LABELS } from './types'
-import type { ProjectStatus } from './types'
+import { portfolioTotals, partitionProjects } from './lib/derive'
+import { PROJECT_STATUSES, STATUS_LABELS, PROJECT_TYPE_LABELS, OUTREACH_LABELS } from './types'
+import type { Project, ProjectStatus } from './types'
 import { ProjectGrid } from './project-grid'
 import { LeadGrid } from './lead-grid'
 import { CountUp } from './count-up'
+import { unarchiveProjectAction, deleteProjectAction } from './actions'
+import { ConfirmButton } from './confirm-button'
+import { formatDate } from './format'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,7 +26,7 @@ export default async function AdminPage({ searchParams }: PageProps) {
 
   const ds = getDataSource()
   const all = await ds.listProjects()
-  const { leads, active } = splitProjects(all)
+  const { leads, active, archived } = partitionProjects(all)
   const totals = portfolioTotals(active)
 
   // Pipeline stats: open leads count + summed estimatedValue
@@ -129,7 +132,64 @@ export default async function AdminPage({ searchParams }: PageProps) {
           <ProjectGrid projects={filteredActive} />
         )}
       </div>
+
+      {/* ── Section: Archived (collapsible, default closed) ── */}
+      <details className="admin-archived">
+        <summary className="admin-archived__summary">
+          <span className="admin-section__eyebrow">Archived</span>
+          <span className="admin-section__count">{archived.length}</span>
+        </summary>
+
+        <div className="admin-archived__body">
+          {archived.length === 0 ? (
+            <p className="admin-archived__empty">Nothing archived.</p>
+          ) : (
+            <ul className="admin-archived-list">
+              {archived.map((p) => (
+                <ArchivedRow key={p.id} project={p} />
+              ))}
+            </ul>
+          )}
+        </div>
+      </details>
     </div>
+  )
+}
+
+function ArchivedRow({ project: p }: { project: Project }) {
+  const unarchiveBound = unarchiveProjectAction.bind(null, p.id)
+  const deleteBound = deleteProjectAction.bind(null, p.id)
+
+  const typeLabel = PROJECT_TYPE_LABELS[p.projectType]
+  const stageLabel = p.outreachStage ? OUTREACH_LABELS[p.outreachStage] : STATUS_LABELS[p.status]
+
+  return (
+    <li className="admin-archived-row">
+      <Link href={`/admin/project/${p.id}`} className="admin-archived-row__meta">
+        <span className="admin-archived-row__name">{p.name}</span>
+        <span className="admin-archived-row__tags">
+          <span className="admin-type-tag">{typeLabel}</span>
+          <span className="admin-archived-row__status">{stageLabel}</span>
+        </span>
+        <span className="admin-archived-row__details">
+          {p.lead} &middot; updated {formatDate(p.updatedAt)}
+        </span>
+      </Link>
+      <div className="admin-archived-row__actions">
+        <ConfirmButton
+          action={unarchiveBound}
+          label="Restore"
+          confirmText=""
+          variant="neutral"
+        />
+        <ConfirmButton
+          action={deleteBound}
+          label="Delete permanently"
+          confirmText="Permanently delete? This cannot be undone."
+          variant="danger"
+        />
+      </div>
+    </li>
   )
 }
 
