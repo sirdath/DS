@@ -11,13 +11,26 @@ const LOCKOUT_MS = 2 * 60 * 1000
 const LS_ATTEMPTS = 'admin_attempts'
 const LS_LOCKOUT = 'admin_lockout'
 
+// SSR-safe: localStorage is browser-only and Next still server-renders this
+// 'use client' module once. A `typeof window === 'undefined'` guard gets
+// dead-code-eliminated in client modules by the bundler, so we use try/catch
+// (opaque to the bundler) — on the server the bare `localStorage` reference
+// throws ReferenceError, which we swallow and return 0.
 function getRemainingLockout(): number {
-  const until = parseInt(localStorage.getItem(LS_LOCKOUT) ?? '0', 10)
-  return Math.max(0, until - Date.now())
+  try {
+    const until = parseInt(localStorage.getItem(LS_LOCKOUT) ?? '0', 10)
+    return Math.max(0, until - Date.now())
+  } catch {
+    return 0
+  }
 }
 
 function getAttempts(): number {
-  return parseInt(localStorage.getItem(LS_ATTEMPTS) ?? '0', 10)
+  try {
+    return parseInt(localStorage.getItem(LS_ATTEMPTS) ?? '0', 10)
+  } catch {
+    return 0
+  }
 }
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
