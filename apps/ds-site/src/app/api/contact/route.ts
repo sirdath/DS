@@ -45,7 +45,7 @@ function rateLimited(ip: string): boolean {
 
 function topicCapReached(): boolean {
   const now = Date.now();
-  while (topicTimes.length && now - topicTimes[0] > IP_HOUR_MS) topicTimes.shift();
+  while (topicTimes.length && now - (topicTimes[0] ?? 0) > IP_HOUR_MS) topicTimes.shift();
   return topicTimes.length >= TOPIC_HOUR_MAX;
 }
 
