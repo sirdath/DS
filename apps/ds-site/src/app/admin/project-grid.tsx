@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import type { Project, ProjectStatus } from './types'
-import { STATUS_LABELS } from './types'
+import { STATUS_LABELS, PROJECT_TYPE_LABELS } from './types'
 import { outstanding, isOverdue } from './lib/derive'
 import { formatMoney } from './format'
 import { useStaggerIn } from './use-stagger-in'
@@ -128,7 +128,12 @@ function ProjectCard({ project: p }: { project: Project }) {
         <div className="admin-card__header">
           <div>
             <div className="admin-card__name">{p.name}</div>
-            <div className="admin-card__lead">{p.lead}</div>
+            <div className="admin-card__lead">
+              <span className="admin-type-tag" style={{ marginRight: 6 }}>
+                {PROJECT_TYPE_LABELS[p.projectType]}
+              </span>
+              {p.lead}
+            </div>
           </div>
           <div className="admin-card__header-right">
             {isRetainer && p.retainerMonthly !== null && (

@@ -89,12 +89,17 @@ export default async function AdminPage({ searchParams }: PageProps) {
 
       {/* ── Section: Active Projects ── */}
       <div className="admin-section">
-        <div className="admin-section__header">
-          <p className="admin-section__eyebrow">Active book</p>
-          <h2 className="admin-section__title">
-            Active Projects
-            <span className="admin-section__count">{active.length}</span>
-          </h2>
+        <div className="admin-section__header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
+          <div>
+            <p className="admin-section__eyebrow">Active book</p>
+            <h2 className="admin-section__title">
+              Active Projects
+              <span className="admin-section__count">{active.length}</span>
+            </h2>
+          </div>
+          <Link href="/admin/new" className="admin-new-btn" style={{ flexShrink: 0, marginTop: 2 }}>
+            + New project
+          </Link>
         </div>
 
         {/* Status filter applies to active only */}
