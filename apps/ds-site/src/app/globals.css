@@ -1220,6 +1220,90 @@ footer a:hover { color: var(--silver); }
   .founders-split::before { display: none; }
 }
 
+/* ── Sub-pages: About / Portfolio ── */
+.section--first { padding-top: 132px; }
+.about-blocks {
+  max-width: 760px; margin: 0 auto;
+  display: flex; flex-direction: column; gap: 40px;
+}
+.about-block { border-top: 1px solid var(--hairline); padding-top: 26px; }
+.about-block:first-child { border-top: none; padding-top: 0; }
+.about-block-k {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--ghost); margin-bottom: 14px;
+}
+.about-block p { font-size: 17px; line-height: 1.62; color: var(--silver); text-wrap: pretty; margin: 0; }
+.founder-photo { max-width: 760px; margin: 64px auto 0; }
+.founder-photo-inner {
+  position: relative; aspect-ratio: 16 / 10; border-radius: 18px;
+  border: 1px solid var(--hairline); overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(120% 120% at 50% 0%, rgba(255,255,255,0.06), transparent 60%),
+    linear-gradient(180deg, #161616, #0e0e0e);
+}
+.founder-photo-tag {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ghost);
+  padding: 8px 14px; border: 1px dashed var(--hairline-strong); border-radius: 999px;
+}
+.founder-photo-cap {
+  margin-top: 16px; text-align: center;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 13px; color: var(--ghost); letter-spacing: 0.02em;
+}
+.about-coda {
+  max-width: 760px; margin: 64px auto 0;
+  display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center;
+}
+.about-coda blockquote {
+  font-size: clamp(20px, 2.4vw, 28px); font-weight: 500;
+  letter-spacing: -0.02em; line-height: 1.3; color: var(--white); text-wrap: balance; margin: 0;
+}
+.cases { max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+.case {
+  display: grid; grid-template-columns: 1fr 1.1fr;
+  border: 1px solid var(--hairline); border-radius: 20px; overflow: hidden;
+  background: rgba(255,255,255,0.02);
+}
+.case-media {
+  min-height: 260px; display: flex; align-items: center; justify-content: center;
+  border-right: 1px solid var(--hairline);
+  background:
+    radial-gradient(120% 120% at 50% 0%, rgba(255,255,255,0.06), transparent 60%),
+    linear-gradient(180deg, #161616, #0e0e0e);
+}
+.case-media span {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ghost);
+  padding: 8px 14px; border: 1px dashed var(--hairline-strong); border-radius: 999px;
+}
+.case-body { padding: 36px; }
+.case-meta {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ghost);
+  margin-bottom: 14px;
+}
+.case-title {
+  font-size: clamp(20px, 2vw, 26px); font-weight: 600; letter-spacing: -0.022em;
+  line-height: 1.18; color: var(--white); text-wrap: balance; margin: 0 0 14px;
+}
+.case-text { font-size: 15.5px; line-height: 1.6; color: var(--silver); text-wrap: pretty; margin: 0; }
+.case-list { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.case-list li { position: relative; padding-left: 18px; font-size: 14px; color: var(--silver); }
+.case-list li::before {
+  content: ""; position: absolute; left: 0; top: 9px;
+  width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4);
+}
+@media (max-width: 760px) {
+  .section--first { padding-top: 104px; }
+  .case { grid-template-columns: 1fr; }
+  .case-media { border-right: none; border-bottom: 1px solid var(--hairline); min-height: 170px; }
+  .case-body { padding: 26px 22px; }
+  .about-block p { font-size: 16px; }
+}
+
 /* ─── Lock screen (megagym-login) ──────────────── */
 .lock-shell {
   position: fixed; inset: 0; overflow: hidden;

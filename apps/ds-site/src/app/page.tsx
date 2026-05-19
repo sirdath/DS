@@ -518,6 +518,8 @@ export default function HomePage() {
               <li><a href="#how">How we work</a></li>
               <li><a href="#engage">Engage</a></li>
               <li><a href="#founders">Team</a></li>
+              <li><a href="/portfolio">Portfolio</a></li>
+              <li><a href="/about">About</a></li>
             </ul>
             <ContactCTA size="sm" onOpen={() => setChatOpen(true)} />
           </div>
@@ -863,7 +865,8 @@ export default function HomePage() {
         <div>© 2026 DS2 — Digital Solutions Consulting · Athens · London</div>
         <ul className="links">
           <li><a href="#services">Services</a></li>
-          <li><a href="#how">How we work</a></li>
+          <li><a href="/portfolio">Portfolio</a></li>
+          <li><a href="/about">About</a></li>
           <li><ContactCTA size="sm" onOpen={() => setChatOpen(true)} /></li>
         </ul>
       </footer>
