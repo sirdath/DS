@@ -3,8 +3,8 @@
  * Server component.
  */
 import Link from 'next/link'
-import { createProjectAction } from '../actions'
-import { ProjectForm } from '../project-form'
+import { createProjectAction } from '@/app/admin/actions'
+import { ProjectForm } from '@/app/admin/project-form'
 
 export default function NewProjectPage() {
   return (

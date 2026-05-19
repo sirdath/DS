@@ -1517,9 +1517,9 @@
 
 /* ── Admin login ───────────────────────────────── */
 
-/* Full-screen overlay: sit above the admin topbar (z-index 100) */
+/* Full-screen overlay — no topbar to compete with; inherits lock-shell stacking */
 .admin-login-shell {
-  z-index: 200;
+  z-index: 1;
 }
 
 /* Override lock-bg to use pure matte black (no megagym background image) */

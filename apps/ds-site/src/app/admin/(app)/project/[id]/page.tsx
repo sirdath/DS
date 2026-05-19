@@ -4,13 +4,13 @@
  */
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { getDataSource } from '../../lib/get-data-source'
-import { STATUS_LABELS, OUTREACH_LABELS, PROJECT_TYPE_LABELS } from '../../types'
-import { updateProjectAction, archiveProjectAction, unarchiveProjectAction, deleteProjectAction } from '../../actions'
-import { ProjectForm } from '../../project-form'
-import { ProjectDetailView } from '../../project-detail-view'
-import { ActivityFeed } from '../../activity-feed'
-import { ConfirmButton } from '../../confirm-button'
+import { getDataSource } from '@/app/admin/lib/get-data-source'
+import { STATUS_LABELS, OUTREACH_LABELS, PROJECT_TYPE_LABELS } from '@/app/admin/types'
+import { updateProjectAction, archiveProjectAction, unarchiveProjectAction, deleteProjectAction } from '@/app/admin/actions'
+import { ProjectForm } from '@/app/admin/project-form'
+import { ProjectDetailView } from '@/app/admin/project-detail-view'
+import { ActivityFeed } from '@/app/admin/activity-feed'
+import { ConfirmButton } from '@/app/admin/confirm-button'
 
 export const dynamic = 'force-dynamic'
 
