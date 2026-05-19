@@ -18,10 +18,12 @@ import { MockDataSource } from './mock-data-source'
 let mockCached: ProjectDataSource | null = null
 
 export function getDataSource(): ProjectDataSource {
+  // Both public vars required; service-role is guarded separately in
+  // supabase-server.ts. OR-logic was replaced with AND to avoid a half-key
+  // state that could silently fall through to an unintended client (Fix 5).
   const hasSupabase =
     !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    (!!process.env.SUPABASE_SERVICE_ROLE_KEY ||
-      !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+    !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (hasSupabase) {
     // Import inline to avoid the `server-only` import crashing the test runner.

@@ -1,3 +1,5 @@
+import 'server-only'
+
 import { createClient } from '@supabase/supabase-js'
 import { PROJECTS } from './projects'
 import ProjectCard from './ProjectCard'
