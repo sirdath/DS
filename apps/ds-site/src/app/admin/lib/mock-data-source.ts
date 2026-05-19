@@ -1,4 +1,4 @@
-import type { Project, ProjectActivity } from '../types'
+import type { Project, ProjectActivity, ProjectType } from '../types'
 import type { ProjectDataSource, NewProject, ProjectPatch } from './data-source'
 
 function uid(): string {
@@ -30,6 +30,8 @@ const SEED: Project[] = [
     whyThem: null,
     source: null,
     repoUrl: 'https://github.com/sirdath/megagym-site',
+    currentWebsiteUrl: 'https://old-megagym.example',
+    projectType: 'website' as ProjectType,
     createdAt: '2026-02-01T00:00:00Z',
     updatedAt: '2026-03-12T00:00:00Z',
   },
@@ -57,6 +59,8 @@ const SEED: Project[] = [
     whyThem: null,
     source: null,
     repoUrl: 'https://github.com/sirdath/kallisto',
+    currentWebsiteUrl: null,
+    projectType: 'website' as ProjectType,
     createdAt: '2025-11-10T00:00:00Z',
     updatedAt: '2026-05-01T00:00:00Z',
   },
@@ -84,6 +88,8 @@ const SEED: Project[] = [
     whyThem: null,
     source: null,
     repoUrl: 'https://github.com/sirdath/orbit-logistics',
+    currentWebsiteUrl: 'https://orbit-logistics.example',
+    projectType: 'application' as ProjectType,
     createdAt: '2026-03-01T00:00:00Z',
     updatedAt: '2026-05-12T00:00:00Z',
   },
@@ -111,6 +117,8 @@ const SEED: Project[] = [
     whyThem: null,
     source: null,
     repoUrl: 'https://github.com/sirdath/verde-skincare',
+    currentWebsiteUrl: 'https://verde-old.example',
+    projectType: 'website' as ProjectType,
     createdAt: '2026-02-20T00:00:00Z',
     updatedAt: '2026-05-05T00:00:00Z',
   },
@@ -138,6 +146,8 @@ const SEED: Project[] = [
     whyThem: 'Solar installer with an outdated single-page site — strong before/after story.',
     source: 'Inbound',
     repoUrl: null,
+    currentWebsiteUrl: 'https://helios-energy.example',
+    projectType: 'website' as ProjectType,
     createdAt: '2026-05-08T00:00:00Z',
     updatedAt: '2026-05-08T00:00:00Z',
   },
@@ -165,6 +175,8 @@ const SEED: Project[] = [
     whyThem: 'Referral from MegaGym; partner wants a credibility-grade site.',
     source: 'Referral — MegaGym',
     repoUrl: null,
+    currentWebsiteUrl: null,
+    projectType: 'consulting' as ProjectType,
     createdAt: '2026-05-14T00:00:00Z',
     updatedAt: '2026-05-14T00:00:00Z',
   },
@@ -192,6 +204,8 @@ const SEED: Project[] = [
     whyThem: 'Premium charter brand, no web presence — high-value speculative target.',
     source: 'Cold target',
     repoUrl: null,
+    currentWebsiteUrl: null,
+    projectType: 'website' as ProjectType,
     createdAt: '2026-05-19T00:00:00Z',
     updatedAt: '2026-05-19T00:00:00Z',
   },
@@ -219,6 +233,8 @@ const SEED: Project[] = [
     whyThem: 'Chose a cheaper freelancer.',
     source: 'Cold target',
     repoUrl: null,
+    currentWebsiteUrl: null,
+    projectType: 'website' as ProjectType,
     createdAt: '2026-05-19T00:00:00Z',
     updatedAt: '2026-05-19T00:00:00Z',
   },
@@ -273,6 +289,12 @@ export class MockDataSource implements ProjectDataSource {
     }
     this.projects = this.projects.map((p, i) => (i === idx ? next : p))
     return { ...next }
+  }
+
+  async deleteProject(id: string): Promise<void> {
+    const idx = this.projects.findIndex(p => p.id === id)
+    if (idx === -1) throw new Error(`Project ${id} not found`)
+    this.projects = this.projects.filter(p => p.id !== id)
   }
 
   async listActivity(projectId: string): Promise<ProjectActivity[]> {

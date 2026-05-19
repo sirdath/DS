@@ -26,6 +26,26 @@ export const OPEN_OUTREACH_STAGES: OutreachStage[] = [
   'pitched',
 ]
 
+export const PROJECT_TYPES = [
+  'website',
+  'application',
+  'datascience',
+  'aichatbot',
+  'agent',
+  'consulting',
+] as const
+
+export type ProjectType = (typeof PROJECT_TYPES)[number]
+
+export const PROJECT_TYPE_LABELS: Record<ProjectType, string> = {
+  website: 'Website',
+  application: 'Application',
+  datascience: 'Data science',
+  aichatbot: 'AI chatbot',
+  agent: 'AI agent',
+  consulting: 'Consulting',
+}
+
 export const PROJECT_STATUSES = [
   'lead',
   'in_progress',
@@ -74,6 +94,8 @@ export interface Project {
   whyThem: string | null
   source: string | null
   repoUrl: string | null
+  currentWebsiteUrl: string | null
+  projectType: ProjectType
   createdAt: string
   updatedAt: string
 }

@@ -18,6 +18,7 @@ describe('MockDataSource', () => {
       clientPhone: null, notes: '',
       outreachStage: null, proposalUrl: null, estimatedValue: null,
       whyThem: null, source: null, repoUrl: null,
+      currentWebsiteUrl: null, projectType: 'website' as const,
     })
     expect(created.id).toBeTruthy()
     expect(await ds.getProject(created.id)).toMatchObject({ name: 'Acme' })
@@ -33,6 +34,7 @@ describe('MockDataSource', () => {
       clientPhone: null, notes: '',
       outreachStage: null, proposalUrl: null, estimatedValue: null,
       whyThem: null, source: null, repoUrl,
+      currentWebsiteUrl: null, projectType: 'website' as const,
     })
     expect(created.repoUrl).toBe(repoUrl)
     expect((await ds.getProject(created.id))?.repoUrl).toBe(repoUrl)
@@ -80,6 +82,21 @@ describe('MockDataSource', () => {
     })
     it('should throw when id is not found', async () => {
       await expect(ds.convertLead('no-such-id')).rejects.toThrow()
+    })
+  })
+
+  describe('deleteProject', () => {
+    it('should remove the project so getProject returns null', async () => {
+      await ds.deleteProject('seed-megagym')
+      expect(await ds.getProject('seed-megagym')).toBeNull()
+    })
+    it('should decrease listProjects length by 1', async () => {
+      const before = (await ds.listProjects()).length
+      await ds.deleteProject('seed-megagym')
+      expect((await ds.listProjects()).length).toBe(before - 1)
+    })
+    it('should throw with id in message when id is not found', async () => {
+      await expect(ds.deleteProject('no-such-id')).rejects.toThrow('no-such-id')
     })
   })
 
