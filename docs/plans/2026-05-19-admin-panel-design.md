@@ -167,3 +167,28 @@ client, then showing it to win them. Approved delta:
   get a Convert (Won) and Mark Lost action.
 - Phase-4 Supabase schema (Task 11) must include these columns + an
   `outreach_stage` enum.
+
+## Addendum 2 (2026-05-19) — CRUD, project type, current site, analytics URL
+
+- **Full CRUD is in scope:** create / edit / **delete** projects from the UI.
+  Add `deleteProject(id)` to ProjectDataSource + `deleteProjectAction`
+  (delete requires confirm in the UI).
+- **New Project fields:**
+  - `currentWebsiteUrl: string | null` — the client's existing/old site
+    (drives the before/after pitch story; may be empty if they have none).
+  - `projectType` — required enum tag shown on every card:
+    `website | application | datascience | aichatbot | agent | consulting`
+    (default `website`). Add `PROJECT_TYPES` + `PROJECT_TYPE_LABELS`.
+  - Existing `url` is relabelled "Live site" (the site we built them);
+    existing `clientCompany/clientContact/clientEmail/clientPhone` are the
+    contact details, surfaced on the detail/edit screens.
+- **Analytics URL — reversal of the §3 default:** do NOT relocate
+  `$ecretAnalytics`. Keep the live path
+  `https://www.ds2-consulting.com/$ecretAnalytics/`, link the admin
+  Analytics tab to it, and gate it via the Phase-4 middleware matcher
+  (matcher includes `/$ecretAnalytics`). Rationale: relocating breaks a
+  live URL already in use for no security gain — gating in place is the
+  same outcome without the breakage. Task 10 changes from "relocate" to
+  "gate in place"; Task 14 matcher must include `/$ecretAnalytics/:path*`.
+- Phase-4 Supabase schema (Task 11) must add `current_website_url` and a
+  `project_type` enum/column.
