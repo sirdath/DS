@@ -62,6 +62,7 @@ function parseProject(fd: FormData): NewProject {
     estimatedValue: nullableNum(fd.get('estimatedValue')),
     whyThem: nullableStr(fd.get('whyThem')),
     source: nullableStr(fd.get('source')),
+    repoUrl: nullableStr(fd.get('repoUrl')),
   }
 }
 

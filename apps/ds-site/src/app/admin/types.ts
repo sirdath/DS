@@ -73,6 +73,7 @@ export interface Project {
   estimatedValue: number | null
   whyThem: string | null
   source: string | null
+  repoUrl: string | null
   createdAt: string
   updatedAt: string
 }

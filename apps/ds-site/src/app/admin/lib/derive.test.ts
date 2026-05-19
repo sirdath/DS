@@ -10,7 +10,7 @@ function mk(p: Partial<Project>): Project {
     clientCompany: null, clientContact: null, clientEmail: null,
     clientPhone: null, notes: '',
     outreachStage: null, proposalUrl: null, estimatedValue: null,
-    whyThem: null, source: null,
+    whyThem: null, source: null, repoUrl: null,
     createdAt: '2026-01-01T00:00:00Z',
     updatedAt: '2026-01-01T00:00:00Z', ...p,
   }

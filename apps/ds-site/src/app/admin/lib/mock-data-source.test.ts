@@ -17,10 +17,25 @@ describe('MockDataSource', () => {
       clientCompany: 'Acme', clientContact: null, clientEmail: null,
       clientPhone: null, notes: '',
       outreachStage: null, proposalUrl: null, estimatedValue: null,
-      whyThem: null, source: null,
+      whyThem: null, source: null, repoUrl: null,
     })
     expect(created.id).toBeTruthy()
     expect(await ds.getProject(created.id)).toMatchObject({ name: 'Acme' })
+  })
+
+  it('should round-trip repoUrl through createProject', async () => {
+    const repoUrl = 'https://github.com/sirdath/test-project'
+    const created = await ds.createProject({
+      name: 'Test', url: '', status: 'lead', completionPct: 0,
+      lead: 'Dimitris', contractValue: 0, amountPaid: 0, retainerMonthly: null,
+      startDate: null, targetDate: null, deliveredDate: null,
+      clientCompany: null, clientContact: null, clientEmail: null,
+      clientPhone: null, notes: '',
+      outreachStage: null, proposalUrl: null, estimatedValue: null,
+      whyThem: null, source: null, repoUrl,
+    })
+    expect(created.repoUrl).toBe(repoUrl)
+    expect((await ds.getProject(created.id))?.repoUrl).toBe(repoUrl)
   })
 
   it('should patch a project and bump updatedAt', async () => {
