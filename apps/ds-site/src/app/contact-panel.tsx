@@ -12,6 +12,35 @@ function makeId(): string {
   return `s-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
+/** The one call-to-action used everywhere on the site — opens the contact panel. */
+export function ContactCTA({
+  onOpen,
+  label = "Send a message",
+  size,
+  className = "",
+}: {
+  onOpen: () => void;
+  label?: string;
+  size?: "sm";
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      className={`cta${size === "sm" ? " cta--sm" : ""}${className ? ` ${className}` : ""}`}
+      onClick={onOpen}
+    >
+      <span className="cta__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5z" />
+          <path d="M8.5 11.5h7M8.5 14.5h4.5" />
+        </svg>
+      </span>
+      {label}
+    </button>
+  );
+}
+
 export default function ContactPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");

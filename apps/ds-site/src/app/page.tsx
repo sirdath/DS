@@ -2,7 +2,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import ContactPanel from "./contact-panel";
+import ContactPanel, { ContactCTA } from "./contact-panel";
 
 export default function HomePage() {
   const [chatOpen, setChatOpen] = useState(false);
@@ -355,25 +355,9 @@ export default function HomePage() {
             });
           });
         };
-        initMagnetic(".btn-primary, .btn-ghost", 0.22, 0.7);
-        initMagnetic(".btn-mac-primary, .btn-mac-ghost", 0.18, 0.7);
-        initMagnetic(".mode-cta", 0.16, 0.7);
-        initMagnetic(".nav-cta", 0.2, 0.6);
-
-        // Nav CTA arrow — GSAP quickTo nudge on hover (no per-frame tweens)
-        const navCta = document.querySelector(".nav-cta") as HTMLElement | null;
-        const navArrow = navCta?.querySelector(".nav-cta-arrow") as HTMLElement | null;
-        if (navCta && navArrow) {
-          const ax = gsap.quickTo(navArrow, "x", { duration: 0.35, ease: "power3.out" });
-          const enter = () => ax(4);
-          const leave = () => ax(0);
-          navCta.addEventListener("mouseenter", enter);
-          navCta.addEventListener("mouseleave", leave);
-          disposers.push(() => {
-            navCta.removeEventListener("mouseenter", enter);
-            navCta.removeEventListener("mouseleave", leave);
-          });
-        }
+        // One unified CTA everywhere + the hero ghost link — GSAP magnetic.
+        initMagnetic(".cta", 0.2, 0.65);
+        initMagnetic(".btn-ghost", 0.2, 0.7);
       }
 
       // ─── SplitReveal — word-by-word title reveal on scroll ───
@@ -535,10 +519,7 @@ export default function HomePage() {
               <li><a href="#engage">Engage</a></li>
               <li><a href="#founders">Team</a></li>
             </ul>
-            <button type="button" className="nav-cta" onClick={() => setChatOpen(true)}>
-              Send a message
-              <span className="nav-cta-arrow" aria-hidden="true">→</span>
-            </button>
+            <ContactCTA size="sm" onOpen={() => setChatOpen(true)} />
           </div>
         </div>
       </nav>
@@ -567,7 +548,7 @@ export default function HomePage() {
           A senior team for strategy, engineering, and applied AI. We work best when we can be honest early, even if that means challenging the initial idea.
         </p>
         <div className="cta-row">
-          <a href="mailto:hello@ds2-consulting.com?subject=Booking%20a%20call" className="btn btn-primary">Book a call</a>
+          <ContactCTA onOpen={() => setChatOpen(true)} />
           <a href="#services" className="btn btn-ghost">What we do</a>
         </div>
       </section>
@@ -737,10 +718,7 @@ export default function HomePage() {
                 <div className="stack-row"><div className="stack-marker" /><div className="stack-label">Stewardship</div><div className="stack-tag">add-on</div></div>
               </div>
               <div className="mode-foot">
-                <a className="mode-cta" href="mailto:hello@ds2-consulting.com?subject=Consulting%20engagement">
-                  <span>Start with consulting</span>
-                  <span className="mode-cta-arrow" />
-                </a>
+                <ContactCTA size="sm" onOpen={() => setChatOpen(true)} />
               </div>
             </article>
 
@@ -761,10 +739,7 @@ export default function HomePage() {
                 <div className="stack-row"><div className="stack-marker" /><div className="stack-label">Stewardship</div><div className="stack-tag">add-on</div></div>
               </div>
               <div className="mode-foot">
-                <a className="mode-cta" href="mailto:hello@ds2-consulting.com?subject=Build%20engagement">
-                  <span>Start with a build</span>
-                  <span className="mode-cta-arrow" />
-                </a>
+                <ContactCTA size="sm" onOpen={() => setChatOpen(true)} />
               </div>
             </article>
 
@@ -785,10 +760,7 @@ export default function HomePage() {
                 <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">Stewardship</div><div className="stack-tag">included</div></div>
               </div>
               <div className="mode-foot">
-                <a className="mode-cta" href="mailto:hello@ds2-consulting.com?subject=End-to-end%20engagement">
-                  <span>Take it end-to-end</span>
-                  <span className="mode-cta-arrow" />
-                </a>
+                <ContactCTA size="sm" onOpen={() => setChatOpen(true)} />
               </div>
             </article>
           </div>
@@ -875,8 +847,7 @@ export default function HomePage() {
                   <span id="compose-status">Drafting · Athens / London</span>
                 </div>
                 <div className="compose-actions">
-                  <a href="mailto:hello@ds2-consulting.com?subject=Project%20brief" className="btn-mac btn-mac-ghost">Save draft</a>
-                  <a href="mailto:hello@ds2-consulting.com?subject=Booking%20a%20call" className="btn-mac btn-mac-primary">Send <kbd>⌘↵</kbd></a>
+                  <ContactCTA size="sm" onOpen={() => setChatOpen(true)} />
                 </div>
               </div>
             </div>
@@ -893,7 +864,7 @@ export default function HomePage() {
         <ul className="links">
           <li><a href="#services">Services</a></li>
           <li><a href="#how">How we work</a></li>
-          <li><a href="mailto:hello@ds2-consulting.com">Contact</a></li>
+          <li><ContactCTA size="sm" onOpen={() => setChatOpen(true)} /></li>
         </ul>
       </footer>
 

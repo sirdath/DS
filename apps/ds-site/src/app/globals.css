@@ -102,6 +102,53 @@ nav.top {
 /* nav-cta is a <button> now — strip UA chrome */
 .nav-cta { border: 0; cursor: pointer; font-family: inherit; }
 
+/* ── Unified call-to-action (used everywhere, opens the contact panel) ── */
+.cta {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 13px 24px;
+  border: 0; cursor: pointer; font-family: inherit;
+  font-size: 14.5px; font-weight: 600; letter-spacing: -0.01em;
+  color: #0A0A0A;
+  border-radius: 999px;
+  text-decoration: none; white-space: nowrap;
+  isolation: isolate; overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  background: linear-gradient(180deg, #ffffff 0%, #c9c9cf 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.95),
+    inset 0 -1px 0 rgba(0,0,0,0.20),
+    0 0 0 1px rgba(255,255,255,0.16),
+    0 12px 28px -12px rgba(0,0,0,0.75),
+    0 0 24px -4px rgba(255,255,255,0.30);
+  transition: box-shadow 0.3s ease;
+}
+.cta--sm { padding: 9px 18px; font-size: 13px; gap: 7px; }
+.cta__icon { width: 17px; height: 17px; flex-shrink: 0; display: block; }
+.cta--sm .cta__icon { width: 15px; height: 15px; }
+.cta__icon svg { width: 100%; height: 100%; display: block; }
+/* moving sheen — the "wow", stays monochrome */
+.cta::after {
+  content: "";
+  position: absolute; top: 0; bottom: 0; width: 38%; left: -55%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,0.9), transparent);
+  transform: skewX(-18deg);
+  animation: ctaSheen 4.8s ease-in-out infinite;
+  pointer-events: none; z-index: 1;
+}
+@keyframes ctaSheen { 0% { left: -55%; } 60% { left: 125%; } 100% { left: 125%; } }
+.cta > * { position: relative; z-index: 2; }
+.cta:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 0 -1px 0 rgba(0,0,0,0.22),
+    0 0 0 1px rgba(255,255,255,0.32),
+    0 16px 34px -10px rgba(0,0,0,0.8),
+    0 0 34px -2px rgba(255,255,255,0.6);
+}
+.cta:active { box-shadow: inset 0 2px 5px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.2); }
+@media (prefers-reduced-motion: reduce) { .cta::after { display: none; } }
+
 /* ── Contact panel (in-app message → Telegram) — v2 ── */
 .cpanel-overlay {
   position: fixed; inset: 0; z-index: 300;
