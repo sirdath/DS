@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 import { getDataSource } from './lib/get-data-source'
 import { PROJECT_STATUSES, OUTREACH_STAGES, PROJECT_TYPES } from './types'
 import type { ProjectStatus, OutreachStage, ProjectType } from './types'
@@ -78,6 +79,7 @@ export async function createProjectAction(fd: FormData): Promise<void> {
   const ds = getDataSource()
   await ds.createProject(parseProject(fd))
   revalidatePath('/admin')
+  redirect('/admin')
 }
 
 export async function updateProjectAction(id: string, fd: FormData): Promise<void> {
@@ -114,4 +116,5 @@ export async function deleteProjectAction(id: string): Promise<void> {
   if (!id) throw new Error('Missing project id')
   await getDataSource().deleteProject(id)
   revalidatePath('/admin')
+  redirect('/admin')
 }
