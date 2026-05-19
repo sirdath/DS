@@ -1,0 +1,1659 @@
+/**
+ * admin.css — DS Admin panel styles
+ *
+ * Palette is defined via custom properties at the top.
+ * Only pure neutral grays (R=G=B). One warm amber accent.
+ * Ported and adapted from packages/frontendmaxxing-reference/components/cards.css
+ * and animations/stagger.js — restyled for the dark DS admin aesthetic.
+ *
+ * Visual enhancements (2026-05-19):
+ *  - Film grain overlay on .admin-shell (ported from noise-grain.css .grain-light)
+ *  - Cursor spotlight glow on .admin-card (adapted from spotlight-reveal.js/css)
+ *  - GSAP progress sweep & hover lift wired in project-grid.tsx
+ *  - GSAP count-up totals wired in count-up.tsx + page.tsx
+ */
+
+/* ── Custom Properties ─────────────────────────── */
+:root {
+  /* Backgrounds */
+  --admin-bg:            #0a0a0a;
+  --admin-surface:       #141414;
+  --admin-surface-raise: #1c1c1c;
+  --admin-border:        rgba(255, 255, 255, 0.07);
+  --admin-border-hover:  rgba(255, 255, 255, 0.13);
+
+  /* Text */
+  --admin-text:          #f5f5f5;
+  --admin-text-muted:    #888888;
+  --admin-text-dim:      #444444;
+  --admin-mono:          ui-monospace, 'SF Mono', 'Fira Code', monospace;
+
+  /* Accent — warm amber only */
+  --admin-amber:         #e8b46a;
+  --admin-amber-dim:     rgba(232, 180, 106, 0.15);
+  --admin-amber-border:  rgba(232, 180, 106, 0.30);
+
+  /* Status pills */
+  --pill-lead-bg:        rgba(255, 255, 255, 0.06);
+  --pill-lead-text:      #888888;
+  --pill-lead-border:    rgba(255, 255, 255, 0.10);
+
+  --pill-progress-bg:    rgba(232, 180, 106, 0.12);
+  --pill-progress-text:  #e8b46a;
+  --pill-progress-border:rgba(232, 180, 106, 0.28);
+
+  --pill-delivered-bg:   rgba(160, 180, 155, 0.10);
+  --pill-delivered-text: #a0b49b;
+  --pill-delivered-border:rgba(160, 180, 155, 0.22);
+
+  --pill-retainer-bg:    rgba(220, 210, 190, 0.13);
+  --pill-retainer-text:  #dcd2be;
+  --pill-retainer-border:rgba(220, 210, 190, 0.35);
+
+  /* Progress — status-keyed, distinctive fills */
+  --progress-track:        rgba(255, 255, 255, 0.07);
+  --progress-fill-base:    rgba(255, 255, 255, 0.30);
+  /* lead: barely any progress — keep low-key neutral */
+  --progress-lead:         linear-gradient(90deg, #5c5c5c, #7a7a7a);
+  --progress-lead-glow:    transparent;
+  /* in progress: active warm amber */
+  --progress-inprogress:   linear-gradient(90deg, #d98f3c, #f2bd6b);
+  --progress-inprogress-glow: rgba(232, 180, 106, 0.45);
+  /* delivered: clear, confident green */
+  --progress-delivered:    linear-gradient(90deg, #2f9e6e, #57c98f);
+  --progress-delivered-glow: rgba(70, 190, 135, 0.40);
+  /* retainer: the win — richest gold with a glow */
+  --progress-retainer:     linear-gradient(90deg, #e0a23f, #f7d98a);
+  --progress-retainer-glow: rgba(244, 205, 130, 0.55);
+
+  /* Motion */
+  --admin-duration-base: 0.5s;
+  --admin-ease:          cubic-bezier(0.4, 0, 0.2, 1);
+  --admin-ease-out:      cubic-bezier(0, 0, 0.2, 1);
+
+  /* Layout */
+  --admin-radius:        10px;
+  --admin-topbar-h:      52px;
+  --admin-max-w:         1200px;
+}
+
+/* ── Shell ─────────────────────────────────────── */
+.admin-shell {
+  min-height: 100vh;
+  background: var(--admin-bg);
+  color: var(--admin-text);
+  font-family: var(--font-inter), ui-sans-serif, sans-serif;
+  position: relative;
+}
+
+/* ── Film Grain Overlay (ported from noise-grain.css .grain-light) ── */
+/* Using ::after on .admin-shell; fixed to viewport so it covers the whole page */
+.admin-shell::after {
+  content: '';
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  opacity: 0.035;
+  pointer-events: none;
+  z-index: 9999;
+  animation: admin-grain-shift 8s steps(4) infinite;
+}
+
+@keyframes admin-grain-shift {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(-5%, -5%); }
+  50%  { transform: translate(5%, 5%); }
+  75%  { transform: translate(-5%, 5%); }
+  100% { transform: translate(5%, -5%); }
+}
+
+/* ── Topbar ────────────────────────────────────── */
+.admin-topbar {
+  height: var(--admin-topbar-h);
+  border-bottom: 1px solid var(--admin-border);
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 0 28px;
+  position: sticky;
+  top: 0;
+  background: rgba(10, 10, 10, 0.90);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 100;
+}
+
+.admin-topbar__eyebrow {
+  font-family: var(--admin-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--admin-text-dim);
+  white-space: nowrap;
+  margin-right: 8px;
+}
+
+.admin-topbar__nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.admin-topbar__link {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--admin-text-muted);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: color 0.18s ease, background 0.18s ease;
+}
+
+.admin-topbar__link:hover {
+  color: var(--admin-text);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.admin-topbar__link.is-active {
+  color: var(--admin-text);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.admin-topbar__actions {
+  margin-left: auto;
+}
+
+.admin-topbar__signout {
+  background: transparent;
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  color: var(--admin-text-muted);
+  font-size: 12px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: border-color 0.18s ease, color 0.18s ease;
+}
+
+.admin-topbar__signout:hover {
+  border-color: var(--admin-border-hover);
+  color: var(--admin-text);
+}
+
+/* ── Page Container ────────────────────────────── */
+.admin-container {
+  max-width: var(--admin-max-w);
+  margin: 0 auto;
+  padding: 40px 28px 80px;
+}
+
+/* ── Totals Bar ────────────────────────────────── */
+.admin-totals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.admin-total {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color var(--admin-duration-base) var(--admin-ease);
+}
+
+.admin-total:hover {
+  border-color: var(--admin-border-hover);
+}
+
+.admin-total__label {
+  font-family: var(--admin-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--admin-text-dim);
+}
+
+.admin-total__value {
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  color: var(--admin-text);
+  line-height: 1;
+}
+
+.admin-total__sub {
+  font-size: 11px;
+  color: var(--admin-text-muted);
+  margin-top: 2px;
+}
+
+/* ── Filter Row ────────────────────────────────── */
+.admin-filters {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.admin-filter-link {
+  font-size: 12px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--admin-text-muted);
+  text-decoration: none;
+  padding: 5px 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.admin-filter-link:hover {
+  color: var(--admin-text);
+  border-color: var(--admin-border-hover);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.admin-filter-link.is-active {
+  color: var(--admin-text);
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* ── Project Grid ──────────────────────────────── */
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
+  gap: 12px;
+}
+
+/* ── Project Card ─────────────────────────────────
+   Adapted from frontendmaxxing-reference card-hover-lift.
+   Restyled: neutral dark palette, 10px radius, 1px border.
+   Hover lift is now GSAP-driven (project-grid.tsx).
+   CSS transition kept as fallback for pointer-unaware contexts.
+   ─────────────────────────────────────────────── */
+.admin-card {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  padding: 22px 22px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  overflow: hidden;
+  /* Transform handled by GSAP; keep border/shadow transitions */
+  transition:
+    border-color var(--admin-duration-base) var(--admin-ease),
+    box-shadow var(--admin-duration-base) var(--admin-ease);
+  /* Glow position defaults */
+  --card-mx: 50%;
+  --card-my: 50%;
+}
+
+.admin-card:hover {
+  border-color: var(--admin-border-hover);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ── Cursor spotlight glow layer (::before)
+   Adapted from spotlight-reveal.js — pointer-tracked radial warm glow.
+   Neutral/amber tint; no cool colours (B never > R).
+   ─────────────────────────────────────────────── */
+.admin-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--admin-radius);
+  background: radial-gradient(
+    circle 260px at var(--card-mx, 50%) var(--card-my, 50%),
+    rgba(255, 255, 255, 0.06),
+    transparent 60%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+
+.admin-card:hover::before {
+  opacity: 1;
+}
+
+/* Retainer cards: warm amber tint on the spotlight glow */
+.admin-card.is-retainer::before {
+  background: radial-gradient(
+    circle 260px at var(--card-mx, 50%) var(--card-my, 50%),
+    rgba(232, 180, 106, 0.10),
+    transparent 60%
+  );
+}
+
+/* Ensure card content sits above the glow layer */
+.admin-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-card__name {
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  color: var(--admin-text);
+  line-height: 1.25;
+}
+
+.admin-card__lead {
+  font-size: 11px;
+  color: var(--admin-text-dim);
+  margin-top: 3px;
+}
+
+.admin-card__money {
+  font-size: 12px;
+  color: var(--admin-text-muted);
+  font-family: var(--admin-mono);
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-card__money-paid {
+  color: var(--admin-text);
+}
+
+.admin-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── Status Pills ──────────────────────────────── */
+.admin-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  line-height: 1.6;
+}
+
+.admin-status-pill.is-lead {
+  background: var(--pill-lead-bg);
+  color: var(--pill-lead-text);
+  border-color: var(--pill-lead-border);
+}
+
+.admin-status-pill.is-in_progress {
+  background: var(--pill-progress-bg);
+  color: var(--pill-progress-text);
+  border-color: var(--pill-progress-border);
+}
+
+.admin-status-pill.is-delivered {
+  background: var(--pill-delivered-bg);
+  color: var(--pill-delivered-text);
+  border-color: var(--pill-delivered-border);
+}
+
+.admin-status-pill.is-retainer {
+  background: var(--pill-retainer-bg);
+  color: var(--pill-retainer-text);
+  border-color: var(--pill-retainer-border);
+  font-weight: 500;
+}
+
+/* ── Progress Bar ──────────────────────────────── */
+.admin-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-progress__track {
+  flex: 1;
+  height: 5px;
+  background: var(--progress-track);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.admin-progress__fill {
+  height: 100%;
+  background: var(--progress-fill-base);
+  border-radius: 3px;
+  /* Width is animated by GSAP on card entrance; no CSS transition needed here */
+}
+
+/* Status-keyed fills — each stage reads at a glance */
+.admin-card:has(.is-lead) .admin-progress__fill {
+  background: var(--progress-lead);
+}
+
+.admin-card:has(.is-in_progress) .admin-progress__fill {
+  background: var(--progress-inprogress);
+  box-shadow: 0 0 8px var(--progress-inprogress-glow);
+}
+
+.admin-card:has(.is-delivered) .admin-progress__fill {
+  background: var(--progress-delivered);
+  box-shadow: 0 0 8px var(--progress-delivered-glow);
+}
+
+/* Retainer — the "win" state: richest gold + strongest glow */
+.admin-card:has(.is-retainer) .admin-progress__fill {
+  background: var(--progress-retainer);
+  box-shadow: 0 0 10px var(--progress-retainer-glow);
+}
+
+.admin-progress__label {
+  font-size: 11px;
+  font-family: var(--admin-mono);
+  color: var(--admin-text-dim);
+  min-width: 32px;
+  text-align: right;
+}
+
+/* ── Overdue Badge ─────────────────────────────── */
+.admin-overdue {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--admin-amber-dim);
+  border: 1px solid var(--admin-amber-border);
+  color: var(--admin-amber);
+  font-size: 10px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ── Section Header ────────────────────────────── */
+.admin-page-header {
+  margin-bottom: 32px;
+}
+
+.admin-page-eyebrow {
+  font-family: var(--admin-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--admin-text-dim);
+  margin-bottom: 10px;
+}
+
+.admin-page-title {
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  color: var(--admin-text);
+  margin: 0 0 6px;
+}
+
+.admin-page-sub {
+  font-size: 13px;
+  color: var(--admin-text-muted);
+  line-height: 1.5;
+}
+
+/* ── Responsive ────────────────────────────────── */
+@media (max-width: 768px) {
+  .admin-topbar {
+    padding: 0 16px;
+    gap: 16px;
+  }
+
+  .admin-container {
+    padding: 24px 16px 60px;
+  }
+
+  .admin-totals {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-total__value {
+    font-size: 18px;
+  }
+
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Card + Lead wrappers ──────────────────────── */
+.admin-card-wrapper,
+.admin-lead-wrapper { display: flex; flex-direction: column; }
+
+/* Flatten bottom radius when a footer follows the card */
+.admin-card-wrapper:has(.admin-card__footer) .admin-card,
+.admin-lead-wrapper:has(.admin-lead-card__actions) .admin-card {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* When demo-link footer sits between card and action footer, also lose its radii */
+.admin-lead-wrapper .admin-card__footer {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: none;
+}
+
+.admin-card__header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* ── Retainer badge + Repo link ────────────────── */
+.admin-retainer-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.07em;
+  font-weight: 500;
+  white-space: nowrap;
+  background: var(--admin-amber-dim);
+  border: 1px solid var(--admin-amber-border);
+  color: var(--admin-amber);
+}
+
+.admin-card__footer {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-top: none;
+  border-bottom-left-radius: var(--admin-radius);
+  border-bottom-right-radius: var(--admin-radius);
+  padding: 7px 22px;
+  display: flex;
+  align-items: center;
+}
+
+.admin-repo-link {
+  font-size: 11px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--admin-text-dim);
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+.admin-repo-link:hover { color: var(--admin-amber); }
+
+/* ── Sections + Pipeline stat ──────────────────── */
+.admin-section { margin-bottom: 52px; }
+.admin-section__header { margin-bottom: 20px; }
+
+.admin-section__eyebrow {
+  font-family: var(--admin-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--admin-text-dim);
+  margin: 0 0 6px;
+}
+
+.admin-section__title {
+  font-size: 20px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: var(--admin-text);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-section__count {
+  font-family: var(--admin-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--admin-text-dim);
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: 20px;
+  padding: 2px 9px;
+  font-weight: 400;
+}
+
+.admin-total--pipeline { border-color: var(--admin-amber-border); }
+.admin-total--pipeline .admin-total__label { color: var(--admin-amber); }
+
+/* ── Lead card ─────────────────────────────────── */
+/* Inherits all .admin-card styles; ::before overrides glow tint */
+.admin-lead-card::before {
+  background: radial-gradient(
+    circle 260px at var(--card-mx, 50%) var(--card-my, 50%),
+    rgba(255, 255, 255, 0.05),
+    transparent 60%
+  );
+}
+
+.admin-lead-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-lead-card__why {
+  font-size: 12px;
+  color: var(--admin-text-muted);
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.admin-lead-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.admin-lead-card__meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.admin-lead-card__meta-label {
+  font-family: var(--admin-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--admin-text-dim);
+}
+
+.admin-lead-card__meta-value {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--admin-text);
+}
+
+.admin-lead-card__demo-link {
+  align-self: flex-start;
+  font-size: 12px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--admin-amber);
+  text-decoration: none;
+  border-bottom: 1px solid var(--admin-amber-border);
+  padding-bottom: 1px;
+  transition: border-color 0.18s ease, color 0.18s ease;
+}
+
+.admin-lead-card__demo-link:hover {
+  border-color: var(--admin-amber);
+}
+
+.admin-lead-card__no-demo {
+  font-size: 11px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.06em;
+  color: var(--admin-text-dim);
+}
+
+/* ── Lead card action footer ───────────────────── */
+.admin-lead-card__actions {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-top: none;
+  border-bottom-left-radius: var(--admin-radius);
+  border-bottom-right-radius: var(--admin-radius);
+  padding: 8px 14px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.admin-lead-card__btn {
+  background: transparent;
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  font-size: 11px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+}
+
+.admin-lead-card__btn--convert {
+  color: var(--admin-amber);
+  border-color: var(--admin-amber-border);
+}
+.admin-lead-card__btn--convert:hover {
+  background: var(--admin-amber-dim);
+  border-color: var(--admin-amber);
+}
+.admin-lead-card__btn--lost { color: var(--admin-text-dim); }
+.admin-lead-card__btn--lost:hover {
+  border-color: var(--admin-border-hover);
+  color: var(--admin-text-muted);
+}
+
+/* ── Outreach stage pills ──────────────────────── */
+/* Shares base shape with .admin-status-pill */
+.admin-outreach-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  line-height: 1.6;
+}
+
+
+/* identified: muted — just spotted, no action yet */
+.admin-outreach-pill.is-identified {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--admin-text-dim);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* demo_built: amber — we've done work, nudge to send */
+.admin-outreach-pill.is-demo_built {
+  background: var(--admin-amber-dim);
+  color: var(--admin-amber);
+  border-color: var(--admin-amber-border);
+}
+
+/* pitched: bright amber + subtle pulse ring — "awaiting reply" */
+.admin-outreach-pill.is-pitched {
+  background: rgba(232, 180, 106, 0.22);
+  color: #f2cc88;
+  border-color: rgba(232, 180, 106, 0.55);
+  box-shadow: 0 0 0 0 rgba(232, 180, 106, 0.40);
+  animation: outreach-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes outreach-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232, 180, 106, 0.40); }
+  50%       { box-shadow: 0 0 0 5px rgba(232, 180, 106, 0); }
+}
+
+/* ── Project-type tag ──────────────────────────── */
+.admin-type-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: var(--admin-mono);
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  color: var(--admin-text-dim);
+  white-space: nowrap;
+}
+
+/* ── New project button ────────────────────────── */
+.admin-new-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--admin-amber);
+  background: var(--admin-amber-dim);
+  border: 1px solid var(--admin-amber-border);
+  text-decoration: none;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+.admin-new-btn:hover {
+  background: rgba(232, 180, 106, 0.22);
+  border-color: var(--admin-amber);
+  color: #f2cc88;
+}
+
+/* ── Back link ─────────────────────────────────── */
+.admin-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--admin-text-dim);
+  text-decoration: none;
+  margin-bottom: 28px;
+  transition: color 0.18s ease;
+}
+.admin-back-link:hover { color: var(--admin-text-muted); }
+
+/* ── Admin Form ────────────────────────────────── */
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.admin-form__section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-form__section-title {
+  font-family: var(--admin-mono);
+  font-size: 10px;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: var(--admin-text-dim);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--admin-border);
+  margin: 0;
+}
+
+.admin-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.admin-form__row--3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media (max-width: 640px) {
+  .admin-form__row,
+  .admin-form__row--3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-form__group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-form__label {
+  font-family: var(--admin-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--admin-text-muted);
+}
+
+.admin-form__required {
+  color: var(--admin-amber);
+  margin-left: 3px;
+}
+
+.admin-form__input,
+.admin-form__select,
+.admin-form__textarea {
+  background: var(--admin-surface-raise);
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  color: var(--admin-text);
+  font-size: 14px;
+  font-family: inherit;
+  padding: 9px 12px;
+  transition: border-color 0.18s ease;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.admin-form__input:focus,
+.admin-form__select:focus,
+.admin-form__textarea:focus {
+  border-color: var(--admin-amber-border);
+  box-shadow: 0 0 0 2px rgba(232, 180, 106, 0.12);
+}
+
+.admin-form__input::placeholder,
+.admin-form__textarea::placeholder {
+  color: var(--admin-text-dim);
+}
+
+.admin-form__select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+.admin-form__select option {
+  background: #1c1c1c;
+  color: var(--admin-text);
+}
+
+.admin-form__textarea {
+  resize: vertical;
+  min-height: 88px;
+  line-height: 1.55;
+}
+
+.admin-form__hint {
+  font-size: 11px;
+  color: var(--admin-text-dim);
+  line-height: 1.4;
+}
+
+.admin-form__range-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-form__range {
+  flex: 1;
+  accent-color: var(--admin-amber);
+  height: 4px;
+  cursor: pointer;
+}
+
+.admin-form__range-val {
+  font-family: var(--admin-mono);
+  font-size: 12px;
+  color: var(--admin-text-muted);
+  min-width: 36px;
+  text-align: right;
+}
+
+.admin-form__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--admin-border);
+}
+
+.admin-form__submit {
+  padding: 10px 24px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--admin-amber-dim);
+  border: 1px solid var(--admin-amber-border);
+  color: var(--admin-amber);
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+.admin-form__submit:hover {
+  background: rgba(232, 180, 106, 0.22);
+  border-color: var(--admin-amber);
+  color: #f2cc88;
+}
+
+/* ── Detail page ───────────────────────────────── */
+.admin-detail__header {
+  margin-bottom: 32px;
+}
+
+.admin-detail__tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.admin-detail__name {
+  font-size: 32px;
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  color: var(--admin-text);
+  margin: 0 0 6px;
+  line-height: 1.15;
+}
+
+.admin-detail__sub {
+  font-size: 13px;
+  color: var(--admin-text-muted);
+}
+
+.admin-detail__sections {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  margin-bottom: 40px;
+}
+
+.admin-detail__section {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  padding: 20px 24px;
+}
+
+.admin-detail__section-title {
+  font-family: var(--admin-mono);
+  font-size: 10px;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: var(--admin-text-dim);
+  margin: 0 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-detail__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.admin-detail__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-detail__field-label {
+  font-family: var(--admin-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--admin-text-dim);
+}
+
+.admin-detail__field-value {
+  font-size: 14px;
+  color: var(--admin-text);
+}
+
+.admin-detail__field-value a {
+  color: var(--admin-amber);
+  text-decoration: none;
+  word-break: break-all;
+}
+.admin-detail__field-value a:hover {
+  text-decoration: underline;
+}
+
+.admin-detail__notes {
+  font-size: 14px;
+  color: var(--admin-text-muted);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/* ── Activity feed ─────────────────────────────── */
+.admin-activity {
+  margin-top: 40px;
+}
+
+.admin-activity__title {
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--admin-text);
+  margin: 0 0 20px;
+}
+
+.admin-activity__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.admin-activity__item {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  padding: 14px 18px;
+}
+
+.admin-activity__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.admin-activity__author {
+  font-family: var(--admin-mono);
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  color: var(--admin-amber);
+}
+
+.admin-activity__age {
+  font-size: 11px;
+  color: var(--admin-text-dim);
+}
+
+.admin-activity__body {
+  font-size: 14px;
+  color: var(--admin-text-muted);
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.admin-activity__form {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-activity__form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 560px) {
+  .admin-activity__form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-activity__empty {
+  font-size: 13px;
+  color: var(--admin-text-dim);
+  padding: 12px 0;
+}
+
+/* ── Edit details summary ──────────────────────── */
+.admin-edit-details {
+  margin-top: 32px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  overflow: hidden;
+}
+
+.admin-edit-details summary {
+  font-family: var(--admin-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--admin-text-muted);
+  padding: 14px 20px;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--admin-surface);
+  transition: color 0.18s ease;
+  user-select: none;
+}
+.admin-edit-details summary::-webkit-details-marker { display: none; }
+.admin-edit-details summary::before {
+  content: '▶';
+  font-size: 9px;
+  transition: transform 0.2s ease;
+  display: inline-block;
+}
+.admin-edit-details[open] summary::before {
+  transform: rotate(90deg);
+}
+.admin-edit-details summary:hover { color: var(--admin-text); }
+
+.admin-edit-details__body {
+  padding: 24px;
+  border-top: 1px solid var(--admin-border);
+  background: var(--admin-bg);
+}
+
+/* ── Danger / delete button ────────────────────── */
+.admin-danger-zone {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--admin-border);
+}
+
+.admin-danger-zone__label {
+  font-family: var(--admin-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--admin-text-dim);
+  margin-bottom: 12px;
+}
+
+.admin-btn-delete {
+  background: transparent;
+  border: 1px solid rgba(192, 106, 90, 0.30);
+  border-radius: 7px;
+  color: #c06a5a;
+  font-size: 12px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+.admin-btn-delete:hover {
+  background: rgba(192, 106, 90, 0.10);
+  border-color: #c06a5a;
+  color: #d07868;
+}
+
+/* ── Retainer badge on detail header ──────────────── */
+.admin-retainer-detail-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.07em;
+  font-weight: 500;
+  background: var(--admin-amber-dim);
+  border: 1px solid var(--admin-amber-border);
+  color: var(--admin-amber);
+}
+
+/* ── Not found page ────────────────────────────── */
+.admin-not-found {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.admin-not-found__code {
+  font-family: var(--admin-mono);
+  font-size: 64px;
+  font-weight: 300;
+  color: var(--admin-text-dim);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.admin-not-found__msg {
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--admin-text-muted);
+  letter-spacing: -0.01em;
+}
+
+/* ── Edit details — prominent variant ─────────── */
+/* Overrides the muted summary to look like the amber "new" button */
+.admin-edit-details--prominent summary,
+.admin-edit-details--prominent .admin-edit-details__summary--prominent {
+  font-size: 13px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--admin-amber);
+  background: var(--admin-amber-dim);
+  border-bottom: none;
+  padding: 10px 20px;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.admin-edit-details--prominent[open] summary,
+.admin-edit-details--prominent[open] .admin-edit-details__summary--prominent {
+  background: rgba(232, 180, 106, 0.12);
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-edit-details--prominent summary:hover,
+.admin-edit-details--prominent .admin-edit-details__summary--prominent:hover {
+  background: rgba(232, 180, 106, 0.22);
+  color: #f2cc88;
+}
+
+/* ── Danger zone actions row ───────────────────── */
+.admin-danger-zone__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ── Archive button (neutral-warning, not scary red) ── */
+.admin-btn-archive {
+  background: transparent;
+  border: 1px solid var(--admin-border-hover);
+  border-radius: 7px;
+  color: var(--admin-text-muted);
+  font-size: 12px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+.admin-btn-archive:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: var(--admin-text);
+}
+
+/* ── Archived badge (detail header) ───────────── */
+.admin-archived-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: var(--admin-mono);
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  color: var(--admin-text-dim);
+  white-space: nowrap;
+}
+
+/* ── Archived section (collapsible <details>) ──── */
+.admin-archived {
+  margin-top: 16px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  overflow: hidden;
+}
+
+.admin-archived__summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  cursor: pointer;
+  list-style: none;
+  background: var(--admin-surface);
+  user-select: none;
+  /* suppress default marker */
+}
+.admin-archived__summary::-webkit-details-marker { display: none; }
+.admin-archived__summary::marker { content: none; }
+
+/* The eyebrow inside summary inherits muted color — intentionally quiet */
+.admin-archived__summary .admin-section__eyebrow {
+  margin: 0;
+  transition: color 0.18s ease;
+}
+.admin-archived:hover .admin-archived__summary .admin-section__eyebrow,
+.admin-archived[open] .admin-archived__summary .admin-section__eyebrow {
+  color: var(--admin-text-muted);
+}
+
+.admin-archived__body {
+  padding: 16px 20px;
+  border-top: 1px solid var(--admin-border);
+  background: var(--admin-bg);
+}
+
+.admin-archived__empty {
+  font-size: 13px;
+  color: var(--admin-text-dim);
+  padding: 4px 0;
+}
+
+/* ── Archived list + rows ──────────────────────── */
+.admin-archived-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.admin-archived-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 14px;
+  border-radius: 7px;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  flex-wrap: wrap;
+  transition: border-color 0.18s ease;
+}
+.admin-archived-row:hover { border-color: var(--admin-border-hover); }
+
+.admin-archived-row__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.admin-archived-row__name {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--admin-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-archived-row__tags {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.admin-archived-row__status {
+  font-family: var(--admin-mono);
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--admin-text-dim);
+}
+
+.admin-archived-row__details {
+  font-size: 11px;
+  color: var(--admin-text-dim);
+}
+
+.admin-archived-row__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ── Admin login ───────────────────────────────── */
+
+/* Full-screen overlay — no topbar to compete with; inherits lock-shell stacking */
+.admin-login-shell {
+  z-index: 1;
+}
+
+/* Override lock-bg to use pure matte black (no megagym background image) */
+.admin-login-bg {
+  background: var(--admin-bg) !important;
+}
+
+/* Faint film-grain behind the card (reuses admin-shell grain data-URI) */
+.admin-login-shell::after {
+  content: '';
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 1;
+  animation: admin-grain-shift 8s steps(4) infinite;
+}
+
+/* Card: slightly narrower + admin surface color */
+.admin-login-card {
+  background: var(--admin-surface) !important;
+  max-width: 460px;
+  border-color: var(--admin-border) !important;
+}
+
+/* Brand eyebrow: monospace, letter-spaced, amber */
+.admin-login-brand {
+  margin-top: 28px;
+  font-family: var(--admin-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--admin-amber);
+  opacity: 0.9;
+}
+
+/* Title: lighter weight to match admin panel aesthetic */
+.admin-login-title {
+  font-size: clamp(20px, 2.6vw, 28px) !important;
+  font-weight: 300 !important;
+  margin-top: 16px !important;
+}
+
+/* Gap between username and password inputs */
+.admin-login-input-wrap--gap {
+  margin-top: 10px;
+}
+
+/* Submit arrow: amber accent */
+.admin-login-submit:not(:disabled) {
+  color: var(--admin-amber) !important;
+}
+.admin-login-submit:not(:disabled):hover {
+  color: #f2cc88 !important;
+}
+
+/* Subtle loading spinner */
+.admin-login-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid rgba(232, 180, 106, 0.25);
+  border-top-color: var(--admin-amber);
+  border-radius: 50%;
+  animation: admin-spin 0.7s linear infinite;
+}
+@keyframes admin-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Signed-out confirmation state */
+.admin-login-signedout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ── Reduced Motion ────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .admin-card,
+  .admin-total,
+  .admin-topbar__link,
+  .admin-filter-link,
+  .admin-topbar__signout,
+  .admin-lead-card__btn,
+  .admin-repo-link,
+  .admin-lead-card__demo-link,
+  .admin-archived-row,
+  .admin-btn-archive,
+  .admin-btn-delete,
+  .admin-edit-details--prominent summary {
+    transition: none;
+    animation: none;
+  }
+
+  /* Glow layer: never show under reduced motion */
+  .admin-card::before {
+    display: none;
+  }
+
+  .admin-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Progress bars render at final width immediately (GSAP gated in JS) */
+  .admin-progress__fill {
+    transition: none;
+  }
+
+  /* Grain animation off */
+  .admin-shell::after {
+    animation: none;
+  }
+
+  /* Pitched pill: no pulse ring */
+  .admin-outreach-pill.is-pitched {
+    animation: none;
+    box-shadow: none;
+  }
+
+  /* Login: disable grain + spinner animation */
+  .admin-login-shell::after {
+    animation: none;
+  }
+  .admin-login-spinner {
+    animation: none;
+    border-top-color: var(--admin-amber);
+    opacity: 0.8;
+  }
+}
