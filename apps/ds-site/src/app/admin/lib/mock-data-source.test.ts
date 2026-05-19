@@ -126,4 +126,54 @@ describe('MockDataSource', () => {
       await expect(ds.markLeadLost('no-such-id')).rejects.toThrow()
     })
   })
+
+  describe('archiveProject', () => {
+    it('should set archived true and bump updatedAt', async () => {
+      const before = await ds.getProject('seed-helios')
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      expect(before!.archived).toBe(false)
+      const updated = await ds.archiveProject('seed-helios')
+      expect(updated.archived).toBe(true)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      expect(updated.updatedAt >= before!.updatedAt).toBe(true)
+    })
+    it('should persist the change via getProject', async () => {
+      await ds.archiveProject('seed-helios')
+      const fetched = await ds.getProject('seed-helios')
+      expect(fetched?.archived).toBe(true)
+    })
+    it('should return the updated Project', async () => {
+      const updated = await ds.archiveProject('seed-helios')
+      expect(updated.id).toBe('seed-helios')
+      expect(updated.archived).toBe(true)
+    })
+    it('should throw when id is not found', async () => {
+      await expect(ds.archiveProject('no-such-id')).rejects.toThrow()
+    })
+  })
+
+  describe('unarchiveProject', () => {
+    it('should set archived false and bump updatedAt', async () => {
+      const before = await ds.getProject('seed-lost-demo')
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      expect(before!.archived).toBe(true)
+      const updated = await ds.unarchiveProject('seed-lost-demo')
+      expect(updated.archived).toBe(false)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      expect(updated.updatedAt >= before!.updatedAt).toBe(true)
+    })
+    it('should persist the change via getProject', async () => {
+      await ds.unarchiveProject('seed-lost-demo')
+      const fetched = await ds.getProject('seed-lost-demo')
+      expect(fetched?.archived).toBe(false)
+    })
+    it('should return the updated Project', async () => {
+      const updated = await ds.unarchiveProject('seed-lost-demo')
+      expect(updated.id).toBe('seed-lost-demo')
+      expect(updated.archived).toBe(false)
+    })
+    it('should throw when id is not found', async () => {
+      await expect(ds.unarchiveProject('no-such-id')).rejects.toThrow()
+    })
+  })
 })

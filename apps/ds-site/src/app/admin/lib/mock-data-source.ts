@@ -284,6 +284,18 @@ export class MockDataSource implements ProjectDataSource {
     return this.updateProject(id, { outreachStage: 'lost' })
   }
 
+  async archiveProject(id: string): Promise<Project> {
+    const idx = this.projects.findIndex(p => p.id === id)
+    if (idx === -1) throw new Error(`Project ${id} not found`)
+    return this.updateProject(id, { archived: true })
+  }
+
+  async unarchiveProject(id: string): Promise<Project> {
+    const idx = this.projects.findIndex(p => p.id === id)
+    if (idx === -1) throw new Error(`Project ${id} not found`)
+    return this.updateProject(id, { archived: false })
+  }
+
   async updateProject(id: string, patch: ProjectPatch): Promise<Project> {
     const idx = this.projects.findIndex(p => p.id === id)
     if (idx === -1) throw new Error(`Project ${id} not found`)

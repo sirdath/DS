@@ -15,6 +15,10 @@ export interface ProjectDataSource {
   convertLead(id: string): Promise<Project>
   /** Archive a lead as lost: sets outreachStage lost, keeps status lead. */
   markLeadLost(id: string): Promise<Project>
+  /** Soft-delete: sets archived true, bumps updatedAt. */
+  archiveProject(id: string): Promise<Project>
+  /** Restore from archive: sets archived false, bumps updatedAt. */
+  unarchiveProject(id: string): Promise<Project>
   deleteProject(id: string): Promise<void>
   listActivity(projectId: string): Promise<ProjectActivity[]>
   addActivity(projectId: string, body: string, author: string): Promise<ProjectActivity>
