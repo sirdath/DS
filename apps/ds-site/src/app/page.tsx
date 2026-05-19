@@ -355,8 +355,8 @@ export default function HomePage() {
             });
           });
         };
-        // One unified CTA everywhere + the hero ghost link — GSAP magnetic.
-        initMagnetic(".cta", 0.2, 0.65);
+        // Magnetic only on the hero ghost link. The primary CTA stays still
+        // (the cursor-follow read as "shaking").
         initMagnetic(".btn-ghost", 0.2, 0.7);
       }
 
