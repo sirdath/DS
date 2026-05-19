@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import type { Project, OutreachStage } from './types'
-import { OUTREACH_LABELS } from './types'
+import { OUTREACH_LABELS, PROJECT_TYPE_LABELS } from './types'
 import { formatMoney } from './format'
 import { convertLeadAction, markLeadLostAction } from './actions'
 import { useStaggerIn } from './use-stagger-in'
@@ -82,7 +82,7 @@ function LeadCard({ lead: p }: { lead: Project }) {
 
   return (
     <div className="admin-lead-wrapper" data-stagger>
-      {/* Card body — full clickable link, excludes action footer */}
+      {/* Card body — full clickable link, excludes action footer and demo link */}
       <Link
         href={`/admin/project/${p.id}`}
         className={`admin-card admin-lead-card`}
@@ -91,7 +91,12 @@ function LeadCard({ lead: p }: { lead: Project }) {
         <div className="admin-card__header">
           <div>
             <div className="admin-card__name">{p.name}</div>
-            <div className="admin-card__lead">{p.lead}</div>
+            <div className="admin-card__lead">
+              <span className="admin-type-tag" style={{ marginRight: 6 }}>
+                {PROJECT_TYPE_LABELS[p.projectType]}
+              </span>
+              {p.lead}
+            </div>
           </div>
           <OutreachPill stage={stage} label={stageLabel} />
         </div>
@@ -116,21 +121,26 @@ function LeadCard({ lead: p }: { lead: Project }) {
             )}
           </div>
 
-          {p.proposalUrl ? (
-            <a
-              href={p.proposalUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="admin-lead-card__demo-link"
-              onClick={(e) => e.stopPropagation()}
-            >
-              View demo &#8599;
-            </a>
-          ) : stage === 'identified' ? (
+          {/* No demo placeholder shown inside card — demo link moved to footer below */}
+          {!p.proposalUrl && stage === 'identified' && (
             <span className="admin-lead-card__no-demo">No demo yet</span>
-          ) : null}
+          )}
         </div>
       </Link>
+
+      {/* Demo link — sibling of the Link so no anchor-in-anchor nesting */}
+      {p.proposalUrl && (
+        <div className="admin-card__footer">
+          <a
+            href={p.proposalUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="admin-lead-card__demo-link"
+          >
+            View demo &#8599;
+          </a>
+        </div>
+      )}
 
       {/* Action footer — sibling of the Link, not nested inside it */}
       <div className="admin-lead-card__actions">
