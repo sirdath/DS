@@ -11,7 +11,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           <Link href="/admin" className="admin-topbar__link">
             Projects
           </Link>
-          <Link href="/admin/analytics" className="admin-topbar__link">
+          <Link href="/$ecretAnalytics/" className="admin-topbar__link">
             Analytics
           </Link>
         </nav>
