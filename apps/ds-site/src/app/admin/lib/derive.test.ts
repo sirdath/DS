@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { outstanding, isOverdue, portfolioTotals, isPotentialLead, splitProjects } from './derive'
+import { outstanding, isOverdue, portfolioTotals, isPotentialLead, splitProjects, partitionProjects } from './derive'
 import type { Project } from '../types'
 
 function mk(p: Partial<Project>): Project {
@@ -12,6 +12,7 @@ function mk(p: Partial<Project>): Project {
     outreachStage: null, proposalUrl: null, estimatedValue: null,
     whyThem: null, source: null, repoUrl: null,
     currentWebsiteUrl: null, projectType: 'website',
+    archived: false,
     createdAt: '2026-01-01T00:00:00Z',
     updatedAt: '2026-01-01T00:00:00Z', ...p,
   }
@@ -116,5 +117,75 @@ describe('splitProjects', () => {
     const { leads, active } = splitProjects(projects)
     expect(leads.map(p => p.id)).toEqual(['1'])
     expect(active.map(p => p.id)).toEqual(['2', '4', '5'])
+  })
+  it('should exclude an archived lead from both leads and active', () => {
+    const { leads, active } = splitProjects([
+      mk({ id: 'a', status: 'lead', outreachStage: 'pitched', archived: true }),
+    ])
+    expect(leads).toHaveLength(0)
+    expect(active).toHaveLength(0)
+  })
+  it('should exclude an archived in_progress project from both leads and active', () => {
+    const { leads, active } = splitProjects([
+      mk({ id: 'b', status: 'in_progress', outreachStage: null, archived: true }),
+    ])
+    expect(leads).toHaveLength(0)
+    expect(active).toHaveLength(0)
+  })
+})
+
+describe('partitionProjects', () => {
+  it('should put an archived in_progress project only in archived', () => {
+    const { leads, active, archived } = partitionProjects([
+      mk({ id: 'p1', status: 'in_progress', outreachStage: null, archived: true }),
+    ])
+    expect(archived.map(p => p.id)).toEqual(['p1'])
+    expect(leads).toHaveLength(0)
+    expect(active).toHaveLength(0)
+  })
+  it('should put an archived lead only in archived', () => {
+    const { leads, active, archived } = partitionProjects([
+      mk({ id: 'p2', status: 'lead', outreachStage: 'pitched', archived: true }),
+    ])
+    expect(archived.map(p => p.id)).toEqual(['p2'])
+    expect(leads).toHaveLength(0)
+    expect(active).toHaveLength(0)
+  })
+  it('should put a normal pitched lead only in leads', () => {
+    const { leads, active, archived } = partitionProjects([
+      mk({ id: 'p3', status: 'lead', outreachStage: 'pitched', archived: false }),
+    ])
+    expect(leads.map(p => p.id)).toEqual(['p3'])
+    expect(active).toHaveLength(0)
+    expect(archived).toHaveLength(0)
+  })
+  it('should put an active retainer only in active', () => {
+    const { leads, active, archived } = partitionProjects([
+      mk({ id: 'p4', status: 'retainer', outreachStage: null, archived: false }),
+    ])
+    expect(active.map(p => p.id)).toEqual(['p4'])
+    expect(leads).toHaveLength(0)
+    expect(archived).toHaveLength(0)
+  })
+  it('should put a lost non-archived lead in none of the three', () => {
+    const { leads, active, archived } = partitionProjects([
+      mk({ id: 'p5', status: 'lead', outreachStage: 'lost', archived: false }),
+    ])
+    expect(leads).toHaveLength(0)
+    expect(active).toHaveLength(0)
+    expect(archived).toHaveLength(0)
+  })
+  it('should correctly partition a mixed set', () => {
+    const projects = [
+      mk({ id: '1', status: 'lead', outreachStage: 'demo_built', archived: false }),
+      mk({ id: '2', status: 'in_progress', outreachStage: null, archived: false }),
+      mk({ id: '3', status: 'lead', outreachStage: 'lost', archived: false }),
+      mk({ id: '4', status: 'in_progress', outreachStage: null, archived: true }),
+      mk({ id: '5', status: 'lead', outreachStage: 'pitched', archived: true }),
+    ]
+    const { leads, active, archived } = partitionProjects(projects)
+    expect(leads.map(p => p.id)).toEqual(['1'])
+    expect(active.map(p => p.id)).toEqual(['2'])
+    expect(archived.map(p => p.id)).toEqual(['4', '5'])
   })
 })

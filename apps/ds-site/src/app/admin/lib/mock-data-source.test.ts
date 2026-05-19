@@ -19,6 +19,7 @@ describe('MockDataSource', () => {
       outreachStage: null, proposalUrl: null, estimatedValue: null,
       whyThem: null, source: null, repoUrl: null,
       currentWebsiteUrl: null, projectType: 'website' as const,
+      archived: false,
     })
     expect(created.id).toBeTruthy()
     expect(await ds.getProject(created.id)).toMatchObject({ name: 'Acme' })
@@ -35,6 +36,7 @@ describe('MockDataSource', () => {
       outreachStage: null, proposalUrl: null, estimatedValue: null,
       whyThem: null, source: null, repoUrl,
       currentWebsiteUrl: null, projectType: 'website' as const,
+      archived: false,
     })
     expect(created.repoUrl).toBe(repoUrl)
     expect((await ds.getProject(created.id))?.repoUrl).toBe(repoUrl)

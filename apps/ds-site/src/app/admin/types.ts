@@ -96,6 +96,7 @@ export interface Project {
   repoUrl: string | null
   currentWebsiteUrl: string | null
   projectType: ProjectType
+  archived: boolean
   createdAt: string
   updatedAt: string
 }

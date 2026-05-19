@@ -16,13 +16,15 @@ export function isPotentialLead(p: Project): boolean {
 /**
  * Splits a project list into:
  * - leads: open potential leads (isPotentialLead === true)
- * - active: everything else EXCEPT lost leads
+ * - active: everything else EXCEPT lost leads and archived projects
  *   (status 'lead' && outreachStage 'lost' are excluded from both lists)
+ *   (archived projects are excluded from both lists)
  */
 export function splitProjects(projects: Project[]): { leads: Project[]; active: Project[] } {
   const leads: Project[] = []
   const active: Project[] = []
   for (const p of projects) {
+    if (p.archived) continue
     if (isPotentialLead(p)) {
       leads.push(p)
     } else if (!(p.status === 'lead' && p.outreachStage === 'lost')) {
@@ -31,6 +33,33 @@ export function splitProjects(projects: Project[]): { leads: Project[]; active: 
     // lost leads (status 'lead', outreachStage 'lost') fall through → excluded from both
   }
   return { leads, active }
+}
+
+/**
+ * Partitions a project list into three mutually exclusive groups:
+ * - archived: every project with archived === true (regardless of status/outreach)
+ * - leads: open potential leads (isPotentialLead === true) among non-archived projects
+ * - active: non-archived, non-lost-lead projects (same as splitProjects active)
+ */
+export function partitionProjects(projects: Project[]): {
+  leads: Project[]
+  active: Project[]
+  archived: Project[]
+} {
+  const leads: Project[] = []
+  const active: Project[] = []
+  const archived: Project[] = []
+  for (const p of projects) {
+    if (p.archived) {
+      archived.push(p)
+    } else if (isPotentialLead(p)) {
+      leads.push(p)
+    } else if (!(p.status === 'lead' && p.outreachStage === 'lost')) {
+      active.push(p)
+    }
+    // non-archived lost leads fall through → excluded from all three
+  }
+  return { leads, active, archived }
 }
 
 export function outstanding(p: Project): number {
