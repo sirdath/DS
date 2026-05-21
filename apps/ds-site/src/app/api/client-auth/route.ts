@@ -11,8 +11,11 @@ interface PasswordEntry {
 }
 
 function getPasswords(): PasswordEntry[] {
+  // CLIENT_PASSWORDS is the canonical var; fall back to the legacy
+  // MEGAGYM_PASSWORDS so nothing breaks before the env var is renamed.
+  const raw = process.env.CLIENT_PASSWORDS ?? process.env.MEGAGYM_PASSWORDS ?? '[]'
   try {
-    return JSON.parse(process.env.MEGAGYM_PASSWORDS ?? '[]')
+    return JSON.parse(raw)
   } catch {
     return []
   }

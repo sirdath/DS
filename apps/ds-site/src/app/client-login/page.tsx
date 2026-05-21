@@ -32,8 +32,8 @@ function EyeIcon({ open }: { open: boolean }) {
 
 const MAX_ATTEMPTS = 5
 const LOCKOUT_MS = 2 * 60 * 1000
-const LS_ATTEMPTS = 'mgym_attempts'
-const LS_LOCKOUT = 'mgym_lockout'
+const LS_ATTEMPTS = 'client_attempts'
+const LS_LOCKOUT = 'client_lockout'
 
 function getRemainingLockout(): number {
   const until = parseInt(localStorage.getItem(LS_LOCKOUT) ?? '0', 10)
@@ -79,7 +79,7 @@ function LoginForm() {
     setLoading(true)
 
     try {
-      const res = await fetch('/api/megagym-auth', {
+      const res = await fetch('/api/client-auth/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password }),
@@ -101,12 +101,12 @@ function LoginForm() {
       localStorage.setItem(LS_ATTEMPTS, '0')
 
       const { redirect: passwordRedirect } = await res.json()
-      // Deep-link from middleware takes priority; fall back to password's own destination
+      // Deep-link from middleware takes priority; fall back to the password's destination
       const redirect = searchParams.get('redirect') ?? passwordRedirect ?? '/clients'
 
       // Prime sessionStorage so the MegaGym preloader skips itself when the
-      // user navigates from the clients page into /MegaGym-Website. Same
-      // origin (ds2-consulting.com) so the flag is readable there.
+      // user navigates into /MegaGym-Website. Same origin, so it's readable
+      // there; harmless no-op for any other client.
       try {
         sessionStorage.setItem('megagym-loaded', '1')
       } catch {
@@ -182,7 +182,7 @@ function LoginForm() {
   )
 }
 
-export default function MegaGymLogin() {
+export default function ClientLogin() {
   return (
     <Suspense>
       <LoginForm />

@@ -18,6 +18,17 @@ const nextConfig = {
       },
     ];
   },
+  // The client password page generalised from /megagym-login to /client-login;
+  // keep the old URL working for any already-shared links.
+  async redirects() {
+    return [
+      {
+        source: "/megagym-login",
+        destination: "/client-login",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

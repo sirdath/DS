@@ -1366,7 +1366,7 @@ footer a:hover { color: var(--silver); }
   .about-block p { font-size: 16px; }
 }
 
-/* ─── Lock screen (megagym-login) ──────────────── */
+/* ─── Lock screen (client-login — shared client password page) ──────────────── */
 .lock-shell {
   position: fixed; inset: 0; overflow: hidden;
   font-family: var(--font-inter), ui-sans-serif, sans-serif;

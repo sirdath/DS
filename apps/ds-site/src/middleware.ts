@@ -55,12 +55,12 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // ── Branch 1: Client preview gate (MegaGym + Samioglou + /clients) ─────────
-  // All client previews share the same password gate (/megagym-login →
-  // /api/megagym-auth, matched against MEGAGYM_PASSWORDS). Samioglou is a
-  // proxied external deployment (next.config.mjs); gating it here means a
-  // visitor must enter the Samioglou password before the proxy serves it,
-  // and every authed page-view is logged to `visits` (client_id from the
-  // password entry's id), exactly like MegaGym.
+  // All client previews share one reusable password gate (/client-login →
+  // /api/client-auth, matched against CLIENT_PASSWORDS — a per-client list).
+  // Samioglou is a proxied external deployment (next.config.mjs); gating it
+  // here means a visitor must enter the Samioglou password before the proxy
+  // serves it, and every authed page-view is logged to `visits` (client_id
+  // from the password entry's id), exactly like every other client.
   if (
     pathname.startsWith('/clients/') ||
     pathname.startsWith('/MegaGym-Website/') ||
@@ -71,7 +71,7 @@ export async function middleware(request: NextRequest) {
 
     if (cookie?.value !== AUTH_VALUE) {
       const url = request.nextUrl.clone()
-      url.pathname = '/megagym-login'
+      url.pathname = '/client-login'
       url.searchParams.set('redirect', pathname)
       return NextResponse.redirect(url)
     }
@@ -103,7 +103,7 @@ export async function middleware(request: NextRequest) {
       }
 
       const url = request.nextUrl.clone()
-      url.pathname = '/megagym-login'
+      url.pathname = '/client-login'
       url.searchParams.set('redirect', pathname)
       const res = NextResponse.redirect(url)
       res.cookies.delete(AUTH_COOKIE)
