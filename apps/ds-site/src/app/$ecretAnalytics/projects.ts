@@ -14,6 +14,13 @@ export const PROJECTS: Project[] = [
     url: 'ds2-consulting.com/MegaGym-Website',
     description: 'Fitness centre — Athens',
   },
+  {
+    slug: 'samioglou',
+    name: 'Samioglou',
+    pathPrefix: '/samioglou',
+    url: 'ds2-consulting.com/samioglou',
+    description: 'Client site — proxied deployment',
+  },
 ]
 
 export function getProject(slug: string): Project | undefined {

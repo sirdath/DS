@@ -54,6 +54,58 @@ function isAdminEmail(email: string | undefined): boolean {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
+  // ── Branch 0: Samioglou client site (proxied) — log page-views, no gate ────
+  // /samioglou is a transparent rewrite to an external Vercel deployment
+  // (see next.config.mjs). It's a public client site, so no auth — we only
+  // log HTML page-views to the same `visits` table the analytics page reads.
+  if (pathname === '/samioglou' || pathname.startsWith('/samioglou/')) {
+    const response = NextResponse.next()
+
+    // Only log document loads, not the proxied JS/CSS/image asset requests.
+    const accept = request.headers.get('accept') ?? ''
+    if (!accept.includes('text/html')) return response
+
+    const SAMIOGLOU_VISITOR = 'samioglou_visitor'
+    let visitorId = request.cookies.get(SAMIOGLOU_VISITOR)?.value ?? null
+    if (!visitorId) {
+      visitorId = crypto.randomUUID()
+      response.cookies.set(SAMIOGLOU_VISITOR, visitorId, {
+        maxAge: 60 * 60 * 24 * 365,
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+      })
+    }
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    if (supabaseUrl && serviceKey) {
+      fetch(`${supabaseUrl}/rest/v1/visits`, {
+        method: 'POST',
+        headers: {
+          apikey: serviceKey,
+          Authorization: `Bearer ${serviceKey}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal',
+        },
+        body: JSON.stringify({
+          path: pathname,
+          referrer: request.headers.get('referer') ?? null,
+          country:
+            request.headers.get('x-vercel-ip-country') ??
+            (request as NextRequest & { geo?: { country?: string } }).geo
+              ?.country ??
+            null,
+          user_agent: request.headers.get('user-agent') ?? null,
+          visitor_id: visitorId,
+          client_id: 'samioglou',
+        }),
+      }).catch(() => {})
+    }
+
+    return response
+  }
+
   // ── Branch 1: MegaGym / Clients gate ──────────────────────────────────────
   if (
     pathname.startsWith('/clients/') ||
@@ -235,6 +287,8 @@ export const config = {
   matcher: [
     '/clients/:path*',
     '/MegaGym-Website/:path*',
+    '/samioglou',
+    '/samioglou/:path*',
     '/admin',
     '/admin/:path*',
     '/$ecretAnalytics',
