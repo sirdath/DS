@@ -5,7 +5,7 @@ import gsap from 'gsap'
 import type { Project, ProjectStatus } from './types'
 import { STATUS_LABELS, PROJECT_TYPE_LABELS } from './types'
 import { outstanding, isOverdue } from './lib/derive'
-import { getSite } from './lib/sites'
+import { siteForProject } from './lib/sites'
 import { formatMoney } from './format'
 import { useStaggerIn } from './use-stagger-in'
 
@@ -62,7 +62,7 @@ export function ProjectGrid({ projects }: Props) {
 function ProjectCard({ project: p }: { project: Project }) {
   const owed = outstanding(p)
   const overdue = isOverdue(p)
-  const site = getSite(p.siteSlug)
+  const site = siteForProject(p)
   const cardRef = useRef<HTMLAnchorElement>(null)
   const glowXSetter = useRef<ReturnType<typeof gsap.quickTo> | null>(null)
   const glowYSetter = useRef<ReturnType<typeof gsap.quickTo> | null>(null)

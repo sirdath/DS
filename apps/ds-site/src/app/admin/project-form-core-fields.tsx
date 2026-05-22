@@ -111,8 +111,8 @@ export function CoreFields({ project: p }: Props) {
           ))}
         </select>
         <p className="admin-form__hint">
-          Links this project to a hosted/tracked site. Enables the &ldquo;Open site&rdquo; admin
-          login on the card and its visit analytics.
+          Auto-detected from the project name (e.g. &ldquo;MegaGym&rdquo; → MegaGym). Set this only
+          to override when the name doesn&rsquo;t match a tracked site.
         </p>
       </div>
     </div>

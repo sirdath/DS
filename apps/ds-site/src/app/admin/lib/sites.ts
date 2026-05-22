@@ -43,6 +43,26 @@ export function getSite(slug: string | null | undefined): TrackedSite | undefine
   return TRACKED_SITES.find(s => s.slug === slug)
 }
 
+/**
+ * Resolve the tracked site for an admin project. Uses the explicit siteSlug if
+ * set, otherwise auto-matches by name (e.g. project "MegaGym" → site "megagym")
+ * so projects link to their analytics + Open-site link with no manual step.
+ */
+export function siteForProject(
+  project: { name?: string | null; siteSlug?: string | null },
+): TrackedSite | undefined {
+  if (project.siteSlug) {
+    const explicit = getSite(project.siteSlug)
+    if (explicit) return explicit
+  }
+  const name = (project.name ?? '').trim().toLowerCase()
+  if (!name) return undefined
+  const normalized = name.replace(/[^a-z0-9]+/g, '')
+  return TRACKED_SITES.find(
+    s => s.name.toLowerCase() === name || s.slug === normalized,
+  )
+}
+
 /** Map an admin's email to a short label used as the visit client_id (`<label>-admin`). */
 const ADMIN_LABELS: Record<string, string> = {
   'dimo.atheneos@gmail.com': 'dimitris',

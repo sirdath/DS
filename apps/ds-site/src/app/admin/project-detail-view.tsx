@@ -6,6 +6,7 @@
 import type { Project } from './types'
 import { formatMoney, formatDate } from './format'
 import { outstanding } from './lib/derive'
+import { siteForProject } from './lib/sites'
 
 interface Props {
   project: Project
@@ -31,9 +32,31 @@ function ExternalLink({ href, label }: { href: string | null; label: string }) {
 
 export function ProjectDetailView({ project: p }: Props) {
   const owed = outstanding(p)
+  const site = siteForProject(p)
 
   return (
     <div className="admin-detail__sections">
+      {/* Visit site — admin auto-login (no client password) */}
+      {site && (
+        <section className="admin-detail__visit">
+          <div className="admin-detail__visit-text">
+            <span className="admin-detail__visit-eyebrow">Live site</span>
+            <p className="admin-detail__visit-desc">
+              Opens <strong>{site.name}</strong> logged in as you — no password — and records the
+              visit in this project&rsquo;s analytics.
+            </p>
+          </div>
+          <a
+            href={`/admin/open/${site.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="admin-visit-btn"
+          >
+            Visit site &#8599;
+          </a>
+        </section>
+      )}
+
       {/* Money */}
       <section className="admin-detail__section">
         <h2 className="admin-detail__section-title">Money</h2>

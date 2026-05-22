@@ -630,6 +630,33 @@
 }
 .admin-open-link:hover { opacity: 0.78; }
 
+/* ── Project detail: Visit-site (admin auto-login) banner ── */
+.admin-detail__visit {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  background: var(--admin-amber-dim);
+  border: 1px solid var(--admin-amber-border);
+  border-radius: var(--admin-radius);
+  padding: 18px 22px; margin-bottom: 28px;
+}
+.admin-detail__visit-eyebrow {
+  font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--admin-amber); font-family: var(--admin-mono);
+}
+.admin-detail__visit-desc { margin: 6px 0 0; font-size: 13.5px; color: var(--admin-text-muted); line-height: 1.5; }
+.admin-detail__visit-desc strong { color: var(--admin-text); font-weight: 600; }
+.admin-visit-btn {
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 11px 20px; border-radius: var(--admin-radius);
+  background: var(--admin-amber); color: #1a1208;
+  font-size: 13px; font-weight: 700; text-decoration: none;
+  white-space: nowrap; transition: opacity 0.18s ease;
+}
+.admin-visit-btn:hover { opacity: 0.88; }
+@media (max-width: 600px) {
+  .admin-detail__visit { flex-direction: column; align-items: flex-start; }
+}
+
 /* ── Projects tabs (Overview | Analytics) ── */
 .admin-tabs {
   display: flex;
