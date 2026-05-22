@@ -54,6 +54,14 @@ function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
+  // Pick a per-client backdrop from where the visitor was headed.
+  const redirectParam = searchParams.get('redirect') ?? ''
+  const client = redirectParam.startsWith('/MegaGym-Website')
+    ? 'megagym'
+    : redirectParam.startsWith('/samioglou')
+      ? 'samioglou'
+      : null
+
   useEffect(() => {
     const check = () => {
       const remaining = getRemainingLockout()
@@ -122,7 +130,7 @@ function LoginForm() {
 
   return (
     <div className="lock-shell">
-      <div className="lock-bg" aria-hidden="true" />
+      <div className={`lock-bg${client ? ` lock-bg--${client}` : ''}`} aria-hidden="true" />
 
       {/* Password card */}
       <div className="lock-overlay">

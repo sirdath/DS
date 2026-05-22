@@ -1375,11 +1375,23 @@ footer a:hover { color: var(--silver); }
   position: absolute; inset: 0;
   z-index: 0;
   pointer-events: none;
-  /* Background image: swap megagym-bg.png in /public for any client screenshot —
-     just replace the file and adjust the overlay opacity below to taste. */
+  /* Neutral DS2 backdrop — the default for any client without its own image. */
+  background:
+    radial-gradient(120% 90% at 50% -10%, rgba(255,255,255,0.05), transparent 60%),
+    linear-gradient(180deg, #121212, #0a0a0a);
+}
+/* Per-client backdrops. /client-login sets a `lock-bg--<client>` class from the
+   redirect target, so each gated site shows its own background. To give a new
+   client a bespoke image, drop /public/<client>-bg.png and add a rule here. */
+.lock-bg--megagym {
   background:
     linear-gradient(rgba(0,0,0,0.94), rgba(0,0,0,0.94)),
     url('/megagym-bg.png') center/cover no-repeat;
+}
+.lock-bg--samioglou {
+  background:
+    radial-gradient(110% 80% at 50% 112%, rgba(255,255,255,0.06), transparent 55%),
+    linear-gradient(180deg, #0e0e0e, #050505);
 }
 
 .lock-overlay {
