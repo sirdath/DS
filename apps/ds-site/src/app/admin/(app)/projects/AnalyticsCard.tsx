@@ -42,7 +42,7 @@ export default function ProjectCard({ slug, name, url, description, total, weekC
   const [hovered, setHovered] = useState(false)
 
   return (
-    <Link href={`/$ecretAnalytics/${slug}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+    <Link href={`/admin/projects/analytics/${slug}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
       <div
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}

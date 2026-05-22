@@ -5,6 +5,7 @@ import gsap from 'gsap'
 import type { Project, ProjectStatus } from './types'
 import { STATUS_LABELS, PROJECT_TYPE_LABELS } from './types'
 import { outstanding, isOverdue } from './lib/derive'
+import { getSite } from './lib/sites'
 import { formatMoney } from './format'
 import { useStaggerIn } from './use-stagger-in'
 
@@ -61,6 +62,7 @@ export function ProjectGrid({ projects }: Props) {
 function ProjectCard({ project: p }: { project: Project }) {
   const owed = outstanding(p)
   const overdue = isOverdue(p)
+  const site = getSite(p.siteSlug)
   const cardRef = useRef<HTMLAnchorElement>(null)
   const glowXSetter = useRef<ReturnType<typeof gsap.quickTo> | null>(null)
   const glowYSetter = useRef<ReturnType<typeof gsap.quickTo> | null>(null)
@@ -160,17 +162,30 @@ function ProjectCard({ project: p }: { project: Project }) {
         )}
       </Link>
 
-      {/* Repo link — sibling of the card Link so it doesn't nest anchors */}
-      {p.repoUrl && (
+      {/* Footer links — siblings of the card Link so they don't nest anchors */}
+      {(site || p.repoUrl) && (
         <div className="admin-card__footer">
-          <a
-            href={p.repoUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="admin-repo-link"
-          >
-            Repo &#8599;
-          </a>
+          {site && (
+            <a
+              href={`/admin/open/${site.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="admin-open-link"
+              title={`Open ${site.name} as admin — no password`}
+            >
+              Open site &#8599;
+            </a>
+          )}
+          {p.repoUrl && (
+            <a
+              href={p.repoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="admin-repo-link"
+            >
+              Repo &#8599;
+            </a>
+          )}
         </div>
       )}
     </div>

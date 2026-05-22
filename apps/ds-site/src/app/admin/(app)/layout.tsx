@@ -9,10 +9,10 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
         <nav className="admin-topbar__nav" aria-label="Admin navigation">
           <Link href="/admin" className="admin-topbar__link">
-            Projects
+            Dashboard
           </Link>
-          <Link href="/$ecretAnalytics/" className="admin-topbar__link">
-            Analytics
+          <Link href="/admin/projects" className="admin-topbar__link">
+            Projects
           </Link>
         </nav>
 

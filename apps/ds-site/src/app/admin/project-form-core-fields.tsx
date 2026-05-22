@@ -10,6 +10,7 @@ import {
   PROJECT_STATUSES,
   STATUS_LABELS,
 } from './types'
+import { TRACKED_SITES } from './lib/sites'
 
 interface Props {
   project?: Project
@@ -94,6 +95,25 @@ export function CoreFields({ project: p }: Props) {
             defaultValue={p?.completionPct ?? 0}
           />
         </div>
+      </div>
+
+      <div className="admin-form__group">
+        <label htmlFor="pf-siteSlug" className="admin-form__label">Live site</label>
+        <select
+          id="pf-siteSlug"
+          name="siteSlug"
+          className="admin-form__select"
+          defaultValue={p?.siteSlug ?? ''}
+        >
+          <option value="">— none —</option>
+          {TRACKED_SITES.map((s) => (
+            <option key={s.slug} value={s.slug}>{s.name}</option>
+          ))}
+        </select>
+        <p className="admin-form__hint">
+          Links this project to a hosted/tracked site. Enables the &ldquo;Open site&rdquo; admin
+          login on the card and its visit analytics.
+        </p>
       </div>
     </div>
   )

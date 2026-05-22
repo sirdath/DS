@@ -1,8 +1,5 @@
 import { NextResponse } from 'next/server'
-
-const AUTH_COOKIE = 'megagym_auth'
-const AUTH_VALUE = 'ds2-mgym-v1'
-const CLIENT_COOKIE = 'mgym_client'
+import { AUTH_COOKIE, AUTH_VALUE, CLIENT_COOKIE, GATE_COOKIE_OPTS } from '../../admin/lib/client-gate'
 
 interface PasswordEntry {
   id: string
@@ -31,17 +28,7 @@ export async function POST(request: Request) {
   }
 
   const res = NextResponse.json({ ok: true, redirect: match.redirect })
-
-  const cookieOpts = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax' as const,
-    maxAge: 60 * 60 * 24 * 30,
-    path: '/',
-  }
-
-  res.cookies.set(AUTH_COOKIE, AUTH_VALUE, cookieOpts)
-  res.cookies.set(CLIENT_COOKIE, match.id, cookieOpts)
-
+  res.cookies.set(AUTH_COOKIE, AUTH_VALUE, GATE_COOKIE_OPTS)
+  res.cookies.set(CLIENT_COOKIE, match.id, GATE_COOKIE_OPTS)
   return res
 }

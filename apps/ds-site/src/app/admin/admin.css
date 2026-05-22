@@ -617,6 +617,74 @@
 }
 .admin-repo-link:hover { color: var(--admin-amber); }
 
+/* ── Open-site (admin auto-login) link on cards ── */
+.admin-card__footer { gap: 16px; }
+.admin-open-link {
+  font-size: 11px;
+  font-family: var(--admin-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--admin-amber);
+  text-decoration: none;
+  transition: opacity 0.18s ease;
+}
+.admin-open-link:hover { opacity: 0.78; }
+
+/* ── Projects tabs (Overview | Analytics) ── */
+.admin-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--admin-border);
+}
+.admin-tab {
+  padding: 12px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--admin-text-muted);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.18s ease, border-color 0.18s ease;
+}
+.admin-tab:hover { color: var(--admin-text); }
+.admin-tab.is-active { color: var(--admin-text); border-bottom-color: var(--admin-amber); }
+
+/* ── Dashboard: collected vs outstanding bar ── */
+.admin-totals--counts { margin-top: 14px; }
+.admin-dash-bar {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  padding: 22px 24px;
+  margin-bottom: 14px;
+}
+.admin-dash-bar__head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; margin-bottom: 14px;
+}
+.admin-dash-bar__label {
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--admin-text-dim); font-family: var(--admin-mono);
+}
+.admin-dash-bar__pct { font-size: 13px; color: var(--admin-amber); font-family: var(--admin-mono); }
+.admin-dash-bar__track {
+  height: 12px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06); overflow: hidden;
+}
+.admin-dash-bar__fill {
+  height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, #4ade80, #86efac);
+}
+.admin-dash-bar__legend {
+  display: flex; gap: 22px; margin-top: 12px;
+  font-size: 12px; color: var(--admin-text-muted);
+}
+.admin-dash-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.admin-dash-dot--collected { background: #4ade80; }
+.admin-dash-dot--outstanding { background: rgba(255, 255, 255, 0.18); }
+.admin-dash-cta { margin-top: 8px; }
+
 /* ── Sections + Pipeline stat ──────────────────── */
 .admin-section { margin-bottom: 52px; }
 .admin-section__header { margin-bottom: 20px; }

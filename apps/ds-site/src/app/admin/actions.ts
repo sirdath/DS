@@ -7,6 +7,7 @@ import { getSessionUser, isAllowedEmail } from './lib/supabase-server'
 import { PROJECT_STATUSES, OUTREACH_STAGES, PROJECT_TYPES } from './types'
 import type { ProjectStatus, OutreachStage, ProjectType } from './types'
 import type { NewProject, ProjectPatch } from './lib/data-source'
+import { TRACKED_SITES } from './lib/sites'
 
 /**
  * Auth guard — must be called at the top of every mutating/reading server action.
@@ -64,6 +65,10 @@ function nullableNum(v: FormDataEntryValue | null): number | null {
   const n = Number(s)
   return Number.isFinite(n) ? n : null
 }
+function asSiteSlug(v: FormDataEntryValue | null): string | null {
+  const s = str(v)
+  return TRACKED_SITES.some(site => site.slug === s) ? s : null
+}
 
 function parseProject(fd: FormData): NewProject {
   const name = str(fd.get('name'))
@@ -94,6 +99,7 @@ function parseProject(fd: FormData): NewProject {
     repoUrl: nullableStr(fd.get('repoUrl')),
     currentWebsiteUrl: nullableStr(fd.get('currentWebsiteUrl')),
     projectType: asProjectType(fd.get('projectType')),
+    siteSlug: asSiteSlug(fd.get('siteSlug')),
     archived: false,
   }
 }

@@ -32,6 +32,7 @@ const SEED: Project[] = [
     repoUrl: 'https://github.com/sirdath/megagym-site',
     currentWebsiteUrl: 'https://old-megagym.example',
     projectType: 'website' as ProjectType,
+    siteSlug: 'megagym',
     archived: false,
     createdAt: '2026-02-01T00:00:00Z',
     updatedAt: '2026-03-12T00:00:00Z',

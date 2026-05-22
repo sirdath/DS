@@ -96,6 +96,9 @@ export interface Project {
   repoUrl: string | null
   currentWebsiteUrl: string | null
   projectType: ProjectType
+  /** Links this engagement to a tracked live site (see admin/lib/sites.ts) for
+   *  the "Open site" admin auto-login + its visit analytics. Null = no live site. */
+  siteSlug?: string | null
   archived: boolean
   createdAt: string
   updatedAt: string

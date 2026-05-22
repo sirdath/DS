@@ -46,6 +46,7 @@ interface ProjectRow {
   repo_url: string | null
   current_website_url: string | null
   project_type: ProjectType
+  site_slug: string | null
   archived: boolean
   created_at: string
   updated_at: string
@@ -88,6 +89,7 @@ function rowToProject(row: ProjectRow): Project {
     repoUrl: row.repo_url,
     currentWebsiteUrl: row.current_website_url,
     projectType: row.project_type,
+    siteSlug: row.site_slug ?? null,
     archived: row.archived,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -127,6 +129,7 @@ function projectToRow(
   if (input.repoUrl !== undefined) row.repo_url = input.repoUrl
   if (input.currentWebsiteUrl !== undefined) row.current_website_url = input.currentWebsiteUrl
   if (input.projectType !== undefined) row.project_type = input.projectType
+  if (input.siteSlug !== undefined) row.site_slug = input.siteSlug ?? null
   if (input.archived !== undefined) row.archived = input.archived
 
   return row
