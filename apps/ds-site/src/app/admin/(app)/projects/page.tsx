@@ -8,6 +8,7 @@ import { LeadGrid } from '@/app/admin/lead-grid'
 import { unarchiveProjectAction, deleteProjectAction } from '@/app/admin/actions'
 import { ConfirmButton } from '@/app/admin/confirm-button'
 import { formatDate } from '@/app/admin/format'
+import { TRACKED_SITES } from '@/app/admin/lib/sites'
 import AnalyticsOverview from './AnalyticsOverview'
 
 export const dynamic = 'force-dynamic'
@@ -63,6 +64,45 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
         </div>
       ) : (
         <>
+          {/* ── Live sites (tracked deployments — independent of project rows) ── */}
+          <div className="admin-section">
+            <div className="admin-section__header">
+              <p className="admin-section__eyebrow">Live sites</p>
+              <h2 className="admin-section__title">
+                Client deployments
+                <span className="admin-section__count">{TRACKED_SITES.length}</span>
+              </h2>
+            </div>
+            <div className="admin-livesites">
+              {TRACKED_SITES.map((site) => (
+                <div key={site.slug} className="admin-livesite-card">
+                  <div className="admin-livesite-card__head">
+                    <span className="admin-livesite-card__name">{site.name}</span>
+                    <span className="admin-livesite-card__desc">{site.description}</span>
+                    <span className="admin-livesite-card__url">{site.url}</span>
+                  </div>
+                  <div className="admin-card__footer">
+                    <a
+                      href={`/admin/open/${site.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="admin-open-link"
+                      title={`Open ${site.name} as admin — no password`}
+                    >
+                      Open site &#8599;
+                    </a>
+                    <Link
+                      href={`/admin/projects/analytics/${site.slug}`}
+                      className="admin-repo-link"
+                    >
+                      View analytics &#8594;
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* ── Potential Leads ── */}
           <div className="admin-section">
             <div className="admin-section__header">

@@ -657,6 +657,34 @@
   .admin-detail__visit { flex-direction: column; align-items: flex-start; }
 }
 
+/* ── Live sites grid (tracked deployments in Projects → Overview) ── */
+.admin-livesites {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+.admin-livesite-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  background: var(--admin-surface);
+  overflow: hidden;
+}
+.admin-livesite-card__head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px 22px;
+}
+.admin-livesite-card__name { font-size: 16px; font-weight: 600; color: var(--admin-text); }
+.admin-livesite-card__desc { font-size: 13px; color: var(--admin-text-muted); }
+.admin-livesite-card__url {
+  margin-top: 4px; font-size: 11px; font-family: var(--admin-mono);
+  letter-spacing: 0.04em; color: var(--admin-text-dim);
+}
+.admin-livesite-card .admin-card__footer { margin-top: auto; }
+
 /* ── Projects tabs (Overview | Analytics) ── */
 .admin-tabs {
   display: flex;
