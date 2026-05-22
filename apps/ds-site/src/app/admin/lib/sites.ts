@@ -55,12 +55,11 @@ export function siteForProject(
     const explicit = getSite(project.siteSlug)
     if (explicit) return explicit
   }
-  const name = (project.name ?? '').trim().toLowerCase()
-  if (!name) return undefined
-  const normalized = name.replace(/[^a-z0-9]+/g, '')
-  return TRACKED_SITES.find(
-    s => s.name.toLowerCase() === name || s.slug === normalized,
-  )
+  const normalized = (project.name ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '')
+  if (!normalized) return undefined
+  // Match when the project name contains the site slug, so variants like
+  // "MegaGym Website" or "Samioglou Removals" still resolve to their site.
+  return TRACKED_SITES.find(s => normalized.includes(s.slug))
 }
 
 /** Map an admin's email to a short label used as the visit client_id (`<label>-admin`). */
