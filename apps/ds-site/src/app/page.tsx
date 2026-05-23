@@ -3,9 +3,12 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import ContactPanel, { ContactCTA } from "./contact-panel";
+import { useT, useLang, LangToggle } from "./i18n";
 
 export default function HomePage() {
   const [chatOpen, setChatOpen] = useState(false);
+  const t = useT();
+  const { lang } = useLang();
 
   useEffect(() => {
     let cancelled = false;
@@ -259,47 +262,6 @@ export default function HomePage() {
         clearTimeout(heroTimeout);
       });
 
-      // ─── How we work — proportional bar reveal ───
-      const strip = document.querySelector("#how-strip .strip-bar");
-      if (strip) {
-        ScrollTrigger.create({
-          trigger: strip,
-          start: "top 85%",
-          once: true,
-          onEnter: () => strip.classList.add("in"),
-        });
-      }
-
-      // ─── How we work — segment ↔ detail panel ───
-      const howSegs = Array.from(document.querySelectorAll(".strip-seg")) as HTMLElement[];
-      const howPanels = Array.from(document.querySelectorAll(".how-panel")) as HTMLElement[];
-      if (howSegs.length && howPanels.length) {
-        const activateHow = (id: string | undefined) => {
-          if (!id) return;
-          howSegs.forEach((s) => s.classList.toggle("active", s.dataset.phase === id));
-          howPanels.forEach((p) => p.classList.toggle("active", p.dataset.phase === id));
-        };
-        howSegs.forEach((seg) => {
-          const handler = () => activateHow(seg.dataset.phase);
-          const onKey = (e: KeyboardEvent) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              handler();
-            }
-          };
-          seg.addEventListener("mouseenter", handler);
-          seg.addEventListener("click", handler);
-          seg.addEventListener("focus", handler);
-          seg.addEventListener("keydown", onKey);
-          disposers.push(() => {
-            seg.removeEventListener("mouseenter", handler);
-            seg.removeEventListener("click", handler);
-            seg.removeEventListener("focus", handler);
-            seg.removeEventListener("keydown", onKey);
-          });
-        });
-      }
-
       // ─── Founders split-seam reveal ───
       const split = document.getElementById("founders-split");
       if (split) {
@@ -311,25 +273,15 @@ export default function HomePage() {
         });
       }
 
-      // ─── Services — index ↔ detail panel ───
-      const svcItems = Array.from(document.querySelectorAll(".svc-item")) as HTMLElement[];
-      const svcPanels = Array.from(document.querySelectorAll(".svc-panel")) as HTMLElement[];
-      if (svcItems.length) {
-        const activate = (id: string | undefined) => {
-          if (!id) return;
-          svcItems.forEach((i) => i.classList.toggle("active", i.dataset.svc === id));
-          svcPanels.forEach((p) => p.classList.toggle("active", p.dataset.svc === id));
-        };
-        svcItems.forEach((item) => {
-          const handler = () => activate(item.dataset.svc);
-          item.addEventListener("mouseenter", handler);
-          item.addEventListener("click", handler);
-          item.addEventListener("focus", handler);
-          disposers.push(() => {
-            item.removeEventListener("mouseenter", handler);
-            item.removeEventListener("click", handler);
-            item.removeEventListener("focus", handler);
-          });
+      // ─── Services bento — staggered fade-up on scroll ───
+      const svcCells = Array.from(document.querySelectorAll(".svc-cell")) as HTMLElement[];
+      if (svcCells.length) {
+        gsap.set(svcCells, { y: 26, autoAlpha: 0 });
+        ScrollTrigger.batch(svcCells, {
+          start: "top 88%",
+          once: true,
+          onEnter: (batch) =>
+            gsap.to(batch, { y: 0, autoAlpha: 1, duration: 0.6, stagger: 0.07, ease: "power3.out", overwrite: true }),
         });
       }
 
@@ -360,7 +312,35 @@ export default function HomePage() {
         initMagnetic(".btn-ghost", 0.2, 0.7);
       }
 
-      // ─── SplitReveal — word-by-word title reveal on scroll ───
+      disposers.push(() => ScrollTrigger.getAll().forEach((st) => st.kill()));
+    })();
+
+    return () => {
+      cancelled = true;
+      typeAbort.aborted = true;
+      disposers.forEach((fn) => fn());
+    };
+  }, []);
+
+  // ─── Language-dependent imperative effects ───
+  // The section titles (word-by-word reveal) and the compose typewriter write to
+  // the DOM directly, so React's text swap doesn't reach them. Re-run on `lang`
+  // change so they render in the active language. The titles carry key={lang},
+  // so React remounts them with fresh text before this effect re-splits them.
+  useEffect(() => {
+    const abort = { v: false };
+    const triggers: Array<{ kill: () => void }> = [];
+
+    // ── Title split-reveal (needs GSAP) ──
+    (async () => {
+      const [{ default: gsap }, { default: ScrollTrigger }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ]);
+      if (abort.v) return;
+      gsap.registerPlugin(ScrollTrigger);
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
       (Array.from(document.querySelectorAll("h2.section-title")) as HTMLElement[]).forEach((el) => {
         if (el.dataset.split) return;
         el.dataset.split = "1";
@@ -394,114 +374,98 @@ export default function HomePage() {
         Array.from(el.childNodes).forEach((c) => processNode(c, frag));
         el.innerHTML = "";
         el.appendChild(frag);
+        if (reduce) return;
         gsap.set(spans, { yPercent: 110, autoAlpha: 0 });
-        ScrollTrigger.create({
+        const st = ScrollTrigger.create({
           trigger: el,
           start: "top 82%",
           once: true,
           onEnter: () =>
             gsap.to(spans, { yPercent: 0, autoAlpha: 1, duration: 0.7, stagger: 0.04, ease: "power3.out", overwrite: true }),
         });
+        triggers.push(st);
       });
-
-      disposers.push(() => ScrollTrigger.getAll().forEach((st) => st.kill()));
-
-      // ─── Compose typewriter — types subject + body when contact in view ───
-      const subjectEl = document.getElementById("compose-subject");
-      const bodyEl = document.getElementById("compose-body");
-      const statusEl = document.getElementById("compose-status");
-      const contactSection = document.getElementById("contact");
-      if (subjectEl && bodyEl && contactSection) {
-        const draft = {
-          subject: "Our website looks like it was built in 2014.",
-          body: [
-            "Hi DS2, we run a <hl>family-owned restaurant group</hl> with four locations around the city. Our current site is a template we haven't touched in years and it shows.",
-            "We want something that actually looks <hl>premium</hl>, loads fast on a phone, with online bookings and menus we can keep updated ourselves.",
-            "Could we grab 30 minutes next week to talk it through?",
-          ],
-        };
-        const escapeHTML = (s: string) =>
-          s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        const setHTML = (el: Element, text: string, withCaret = false) => {
-          const html = text
-            .split(/(<\/?hl>)/)
-            .map((part) =>
-              part === "<hl>" ? '<span class="hl">' : part === "</hl>" ? "</span>" : escapeHTML(part)
-            )
-            .join("");
-          el.innerHTML = html + (withCaret ? '<span class="caret"></span>' : "");
-        }
-        const typeInto = async (el: Element, text: string, speed = 8) => {
-          let out = "";
-          for (let i = 0; i < text.length; i++) {
-            if (typeAbort.aborted) return;
-            const rest = text.slice(i);
-            if (rest.startsWith("<hl>")) {
-              out += "<hl>";
-              i += 3;
-              continue;
-            }
-            if (rest.startsWith("</hl>")) {
-              out += "</hl>";
-              i += 4;
-              continue;
-            }
-            out += text[i];
-            setHTML(el, out, true);
-            const ch = text[i];
-            let delay = speed + Math.random() * 6;
-            if (ch === "," || ch === ".") delay += 35;
-            if (ch === " ") delay = speed * 0.5;
-            await new Promise((r) => setTimeout(r, delay));
-          }
-          setHTML(el, out, true);
-        };
-        let started = false;
-        const start = async () => {
-          if (started) return;
-          started = true;
-          if (statusEl) statusEl.textContent = "Drafting · Athens / London";
-          bodyEl.innerHTML = "";
-          await typeInto(subjectEl, draft.subject, 9);
-          if (typeAbort.aborted) return;
-          setHTML(subjectEl, draft.subject, false);
-          for (let p = 0; p < draft.body.length; p++) {
-            if (typeAbort.aborted) return;
-            const paragraph = draft.body[p];
-            if (!paragraph) continue;
-            const pEl = document.createElement("p");
-            bodyEl.appendChild(pEl);
-            if (p > 0) {
-              const prev = bodyEl.children[p - 1];
-              if (prev) prev.innerHTML = prev.innerHTML.replace(/<span class="caret"><\/span>/, "");
-            }
-            await typeInto(pEl, paragraph, 6);
-            await new Promise((r) => setTimeout(r, 120));
-          }
-          if (statusEl && !typeAbort.aborted) statusEl.textContent = "Ready to send · Athens / London";
-        };
-        const obs = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((e) => {
-              if (e.isIntersecting) {
-                start();
-                obs.disconnect();
-              }
-            });
-          },
-          { threshold: 0.2 }
-        );
-        obs.observe(contactSection);
-        disposers.push(() => obs.disconnect());
-      }
     })();
 
+    // ── Compose typewriter (types the draft email in the active language) ──
+    const subjectEl = document.getElementById("compose-subject");
+    const bodyEl = document.getElementById("compose-body");
+    const statusEl = document.getElementById("compose-status");
+    const contactSection = document.getElementById("contact");
+    let obs: IntersectionObserver | null = null;
+
+    if (subjectEl && bodyEl && contactSection) {
+      // Clear any previously-typed (other-language) content immediately.
+      subjectEl.innerHTML = "";
+      bodyEl.innerHTML = "";
+      const c = t.contact;
+      const draft = { subject: c.draftSubject, body: c.draftBody };
+      const escapeHTML = (s: string) =>
+        s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      const setHTML = (el: Element, text: string, withCaret = false) => {
+        const html = text
+          .split(/(<\/?hl>)/)
+          .map((part) =>
+            part === "<hl>" ? '<span class="hl">' : part === "</hl>" ? "</span>" : escapeHTML(part)
+          )
+          .join("");
+        el.innerHTML = html + (withCaret ? '<span class="caret"></span>' : "");
+      };
+      const typeInto = async (el: Element, text: string, speed = 8) => {
+        let out = "";
+        for (let i = 0; i < text.length; i++) {
+          if (abort.v) return;
+          const rest = text.slice(i);
+          if (rest.startsWith("<hl>")) { out += "<hl>"; i += 3; continue; }
+          if (rest.startsWith("</hl>")) { out += "</hl>"; i += 4; continue; }
+          out += text[i];
+          setHTML(el, out, true);
+          const ch = text[i];
+          let delay = speed + Math.random() * 6;
+          if (ch === "," || ch === ".") delay += 35;
+          if (ch === " ") delay = speed * 0.5;
+          await new Promise((r) => setTimeout(r, delay));
+        }
+        setHTML(el, out, true);
+      };
+      const start = async () => {
+        if (statusEl) statusEl.textContent = c.statusDrafting;
+        bodyEl.innerHTML = "";
+        await typeInto(subjectEl, draft.subject, 9);
+        if (abort.v) return;
+        setHTML(subjectEl, draft.subject, false);
+        for (let p = 0; p < draft.body.length; p++) {
+          if (abort.v) return;
+          const paragraph = draft.body[p];
+          if (!paragraph) continue;
+          const pEl = document.createElement("p");
+          bodyEl.appendChild(pEl);
+          if (p > 0) {
+            const prev = bodyEl.children[p - 1];
+            if (prev) prev.innerHTML = prev.innerHTML.replace(/<span class="caret"><\/span>/, "");
+          }
+          await typeInto(pEl, paragraph, 6);
+          await new Promise((r) => setTimeout(r, 120));
+        }
+        if (statusEl && !abort.v) statusEl.textContent = c.statusReady;
+      };
+      obs = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) { start(); obs?.disconnect(); }
+          });
+        },
+        { threshold: 0.2 }
+      );
+      obs.observe(contactSection);
+    }
+
     return () => {
-      cancelled = true;
-      typeAbort.aborted = true;
-      disposers.forEach((fn) => fn());
+      abort.v = true;
+      triggers.forEach((st) => st.kill());
+      obs?.disconnect();
     };
-  }, []);
+  }, [lang, t]);
 
   return (
     <>
@@ -514,10 +478,11 @@ export default function HomePage() {
           </a>
           <div className="nav-right">
             <ul className="nav-links">
-              <li><a href="/portfolio">Portfolio</a></li>
-              <li><a href="/about">About</a></li>
+              <li><a href="/portfolio">{t.nav.portfolio}</a></li>
+              <li><a href="/about">{t.nav.about}</a></li>
             </ul>
-            <ContactCTA size="sm" onOpen={() => setChatOpen(true)} />
+            <LangToggle />
+            <ContactCTA size="sm" label={t.cta.send} onOpen={() => setChatOpen(true)} />
           </div>
         </div>
       </nav>
@@ -539,15 +504,13 @@ export default function HomePage() {
           />
         </div>
         <div className="tagline">
-          <div className="tagline-1">Digital Solutions</div>
-          <div className="tagline-2">consulting</div>
+          <div className="tagline-1">{t.hero.tag1}</div>
+          <div className="tagline-2">{t.hero.tag2}</div>
         </div>
-        <p className="hero-sub">
-          A senior team for strategy, engineering, and applied AI. We work best when we can be honest early, even if that means challenging the initial idea.
-        </p>
+        <p className="hero-sub">{t.hero.sub}</p>
         <div className="cta-row">
-          <ContactCTA onOpen={() => setChatOpen(true)} />
-          <a href="#services" className="btn btn-ghost">What we do</a>
+          <ContactCTA label={t.cta.send} onOpen={() => setChatOpen(true)} />
+          <a href="#services" className="btn btn-ghost">{t.hero.what}</a>
         </div>
       </section>
 
@@ -555,128 +518,64 @@ export default function HomePage() {
       <section className="section" id="services">
         <div className="wrap">
           <div className="section-head">
-            <div className="eyebrow">Services</div>
-            <h2 className="section-title">Six things we build, <em>and we build them seriously.</em></h2>
-            <p className="section-sub">No menu padding. Each of these is something we'd take responsibility for end-to-end, or refuse the engagement.</p>
+            <div className="eyebrow">{t.services.eyebrow}</div>
+            <h2 key={lang} className="section-title">{t.services.title} <em>{t.services.titleEm}</em></h2>
+            <p className="section-sub">{t.services.sub}</p>
           </div>
-          <div className="svc-split">
-            <div className="svc-index" id="svc-index">
-              <div className="svc-item active" data-svc="0" tabIndex={0}>
-                <div className="svc-item-num">01</div>
-                <div className="svc-item-name">Websites</div>
-                <div className="svc-item-arrow" />
+          <div className="svc-grid">
+            <article className="svc-cell">
+              <div className="svc-cell-top">
+                <div className="svc-cell-icon"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="7" width="30" height="22" rx="2"/><path d="M5 13h30"/><circle cx="9" cy="10" r="0.7" fill="currentColor"/><circle cx="12" cy="10" r="0.7" fill="currentColor"/><path d="M14 33h12"/><path d="M20 29v4"/></svg></div>
+                <span className="svc-cell-num">01</span>
               </div>
-              <div className="svc-item" data-svc="1" tabIndex={0}>
-                <div className="svc-item-num">02</div>
-                <div className="svc-item-name">Chatbots</div>
-                <div className="svc-item-arrow" />
-              </div>
-              <div className="svc-item" data-svc="2" tabIndex={0}>
-                <div className="svc-item-num">03</div>
-                <div className="svc-item-name">AI agents</div>
-                <div className="svc-item-arrow" />
-              </div>
-              <div className="svc-item" data-svc="3" tabIndex={0}>
-                <div className="svc-item-num">04</div>
-                <div className="svc-item-name">Data solutions</div>
-                <div className="svc-item-arrow" />
-              </div>
-              <div className="svc-item" data-svc="4" tabIndex={0}>
-                <div className="svc-item-num">05</div>
-                <div className="svc-item-name">ML pipelines</div>
-                <div className="svc-item-arrow" />
-              </div>
-              <div className="svc-item" data-svc="5" tabIndex={0}>
-                <div className="svc-item-num">06</div>
-                <div className="svc-item-name">App development</div>
-                <div className="svc-item-arrow" />
-              </div>
-            </div>
-            <div className="svc-detail" id="svc-detail">
-              <div className="svc-panel active" data-svc="0">
-                <div className="svc-panel-eyebrow">01 · Websites</div>
-                <div className="svc-panel-icon"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="7" width="30" height="22" rx="2"/><path d="M5 13h30"/><circle cx="9" cy="10" r="0.7" fill="currentColor"/><circle cx="12" cy="10" r="0.7" fill="currentColor"/><path d="M14 33h12"/><path d="M20 29v4"/></svg></div>
-                <h3 className="svc-panel-title">Marketing and product sites in Next.js / React.</h3>
-                <p className="svc-panel-body">Fast, accessible, on-brand, hosted on premium infrastructure. We don't build template sites with plugins glued together. We ship code we'd be willing to maintain ourselves.</p>
-                <div className="svc-ship"><strong>Ships:</strong>&nbsp;Production site · design system · hosting &amp; analytics setup</div>
-              </div>
-              <div className="svc-panel" data-svc="1">
-                <div className="svc-panel-eyebrow">02 · Chatbots</div>
-                <div className="svc-panel-icon"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M7 9h20a4 4 0 0 1 4 4v9a4 4 0 0 1-4 4H17l-6 5v-5H7a4 4 0 0 1-4-4v-9a4 4 0 0 1 4-4z"/><circle cx="13" cy="17.5" r="1" fill="currentColor"/><circle cx="19" cy="17.5" r="1" fill="currentColor"/><circle cx="25" cy="17.5" r="1" fill="currentColor"/></svg></div>
-                <h3 className="svc-panel-title">Production LLM assistants, not toy demos.</h3>
-                <p className="svc-panel-body">Grounded retrieval, prompt caching, session memory, cost tracking, a clear knowledge boundary. The kind of chatbot you can put in front of customers and not lose sleep over the bill or the answers.</p>
-                <div className="svc-ship"><strong>Ships:</strong>&nbsp;Deployed assistant · evaluation harness · cost dashboard</div>
-              </div>
-              <div className="svc-panel" data-svc="2">
-                <div className="svc-panel-eyebrow">03 · AI agents</div>
-                <div className="svc-panel-icon"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><circle cx="20" cy="20" r="4"/><circle cx="8" cy="8" r="2.5"/><circle cx="32" cy="8" r="2.5"/><circle cx="8" cy="32" r="2.5"/><circle cx="32" cy="32" r="2.5"/><path d="M10 10l7 7M30 10l-7 7M10 30l7-7M30 30l-7-7"/></svg></div>
-                <h3 className="svc-panel-title">Multi-step autonomous workflows that actually finish.</h3>
-                <p className="svc-panel-body">Research, outreach, analysis, internal automation. Built on the Claude Agent SDK with tool-use, retries, and observability already wired in, not bolted on after the demo lands.</p>
-                <div className="svc-ship"><strong>Ships:</strong>&nbsp;Production agent · tool catalogue · run trace UI</div>
-              </div>
-              <div className="svc-panel" data-svc="3">
-                <div className="svc-panel-eyebrow">04 · Data solutions</div>
-                <div className="svc-panel-icon"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 33V20"/><path d="M13 33V14"/><path d="M21 33V8"/><path d="M29 33V17"/><path d="M5 33h32"/><circle cx="5" cy="20" r="1.4" fill="currentColor"/><circle cx="13" cy="14" r="1.4" fill="currentColor"/><circle cx="21" cy="8" r="1.4" fill="currentColor"/><circle cx="29" cy="17" r="1.4" fill="currentColor"/></svg></div>
-                <h3 className="svc-panel-title">Bring us a dataset, we tell you what it actually says.</h3>
-                <p className="svc-panel-body">Descriptive analytics, cohort analysis, dashboards, insight reports. One-off study or a recurring stream of insight. We own the analysis end-to-end and stand behind the conclusions.</p>
-                <div className="svc-ship"><strong>Ships:</strong>&nbsp;Insight memo · dashboards · data quality audit</div>
-              </div>
-              <div className="svc-panel" data-svc="4">
-                <div className="svc-panel-eyebrow">05 · ML pipelines</div>
-                <div className="svc-panel-icon"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="10" cy="10" rx="5" ry="2.5"/><path d="M5 10v6c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5v-6"/><path d="M5 16v6c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5v-6"/><path d="M15 18l5 4 5-4"/><path d="M20 22v-6"/><circle cx="30" cy="22" r="5"/><path d="M30 19v6M27 22h6"/></svg></div>
-                <h3 className="svc-panel-title">From raw data to served prediction.</h3>
-                <p className="svc-panel-body">Model training, evaluation, monitoring, deployment. We build the pipeline, not the notebook. If it can't be retrained next quarter without us in the room, we haven't finished the job.</p>
-                <div className="svc-ship"><strong>Ships:</strong>&nbsp;Training &amp; serving stack · drift monitoring · runbooks</div>
-              </div>
-              <div className="svc-panel" data-svc="5">
-                <div className="svc-panel-eyebrow">06 · App development</div>
-                <div className="svc-panel-icon"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><rect x="12" y="4" width="16" height="32" rx="3"/><path d="M12 9h16"/><path d="M12 31h16"/><circle cx="20" cy="33.5" r="0.9" fill="currentColor"/></svg></div>
-                <h3 className="svc-panel-title">Native iOS and Android, cross-platform when it fits.</h3>
-                <p className="svc-panel-body">We pick the stack the engagement actually needs, not the one with the busiest GitHub. The phone is a hard surface; the app should feel like it belongs there.</p>
-                <div className="svc-ship"><strong>Ships:</strong>&nbsp;Shipped app · TestFlight / Play setup · CI for store releases</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+              <h3 className="svc-cell-name">{t.services.items[0].name}</h3>
+              <p className="svc-cell-body">{t.services.items[0].body}</p>
+            </article>
 
-      {/* ─── How we work — proportional duration bar ──── */}
-      <section className="section" id="how">
-        <div className="wrap">
-          <div className="section-head">
-            <div className="eyebrow">How we work</div>
-            <h2 className="section-title">One week to plan. <em>The rest to build.</em></h2>
-            <p className="section-sub">Discovery and framing happen together in week one. Decision in week two. Then we build until it's good.</p>
-          </div>
-          <div className="how-variant">
-            <div className="how-strip" id="how-strip">
-              <div className="strip-bar">
-                <div className="strip-seg strip-discovery active" data-phase="0" role="button" tabIndex={0} aria-label="Discovery, week one" style={{ flex: 1 }}><span>Discovery</span><span className="seg-week">W1 · parallel</span></div>
-                <div className="strip-seg strip-decide" data-phase="1" role="button" tabIndex={0} aria-label="Decide, week two" style={{ flex: 1 }}><span>Decide</span><span className="seg-week">W2</span></div>
-                <div className="strip-seg strip-build" data-phase="2" role="button" tabIndex={0} aria-label="Build and deliver, week three onward" style={{ flex: 6 }}><span>Build &amp; deliver</span><span className="seg-week">W3+ &nbsp;→&nbsp; ◆ deliver</span></div>
+            <article className="svc-cell">
+              <div className="svc-cell-top">
+                <div className="svc-cell-icon"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M7 9h20a4 4 0 0 1 4 4v9a4 4 0 0 1-4 4H17l-6 5v-5H7a4 4 0 0 1-4-4v-9a4 4 0 0 1 4-4z"/><circle cx="13" cy="17.5" r="1" fill="currentColor"/><circle cx="19" cy="17.5" r="1" fill="currentColor"/><circle cx="25" cy="17.5" r="1" fill="currentColor"/></svg></div>
+                <span className="svc-cell-num">02</span>
               </div>
-              <div className="strip-axis">
-                <span>kickoff</span>
-                <span>deliver →</span>
+              <h3 className="svc-cell-name">{t.services.items[1].name}</h3>
+              <p className="svc-cell-body">{t.services.items[1].body}</p>
+            </article>
+
+            <article className="svc-cell">
+              <div className="svc-cell-top">
+                <div className="svc-cell-icon"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><circle cx="20" cy="20" r="4"/><circle cx="8" cy="8" r="2.5"/><circle cx="32" cy="8" r="2.5"/><circle cx="8" cy="32" r="2.5"/><circle cx="32" cy="32" r="2.5"/><path d="M10 10l7 7M30 10l-7 7M10 30l7-7M30 30l-7-7"/></svg></div>
+                <span className="svc-cell-num">03</span>
               </div>
-            </div>
-            <div className="how-detail" id="how-detail">
-              <div className="how-panel active" data-phase="0">
-                <div className="how-panel-eyebrow">W1 · Discovery</div>
-                <p className="how-panel-what">We read the code, the data, the team and the decisions already in flight before we propose anything.</p>
-                <p className="how-panel-why">So we can challenge the idea early, while changing direction is still cheap.</p>
+              <h3 className="svc-cell-name">{t.services.items[2].name}</h3>
+              <p className="svc-cell-body">{t.services.items[2].body}</p>
+            </article>
+
+            <article className="svc-cell">
+              <div className="svc-cell-top">
+                <div className="svc-cell-icon"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 33V20"/><path d="M13 33V14"/><path d="M21 33V8"/><path d="M29 33V17"/><path d="M5 33h32"/><circle cx="5" cy="20" r="1.4" fill="currentColor"/><circle cx="13" cy="14" r="1.4" fill="currentColor"/><circle cx="21" cy="8" r="1.4" fill="currentColor"/><circle cx="29" cy="17" r="1.4" fill="currentColor"/></svg></div>
+                <span className="svc-cell-num">04</span>
               </div>
-              <div className="how-panel" data-phase="1">
-                <div className="how-panel-eyebrow">W2 · Decide</div>
-                <p className="how-panel-what">We frame the risks and lay out the real options with the tradeoffs in your language, then decide on the evidence.</p>
-                <p className="how-panel-why">If the call matters it goes to you to sign off, never as a done deal.</p>
+              <h3 className="svc-cell-name">{t.services.items[3].name}</h3>
+              <p className="svc-cell-body">{t.services.items[3].body}</p>
+            </article>
+
+            <article className="svc-cell">
+              <div className="svc-cell-top">
+                <div className="svc-cell-icon"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="10" cy="10" rx="5" ry="2.5"/><path d="M5 10v6c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5v-6"/><path d="M5 16v6c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5v-6"/><path d="M15 18l5 4 5-4"/><path d="M20 22v-6"/><circle cx="30" cy="22" r="5"/><path d="M30 19v6M27 22h6"/></svg></div>
+                <span className="svc-cell-num">05</span>
               </div>
-              <div className="how-panel" data-phase="2">
-                <div className="how-panel-eyebrow">W3+ · Build &amp; deliver</div>
-                <p className="how-panel-what">We build to quality and keep going until you'd recommend the result, not until the hours run out.</p>
-                <p className="how-panel-why">The bar is yours, not ours. Projects end; responsibility doesn't.</p>
+              <h3 className="svc-cell-name">{t.services.items[4].name}</h3>
+              <p className="svc-cell-body">{t.services.items[4].body}</p>
+            </article>
+
+            <article className="svc-cell">
+              <div className="svc-cell-top">
+                <div className="svc-cell-icon"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><rect x="12" y="4" width="16" height="32" rx="3"/><path d="M12 9h16"/><path d="M12 31h16"/><circle cx="20" cy="33.5" r="0.9" fill="currentColor"/></svg></div>
+                <span className="svc-cell-num">06</span>
               </div>
-            </div>
+              <h3 className="svc-cell-name">{t.services.items[5].name}</h3>
+              <p className="svc-cell-body">{t.services.items[5].body}</p>
+            </article>
           </div>
         </div>
       </section>
@@ -684,9 +583,9 @@ export default function HomePage() {
       {/* ─── Thesis ──────────────────────────────────── */}
       <section className="thesis-section" id="thesis">
         <figure className="thesis">
-          <div className="thesis-eyebrow">A working principle</div>
-          <blockquote>The biggest cost is <em>lack of knowledge</em>.</blockquote>
-          <figcaption>— DS2</figcaption>
+          <div className="thesis-eyebrow">{t.thesis.eyebrow}</div>
+          <blockquote>{t.thesis.quote}<em>{t.thesis.quoteEm}</em>{t.thesis.quoteEnd}</blockquote>
+          <figcaption>{t.thesis.by}</figcaption>
         </figure>
       </section>
 
@@ -694,72 +593,72 @@ export default function HomePage() {
       <section className="section" id="engage">
         <div className="wrap">
           <div className="section-head">
-            <div className="eyebrow">How we engage</div>
-            <h2 className="section-title">Three modes. <em>You pick one.</em></h2>
-            <p className="section-sub">No bundles, no upsell. Each mode is its own contract, scoped to what you actually need.</p>
+            <div className="eyebrow">{t.engage.eyebrow}</div>
+            <h2 key={lang} className="section-title">{t.engage.title} <em>{t.engage.titleEm}</em></h2>
+            <p className="section-sub">{t.engage.sub}</p>
           </div>
           <div className="modes">
             <article className="mode m1">
               <div className="mode-head">
                 <div className="mode-head-text">
-                  <div className="mode-num">MODE 01</div>
-                  <h3>Consulting only.</h3>
-                  <div className="mode-best"><strong>Best for:</strong> teams who already build, but want a second pair of senior eyes.</div>
+                  <div className="mode-num">{t.engage.modes[0].num}</div>
+                  <h3>{t.engage.modes[0].title}</h3>
+                  <div className="mode-best"><strong>{t.engage.modes[0].bestLabel}</strong>{t.engage.modes[0].best}</div>
                 </div>
                 <div className="mode-bigfig">01</div>
               </div>
-              <p>We pressure-test the plan, the architecture and the team, without writing a line of code.</p>
+              <p>{t.engage.modes[0].desc}</p>
               <div className="mode-stack">
-                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">Strategy &amp; diagnostic</div><div className="stack-tag">included</div></div>
-                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">Build &amp; delivery</div><div className="stack-tag">—</div></div>
-                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">Handover docs</div><div className="stack-tag">—</div></div>
-                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">Stewardship</div><div className="stack-tag">add-on</div></div>
+                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.strategy}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
+                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.build}</div><div className="stack-tag">{t.engage.tags.none}</div></div>
+                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.handover}</div><div className="stack-tag">{t.engage.tags.none}</div></div>
+                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.stewardship}</div><div className="stack-tag">{t.engage.tags.addon}</div></div>
               </div>
             </article>
 
             <article className="mode m2">
               <div className="mode-head">
                 <div className="mode-head-text">
-                  <div className="mode-num">MODE 02</div>
-                  <h3>Build only.</h3>
-                  <div className="mode-best"><strong>Best for:</strong> when the spec is clear and you need senior hands to ship it.</div>
+                  <div className="mode-num">{t.engage.modes[1].num}</div>
+                  <h3>{t.engage.modes[1].title}</h3>
+                  <div className="mode-best"><strong>{t.engage.modes[1].bestLabel}</strong>{t.engage.modes[1].best}</div>
                 </div>
                 <div className="mode-bigfig">02</div>
               </div>
-              <p>You bring the spec. We ship it with senior engineers and weekly visibility, in code we'd maintain ourselves.</p>
+              <p>{t.engage.modes[1].desc}</p>
               <div className="mode-stack">
-                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">Strategy &amp; diagnostic</div><div className="stack-tag">—</div></div>
-                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">Build &amp; delivery</div><div className="stack-tag">included</div></div>
-                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">Handover docs</div><div className="stack-tag">included</div></div>
-                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">Stewardship</div><div className="stack-tag">add-on</div></div>
+                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.strategy}</div><div className="stack-tag">{t.engage.tags.none}</div></div>
+                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.build}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
+                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.handover}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
+                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.stewardship}</div><div className="stack-tag">{t.engage.tags.addon}</div></div>
               </div>
             </article>
 
             <article className="mode m3">
               <div className="mode-head">
                 <div className="mode-head-text">
-                  <div className="mode-num">MODE 03</div>
-                  <h3>End-to-end.</h3>
-                  <div className="mode-best"><strong>Best for:</strong> early ideas, ambiguous problems, full accountability under one roof.</div>
+                  <div className="mode-num">{t.engage.modes[2].num}</div>
+                  <h3>{t.engage.modes[2].title}</h3>
+                  <div className="mode-best"><strong>{t.engage.modes[2].bestLabel}</strong>{t.engage.modes[2].best}</div>
                 </div>
                 <div className="mode-bigfig">03</div>
               </div>
-              <p>Strategy, design, build and handoff under one roof. Where challenge-first pays back the most.</p>
+              <p>{t.engage.modes[2].desc}</p>
               <div className="mode-stack">
-                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">Strategy &amp; diagnostic</div><div className="stack-tag">included</div></div>
-                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">Build &amp; delivery</div><div className="stack-tag">included</div></div>
-                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">Handover docs</div><div className="stack-tag">included</div></div>
-                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">Stewardship</div><div className="stack-tag">included</div></div>
+                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.strategy}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
+                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.build}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
+                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.handover}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
+                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.stewardship}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
               </div>
             </article>
           </div>
           <div className="stewardship">
-            <span className="stewardship-tag">Optional</span>
-            <p><strong>Stewardship.</strong> A monthly retainer after delivery. We keep eyes on what we built. Patching, monitoring, and the occasional honest call when something's drifting.</p>
+            <span className="stewardship-tag">{t.engage.stewardshipTag}</span>
+            <p><strong>{t.engage.stewardshipLead}</strong>{t.engage.stewardshipRest}</p>
           </div>
           <div className="engage-cta">
-            <p>Not sure which one fits? Tell us what you're trying to do and we'll point you straight.</p>
-            <ContactCTA onOpen={() => setChatOpen(true)} />
+            <p>{t.engage.ctaText}</p>
+            <ContactCTA label={t.cta.send} onOpen={() => setChatOpen(true)} />
           </div>
         </div>
       </section>
@@ -768,28 +667,28 @@ export default function HomePage() {
       <section className="section" id="founders">
         <div className="wrap">
           <div className="section-head">
-            <div className="eyebrow">Team</div>
-            <h2 className="section-title">Two senior founders. <em>No layers in between.</em></h2>
-            <p className="section-sub">When you talk to DS2, you talk to one of these two. That doesn't change as the engagement grows.</p>
+            <div className="eyebrow">{t.founders.eyebrow}</div>
+            <h2 key={lang} className="section-title">{t.founders.title} <em>{t.founders.titleEm}</em></h2>
+            <p className="section-sub">{t.founders.sub}</p>
           </div>
           <div className="founders-split" id="founders-split">
             <article className="founder-half left">
               <div className="photo" />
-              <div className="founder-role">Founder</div>
-              <h3>Head of Strategy &amp; Consulting.</h3>
-              <p>Client relationships, commercial strategy, advisory. The person who asks the uncomfortable questions early, so they're not asked late by someone with less context.</p>
-              <div className="founder-loc">Athens</div>
+              <div className="founder-role">{t.founders.role}</div>
+              <h3>{t.founders.f1Title}</h3>
+              <p>{t.founders.f1Desc}</p>
+              <div className="founder-loc">{t.founders.f1Loc}</div>
             </article>
             <article className="founder-half right">
               <div className="photo" />
-              <div className="founder-role">Founder</div>
-              <h3>Head of Engineering &amp; Data.</h3>
-              <p>Architecture, data and ML, technical delivery. The person who decides whether what we're proposing will still be standing in three years, and says so before we ship it.</p>
-              <div className="founder-loc">London</div>
+              <div className="founder-role">{t.founders.role}</div>
+              <h3>{t.founders.f2Title}</h3>
+              <p>{t.founders.f2Desc}</p>
+              <div className="founder-loc">{t.founders.f2Loc}</div>
             </article>
           </div>
           <div className="quote-band" style={{ marginTop: 56 }}>
-            <blockquote>We don't certify your organisation. We take responsibility for what we build.</blockquote>
+            <blockquote>{t.founders.quote}</blockquote>
           </div>
         </div>
       </section>
@@ -798,15 +697,15 @@ export default function HomePage() {
       <section className="section" id="contact">
         <div className="wrap">
           <div className="section-head">
-            <div className="eyebrow">Contact</div>
-            <h2 className="section-title">Tell us what you're <em>actually</em> trying to do.</h2>
-            <p className="section-sub">Three lines is enough. We'll write back within the week, usually the same day.</p>
+            <div className="eyebrow">{t.contact.eyebrow}</div>
+            <h2 key={lang} className="section-title">{t.contact.title}<em>{t.contact.titleEm}</em>{t.contact.titleEnd}</h2>
+            <p className="section-sub">{t.contact.sub}</p>
           </div>
           <div className="compose-shell">
             <div className="compose-window">
               <div className="compose-titlebar">
                 <div className="traffic-lights"><span /><span /><span /></div>
-                <div className="compose-title">New Message</div>
+                <div className="compose-title">{t.contact.newMessage}</div>
                 <div />
               </div>
               <div className="compose-toolbar">
@@ -821,15 +720,15 @@ export default function HomePage() {
               </div>
               <div className="compose-headers">
                 <div className="row">
-                  <span className="label">From:</span>
+                  <span className="label">{t.contact.from}</span>
                   <span className="value">you@yourcompany.com</span>
                 </div>
                 <div className="row">
-                  <span className="label">To:</span>
-                  <span className="value"><span className="pill">hello@ds2-consulting.com</span></span>
+                  <span className="label">{t.contact.to}</span>
+                  <span className="value"><span className="pill">ds2consulting.contact@gmail.com</span></span>
                 </div>
                 <div className="row">
-                  <span className="label">Subject:</span>
+                  <span className="label">{t.contact.subject}</span>
                   <span className="value" id="compose-subject" />
                 </div>
               </div>
@@ -837,28 +736,28 @@ export default function HomePage() {
               <div className="compose-footer">
                 <div className="compose-foot-meta">
                   <span className="dot" />
-                  <span id="compose-status">Drafting · Athens / London</span>
+                  <span id="compose-status">{t.contact.statusDrafting}</span>
                 </div>
                 <div className="compose-actions">
-                  <ContactCTA size="sm" onOpen={() => setChatOpen(true)} />
+                  <ContactCTA size="sm" label={t.cta.send} onOpen={() => setChatOpen(true)} />
                 </div>
               </div>
             </div>
             <div className="compose-caption">
-              {"// Founded 2026. Taking on partners through Q4. Or just write us at "}
-              <a href="mailto:hello@ds2-consulting.com">hello@ds2-consulting.com</a>
+              {t.contact.caption}
+              <a href="mailto:ds2consulting.contact@gmail.com">ds2consulting.contact@gmail.com</a>
             </div>
           </div>
         </div>
       </section>
 
       <footer>
-        <div>© 2026 DS2 — Digital Solutions Consulting · Athens · London</div>
+        <div>{t.footer.copyright}</div>
         <ul className="links">
-          <li><a href="#services">Services</a></li>
-          <li><a href="/portfolio">Portfolio</a></li>
-          <li><a href="/about">About</a></li>
-          <li><ContactCTA size="sm" onOpen={() => setChatOpen(true)} /></li>
+          <li><a href="#services">{t.footer.services}</a></li>
+          <li><a href="/portfolio">{t.footer.portfolio}</a></li>
+          <li><a href="/about">{t.footer.about}</a></li>
+          <li><ContactCTA size="sm" label={t.cta.send} onOpen={() => setChatOpen(true)} /></li>
         </ul>
       </footer>
 

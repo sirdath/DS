@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import ContactPanel, { ContactCTA } from "./contact-panel";
+import { useT, LangToggle } from "./i18n";
 
 const ContactCtx = createContext<() => void>(() => {});
 /** Open the shared contact panel from anywhere inside a PageChrome. */
@@ -13,6 +14,7 @@ export const useOpenContact = () => useContext(ContactCtx);
  *  without touching it. Elements with class `reveal` fade up on scroll. */
 export default function PageChrome({ children }: { children: ReactNode }) {
   const [chatOpen, setChatOpen] = useState(false);
+  const t = useT();
 
   useEffect(() => {
     let cancelled = false;
@@ -63,10 +65,11 @@ export default function PageChrome({ children }: { children: ReactNode }) {
           </Link>
           <div className="nav-right">
             <ul className="nav-links">
-              <li><Link href="/portfolio">Portfolio</Link></li>
-              <li><Link href="/about">About</Link></li>
+              <li><Link href="/portfolio">{t.nav.portfolio}</Link></li>
+              <li><Link href="/about">{t.nav.about}</Link></li>
             </ul>
-            <ContactCTA size="sm" onOpen={() => setChatOpen(true)} />
+            <LangToggle />
+            <ContactCTA size="sm" label={t.cta.send} onOpen={() => setChatOpen(true)} />
           </div>
         </div>
       </nav>
@@ -74,11 +77,11 @@ export default function PageChrome({ children }: { children: ReactNode }) {
       {children}
 
       <footer>
-        <div>© 2026 DS2 — Digital Solutions Consulting · Athens · London</div>
+        <div>{t.footer.copyright}</div>
         <ul className="links">
-          <li><Link href="/about">About</Link></li>
-          <li><Link href="/portfolio">Portfolio</Link></li>
-          <li><Link href="/#services">Services</Link></li>
+          <li><Link href="/about">{t.footer.about}</Link></li>
+          <li><Link href="/portfolio">{t.footer.portfolio}</Link></li>
+          <li><Link href="/#services">{t.footer.services}</Link></li>
         </ul>
       </footer>
 

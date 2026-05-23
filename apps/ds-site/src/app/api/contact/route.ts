@@ -189,7 +189,7 @@ export async function POST(request: Request): Promise<Response> {
   } catch (err) {
     console.error("[contact] delivery failed:", err);
     return NextResponse.json(
-      { ok: false, error: "Couldn't send that just now. Email hello@ds2-consulting.com and we'll pick it up." },
+      { ok: false, error: "Couldn't send that just now. Email ds2consulting.contact@gmail.com and we'll pick it up." },
       { status: 502 }
     );
   }

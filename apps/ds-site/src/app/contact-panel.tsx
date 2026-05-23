@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useT } from "./i18n";
 
 type Status = "idle" | "sending" | "sent" | "error";
 type Thread = { id: number; sig: string };
@@ -30,12 +31,13 @@ export function ContactCTA({
       className={`cta${size === "sm" ? " cta--sm" : ""}${className ? ` ${className}` : ""}`}
       onClick={onOpen}
     >
+      {label}
       <span className="cta__icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M20 4H4a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h3v3.5L11.5 17H20a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z" />
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M22 2 11 13" />
+          <path d="M22 2 15 22l-4-9-9-4 20-7Z" />
         </svg>
       </span>
-      {label}
     </button>
   );
 }
@@ -60,6 +62,7 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
   const scrollRef = useRef<HTMLDivElement>(null);
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
+  const P = useT().panel;
 
   if (open && !sessionId.current) sessionId.current = makeId();
 
@@ -114,11 +117,11 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
     const n = name.trim();
     const msg = draft.trim();
     if (!n) {
-      setError("Add your name first.");
+      setError(P.errName);
       return;
     }
     if (!msg) {
-      setError("Write a message first.");
+      setError(P.errMsg);
       return;
     }
     setStatus("sending");
@@ -148,7 +151,7 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
       };
       if (!res.ok || !data.ok) {
         setStatus("error");
-        setError(data.error || "Something went wrong. Try again.");
+        setError(data.error || P.errGeneric);
         return;
       }
       if (typeof data.threadId === "number" && data.threadSig) {
@@ -159,7 +162,7 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
       setStatus("sent");
     } catch {
       setStatus("error");
-      setError("Couldn't reach us. Check your connection and retry.");
+      setError(P.errNetwork);
     }
   }
 
@@ -174,7 +177,7 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
     return (
       <button type="button" className="cpanel-tab" onClick={() => setMinimized(false)} aria-label="Reopen your message to DS2">
         <span className="cpanel-tab-dot" />
-        Message DS2
+        {P.tab}
       </button>
     );
   }
@@ -218,16 +221,16 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
               onClick={() => setMaximized((m) => !m)}
             />
           </div>
-          <div className="cpanel-bar-title">Message DS2</div>
+          <div className="cpanel-bar-title">{P.title}</div>
           <button type="button" className="cpanel-x" aria-label="Close" onClick={onClose}>✕</button>
         </div>
 
         <div className="cpanel-body" ref={scrollRef}>
           <div className="cpanel-intro">
             {locked ? (
-              <>Talking to <strong>{name}</strong>{company ? <> · {company}</> : null}{email ? <> · {email}</> : null}. We read every message.</>
+              <>{P.introLockedPrefix}<strong>{name}</strong>{company ? <> · {company}</> : null}{email ? <> · {email}</> : null}{P.introLockedSuffix}</>
             ) : (
-              <>No forms, no login. Tell us what you{"’"}re trying to do and it lands straight with the two of us.</>
+              <>{P.introUnlocked}</>
             )}
           </div>
 
@@ -236,7 +239,7 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
               <input
                 ref={firstFieldRef}
                 className="cpanel-input"
-                placeholder="Your name"
+                placeholder={P.phName}
                 value={name}
                 maxLength={80}
                 onChange={(e) => setName(e.target.value)}
@@ -244,14 +247,14 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
               <div className="cpanel-fields-row">
                 <input
                   className="cpanel-input"
-                  placeholder="Company (optional)"
+                  placeholder={P.phCompany}
                   value={company}
                   maxLength={100}
                   onChange={(e) => setCompany(e.target.value)}
                 />
                 <input
                   className="cpanel-input"
-                  placeholder="Where you're based (optional)"
+                  placeholder={P.phCountry}
                   value={country}
                   maxLength={64}
                   onChange={(e) => setCountry(e.target.value)}
@@ -259,7 +262,7 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
               </div>
               <input
                 className="cpanel-input"
-                placeholder="Email (optional, so we can reply)"
+                placeholder={P.phEmail}
                 value={email}
                 maxLength={160}
                 onChange={(e) => setEmail(e.target.value)}
@@ -273,7 +276,7 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
 
           {locked && status === "sent" && (
             <div className="cpanel-ack">
-              Delivered to DS2{email ? " · we’ll reply by email" : " · add an email above if you’d like a reply"}.
+              {P.ackBase}{email ? P.ackWithEmail : P.ackNoEmail}.
             </div>
           )}
         </div>
@@ -291,7 +294,7 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
         <div className="cpanel-compose">
           <textarea
             className="cpanel-textarea"
-            placeholder={locked ? "Add another message…" : "What are you trying to build?"}
+            placeholder={locked ? P.composeLocked : P.composeUnlocked}
             value={draft}
             maxLength={2000}
             rows={2}
@@ -299,7 +302,7 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
             onKeyDown={onKeyDown}
           />
           <button type="button" className="cpanel-send" onClick={() => void send()} disabled={status === "sending"}>
-            {status === "sending" ? "Sending…" : "Send"}
+            {status === "sending" ? P.sending : P.send}
             <span className="cpanel-send-arrow" aria-hidden="true">→</span>
           </button>
         </div>
@@ -310,8 +313,8 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
             {error
               ? error
               : status === "sent"
-                ? "Sent · Athens / London"
-                : "Athens / London · usually same-day"}
+                ? P.footSent
+                : P.footIdle}
           </span>
         </div>
       </div>
