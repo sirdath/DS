@@ -19,6 +19,7 @@ type Three<T> = [T, T, T];
 export interface Dict {
   nav: { portfolio: string; about: string };
   cta: { send: string };
+  poweredBy: string;
   hero: { tag1: string; tag2: string; sub: string; what: string };
   services: {
     eyebrow: string;
@@ -125,6 +126,7 @@ export interface Dict {
 const en: Dict = {
   nav: { portfolio: "Portfolio", about: "About" },
   cta: { send: "Send a message" },
+  poweredBy: "Powered by",
   hero: {
     tag1: "Digital Solutions",
     tag2: "consulting",
@@ -331,6 +333,7 @@ const en: Dict = {
 const el: Dict = {
   nav: { portfolio: "Έργα", about: "Σχετικά" },
   cta: { send: "Στείλτε μήνυμα" },
+  poweredBy: "Χτισμένο με",
   hero: {
     tag1: "Ψηφιακές Λύσεις",
     tag2: "συμβουλευτική",

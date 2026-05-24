@@ -391,7 +391,7 @@ h2.section-title em { font-style: normal; color: var(--silver); }
 .logo {
   position: relative;
   z-index: 1;
-  width: min(480px, 58vw);
+  width: min(600px, 72vw);
   height: auto;
   display: block;
   opacity: 0;
@@ -425,8 +425,8 @@ h2.section-title em { font-style: normal; color: var(--silver); }
   .logo-svg .ltr-fill { fill-opacity: 1; transition: none; }
 }
 .tagline { margin-top: 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: 0; animation: fadeUp 1.2s 1.7s cubic-bezier(0.22,0.61,0.36,1) 1 forwards; }
-.tagline-1 { font-family: var(--font-orbitron), "Orbitron", sans-serif; font-size: clamp(20px, 2.4vw, 30px); font-weight: 600; color: var(--white); letter-spacing: 0.36em; text-transform: uppercase; line-height: 1; padding-left: 0.36em; }
-.tagline-2 { font-family: var(--font-orbitron), "Orbitron", sans-serif; font-size: clamp(13px, 1.4vw, 17px); font-weight: 500; color: var(--silver); letter-spacing: 0.5em; text-transform: uppercase; padding-left: 0.5em; }
+.tagline-1 { font-family: var(--font-orbitron), "Orbitron", sans-serif; font-size: clamp(15px, 1.8vw, 22px); font-weight: 600; color: var(--white); letter-spacing: 0.3em; text-transform: uppercase; line-height: 1; padding-left: 0.3em; }
+.tagline-2 { font-family: var(--font-orbitron), "Orbitron", sans-serif; font-size: clamp(10px, 1.1vw, 13px); font-weight: 500; color: var(--silver); letter-spacing: 0.44em; text-transform: uppercase; padding-left: 0.44em; }
 .hero-sub { margin-top: 56px; max-width: 580px; font-size: 19px; line-height: 1.5; color: var(--silver); text-wrap: pretty; opacity: 0; animation: fadeUp 1.2s 1.95s cubic-bezier(0.22,0.61,0.36,1) 1 forwards; }
 .cta-row { margin-top: 32px; display: flex; gap: 18px; align-items: center; flex-wrap: wrap; justify-content: center; }
 .hero .cta-row { opacity: 0; animation: fadeUp 1.2s 2.2s cubic-bezier(0.22,0.61,0.36,1) 1 forwards; }
@@ -438,6 +438,34 @@ h2.section-title em { font-style: normal; color: var(--silver); }
 .btn-ghost:hover { border-color: rgba(255,255,255,0.28); background: rgba(255,255,255,0.07); }
 .hero .cta-row .btn-ghost { padding: 9px 17px; font-size: 13px; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── Powered-by marquee (the stack we build on) ── */
+.powered { position: relative; z-index: 1; padding: 8px 0 48px; }
+.powered-eyebrow {
+  text-align: center;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--ghost); margin-bottom: 26px;
+}
+.powered-viewport {
+  position: relative; overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+}
+.powered-track { display: flex; align-items: center; gap: 60px; width: max-content; will-change: transform; }
+.powered-logo {
+  flex: none; width: 34px; height: 34px;
+  background: var(--silver);
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center; mask-position: center;
+  -webkit-mask-size: contain; mask-size: contain;
+  opacity: 0.58; transition: opacity 0.3s ease;
+}
+.powered-viewport:hover .powered-logo { opacity: 0.85; }
+@media (max-width: 640px) {
+  .powered-track { gap: 42px; }
+  .powered-logo { width: 28px; height: 28px; }
+}
 
 .section { padding: 120px 0; }
 
@@ -832,8 +860,22 @@ h2.section-title em { font-style: normal; color: var(--silver); }
   background: linear-gradient(180deg, rgba(10,10,10,0.35) 0%, rgba(10,10,10,0.85) 100%);
 }
 .founder-half:hover .photo { filter: grayscale(0.15) brightness(0.65) contrast(1.05); transform: scale(1.04); }
+/* City skyline = base layer (Athens for Dimitris, London for Stelios). */
 .founder-half.left .photo  { background-image: url('/founders/athens.png'); }
 .founder-half.right .photo { background-image: url('/founders/london.png'); }
+/* Founder portrait = screen-blended overlay → "this person, this city" double-exposure.
+   Placeholder silhouettes for now; drop real dark-bg/cut-out portraits at
+   /founders/dimitris.jpg + /founders/stelios.jpg and swap the two URLs below. */
+.founder-half .photo::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center top;
+  mix-blend-mode: screen;
+  opacity: 0.9;
+  pointer-events: none;
+}
+.founder-half.left .photo::before  { background-image: url('/founders/dimitris.svg'); }
+.founder-half.right .photo::before { background-image: url('/founders/stelios.svg'); }
 .founder-half.left { transform: translateX(-40px); }
 .founder-half.right { transform: translateX(40px); }
 .founders-split.is-revealed .founder-half { transform: translateX(0); opacity: 1; }

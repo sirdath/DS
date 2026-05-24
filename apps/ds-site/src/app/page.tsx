@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import ContactPanel, { ContactCTA } from "./contact-panel";
 import { useT, useLang, LangToggle } from "./i18n";
+import PoweredBy from "./powered-by";
 
 export default function HomePage() {
   const [chatOpen, setChatOpen] = useState(false);
@@ -542,6 +543,9 @@ export default function HomePage() {
           <a href="#services" className="btn btn-ghost">{t.hero.what}</a>
         </div>
       </section>
+
+      {/* ─── Powered by — the stack we build on ──────── */}
+      <PoweredBy />
 
       {/* ─── Services — index + sticky detail panel ──── */}
       <section className="section" id="services">
