@@ -11,6 +11,8 @@ export type Lang = "en" | "el";
 type SvcItem = { name: string; body: string };
 type EngageMode = { num: string; title: string; best: string; bestLabel: string; desc: string };
 type AboutBlock = { k: string; p: string };
+type FeatItem = { tag: string; name: string; blurb: string; url: string; img: string };
+type Two<T> = [T, T];
 type CaseItem = { tag: string; meta: string; title: string; text: string; list: string[] };
 type Six<T> = [T, T, T, T, T, T];
 type Four<T> = [T, T, T, T];
@@ -19,6 +21,7 @@ type Three<T> = [T, T, T];
 export interface Dict {
   nav: { portfolio: string; about: string };
   cta: { send: string };
+  poweredBy: string;
   hero: { tag1: string; tag2: string; sub: string; what: string };
   services: {
     eyebrow: string;
@@ -26,6 +29,15 @@ export interface Dict {
     titleEm: string;
     sub: string;
     items: Six<SvcItem>;
+  };
+  featured: {
+    eyebrow: string;
+    title: string;
+    titleEm: string;
+    sub: string;
+    visit: string;
+    viewAll: string;
+    items: Two<FeatItem>;
   };
   thesis: { eyebrow: string; quote: string; quoteEm: string; quoteEnd: string; by: string };
   engage: {
@@ -125,6 +137,7 @@ export interface Dict {
 const en: Dict = {
   nav: { portfolio: "Portfolio", about: "About" },
   cta: { send: "Send a message" },
+  poweredBy: "Powered by",
   hero: {
     tag1: "Digital Solutions",
     tag2: "consulting",
@@ -143,6 +156,18 @@ const en: Dict = {
       { name: "Data", body: "Straight answers from your data — what's going on and what to do next." },
       { name: "Predictions", body: "Spot demand, risk, and opportunity before they arrive." },
       { name: "Mobile apps", body: "iOS and Android that feel fast and native." },
+    ],
+  },
+  featured: {
+    eyebrow: "Featured work",
+    title: "A look at ",
+    titleEm: "what we ship.",
+    sub: "A couple of recent builds — the rest live in the portfolio.",
+    visit: "Visit",
+    viewAll: "See all work",
+    items: [
+      { tag: "Website · SEO · Ads", name: "GlobalTeamPlans", blurb: "A focused marketing site, built to be found.", url: "https://globalteamplans.com", img: "globalteamplans" },
+      { tag: "SaaS · Product", name: "dataportfolio.co.uk", blurb: "From idea to a working portfolio-builder SaaS.", url: "https://dataportfolio.co.uk", img: "dataportfolio" },
     ],
   },
   thesis: {
@@ -331,6 +356,7 @@ const en: Dict = {
 const el: Dict = {
   nav: { portfolio: "Έργα", about: "Σχετικά" },
   cta: { send: "Στείλτε μήνυμα" },
+  poweredBy: "Χτισμένο με",
   hero: {
     tag1: "Ψηφιακές Λύσεις",
     tag2: "συμβουλευτική",
@@ -349,6 +375,18 @@ const el: Dict = {
       { name: "Δεδομένα", body: "Ξεκάθαρες απαντήσεις από τα δεδομένα σας — τι συμβαίνει και τι να κάνετε στη συνέχεια." },
       { name: "Προβλέψεις", body: "Εντοπίστε ζήτηση, ρίσκο και ευκαιρίες πριν εμφανιστούν." },
       { name: "Εφαρμογές κινητού", body: "iOS και Android που μοιάζουν γρήγορες και φυσικές." },
+    ],
+  },
+  featured: {
+    eyebrow: "Επιλεγμένες δουλειές",
+    title: "Μια ματιά σε ",
+    titleEm: "αυτά που παραδίδουμε.",
+    sub: "Μερικές πρόσφατες δουλειές — οι υπόλοιπες είναι στα έργα.",
+    visit: "Επίσκεψη",
+    viewAll: "Δείτε όλες τις δουλειές",
+    items: [
+      { tag: "Ιστοσελίδα · SEO · Ads", name: "GlobalTeamPlans", blurb: "Μια στοχευμένη ιστοσελίδα marketing, φτιαγμένη για να τη βρίσκουν.", url: "https://globalteamplans.com", img: "globalteamplans" },
+      { tag: "SaaS · Προϊόν", name: "dataportfolio.co.uk", blurb: "Από ιδέα σε λειτουργικό SaaS δημιουργίας portfolio.", url: "https://dataportfolio.co.uk", img: "dataportfolio" },
     ],
   },
   thesis: {
