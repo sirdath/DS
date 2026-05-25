@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter, Orbitron } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "./i18n";
-import StyleSwitcher from "./style-switcher";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,7 +28,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${inter.variable} ${orbitron.variable}`}>
       <body>
         <LanguageProvider>{children}</LanguageProvider>
-        <StyleSwitcher />
       </body>
     </html>
   );
