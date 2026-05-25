@@ -96,3 +96,6 @@ Everything filtered through the Playbook: subtle, fast, deliberate motion; one s
 - [React Bits (repo)](https://github.com/DavidHDev/react-bits) · [Lenis (repo)](https://github.com/darkroomengineering/lenis)
 - [React Three Fiber (repo)](https://github.com/pmndrs/react-three-fiber) · [Theatre.js](https://www.theatrejs.com/) · [Rive](https://rive.app/) · [awesome-rive](https://github.com/rive-app/awesome-rive)
 - [Best JS scroll/scrollytelling libraries 2026 (CSS Author)](https://cssauthor.com/best-javascript-scroll-animation-scrollytelling-libraries/)
+
+## Studios to study (styling references)
+- **Textura Agency** — https://github.com/textura-agency — strong, distinctive front-end styling; keep as a design/motion reference.
