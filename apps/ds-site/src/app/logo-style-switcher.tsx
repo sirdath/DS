@@ -10,6 +10,7 @@ const MODES = [
   { id: "filled", label: "Filled" },
   { id: "gradient", label: "Gradient" },
   { id: "outline", label: "Outline" },
+  { id: "laser", label: "Laser" },
 ];
 
 function apply(mode: string) {

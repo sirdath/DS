@@ -1816,3 +1816,30 @@ body[data-logo="outline"] .logo-svg .ltr { stroke: #15161B !important; stroke-op
 body[data-logo="outline"] .logo-svg.drawn .ltr { stroke-opacity: 1 !important; }
 body[data-logo="outline"] .logo-svg .ltr-fill,
 body[data-logo="outline"] .logo-svg.drawn .ltr-fill { fill-opacity: 0 !important; }
+
+/* Laser: the outline is "burned" on hot (bright white-violet, wide glow), then
+   .settled (added when the trace finishes) cools it into a calm purple neon outline. */
+:root { --laser: #B49CFF; --laser-hot: #ECE4FF; }
+.laser-beam, .laser-head { opacity: 0; }
+body[data-logo="laser"] .logo-svg .ltr-fill,
+body[data-logo="laser"] .logo-svg.drawn .ltr-fill { fill-opacity: 0 !important; }
+body[data-logo="laser"] .logo-svg .ltr {
+  stroke: var(--laser-hot) !important;
+  stroke-width: 3.4 !important;
+  stroke-opacity: 1 !important;
+  filter: drop-shadow(0 0 3px var(--laser-hot)) drop-shadow(0 0 11px var(--accent)) drop-shadow(0 0 22px var(--accent));
+  transition: stroke 1.1s ease, stroke-width 1.1s ease, filter 1.1s ease;
+}
+body[data-logo="laser"] .logo-svg.settled .ltr {
+  stroke: var(--accent) !important;
+  stroke-width: 2.2 !important;
+  filter: drop-shadow(0 0 2px var(--accent)) drop-shadow(0 0 7px color-mix(in srgb, var(--accent) 55%, transparent));
+}
+body[data-logo="laser"] .laser-head {
+  fill: #FBF8FF;
+  filter: drop-shadow(0 0 6px var(--laser-hot)) drop-shadow(0 0 16px var(--accent)) drop-shadow(0 0 30px var(--accent));
+}
+body[data-logo="laser"] .laser-beam {
+  stroke: var(--laser-hot); stroke-width: 2.5; stroke-linecap: round;
+  filter: drop-shadow(0 0 6px var(--accent)) drop-shadow(0 0 14px var(--accent));
+}
