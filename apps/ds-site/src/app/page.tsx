@@ -136,6 +136,17 @@ export default function HomePage() {
         const sb = hexToRgb01(css.getPropertyValue("--smoke-b"));
         if (sa) program.uniforms.uSmokeA.value = sa;
         if (sb) program.uniforms.uSmokeB.value = sb;
+        // Live smoke recolour when the preview style switcher fires.
+        const onSmoke = (e: Event) => {
+          const d = (e as CustomEvent<{ a: string; b: string }>).detail;
+          if (!d) return;
+          const na = hexToRgb01(d.a);
+          const nb = hexToRgb01(d.b);
+          if (na) program.uniforms.uSmokeA.value = na;
+          if (nb) program.uniforms.uSmokeB.value = nb;
+        };
+        window.addEventListener("ds2:smoke", onSmoke as EventListener);
+        disposers.push(() => window.removeEventListener("ds2:smoke", onSmoke as EventListener));
         const mesh = new Mesh(gl, { geometry, program });
         const resize = () => {
           renderer.setSize(window.innerWidth, window.innerHeight);
