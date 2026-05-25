@@ -1705,6 +1705,52 @@ nav.top { background: rgba(255,255,255,0.72) !important; }
 .compose-caption a { color: var(--accent) !important; }
 .caret { background: var(--accent) !important; }
 
+/* ── Contact panel (the message-button overlay) → light + purple to match the site ── */
+.cpanel-overlay { background: rgba(25,26,34,0.42) !important; }
+.cpanel-overlay--max { background: rgba(246,246,251,0.92) !important; }
+.cpanel {
+  background: #fff !important;
+  border-color: var(--hairline) !important;
+  box-shadow: 0 50px 100px -34px rgba(25,26,34,0.32), 0 0 0 1px var(--hairline) !important;
+}
+.cpanel-bar {
+  background: #f3f3f7 !important;
+  border-bottom: 1px solid var(--hairline) !important;
+  box-shadow: none !important;
+}
+.cpanel-bar-title { color: var(--silver) !important; }
+.cpanel-x { color: var(--ghost) !important; }
+.cpanel-x:hover { background: rgba(25,26,34,0.06) !important; color: var(--white) !important; }
+.cpanel-input, .cpanel-textarea {
+  background: rgba(25,26,34,0.03) !important;
+  border-color: var(--hairline) !important;
+  color: var(--white) !important;
+}
+.cpanel-input::placeholder, .cpanel-textarea::placeholder { color: var(--ghost) !important; }
+.cpanel-input:focus, .cpanel-textarea:focus {
+  border-color: var(--accent) !important;
+  background: color-mix(in srgb, var(--accent) 5%, #fff) !important;
+}
+/* outgoing message bubble → brand purple */
+.cpanel-bubble { background: var(--accent) !important; color: var(--accent-on) !important; }
+.cpanel-compose { background: #f3f3f7 !important; border-top: 1px solid var(--hairline) !important; }
+/* send button → brand purple CTA */
+.cpanel-send {
+  background: var(--accent) !important; color: var(--accent-on) !important;
+  box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--accent) 70%, transparent) !important;
+}
+.cpanel-send:hover { box-shadow: 0 12px 30px -10px color-mix(in srgb, var(--accent) 80%, transparent) !important; }
+.cpanel-foot {
+  background: #f3f3f7 !important; border-top: 1px solid var(--hairline) !important;
+  color: var(--ghost) !important;
+}
+/* minimised tab (bottom-right) */
+.cpanel-tab {
+  background: #fff !important; border-color: var(--hairline) !important; color: var(--white) !important;
+  box-shadow: 0 12px 30px -12px rgba(25,26,34,0.28) !important;
+}
+.cpanel-tab:hover { box-shadow: 0 16px 36px -12px rgba(25,26,34,0.34) !important; }
+
 footer { border-color: var(--hairline) !important; }
 
 /* ── Featured work (home) ── */
