@@ -40,8 +40,8 @@ export default function PoweredBy() {
 
     import("gsap").then(({ default: gsap }) => {
       if (killed || !track) return;
-      // Track holds two copies of the set; -50% scrolls exactly one copy → seamless loop.
-      tween = gsap.to(track, { xPercent: -50, duration: 36, ease: "none", repeat: -1 });
+      // Track holds two identical halves; -50% scrolls exactly one half → seamless loop.
+      tween = gsap.to(track, { xPercent: -50, duration: 72, ease: "none", repeat: -1 });
       viewport?.addEventListener("pointerenter", pause);
       viewport?.addEventListener("pointerleave", resume);
     });
@@ -54,8 +54,9 @@ export default function PoweredBy() {
     };
   }, []);
 
-  // Duplicate the set for a seamless loop.
-  const items = [...TOOLS, ...TOOLS];
+  // Two identical halves (each = the set twice) so one half always exceeds the
+  // viewport on wide screens — the -50% scroll never reveals an empty gap.
+  const items = [...TOOLS, ...TOOLS, ...TOOLS, ...TOOLS];
 
   return (
     <section className="powered" aria-label={t.poweredBy}>

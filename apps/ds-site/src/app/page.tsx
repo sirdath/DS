@@ -481,7 +481,9 @@ export default function HomePage() {
                 return;
               }
               const wrap = document.createElement("span");
-              wrap.style.cssText = "display:inline-block;overflow:hidden;vertical-align:top;white-space:nowrap;";
+              // padding-bottom + matching negative margin give descenders (g/y) room inside the
+              // overflow:hidden reveal mask without shifting layout.
+              wrap.style.cssText = "display:inline-block;overflow:hidden;vertical-align:top;white-space:nowrap;padding-bottom:0.15em;margin-bottom:-0.15em;";
               wrap.setAttribute("aria-hidden", "true");
               const inner = document.createElement("span");
               inner.style.cssText = "display:inline-block;";
@@ -501,7 +503,7 @@ export default function HomePage() {
         el.innerHTML = "";
         el.appendChild(frag);
         if (reduce) return;
-        gsap.set(spans, { yPercent: 110, autoAlpha: 0 });
+        gsap.set(spans, { yPercent: 120, autoAlpha: 0 });
         const st = ScrollTrigger.create({
           trigger: el,
           start: "top 82%",
@@ -599,7 +601,7 @@ export default function HomePage() {
 
       <nav className="top">
         <div className="nav-inner">
-          <a href="#top" className="nav-mark" aria-label="DS2 — home">
+          <a href="#top" className="nav-mark" aria-label="DS2, home">
             <DS2Mark className="nav-mark-svg" />
           </a>
           <div className="nav-right">

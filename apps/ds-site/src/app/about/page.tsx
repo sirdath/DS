@@ -42,14 +42,14 @@ function AboutBody() {
         <div className="founder-photo reveal">
           <div className="about-cities">
             <figure className="about-city">
+              <figcaption>{a.cityAthens}</figcaption>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/founders/athens.png" alt={a.cityAthens} />
-              <figcaption>{a.cityAthens}</figcaption>
             </figure>
             <figure className="about-city">
+              <figcaption>{a.cityLondon}</figcaption>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/founders/london.png" alt={a.cityLondon} />
-              <figcaption>{a.cityLondon}</figcaption>
             </figure>
           </div>
           <div className="founder-photo-cap">{a.citiesCap}</div>

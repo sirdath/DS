@@ -340,7 +340,7 @@ nav.top {
 .eyebrow { font-size: 12px; color: var(--ghost); font-weight: 500; margin-bottom: 14px; }
 h2.section-title {
   font-size: clamp(34px, 4vw, 52px); font-weight: 600;
-  letter-spacing: -0.03em; line-height: 1.05; color: var(--white); text-wrap: balance;
+  letter-spacing: -0.03em; line-height: 1.12; color: var(--white); text-wrap: balance;
 }
 h2.section-title em { font-style: normal; color: var(--silver); }
 .section-sub { margin-top: 16px; font-size: 18px; color: var(--silver); line-height: 1.5; text-wrap: pretty; }
@@ -468,9 +468,11 @@ h2.section-title em { font-style: normal; color: var(--silver); }
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
 }
-.powered-track { display: flex; align-items: center; gap: 60px; width: max-content; will-change: transform; }
+/* Spacing lives as a per-item margin-right (not container gap) so every copy is the
+   exact same width — the -50% loop then lands seamlessly with no half-gap at the seam. */
+.powered-track { display: flex; align-items: center; width: max-content; will-change: transform; }
 .powered-logo {
-  flex: none; width: 34px; height: 34px;
+  flex: none; width: 34px; height: 34px; margin-right: 60px;
   background: var(--silver);
   -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
   -webkit-mask-position: center; mask-position: center;
@@ -479,8 +481,7 @@ h2.section-title em { font-style: normal; color: var(--silver); }
 }
 .powered-viewport:hover .powered-logo { opacity: 0.85; }
 @media (max-width: 640px) {
-  .powered-track { gap: 42px; }
-  .powered-logo { width: 28px; height: 28px; }
+  .powered-logo { width: 28px; height: 28px; margin-right: 42px; }
 }
 
 .section { padding: 120px 0; }
@@ -1131,21 +1132,19 @@ footer a:hover { color: var(--silver); }
 }
 @media (max-width: 640px) { .about-mv { grid-template-columns: 1fr; } }
 .about-cities { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.about-city {
-  position: relative; margin: 0;
-  border: 1px solid var(--hairline); border-radius: 16px; overflow: hidden;
-}
-.about-city img { display: block; width: 100%; height: 280px; object-fit: cover; }
+/* Location name on top (large), photo below. */
+.about-city { position: relative; margin: 0; display: flex; flex-direction: column; gap: 12px; }
 .about-city figcaption {
-  position: absolute; left: 14px; bottom: 12px;
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: #fff;
-  padding: 5px 12px; border-radius: 999px;
-  background: rgba(0,0,0,0.45);
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  font-size: 30px; font-weight: 600; letter-spacing: -0.02em;
+  color: var(--white); line-height: 1.1;
+}
+.about-city img {
+  display: block; width: 100%; height: 260px; object-fit: cover;
+  border: 1px solid var(--hairline); border-radius: 16px;
 }
 @media (max-width: 640px) {
   .about-cities { grid-template-columns: 1fr; }
+  .about-city figcaption { font-size: 26px; }
   .about-city img { height: 220px; }
 }
 .founder-photo-inner {
@@ -1651,8 +1650,16 @@ nav.top { background: rgba(255,255,255,0.72) !important; }
 
 /* ── How we engage — light cards + periwinkle detailing ── */
 .mode-num { color: var(--accent) !important; }
-/* big ghost figure → soft periwinkle (was a white gradient, invisible on light) */
-.mode-bigfig { background: none !important; -webkit-text-fill-color: color-mix(in srgb, var(--accent) 16%, transparent) !important; color: color-mix(in srgb, var(--accent) 16%, transparent) !important; }
+/* The base shadows --accent to old silver gradients per mode (m1/m2/m3); restore brand
+   purple inside the cards so every accent reads purple — this turns the base left-edge
+   stripe (background: var(--accent)) and its hover ramp purple automatically. */
+.mode.m1, .mode.m2, .mode.m3 { --accent: inherit !important; }
+/* big figure → clear purple gradient (was a faint 16% wash, barely visible) */
+.mode-bigfig {
+  background: linear-gradient(180deg, var(--accent-soft), var(--accent)) !important;
+  -webkit-background-clip: text !important; background-clip: text !important;
+  -webkit-text-fill-color: transparent !important; color: transparent !important;
+}
 /* highlight the end-to-end mode as the flagship */
 .mode.m3 { border-color: color-mix(in srgb, var(--accent) 40%, transparent) !important; box-shadow: 0 26px 56px -32px color-mix(in srgb, var(--accent) 40%, transparent) !important; }
 .stack-row { background: rgba(25,26,34,0.025) !important; border-color: transparent !important; }
