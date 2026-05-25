@@ -27,7 +27,7 @@
   --hairline-strong: rgba(25,26,34,0.16);
   /* Brand accent — change --accent (and optionally the smoke + hue vars below)
      to test a whole new palette; the rest derives from it via color-mix. */
-  --accent: #6D5DD3;       /* periwinkle */
+  --accent: #1F9D6B;       /* periwinkle */
   --accent-soft: #B9B0EE;
   --accent-on: #ffffff;                                          /* text on accent */
   --accent-deep: color-mix(in srgb, var(--accent) 56%, #000);    /* wordmark gradient bottom */
@@ -37,8 +37,8 @@
   --accent-tint-2: color-mix(in srgb, var(--accent) 19%, #fff);  /* header hover */
   --hue-2: #E896C4;        /* secondary cloud hue (rose) */
   --hue-3: #60C4A8;        /* tertiary cloud hue (mint) */
-  --smoke-a: #9990F1;      /* hero smoke A (read by the shader) */
-  --smoke-b: #F6BEDA;      /* hero smoke B (read by the shader) */
+  --smoke-a: #5FCBA8;      /* hero smoke A (read by the shader) */
+  --smoke-b: #BFE6D2;      /* hero smoke B (read by the shader) */
   --surface: #FFFFFF;
   color-scheme: light;
 }
