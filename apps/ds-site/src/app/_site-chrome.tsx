@@ -1,9 +1,9 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import ContactPanel, { ContactCTA } from "./contact-panel";
 import { useT, LangToggle } from "./i18n";
+import { DS2Mark } from "./ds2-mark";
 
 const ContactCtx = createContext<() => void>(() => {});
 /** Open the shared contact panel from anywhere inside a PageChrome. */
@@ -53,15 +53,8 @@ export default function PageChrome({ children }: { children: ReactNode }) {
     <ContactCtx.Provider value={() => setChatOpen(true)}>
       <nav className="top">
         <div className="nav-inner">
-          <Link href="/" className="nav-mark" aria-label="DS2 home">
-            <Image
-              src="/logos/ds2-logo.png"
-              alt="DS2"
-              width={1136}
-              height={285}
-              priority
-              style={{ height: 26, width: "auto", display: "block", opacity: 0.96 }}
-            />
+          <Link href="/" className="nav-mark" aria-label="DS2 — home">
+            <DS2Mark className="nav-mark-svg" />
           </Link>
           <div className="nav-right">
             <ul className="nav-links">

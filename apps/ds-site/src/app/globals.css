@@ -15,40 +15,56 @@
 }
 
 :root {
-  --black: #0A0A0A;
-  --gray-2: #1A1A1A;
-  --gray-3: #242424;
-  --silver: #A6A6A6;
-  --ghost: #6E6E6E;
-  --white: #F5F5F5;
-  --hairline: rgba(255,255,255,0.08);
-  --hairline-strong: rgba(255,255,255,0.14);
-  --accent: #0f62fe;
-  color-scheme: dark;
+  /* Soft-light redesign. Token names kept (--black=page bg, --white=ink) so the
+     whole component layer flips without renaming everything. */
+  --black: #F6F6FB;        /* page background */
+  --gray-2: #ECECF2;
+  --gray-3: #E2E2EA;
+  --silver: #565C6B;       /* secondary text */
+  --ghost: #9498A6;        /* muted text */
+  --white: #191A22;        /* primary ink */
+  --hairline: rgba(25,26,34,0.10);
+  --hairline-strong: rgba(25,26,34,0.16);
+  /* Brand accent — change --accent (and optionally the smoke + hue vars below)
+     to test a whole new palette; the rest derives from it via color-mix. */
+  --accent: #6D5DD3;       /* periwinkle */
+  --accent-soft: #B9B0EE;
+  --accent-on: #ffffff;                                          /* text on accent */
+  --accent-deep: color-mix(in srgb, var(--accent) 56%, #000);    /* wordmark gradient bottom */
+  --accent-top:  color-mix(in srgb, var(--accent) 52%, #fff);    /* wordmark gradient top */
+  --accent-hover: color-mix(in srgb, var(--accent) 82%, #000);   /* CTA hover */
+  --accent-tint: color-mix(in srgb, var(--accent) 13%, #fff);    /* solid card header */
+  --accent-tint-2: color-mix(in srgb, var(--accent) 19%, #fff);  /* header hover */
+  --hue-2: #E896C4;        /* secondary cloud hue (rose) */
+  --hue-3: #60C4A8;        /* tertiary cloud hue (mint) */
+  --smoke-a: #9990F1;      /* hero smoke A (read by the shader) */
+  --smoke-b: #F6BEDA;      /* hero smoke B (read by the shader) */
+  --surface: #FFFFFF;
+  color-scheme: light;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { background: var(--black); }
 body {
   font-family: var(--font-inter), ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
   color: var(--white);
-  background: #0A0A0A;
+  background: var(--black);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   letter-spacing: -0.012em;
 }
-::selection { background: rgba(255,255,255,0.16); color: #fff; }
+::selection { background: color-mix(in srgb, var(--accent) 20%, transparent); color: #191A22; }
 
-/* OGL shader background canvas */
+/* OGL shader background canvas (the lavender smoke) */
 #shader-bg {
   position: fixed; inset: 0; z-index: 0;
   pointer-events: none;
-  opacity: 0.55;
+  opacity: 0.9;
 }
-/* dim layer to keep text legible over the shader */
+/* soft edge vignette toward the page background, keeps text crisp over the smoke */
 body::before {
   content: ""; position: fixed; inset: 0; z-index: 0;
-  background: radial-gradient(ellipse at center, transparent 0%, rgba(10,10,10,0.55) 70%);
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(246,246,251,0.55) 78%);
   pointer-events: none;
 }
 nav.top, section, footer { position: relative; z-index: 1; }
@@ -391,7 +407,7 @@ h2.section-title em { font-style: normal; color: var(--silver); }
 .logo {
   position: relative;
   z-index: 1;
-  width: min(600px, 72vw);
+  width: min(500px, 60vw);
   height: auto;
   display: block;
   opacity: 0;
@@ -1588,4 +1604,186 @@ footer a:hover { color: var(--silver); }
 }
 @media (max-width: 400px) {
   .cta--sm { padding: 7px 13px; font-size: 11.5px; gap: 5px; }
+}
+
+/* ============================================================
+   SOFT-LIGHT REDESIGN — surface retone (consolidated layer)
+   Flips the dark-glass surfaces to a light scheme. Will be folded
+   into the base rules / @ds/tokens once the direction is locked.
+   ============================================================ */
+.hero-aura { display: none !important; }
+.logo-svg { filter: none; }
+/* Wordmark: vertical gradient across each letter, top (light periwinkle) →
+   bottom (deep violet). Gradient only. */
+.logo-svg .ltr-fill { fill: url(#dsgrad) !important; }
+.logo-svg .ltr { stroke: var(--accent) !important; }
+/* gradient stops follow the brand accent */
+.logo-svg .g-top { stop-color: var(--accent-top); }
+.logo-svg .g-mid { stop-color: var(--accent); }
+.logo-svg .g-bot { stop-color: var(--accent-deep); }
+
+nav.top { background: rgba(255,255,255,0.72) !important; }
+/* Nav wordmark = same brand purple as the hero. */
+.nav-mark-svg { height: 26px; width: auto; display: block; color: var(--accent); }
+.nav-mark { opacity: 0.92; transition: opacity 0.2s ease; }
+.nav-mark:hover { opacity: 1; }
+
+/* primary CTA → periwinkle accent */
+.cta { background: var(--accent) !important; color: #fff !important;
+  box-shadow: 0 10px 26px -12px color-mix(in srgb, var(--accent) 60%, transparent) !important; }
+.cta:hover { background: var(--accent-hover) !important; box-shadow: 0 16px 32px -12px color-mix(in srgb, var(--accent) 78%, transparent) !important; }
+.cta:active { box-shadow: 0 6px 16px -10px color-mix(in srgb, var(--accent) 70%, transparent) !important; }
+
+.btn-ghost { background: #fff; border-color: var(--hairline-strong); }
+.btn-ghost:hover { border-color: var(--accent); background: #fff; }
+
+/* accent text accents */
+.eyebrow, h2.section-title em, .tagline-2, .svc-cell-icon, .case-tag,
+.about-mv-k, .about-block-k, .thesis-eyebrow, .thesis blockquote em { color: var(--accent) !important; }
+
+/* glass cards → white surfaces */
+.svc-cell, .mode, .about-mv-card, .case, .client-card {
+  background: #fff !important; border-color: var(--hairline) !important;
+  box-shadow: 0 18px 44px -30px rgba(25,26,34,0.26) !important;
+}
+.svc-cell::before { display: none !important; }
+.svc-cell:hover, .case:hover { border-color: var(--accent) !important; }
+
+/* ── How we engage — light cards + periwinkle detailing ── */
+.mode-num { color: var(--accent) !important; }
+/* big ghost figure → soft periwinkle (was a white gradient, invisible on light) */
+.mode-bigfig { background: none !important; -webkit-text-fill-color: color-mix(in srgb, var(--accent) 16%, transparent) !important; color: color-mix(in srgb, var(--accent) 16%, transparent) !important; }
+/* highlight the end-to-end mode as the flagship */
+.mode.m3 { border-color: color-mix(in srgb, var(--accent) 40%, transparent) !important; box-shadow: 0 26px 56px -32px color-mix(in srgb, var(--accent) 40%, transparent) !important; }
+.stack-row { background: rgba(25,26,34,0.025) !important; border-color: transparent !important; }
+.stack-row.on { background: color-mix(in srgb, var(--accent) 10%, transparent) !important; border-color: color-mix(in srgb, var(--accent) 26%, transparent) !important; }
+.stack-marker { background: #fff !important; border-color: var(--hairline-strong) !important; }
+.stack-row.on .stack-marker { background: var(--accent) !important; border-color: var(--accent) !important; }
+.stack-row.on .stack-marker::after { border-color: #fff !important; }
+.stack-label { color: var(--ghost) !important; }
+.stack-row.on .stack-label { color: var(--white) !important; }
+.stack-tag { color: var(--ghost) !important; }
+.stack-row.on .stack-tag { color: var(--accent) !important; }
+.stewardship { background: color-mix(in srgb, var(--accent) 6%, transparent) !important; border-color: color-mix(in srgb, var(--accent) 18%, transparent) !important; }
+.stewardship-tag { background: color-mix(in srgb, var(--accent) 14%, transparent) !important; color: var(--accent) !important; }
+.stewardship strong { color: var(--white) !important; }
+.engage-cta p { color: var(--silver) !important; }
+
+/* Founders → light cards: city becomes a pale backdrop, dark text on top. */
+.founder-half { background: #fff !important; }
+.founder-half .photo { filter: grayscale(0.18) brightness(1.06) contrast(1.0) !important; }
+.founder-half .photo::after { background: linear-gradient(180deg, rgba(246,246,251,0.70) 0%, rgba(246,246,251,0.90) 100%) !important; }
+.founder-half .photo::before { display: none !important; }
+.founder-half h3 { color: var(--white) !important; }
+.founder-half p { color: var(--silver) !important; }
+.founder-role { color: var(--accent) !important; }
+.founder-loc { color: var(--ghost) !important; border-color: var(--hairline) !important; }
+.quote-band blockquote { color: var(--white) !important; }
+
+/* contact mail window → light */
+.compose-window { background: #fff !important; border-color: var(--hairline) !important;
+  box-shadow: 0 30px 70px -40px rgba(25,26,34,0.4) !important; }
+.compose-titlebar, .compose-toolbar { background: #f3f3f7 !important; border-color: var(--hairline) !important; }
+.compose-title { color: var(--silver) !important; }
+.toolbar-btn { color: var(--ghost) !important; }
+.toolbar-btn:hover { background: rgba(25,26,34,0.05) !important; color: var(--white) !important; }
+.toolbar-divider { background: var(--hairline) !important; }
+.compose-headers .label { color: var(--ghost) !important; }
+.compose-headers .value { color: var(--white) !important; }
+.compose-headers .pill { background: color-mix(in srgb, var(--accent) 12%, transparent) !important; color: var(--accent) !important; }
+.compose-body { color: var(--white) !important; }
+.compose-body .hl { color: var(--accent) !important; background: color-mix(in srgb, var(--accent) 10%, transparent) !important; }
+.compose-footer { border-color: var(--hairline) !important; }
+.compose-caption { color: var(--ghost) !important; }
+.compose-caption a { color: var(--accent) !important; }
+.caret { background: var(--accent) !important; }
+
+footer { border-color: var(--hairline) !important; }
+
+/* ── Featured work (home) ── */
+.feat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; max-width: 1040px; margin: 0 auto; }
+.feat-card {
+  position: relative; display: flex; flex-direction: column; text-decoration: none;
+  border: 1px solid var(--hairline); border-radius: 18px; overflow: hidden; background: #fff;
+  box-shadow: 0 26px 56px -38px color-mix(in srgb, var(--accent) 40%, transparent);
+  transition: transform 0.5s cubic-bezier(0.22,0.61,0.36,1), box-shadow 0.4s ease, border-color 0.3s ease;
+}
+.feat-card:hover { transform: translateY(-5px); border-color: color-mix(in srgb, var(--accent) 40%, transparent); box-shadow: 0 34px 68px -36px color-mix(in srgb, var(--accent) 50%, transparent); }
+.feat-media { aspect-ratio: 16 / 10; overflow: hidden; border-bottom: 1px solid var(--hairline); }
+.feat-media img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; transition: transform 0.6s cubic-bezier(0.22,0.61,0.36,1); }
+.feat-card:hover .feat-media img { transform: scale(1.03); }
+.feat-body { padding: 22px 24px; }
+.feat-tag { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+.feat-name { font-size: 19px; font-weight: 600; letter-spacing: -0.02em; color: var(--white); margin: 8px 0 6px; }
+.feat-blurb { font-size: 14px; line-height: 1.5; color: var(--silver); }
+.feat-link { display: inline-block; margin-top: 14px; font-size: 13px; font-weight: 600; color: var(--accent); }
+.feat-cta { text-align: center; margin-top: 32px; }
+.feat-viewall { color: var(--accent); font-weight: 600; font-size: 14.5px; text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s ease; }
+.feat-viewall:hover { border-color: var(--accent); }
+@media (max-width: 760px) { .feat-grid { grid-template-columns: 1fr; } }
+
+/* Portfolio — each project sits in its own drifting smoke cloud (the page's
+   background effect, localised + tinted per project). */
+.cases { overflow: visible; }
+.case {
+  position: relative; overflow: visible !important;
+  box-shadow: 0 24px 52px -36px rgba(25,26,34,0.22) !important;
+  transition: transform 0.5s cubic-bezier(0.22,0.61,0.36,1);
+}
+.case-media { border-radius: 20px 20px 0 0 !important; overflow: hidden; }
+.case::before {
+  content: ""; position: absolute; z-index: -1; inset: -16% -12% -22% -12%;
+  border-radius: 46px; filter: blur(52px); opacity: 0.85; pointer-events: none;
+  background:
+    radial-gradient(48% 58% at 32% 30%, var(--c1), transparent 70%),
+    radial-gradient(52% 52% at 72% 66%, var(--c2), transparent 72%);
+  animation: cloudDrift 22s ease-in-out infinite alternate;
+}
+.case:nth-child(3n+1) { --c1: color-mix(in srgb, var(--accent) 55%, transparent); --c2: color-mix(in srgb, var(--accent-soft) 40%, transparent); }
+.case:nth-child(3n+2) { --c1: rgba(232,150,196,0.52); --c2: rgba(120,150,240,0.38); }
+.case:nth-child(3n+2)::before { animation-delay: -7s; }
+.case:nth-child(3n+3) { --c1: rgba(96,196,168,0.48); --c2: rgba(120,180,230,0.38); }
+.case:nth-child(3n+3)::before { animation-delay: -14s; }
+.case:hover { transform: translateY(-5px); }
+@keyframes cloudDrift {
+  from { transform: translate(-3%, -1%) scale(1); }
+  to   { transform: translate(3%, 2%) scale(1.1); }
+}
+@media (prefers-reduced-motion: reduce) { .case::before { animation: none !important; } }
+
+/* Powered-by marquee icons → brand purple */
+.powered-logo { background: var(--accent) !important; opacity: 0.62; }
+.powered-viewport:hover .powered-logo { opacity: 0.9; }
+
+/* Services — tinted header (icon + name) over a white description band */
+.svc-cell { padding: 22px 20px 0 !important; background: color-mix(in srgb, var(--accent) 7.5%, transparent) !important; }
+.svc-cell:hover { background: color-mix(in srgb, var(--accent) 11%, transparent) !important; border-color: var(--accent) !important; }
+.svc-cell-body {
+  margin: auto -20px 0 !important;
+  padding: 15px 20px 16px !important;
+  background: #fff !important;
+  border-top: 1px solid var(--hairline);
+}
+
+/* Uniform service boxes — every card identical size, consistent white band */
+.svc-grid { grid-auto-rows: 1fr !important; }
+.svc-cell { height: 100% !important; }
+.svc-cell-name { min-height: 2.4em; }
+.svc-cell-body { min-height: 2.8em !important; }
+
+/* Service cards: solid-ish lavender header (drop the glass) + fixed-size white band */
+.svc-cell {
+  background: var(--accent-tint) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.svc-cell:hover { background: var(--accent-tint-2) !important; }
+.svc-cell-body {
+  margin: auto -20px 0 !important;
+  height: 78px !important; min-height: 78px !important;
+  padding: 0 20px !important;
+  display: flex; align-items: center;
+  background: #fff !important;
+  border-top: 1px solid var(--hairline);
+  overflow: hidden;
 }
