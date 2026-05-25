@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" preserveAspectRatio="xMidYMid slice">
+  <!-- transparent overlay: founder silhouette, screen-blended over the city skyline.
+       Replace with a real cut-out / dark-bg portrait of Stelios later. -->
+  <text x="300" y="430" text-anchor="middle" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="300" font-weight="700" fill="#ffffff" fill-opacity="0.10">S</text>
+  <g fill="#d6d8e0" fill-opacity="0.5">
+    <circle cx="300" cy="318" r="96"/>
+    <path d="M150 800 C150 612 222 528 300 528 C378 528 450 612 450 800 Z"/>
+  </g>
+</svg>
