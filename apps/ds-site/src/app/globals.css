@@ -1791,9 +1791,9 @@ footer { border-color: var(--hairline) !important; }
 /* Wordmark treatment: black filled, purple "Digital Solutions", black "consulting" */
 .logo-svg .ltr-fill { fill: #15161B !important; }
 .logo-svg .ltr { stroke: #15161B !important; }
-.nav-mark-svg { color: #15161B; }
-.tagline-1 { color: var(--accent) !important; }
-.tagline-2 { color: #15161B !important; }
+.nav-mark-svg { color: var(--accent); } /* purple mark, echoes the gradient hero */
+.tagline-1 { color: #15161B !important; }      /* "Digital Solutions" — black */
+.tagline-2 { color: var(--accent) !important; } /* "consulting" — purple */
 
 /* Logo-style switcher pill (preview) */
 .style-switcher {

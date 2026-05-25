@@ -27,9 +27,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${orbitron.variable}`}>
-      {/* data-logo sets the production hero treatment (black thin outline). On preview
+      {/* data-logo sets the production hero treatment (purple gradient). On preview
           deploys + local dev the style switcher below can override it for review. */}
-      <body data-logo="outline">
+      <body data-logo="gradient">
         <LanguageProvider>{children}</LanguageProvider>
         {process.env.VERCEL_ENV !== "production" && <LogoStyleSwitcher />}
       </body>
