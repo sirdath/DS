@@ -1794,3 +1794,25 @@ footer { border-color: var(--hairline) !important; }
 .nav-mark-svg { color: #15161B; }
 .tagline-1 { color: var(--accent) !important; }
 .tagline-2 { color: #15161B !important; }
+
+/* Logo-style switcher pill (preview) */
+.style-switcher {
+  position: fixed; z-index: 200; bottom: 18px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 6px; padding: 7px 9px; border-radius: 999px;
+  background: rgba(20,18,30,0.82); backdrop-filter: blur(14px);
+  box-shadow: 0 14px 40px -18px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.12);
+}
+.style-switcher__label { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.5); padding: 0 6px; }
+.style-switcher__btn { cursor: pointer; border: 1px solid transparent; background: transparent; color: rgba(255,255,255,0.82); font-size: 12.5px; font-weight: 500; padding: 6px 14px; border-radius: 999px; transition: background 0.2s ease, color 0.2s ease; }
+.style-switcher__btn:hover { background: rgba(255,255,255,0.08); }
+.style-switcher__btn.on { background: #fff; color: #16181d; }
+
+/* Logo-style modes (set by the switcher via body[data-logo]) */
+body[data-logo="filled"] .logo-svg .ltr-fill { fill: #15161B !important; }
+body[data-logo="filled"] .logo-svg .ltr { stroke: #15161B !important; }
+body[data-logo="gradient"] .logo-svg .ltr-fill { fill: url(#dsgrad) !important; }
+body[data-logo="gradient"] .logo-svg .ltr { stroke: var(--accent) !important; }
+body[data-logo="outline"] .logo-svg .ltr { stroke: #15161B !important; stroke-opacity: 1 !important; stroke-width: 2.5 !important; }
+body[data-logo="outline"] .logo-svg.drawn .ltr { stroke-opacity: 1 !important; }
+body[data-logo="outline"] .logo-svg .ltr-fill,
+body[data-logo="outline"] .logo-svg.drawn .ltr-fill { fill-opacity: 0 !important; }

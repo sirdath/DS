@@ -269,27 +269,39 @@ export default function HomePage() {
         });
       }
 
-      // ─── Hero wordmark — GSAP stroke draw-in, then fill cross-fade ───
+      // ─── Hero wordmark — draw-in; mode (filled/gradient/outline) set by the style switcher ───
       const heroLogo = document.getElementById("hero-logo");
       if (heroLogo) {
-        const strokes = Array.from(heroLogo.querySelectorAll<SVGPathElement>(".ltr"));
+        const logoEl = heroLogo;
+        const strokes = Array.from(logoEl.querySelectorAll<SVGPathElement>(".ltr"));
         const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        if (reduceMotion || strokes.length === 0) {
-          heroLogo.classList.add("drawn");
-        } else {
+        let drawTimer: ReturnType<typeof setTimeout> | undefined;
+        const runLogo = (mode: string) => {
+          clearTimeout(drawTimer);
+          gsap.getTweensOf(strokes).forEach((t) => t.kill());
+          logoEl.classList.remove("drawn");
+          if (reduceMotion || strokes.length === 0) {
+            strokes.forEach((p) => gsap.set(p, { strokeDashoffset: 0, strokeOpacity: 1 }));
+            if (mode !== "outline") logoEl.classList.add("drawn");
+            return;
+          }
           strokes.forEach((p, i) => {
             const len = p.getTotalLength();
             gsap.set(p, { strokeDasharray: len, strokeDashoffset: len, strokeOpacity: 1 });
-            gsap.to(p, {
-              strokeDashoffset: 0,
-              duration: 1.6,
-              delay: 0.1 + i * 0.18,
-              ease: "power2.inOut",
-            });
+            gsap.to(p, { strokeDashoffset: 0, duration: 1.6, delay: 0.1 + i * 0.18, ease: "power2.inOut" });
           });
-          const drawTimer = setTimeout(() => heroLogo.classList.add("drawn"), 1900);
-          disposers.push(() => clearTimeout(drawTimer));
-        }
+          if (mode !== "outline") {
+            drawTimer = setTimeout(() => logoEl.classList.add("drawn"), 1900);
+          }
+        };
+        runLogo(document.body.getAttribute("data-logo") || "filled");
+        const onLogoStyle = (e: Event) =>
+          runLogo((e as CustomEvent<{ mode: string }>).detail?.mode || "filled");
+        window.addEventListener("ds2:logostyle", onLogoStyle as EventListener);
+        disposers.push(() => {
+          clearTimeout(drawTimer);
+          window.removeEventListener("ds2:logostyle", onLogoStyle as EventListener);
+        });
       }
 
       // ─── Hash links via Lenis ───
