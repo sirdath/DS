@@ -1811,3 +1811,10 @@ footer { border-color: var(--hairline) !important; }
 .style-switcher__btn.on { background: #fff; color: #16181d; }
 .style-switcher__dot { width: 10px; height: 10px; border-radius: 50%; background: var(--sw); box-shadow: 0 0 0 2px rgba(255,255,255,0.15); }
 @media (max-width: 520px) { .style-switcher__label { display: none; } .style-switcher__btn { padding: 6px 10px; font-size: 12px; } }
+
+/* TEST: black wordmark, purple Digital Solutions, black consulting */
+.logo-svg .ltr-fill { fill: #15161B !important; }
+.logo-svg .ltr { stroke: #15161B !important; }
+.nav-mark-svg { color: #15161B; }
+.tagline-1 { color: var(--accent) !important; }
+.tagline-2 { color: #15161B !important; }
