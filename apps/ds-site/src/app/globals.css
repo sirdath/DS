@@ -1794,3 +1794,14 @@ footer { border-color: var(--hairline) !important; }
 .nav-mark-svg { color: #15161B; }
 .tagline-1 { color: var(--accent) !important; }
 .tagline-2 { color: #15161B !important; }
+
+/* Laser preview: glowing purple neon outline (beam-traced), no fill */
+:root { --laser: #B49CFF; }
+.logo-svg .ltr {
+  stroke: var(--laser) !important; stroke-width: 2.5 !important; stroke-opacity: 1 !important;
+  filter: drop-shadow(0 0 4px var(--accent)) drop-shadow(0 0 12px var(--accent));
+}
+.logo-svg .ltr-fill, .logo-svg.drawn .ltr-fill { fill-opacity: 0 !important; }
+.logo-svg.drawn .ltr { stroke-opacity: 1 !important; }
+.laser-head { fill: #F1ECFF; filter: drop-shadow(0 0 6px var(--accent)) drop-shadow(0 0 18px var(--laser)); }
+.laser-beam { stroke: var(--laser); stroke-width: 2; stroke-linecap: round; opacity: 0; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 8px var(--accent)); }
