@@ -115,9 +115,18 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
 
   async function send() {
     const n = name.trim();
+    const em = email.trim();
     const msg = draft.trim();
     if (!n) {
       setError(P.errName);
+      return;
+    }
+    if (!em) {
+      setError(P.errEmail);
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) {
+      setError(P.errEmailInvalid);
       return;
     }
     if (!msg) {
@@ -132,7 +141,7 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           name: n,
-          email: email.trim(),
+          email: em,
           message: msg,
           company: company.trim(),
           country: country.trim(),
@@ -226,6 +235,12 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
         </div>
 
         <div className="cpanel-body" ref={scrollRef}>
+          {!maximized && (
+            <div className="cpanel-brand">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logos/ds2-logo.png" alt="DS2" />
+            </div>
+          )}
           <div className="cpanel-intro">
             {locked ? (
               <>{P.introLockedPrefix}<strong>{name}</strong>{company ? <> · {company}</> : null}{email ? <> · {email}</> : null}{P.introLockedSuffix}</>
@@ -262,6 +277,10 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
               </div>
               <input
                 className="cpanel-input"
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                aria-required="true"
                 placeholder={P.phEmail}
                 value={email}
                 maxLength={160}

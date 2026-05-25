@@ -124,10 +124,11 @@ export async function POST(request: Request): Promise<Response> {
   const firstMessage = payload.first === true;
 
   if (!name) return NextResponse.json({ ok: false, error: "Please add your name." }, { status: 400 });
-  if (!message) return NextResponse.json({ ok: false, error: "Write a message first." }, { status: 400 });
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (!email) return NextResponse.json({ ok: false, error: "Please add your email so we can reply." }, { status: 400 });
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ ok: false, error: "That email doesn't look right." }, { status: 400 });
   }
+  if (!message) return NextResponse.json({ ok: false, error: "Write a message first." }, { status: 400 });
 
   const validThread = verifyThread(payload.threadId, payload.threadSig);
   const stamp = new Date().toLocaleString("en-GB", { timeZone: "Europe/London" });

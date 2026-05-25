@@ -763,7 +763,10 @@ export default function HomePage() {
         <figure className="thesis">
           <div className="thesis-eyebrow">{t.thesis.eyebrow}</div>
           <blockquote>{t.thesis.quote}<em>{t.thesis.quoteEm}</em>{t.thesis.quoteEnd}</blockquote>
-          <figcaption>{t.thesis.by}</figcaption>
+          <figcaption>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="thesis-mark" src="/logos/ds2-logo.png" alt={t.thesis.by} />
+          </figcaption>
         </figure>
       </section>
 

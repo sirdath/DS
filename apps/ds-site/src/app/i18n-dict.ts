@@ -127,6 +127,8 @@ export interface Dict {
     footSent: string;
     footIdle: string;
     errName: string;
+    errEmail: string;
+    errEmailInvalid: string;
     errMsg: string;
     errGeneric: string;
     errNetwork: string;
@@ -335,7 +337,7 @@ const en: Dict = {
     phName: "Your name",
     phCompany: "Company (optional)",
     phCountry: "Where you're based (optional)",
-    phEmail: "Email (optional, so we can reply)",
+    phEmail: "Email (so we can reply)",
     ackBase: "Delivered to DS2",
     ackWithEmail: " · we’ll reply by email",
     ackNoEmail: " · add an email above if you’d like a reply",
@@ -346,6 +348,8 @@ const en: Dict = {
     footSent: "Sent · Athens / London",
     footIdle: "Athens / London · usually same-day",
     errName: "Add your name first.",
+    errEmail: "Add your email so we can reply.",
+    errEmailInvalid: "That email doesn't look right.",
     errMsg: "Write a message first.",
     errGeneric: "Something went wrong. Try again.",
     errNetwork: "Couldn't reach us. Check your connection and retry.",
@@ -554,7 +558,7 @@ const el: Dict = {
     phName: "Το όνομά σας",
     phCompany: "Εταιρεία (προαιρετικό)",
     phCountry: "Πού εδρεύετε (προαιρετικό)",
-    phEmail: "Email (προαιρετικό, για να απαντήσουμε)",
+    phEmail: "Email (για να απαντήσουμε)",
     ackBase: "Παραδόθηκε στη DS2",
     ackWithEmail: " · θα απαντήσουμε με email",
     ackNoEmail: " · προσθέστε email παραπάνω αν θέλετε απάντηση",
@@ -565,6 +569,8 @@ const el: Dict = {
     footSent: "Στάλθηκε · Αθήνα / Λονδίνο",
     footIdle: "Αθήνα / Λονδίνο · συνήθως αυθημερόν",
     errName: "Προσθέστε πρώτα το όνομά σας.",
+    errEmail: "Προσθέστε το email σας για να απαντήσουμε.",
+    errEmailInvalid: "Αυτό το email δεν φαίνεται σωστό.",
     errMsg: "Γράψτε πρώτα ένα μήνυμα.",
     errGeneric: "Κάτι πήγε στραβά. Δοκιμάστε ξανά.",
     errNetwork: "Δεν μπορέσαμε να επικοινωνήσουμε. Ελέγξτε τη σύνδεσή σας και ξαναδοκιμάστε.",
