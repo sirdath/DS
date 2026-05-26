@@ -1,0 +1,23 @@
+{
+  "name": "@ds/lead-finder",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "DS2 lead finder — discovers businesses (incl. ones with no website), scores their sites for outdatedness, tags them, and exports an Excel workbook of prioritised leads.",
+  "bin": {
+    "lead-finder": "./src/index.ts"
+  },
+  "scripts": {
+    "find": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "exceljs": "^4.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
