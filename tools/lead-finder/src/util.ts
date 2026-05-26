@@ -78,6 +78,15 @@ export function leadKey(name: string, area: string | null, website: string | nul
   return `${name.trim().toLowerCase()}|${(area ?? "").trim().toLowerCase()}|${host}`;
 }
 
+/**
+ * The key written into the workbook so a re-run can re-attach a lead's saved
+ * Verified/Done/Status/Notes. `source:sourceId` is stable across runs; callers
+ * fall back to leadKey() when matching older files that predate this column.
+ */
+export function leadStableKey(source: string, sourceId: string): string {
+  return `${source}:${sourceId}`;
+}
+
 export function safeHost(url: string): string {
   try {
     return new URL(url).hostname.replace(/^www\./, "").toLowerCase();

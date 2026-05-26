@@ -4,7 +4,7 @@
  * ones without are prime "needs a site built" leads.
  */
 import type { RawLead } from "../types.js";
-import { USER_AGENT, log } from "../util.js";
+import { USER_AGENT, log, sleep } from "../util.js";
 import type { GeoPoint } from "./geocode.js";
 
 const ENDPOINT = "https://overpass-api.de/api/interpreter";
@@ -111,14 +111,26 @@ export async function discoverOverpass(
   radiusM: number,
 ): Promise<RawLead[]> {
   const query = buildQuery(point, categories, radiusM);
-  const res = await fetch(ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": USER_AGENT },
-    body: `data=${encodeURIComponent(query)}`,
-  });
-  if (!res.ok) {
-    const body = await res.text().catch(() => "");
-    throw new Error(`Overpass query failed (${res.status}). ${body.slice(0, 200)}`);
+  // Overpass rate-limits aggressively (429/504). Retry a couple of times with backoff.
+  let res: Response | null = null;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    res = await fetch(ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": USER_AGENT },
+      body: `data=${encodeURIComponent(query)}`,
+    });
+    if (res.ok) break;
+    if (res.status === 429 || res.status === 504 || res.status === 503) {
+      const wait = 5000 * (attempt + 1);
+      log.warn(`Overpass busy (${res.status}); retrying in ${wait / 1000}s…`);
+      await sleep(wait);
+      continue;
+    }
+    break;
+  }
+  if (!res || !res.ok) {
+    const body = res ? await res.text().catch(() => "") : "";
+    throw new Error(`Overpass query failed (${res?.status ?? "no response"}). ${body.slice(0, 200)}`);
   }
   const data = (await res.json()) as { elements: OverpassElement[] };
 

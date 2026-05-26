@@ -15,6 +15,7 @@ import { analyseSite } from "./analyze.js";
 import { domainCreated } from "./domain-age.js";
 import { buildLead } from "./score.js";
 import { writeWorkbook } from "./excel.js";
+import { readPriorState } from "./merge.js";
 import { log, mapPool, progressBar, sleep, leadKey, normaliseUrl } from "./util.js";
 
 async function main(): Promise<void> {
@@ -95,10 +96,24 @@ async function main(): Promise<void> {
   let final = leads.filter((l) => l.leadScore >= cfg.minScore);
   if (cfg.perIndustry > 0) final = capPerIndustry(final, cfg.perIndustry);
 
-  // ── 6. Export ────────────────────────────────────────────────
+  // ── 6. Export (merging any Verified/Done/Status/Notes from a prior run) ──
   const outPath = resolve(cfg.out);
+  const prior = await readPriorState(outPath);
+
+  // Safety: never overwrite an existing tracker with an empty result (a transient
+  // Overpass rate-limit can return 0 — that must not wipe the founders' ticks).
+  if (final.length === 0) {
+    if (prior.size > 0) {
+      log.err(`Discovery returned 0 leads — keeping the existing file untouched (likely a transient rate-limit; retry in a minute).`);
+    } else {
+      log.warn("No leads found and no existing file to preserve — nothing written.");
+    }
+    return;
+  }
+
   await mkdir(dirname(outPath), { recursive: true });
-  await writeWorkbook(final, outPath, { area: cfg.area, categories: cfg.categories });
+  if (prior.size) log.ok(`Preserving tracked state for ${prior.size} leads from the existing file`);
+  await writeWorkbook(final, outPath, { area: cfg.area, categories: cfg.categories }, prior);
 
   // ── 7. Report ────────────────────────────────────────────────
   const high = final.filter((l) => l.priority === "High").length;

@@ -25,8 +25,11 @@ businesses with no site or a decade-old one — exactly our build/redesign work.
    - slow response · tiny/placeholder pages · DIY builders (Wix/Squarespace)
 3. **Scores & tags** each lead (0–100), assigns **High/Medium/Low** priority, and
    writes a one-line **pitch angle** ("Not mobile-friendly — losing phone visitors").
-4. **Exports a formatted .xlsx** with sheets: **Summary · All leads · No website ·
-   Ugly sites**, colour-coded by priority/ugliness, with clickable site + map links.
+4. **Exports a shareable Excel "lead tracker"** — sheets: **Dashboard · All leads ·
+   No website · Ugly sites**. Each lead has editable **Verified / Done / Status / Notes**
+   columns (dropdowns), colour-coded priority/ugliness (conditional formatting), clickable
+   site + map links, and a **live Dashboard** whose counts update as you tick boxes.
+   **Re-running merges your ticks/notes back in** — it never wipes work already done.
 
 ## Usage
 
@@ -47,6 +50,22 @@ npm run find -- --area greece-major --radius 5000 --limit 400
 ```
 
 Output lands in `out/ds2-leads-<area>-<date>.xlsx`.
+
+## Using it as a shared tracker
+
+The workbook is a CRM-lite you and Stel work from:
+
+- On any lead sheet, click the **Verified** / **Done** cell → pick **✓** from the dropdown
+  (it turns green). Set **Status** (New / Contacted / Replied / Meeting / Won / Lost / Not a fit)
+  and type **Notes**. The **Dashboard** tab's counts (Done, Verified, Still-to-contact) update live.
+- **Re-running keeps your work.** Point a new run at the **same `--out` file** and it merges your
+  Verified/Done/Status/Notes onto the refreshed leads (matched by a hidden `Key` column). New leads
+  appear blank; nothing you typed is lost. As a safety net, a run that finds **0 leads** (e.g. a
+  transient rate-limit) will **not** overwrite an existing file.
+- For two people editing at once, keep the file on **OneDrive/SharePoint or Google Drive** and use
+  co-authoring; otherwise just share the regenerated file (the merge preserves history).
+- Excel has no library-writable native checkbox, so Verified/Done are dropdown "✓" cells — they work
+  identically in desktop Excel, Excel for web, and Google Sheets.
 
 ### Options
 
