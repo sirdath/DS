@@ -65,7 +65,6 @@ export interface Dict {
     f2Title: string;
     f2Desc: string;
     f2Loc: string;
-    quote: string;
   };
   contact: {
     eyebrow: string;
@@ -223,7 +222,7 @@ const en: Dict = {
     eyebrow: "Team",
     title: "Two senior founders.",
     titleEm: "No layers in between.",
-    sub: "When you talk to DS2, you talk to one of these two. That doesn't change as the engagement grows.",
+    sub: "When you talk to DS2, you talk to one of these two. You're never handed off to junior staff, however big the project gets.",
     role: "Founder",
     f1Title: "Head of Strategy & Consulting.",
     f1Desc: "Client relationships, commercial strategy, advisory. The person who asks the uncomfortable questions early, so they're not asked late by someone with less context.",
@@ -231,14 +230,13 @@ const en: Dict = {
     f2Title: "Head of Engineering & Data.",
     f2Desc: "Architecture, data and ML, technical delivery. The person who decides whether what we're proposing will still be standing in three years, and says so before we ship it.",
     f2Loc: "London",
-    quote: "We don't certify your organisation. We take responsibility for what we build.",
   },
   contact: {
     eyebrow: "Contact",
     title: "Tell us what you're ",
     titleEm: "actually",
     titleEnd: " trying to do.",
-    sub: "Three lines is enough. We'll write back within the week, usually the same day.",
+    sub: "We reply within 1-3 business days.",
     newMessage: "New Message",
     from: "From:",
     to: "To:",
@@ -444,7 +442,7 @@ const el: Dict = {
     eyebrow: "Ομάδα",
     title: "Δύο έμπειροι ιδρυτές.",
     titleEm: "Κανένα ενδιάμεσο επίπεδο.",
-    sub: "Όταν μιλάτε με τη DS2, μιλάτε με έναν από τους δύο. Αυτό δεν αλλάζει όσο μεγαλώνει το έργο.",
+    sub: "Όταν μιλάτε με τη DS2, μιλάτε με έναν από τους δύο. Δεν σας περνάμε ποτέ σε junior προσωπικό, όσο μεγάλο κι αν γίνει το έργο.",
     role: "Ιδρυτής",
     f1Title: "Επικεφαλής Στρατηγικής & Συμβουλευτικής.",
     f1Desc: "Σχέσεις με πελάτες, εμπορική στρατηγική, συμβουλευτική. Αυτός που κάνει τις δύσκολες ερωτήσεις νωρίς, ώστε να μην τεθούν αργά από κάποιον με λιγότερη εικόνα.",
@@ -452,14 +450,13 @@ const el: Dict = {
     f2Title: "Επικεφαλής Μηχανικής & Δεδομένων.",
     f2Desc: "Αρχιτεκτονική, δεδομένα και ML, τεχνική παράδοση. Αυτός που κρίνει αν αυτό που προτείνουμε θα στέκεται ακόμη σε τρία χρόνια, και το λέει πριν το παραδώσουμε.",
     f2Loc: "Λονδίνο",
-    quote: "Δεν πιστοποιούμε τον οργανισμό σας. Αναλαμβάνουμε την ευθύνη για αυτό που φτιάχνουμε.",
   },
   contact: {
     eyebrow: "Επικοινωνία",
     title: "Πείτε μας τι ",
     titleEm: "πραγματικά",
     titleEnd: " θέλετε να πετύχετε.",
-    sub: "Τρεις γραμμές αρκούν. Απαντάμε μέσα στην εβδομάδα, συνήθως την ίδια μέρα.",
+    sub: "Απαντάμε μέσα σε 1-3 εργάσιμες ημέρες.",
     newMessage: "Νέο μήνυμα",
     from: "Από:",
     to: "Προς:",

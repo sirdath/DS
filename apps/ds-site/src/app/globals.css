@@ -604,6 +604,9 @@ h2.section-title em { font-style: normal; color: var(--silver); }
   text-wrap: balance;
   margin: 0;
 }
+/* Wrap the thesis in quotation marks so it clearly reads as a quote. */
+.thesis blockquote::before { content: "\201C"; }
+.thesis blockquote::after { content: "\201D"; }
 .thesis blockquote em {
   font-style: italic;
   font-weight: 300;
@@ -619,12 +622,17 @@ h2.section-title em { font-style: normal; color: var(--silver); }
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
 }
 .thesis figcaption {
-  margin-top: 56px;
-  font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
-  font-size: 11px;
-  letter-spacing: 0.22em;
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+.thesis-dash {
   color: var(--ghost);
-  text-transform: uppercase;
+  font-size: 26px;
+  font-weight: 300;
+  line-height: 1;
 }
 @media (max-width: 768px) {
   .thesis-section { padding: 96px 0; }

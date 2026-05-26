@@ -764,6 +764,7 @@ export default function HomePage() {
           <div className="thesis-eyebrow">{t.thesis.eyebrow}</div>
           <blockquote>{t.thesis.quote}<em>{t.thesis.quoteEm}</em>{t.thesis.quoteEnd}</blockquote>
           <figcaption>
+            <span className="thesis-dash" aria-hidden="true">—</span>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img className="thesis-mark" src="/logos/ds2-logo.png" alt={t.thesis.by} />
           </figcaption>
@@ -867,9 +868,6 @@ export default function HomePage() {
               <p>{t.founders.f2Desc}</p>
               <div className="founder-loc">{t.founders.f2Loc}</div>
             </article>
-          </div>
-          <div className="quote-band" style={{ marginTop: 56 }}>
-            <blockquote>{t.founders.quote}</blockquote>
           </div>
         </div>
       </section>
