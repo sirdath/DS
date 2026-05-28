@@ -11,7 +11,7 @@ const CHROME =
   process.env.CHROME_PATH ||
   "C:/Program Files/Google/Chrome/Application/chrome.exe";
 
-export async function screenshot(url: string, timeoutMs = 25000): Promise<Buffer | null> {
+export async function screenshot(url: string, timeoutMs = 25000, size = "1280,800"): Promise<Buffer | null> {
   const dir = await mkdtemp(join(tmpdir(), "ds2-shot-"));
   const out = join(dir, "shot.png");
   try {
@@ -23,7 +23,7 @@ export async function screenshot(url: string, timeoutMs = 25000): Promise<Buffer
         "--hide-scrollbars",
         "--no-sandbox",
         "--force-device-scale-factor=1",
-        "--window-size=1280,800",
+        `--window-size=${size}`,
         "--default-background-color=FFFFFFFF",
         "--virtual-time-budget=7000",
         `--screenshot=${out}`,
