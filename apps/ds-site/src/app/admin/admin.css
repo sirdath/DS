@@ -1891,3 +1891,46 @@
 .admin-leads-bulkbar__btn:hover { border-color: var(--admin-border-hover); }
 .admin-leads-bulkbar__btn.danger:hover { border-color: rgba(233,165,155,0.5); color: #e9a59b; }
 .admin-leads-table tr.is-selected td { background: var(--admin-amber-dim); }
+
+/* ─── Ugly-site hunt (gamified) ─────────────────────────────────────── */
+.admin-hunt-scoreboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0 14px; }
+.admin-hunt-tile { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 8px;
+  border-radius: var(--admin-radius); border: 1px solid var(--admin-border); background: var(--admin-surface);
+  text-decoration: none; transition: border-color 0.2s ease, transform 0.2s ease; }
+.admin-hunt-tile:hover { transform: translateY(-2px); border-color: var(--admin-border-hover); }
+.admin-hunt-tile.on { border-color: var(--admin-amber-border); background: var(--admin-amber-dim); }
+.admin-hunt-tile__n { font-size: 26px; font-weight: 700; color: var(--admin-text); font-family: var(--admin-mono); }
+.admin-hunt-tile__l { font-size: 12px; color: var(--admin-text-muted); }
+.admin-hunt-tile.is-disaster .admin-hunt-tile__n { color: #e96a6a; }
+.admin-hunt-tile.is-rough .admin-hunt-tile__n { color: #e8a86a; }
+.admin-hunt-tile.is-dated .admin-hunt-tile__n { color: var(--admin-amber); }
+.admin-hunt-tile.is-ok .admin-hunt-tile__n { color: #7dbe82; }
+
+.admin-hunt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-top: 12px; }
+.admin-hunt-card { border: 1px solid var(--admin-border); border-radius: var(--admin-radius); overflow: hidden;
+  background: var(--admin-surface); display: flex; flex-direction: column; transition: border-color 0.2s ease; }
+.admin-hunt-card:hover { border-color: var(--admin-border-hover); }
+.admin-hunt-card.is-busy { opacity: 0.5; }
+.admin-hunt-card__shot { position: relative; display: block; aspect-ratio: 16 / 10; background: #0d0d0d; overflow: hidden; }
+.admin-hunt-card__shot img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+.admin-hunt-card__noshot { display: flex; align-items: center; justify-content: center; height: 100%; color: var(--admin-text-dim); font-size: 12px; }
+.admin-hunt-badge { position: absolute; top: 8px; left: 8px; font-size: 12px; font-weight: 700;
+  padding: 4px 8px; border-radius: 999px; background: rgba(0,0,0,0.7); color: #fff; backdrop-filter: blur(4px); }
+.admin-hunt-badge.is-disaster { background: rgba(233,106,106,0.92); }
+.admin-hunt-badge.is-rough { background: rgba(232,168,106,0.92); color: #1a1a1a; }
+.admin-hunt-badge.is-dated { background: rgba(232,180,106,0.92); color: #1a1a1a; }
+.admin-hunt-badge.is-ok { background: rgba(125,190,130,0.92); color: #102a13; }
+.admin-hunt-badge.is-unscored { background: rgba(255,255,255,0.12); color: var(--admin-text-muted); }
+.admin-hunt-card__body { padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+.admin-hunt-card__name { font-weight: 600; color: var(--admin-text); font-size: 14px; }
+.admin-hunt-card__meta { font-size: 12px; color: var(--admin-text-muted); }
+.admin-hunt-card__notes { font-size: 12px; color: var(--admin-text); font-style: italic; line-height: 1.4; }
+.admin-hunt-card__contact { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; margin-top: 2px; }
+.admin-hunt-card__contact a { color: var(--admin-amber); text-decoration: none; }
+.admin-hunt-card__actions { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.admin-hunt-card__chk { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--admin-text-muted); }
+.admin-hunt-card__actions button { background: var(--admin-surface-raise); border: 1px solid var(--admin-border);
+  color: var(--admin-text); width: 28px; height: 28px; border-radius: 6px; cursor: pointer; }
+.admin-hunt-card__actions button.danger:hover { border-color: rgba(233,165,155,0.5); color: #e9a59b; }
+.admin-hunt-card__actions .admin-leads-select { flex: 1; min-width: 90px; }
+@media (max-width: 768px) { .admin-hunt-scoreboard { grid-template-columns: repeat(2, 1fr); } }
