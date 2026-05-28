@@ -10,8 +10,8 @@ export function LeadsTable({ leads }: { leads: MarketingLead[] }) {
       <table className="admin-leads-table">
         <thead>
           <tr>
-            <th>Ver.</th><th>Done</th><th>Business</th><th>Cat.</th><th>Prio</th><th>Score</th>
-            <th>Phone</th><th>Email</th><th>Site</th><th>Pitch</th><th>Status</th><th>Notes</th><th></th>
+            <th>Ver.</th><th>Done</th><th>Business</th><th className="hide-sm">Cat.</th><th className="hide-sm">Prio</th><th className="hide-sm">Score</th>
+            <th>Phone</th><th className="hide-sm">Email</th><th className="hide-sm">Site</th><th className="hide-sm">Pitch</th><th>Status</th><th className="hide-sm">Notes</th><th></th>
           </tr>
         </thead>
         <tbody>
@@ -45,29 +45,29 @@ function LeadRow({ lead }: { lead: MarketingLead }) {
         <div className="admin-leads-name">{lead.name}</div>
         <div className="admin-leads-sub">{[lead.area, lead.source].filter(Boolean).join(' · ')}</div>
       </td>
-      <td className="dim">{lead.category ?? ''}</td>
-      <td><span className={`admin-prio ${prioClass}`}>{lead.priority ?? '—'}</span></td>
-      <td className="ce strong">{lead.leadScore}</td>
+      <td className="dim hide-sm">{lead.category ?? ''}</td>
+      <td className="hide-sm"><span className={`admin-prio ${prioClass}`}>{lead.priority ?? '—'}</span></td>
+      <td className="ce strong hide-sm">{lead.leadScore}</td>
       <td>
         <input className="admin-leads-edit" value={phone} placeholder="—" onChange={(e) => setPhone(e.target.value)}
           onBlur={() => phone !== (lead.phone ?? '') && run(() => updateLeadContact(lead.id, { phone }))} />
       </td>
-      <td>
+      <td className="hide-sm">
         <input className="admin-leads-edit" value={email} placeholder="—" onChange={(e) => setEmail(e.target.value)}
           onBlur={() => email !== (lead.email ?? '') && run(() => updateLeadContact(lead.id, { email }))} />
       </td>
-      <td>
+      <td className="hide-sm">
         {lead.website
           ? <a href={lead.website} target="_blank" rel="noopener noreferrer" className="admin-leads-link">open</a>
           : <span className="admin-leads-nosite">none</span>}
       </td>
-      <td className="dim admin-leads-pitch" title={lead.pitchAngle ?? ''}>{lead.pitchAngle ?? ''}</td>
+      <td className="dim admin-leads-pitch hide-sm" title={lead.pitchAngle ?? ''}>{lead.pitchAngle ?? ''}</td>
       <td>
         <select className="admin-leads-select" defaultValue={lead.status} onChange={(e) => run(() => setLeadStatus(lead.id, e.target.value))}>
           {LEAD_STATUSES.map((s) => <option key={s} value={s}>{LEAD_STATUS_LABELS[s]}</option>)}
         </select>
       </td>
-      <td>
+      <td className="hide-sm">
         <input className="admin-leads-edit" value={notes} placeholder="—" onChange={(e) => setNotes(e.target.value)}
           onBlur={() => notes !== (lead.notes ?? '') && run(() => updateLeadContact(lead.id, { notes }))} />
       </td>

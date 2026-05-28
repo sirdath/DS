@@ -1842,3 +1842,40 @@
 .admin-leads-filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0 6px; }
 .admin-leads-filters .admin-leads-select { min-width: 120px; }
 .admin-leads-filter--search { max-width: 200px; height: 32px; }
+
+/* ─── Mobile (admin) ────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Topbar: compact, allow horizontal scroll of nav if tight */
+  .admin-topbar { gap: 10px; padding: 0 12px; overflow-x: auto; }
+  .admin-topbar__eyebrow { display: none; }
+  .admin-topbar__nav { gap: 2px; flex: 1; }
+  .admin-topbar__link { padding: 6px 10px; font-size: 13px; white-space: nowrap; }
+  .admin-topbar__signout { padding: 5px 10px; font-size: 11px; }
+
+  .admin-page-title { font-size: 24px; }
+  .admin-section__header { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
+
+  /* Leads filter bar: each control sits on its own row-ish, easy to tap */
+  .admin-leads-filters { gap: 8px; }
+  .admin-leads-filters .admin-form__input,
+  .admin-leads-filters .admin-leads-select { flex: 1 1 46%; min-width: 0; height: 36px; }
+  .admin-leads-filter--search { flex-basis: 100%; max-width: none; }
+  .admin-leads-filters .admin-new-btn { flex: 1 1 46%; }
+
+  /* Leads table: drop secondary columns, lighten padding, keep it tappable */
+  .admin-leads-table .hide-sm { display: none; }
+  .admin-leads-table { min-width: 0; width: 100%; font-size: 13px; }
+  .admin-leads-tablewrap { -webkit-overflow-scrolling: touch; }
+  .admin-leads-table tbody td, .admin-leads-table thead th { padding: 8px 8px; }
+  .admin-leads-edit, .admin-leads-select { font-size: 13px; }
+  .admin-leads-table input[type="checkbox"] { width: 18px; height: 18px; }
+  .admin-leads-actions button { width: 30px; height: 30px; }
+
+  /* Run-area + paste panels: full-width controls */
+  .admin-leads-row { flex-direction: column; align-items: stretch; }
+  .admin-leads-row .admin-form__input,
+  .admin-leads-row .admin-new-btn,
+  .admin-leads-row .admin-repo-link { width: 100%; text-align: center; }
+
+  .admin-leads-pagebar { flex-direction: column; align-items: flex-start; gap: 6px; }
+}
