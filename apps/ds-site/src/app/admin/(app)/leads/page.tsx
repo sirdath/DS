@@ -36,29 +36,39 @@ export default async function LeadsPage({ searchParams }: PageProps) {
   const hasSupabase =
     !!process.env.NEXT_PUBLIC_SUPABASE_URL && !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
+  const PAGE_SIZE = 50
+  const page = Math.max(1, Number(pick(sp, 'page') ?? 1) || 1)
+
   let leads: MarketingLead[] = []
   let areas: AreaRow[] = []
   let pendingCount = 0
+  let total = 0
   let loadError: string | null = null
 
   if (hasSupabase) {
     try {
       const supabase = await getSupabaseServerClient()
-      let query = supabase.from('marketing_leads').select('*').order('lead_score', { ascending: false }).limit(600)
+      let query = supabase
+        .from('marketing_leads')
+        .select('*', { count: 'exact' })
+        .order('lead_score', { ascending: false })
+        .order('created_at', { ascending: false })
       if (priority) query = query.eq('priority', priority)
       if (status) query = query.eq('status', status)
       if (contacted === 'yes') query = query.eq('contacted', true)
       if (contacted === 'no') query = query.eq('contacted', false)
       if (nosite) query = query.eq('has_website', false)
       if (search) query = query.ilike('name', `%${search}%`)
+      query = query.range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1)
 
-      const [{ data, error }, areasRes, pend] = await Promise.all([
+      const [leadsRes, areasRes, pend] = await Promise.all([
         query,
         supabase.from('lead_areas').select('area_label, status, lead_count, run_at').order('run_at', { ascending: false }),
         supabase.from('marketing_leads').select('id', { count: 'exact', head: true }).eq('analysis_status', 'pending').not('website', 'is', null),
       ])
-      if (error) throw new Error(error.message)
-      leads = (data ?? []).map((r) => rowToLead(r as Record<string, unknown>))
+      if (leadsRes.error) throw new Error(leadsRes.error.message)
+      leads = (leadsRes.data ?? []).map((r) => rowToLead(r as Record<string, unknown>))
+      total = leadsRes.count ?? leads.length
       areas = (areasRes.data ?? []) as AreaRow[]
       pendingCount = pend.count ?? 0
     } catch (err) {
@@ -66,18 +76,16 @@ export default async function LeadsPage({ searchParams }: PageProps) {
     }
   }
 
-  const totals = {
-    all: leads.length,
-    high: leads.filter((l) => l.priority === 'High').length,
-    noSite: leads.filter((l) => !l.hasWebsite).length,
-    contacted: leads.filter((l) => l.contacted).length,
-  }
+  const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE))
+  const firstRow = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1
+  const lastRow = Math.min(page * PAGE_SIZE, total)
 
   const filterHref = (params: Record<string, string | undefined>) => {
-    const merged = { priority, status, contacted, nosite: nosite ? '1' : undefined, q: search, ...params }
+    const merged: Record<string, string | undefined> = { priority, status, contacted, nosite: nosite ? '1' : undefined, q: search, page: undefined, ...params }
     const qs = Object.entries(merged).filter(([, v]) => v).map(([k, v]) => `${k}=${encodeURIComponent(v as string)}`).join('&')
     return `/admin/leads${qs ? `?${qs}` : ''}`
   }
+  const pageHref = (p: number) => filterHref({ page: String(p) })
 
   return (
     <div className="admin-container">
@@ -85,7 +93,7 @@ export default async function LeadsPage({ searchParams }: PageProps) {
         <p className="admin-page-eyebrow">DS2 · Leads</p>
         <h1 className="admin-page-title">Leads</h1>
         <p className="admin-page-sub">
-          {totals.all} shown · {totals.high} high · {totals.noSite} no-website · {totals.contacted} contacted
+          {total.toLocaleString()} leads{pendingCount > 0 && ` · ${pendingCount} awaiting analysis`}
         </p>
       </div>
 
@@ -103,7 +111,7 @@ export default async function LeadsPage({ searchParams }: PageProps) {
         <div className="admin-section__header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
           <div>
             <p className="admin-section__eyebrow">Pipeline</p>
-            <h2 className="admin-section__title">All leads<span className="admin-section__count">{totals.all}</span></h2>
+            <h2 className="admin-section__title">All leads<span className="admin-section__count">{total}</span></h2>
           </div>
           <a href="/api/admin/leads/export" className="admin-repo-link" style={{ flexShrink: 0 }}>Export Excel &#8594;</a>
         </div>
@@ -128,10 +136,26 @@ export default async function LeadsPage({ searchParams }: PageProps) {
 
         {leads.length === 0 ? (
           <p style={{ color: 'var(--admin-text-muted)', fontSize: 14, padding: '20px 0' }}>
-            No leads yet. Run the finder for an area above, or paste some in.
+            {total === 0 && !search && !priority && !nosite && !contacted
+              ? 'No leads yet. Run the finder for an area above, or paste some in.'
+              : 'No leads match these filters.'}
           </p>
         ) : (
-          <LeadsTable leads={leads} />
+          <>
+            <div className="admin-leads-pagebar">
+              <span>Showing {firstRow.toLocaleString()}–{lastRow.toLocaleString()} of {total.toLocaleString()}</span>
+              <span className="admin-leads-pagenav">
+                {page > 1
+                  ? <Link href={pageHref(page - 1)} className="admin-filter-link">← Prev</Link>
+                  : <span className="admin-filter-link is-disabled">← Prev</span>}
+                <span className="dim">page {page} / {pageCount}</span>
+                {page < pageCount
+                  ? <Link href={pageHref(page + 1)} className="admin-filter-link">Next →</Link>
+                  : <span className="admin-filter-link is-disabled">Next →</span>}
+              </span>
+            </div>
+            <LeadsTable leads={leads} />
+          </>
         )}
       </div>
     </div>
