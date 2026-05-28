@@ -1,13 +1,13 @@
 /** UI shape for a marketing lead + the row→UI mapper. Client-safe (no server imports). */
 
 export const LEAD_STATUSES = [
-  "new", "contacted", "replied", "meeting", "won", "lost", "not_a_fit",
+  "new", "in_progress", "contacted", "replied", "meeting", "won", "lost", "not_a_fit",
 ] as const;
 export type LeadStatus = (typeof LEAD_STATUSES)[number];
 
 export const LEAD_STATUS_LABELS: Record<LeadStatus, string> = {
-  new: "New", contacted: "Contacted", replied: "Replied", meeting: "Meeting",
-  won: "Won", lost: "Lost", not_a_fit: "Not a fit",
+  new: "New", in_progress: "In progress", contacted: "Contacted", replied: "Replied",
+  meeting: "Meeting", won: "Won", lost: "Lost", not_a_fit: "Not a fit",
 };
 
 export interface MarketingLead {

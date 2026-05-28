@@ -39,6 +39,15 @@ export async function updateLeadContact(id: string, patch: { phone?: string; ema
   revalidatePath(PATH)
 }
 
+export async function bulkSetStatus(ids: string[], status: string): Promise<void> {
+  if (!ids.length) return
+  if (!(LEAD_STATUSES as readonly string[]).includes(status)) throw new Error('Bad status')
+  const supabase = await db()
+  const { error } = await supabase.from('marketing_leads').update({ status: status as LeadStatus }).in('id', ids)
+  if (error) throw new Error(error.message)
+  revalidatePath(PATH)
+}
+
 export async function deleteLead(id: string): Promise<void> {
   const supabase = await db()
   const { error } = await supabase.from('marketing_leads').delete().eq('id', id)

@@ -1879,3 +1879,15 @@
 
   .admin-leads-pagebar { flex-direction: column; align-items: flex-start; gap: 6px; }
 }
+
+/* Bulk-action bar (multi-select on the leads table) */
+.admin-leads-bulkbar { position: sticky; top: var(--admin-topbar-h); z-index: 5;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  background: var(--admin-amber-dim); border: 1px solid var(--admin-amber-border);
+  border-radius: var(--admin-radius); padding: 8px 12px; margin-bottom: 8px; }
+.admin-leads-bulkbar__count { font-weight: 600; color: var(--admin-text); font-size: 13px; }
+.admin-leads-bulkbar__btn { background: var(--admin-surface-raise); border: 1px solid var(--admin-border);
+  color: var(--admin-text); border-radius: 6px; padding: 5px 12px; font-size: 12.5px; cursor: pointer; }
+.admin-leads-bulkbar__btn:hover { border-color: var(--admin-border-hover); }
+.admin-leads-bulkbar__btn.danger:hover { border-color: rgba(233,165,155,0.5); color: #e9a59b; }
+.admin-leads-table tr.is-selected td { background: var(--admin-amber-dim); }
