@@ -1,27 +1,13 @@
 import { NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
 import { assertAdmin } from "../../../../admin/lib/assert-admin";
 
 export const runtime = "nodejs";
-export const maxDuration = 30;
 
-const MODEL = "claude-haiku-4-5-20251001";
-
-const SYSTEM = `You convert a messy block of pasted business "leads" into clean structured data.
-The input is free-form: lines, paragraphs, copy-pasted directory rows, anything. Each distinct
-business becomes one object. Extract only what is actually present — never invent data.
-
-Output ONLY a JSON array (no prose, no markdown fences) of objects with EXACTLY these keys:
-- "name": string (the business name; required — skip entries with no identifiable name)
-- "category": string | null (e.g. "restaurant", "lawyer", "plumber"; best guess from context)
-- "phone": string | null
-- "email": string | null
-- "website": string | null (a URL or domain; null if they clearly have none)
-- "area": string | null (city/area if mentioned)
-- "notes": string | null (anything else useful, e.g. "no website", "referred by X")
-
-Greek text is common — keep Greek names as-is. If a value is missing, use null.`;
-
+/**
+ * Compile a pasted blob of raw leads into structured rows — deterministic, no
+ * LLM/API key. Splits into entries (blank-line blocks, else one per line) and
+ * pulls out email / website / phone with regex; the leftover is the name.
+ */
 interface ParsedLead {
   name: string;
   category: string | null;
@@ -32,17 +18,67 @@ interface ParsedLead {
   notes: string | null;
 }
 
-/** POST { text } → Claude parses raw text into structured leads (preview only, no insert). */
+const EMAIL = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
+const URL = /\b(?:https?:\/\/)?(?:www\.)?[a-z0-9][a-z0-9-]*\.(?:gr|com|net|org|eu|io|co|de|uk|cy|info|shop)(?:\.[a-z]{2})?(?:\/[^\s,;|]*)?/i;
+const PHONE = /\+?\d[\d().\-\s]{6,}\d/;
+
+function parseEntry(block: string): ParsedLead | null {
+  const lines = block.split(/\n/).map((l) => l.trim()).filter(Boolean);
+  if (!lines.length) return null;
+
+  let rest = block.replace(/\s+/g, " ").trim();
+
+  const email = rest.match(EMAIL)?.[0] ?? null;
+  if (email) rest = rest.replace(email, " ");
+
+  // Website only after stripping the email, so we never grab the email's domain.
+  const website = rest.match(URL)?.[0] ?? null;
+  if (website) rest = rest.replace(website, " ");
+
+  let phone: string | null = null;
+  const pm = rest.match(PHONE);
+  if (pm) {
+    const digits = pm[0].replace(/\D/g, "");
+    if (digits.length >= 8 && digits.length <= 15) {
+      phone = pm[0].trim().replace(/\s{2,}/g, " ");
+      rest = rest.replace(pm[0], " ");
+    }
+  }
+
+  // Name = first line with the extracted bits removed; fall back to the leftover.
+  let name = lines[0]!.replace(EMAIL, "").replace(URL, "");
+  if (phone) name = name.replace(phone, "");
+  name = name.replace(/[•·|,;:]+/g, " ").replace(/\s{2,}/g, " ").trim().replace(/[-–—•·|,;:]+$/, "").trim();
+  if (name.length < 2) {
+    name = rest.replace(/[•·|,;:]+/g, " ").replace(/\s{2,}/g, " ").trim();
+  }
+  if (name.length < 2 || !/[a-zα-ω]/i.test(name)) return null;
+
+  return { name, category: null, phone, email, website, area: null, notes: null };
+}
+
+function parseRawLeads(text: string): ParsedLead[] {
+  const blocks = /\n\s*\n/.test(text) ? text.split(/\n\s*\n/) : text.split(/\n/);
+  const out: ParsedLead[] = [];
+  const seen = new Set<string>();
+  for (const b of blocks) {
+    if (out.length >= 500) break;
+    const lead = parseEntry(b);
+    if (!lead) continue;
+    const key = `${lead.name}|${lead.phone ?? ""}`.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(lead);
+  }
+  return out;
+}
+
+/** POST { text } → structured leads (preview only; insert via server action). */
 export async function POST(request: Request): Promise<Response> {
   try {
     await assertAdmin();
   } catch {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
-  }
-
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    return NextResponse.json({ ok: false, error: "ANTHROPIC_API_KEY not configured." }, { status: 500 });
   }
 
   let body: { text?: string };
@@ -56,29 +92,9 @@ export async function POST(request: Request): Promise<Response> {
     return NextResponse.json({ ok: false, error: "Paste some leads first." }, { status: 400 });
   }
 
-  try {
-    const client = new Anthropic({ apiKey });
-    const msg = await client.messages.create({
-      model: MODEL,
-      max_tokens: 8192,
-      system: [{ type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } }],
-      messages: [
-        { role: "user", content: text.slice(0, 60000) },
-        { role: "assistant", content: "[" }, // prefill to force a JSON array
-      ],
-    });
-    const out = msg.content.find((b) => b.type === "text");
-    const jsonText = "[" + (out && out.type === "text" ? out.text : "");
-    let leads: ParsedLead[];
-    try {
-      leads = JSON.parse(jsonText) as ParsedLead[];
-    } catch {
-      return NextResponse.json({ ok: false, error: "Couldn't parse that text into leads — try cleaning it up." }, { status: 422 });
-    }
-    const clean = leads.filter((l) => l && typeof l.name === "string" && l.name.trim().length > 0);
-    return NextResponse.json({ ok: true, leads: clean });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "parse failed";
-    return NextResponse.json({ ok: false, error: message }, { status: 500 });
+  const leads = parseRawLeads(text);
+  if (!leads.length) {
+    return NextResponse.json({ ok: false, error: "Couldn't pick out any leads — put one business per line." }, { status: 422 });
   }
+  return NextResponse.json({ ok: true, leads });
 }
