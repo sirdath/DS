@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.106.2",
     "cheerio": "^1.0.0",
     "exceljs": "^4.4.0"
   },
