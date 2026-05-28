@@ -13,6 +13,12 @@ import { buildLead } from "./score.js";
 import { mapPool, log } from "./util.js";
 import { makeClient } from "./sink-supabase.js";
 
+// Some servers return malformed HTTP that trips an undici assertion thrown from a
+// socket callback (escapes per-request try/catch). Keep the process alive; the
+// affected request is abandoned and its AbortController timeout frees the worker.
+process.on("uncaughtException", (e) => log.warn(`uncaught (continuing): ${e instanceof Error ? e.message : String(e)}`));
+process.on("unhandledRejection", (e) => log.warn(`unhandled (continuing): ${e instanceof Error ? e.message : String(e)}`));
+
 const BATCH = 100;
 const CONCURRENCY = 10;
 const TIMEOUT_MS = 8000;
