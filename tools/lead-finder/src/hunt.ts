@@ -13,7 +13,7 @@ import { discoverOverpass } from "./sources/overpass.js";
 import { fetchSite } from "./fetch-site.js";
 import { analyseSite } from "./analyze.js";
 import { screenshot } from "./screenshot.js";
-import { log, mapPool, normaliseUrl, sleep } from "./util.js";
+import { log, mapPool, normaliseUrl, sleep, safeHost, isRealWebsite, homepageUrl } from "./util.js";
 import { resolveAreas } from "./presets.js";
 import { makeClient, claimArea, finishArea } from "./sink-supabase.js";
 import { existingWebsites, shotKey, uploadShot, insertTarget } from "./sink-redesign.js";
@@ -49,14 +49,19 @@ async function main(): Promise<void> {
       const point = await geocodeArea(area);
       await sleep(1200);
       const raw = await discoverOverpass(point, [industry], radius);
-      const seen = new Set<string>();
+      // One target per registrable domain; drop social/no-site URLs; screenshot the homepage.
+      const seenHost = new Set<string>();
       const targets = raw
         .map((r) => ({ r, url: normaliseUrl(r.website) }))
         .filter((x): x is { r: RawLead; url: string } => {
-          if (!x.url || already.has(x.url) || seen.has(x.url)) return false;
-          seen.add(x.url);
+          if (!x.url || !isRealWebsite(x.url)) return false;
+          const home = homepageUrl(x.url);
+          const host = safeHost(home);
+          if (already.has(home) || seenHost.has(host)) return false;
+          seenHost.add(host);
           return true;
         })
+        .map((x) => ({ r: x.r, url: homepageUrl(x.url) }))
         .slice(0, cap);
 
       let inserted = 0;

@@ -95,5 +95,22 @@ export function safeHost(url: string): string {
   }
 }
 
+/** Hosts that are NOT a real website (social/profile/link pages) — excluded from the ugly-site hunt. */
+const NON_SITE_HOSTS =
+  /(^|\.)(facebook\.com|fb\.com|fb\.me|m\.facebook\.com|instagram\.com|x\.com|twitter\.com|tiktok\.com|youtube\.com|youtu\.be|linkedin\.com|wa\.me|t\.me|linktr\.ee|business\.site|sites\.google\.com|goo\.gl|maps\.app\.goo\.gl)$/i;
+
+export function isRealWebsite(url: string): boolean {
+  const host = safeHost(url);
+  return host.length > 0 && !NON_SITE_HOSTS.test(host);
+}
+
+/** Canonical homepage URL for a host (so chains + deep pages collapse to one screenshot). */
+export function homepageUrl(url: string): string {
+  const host = safeHost(url);
+  if (!host) return url;
+  const proto = url.startsWith("http://") ? "http://" : "https://";
+  return `${proto}${host}/`;
+}
+
 export const USER_AGENT =
   "DS2-LeadFinder/0.1 (+https://ds2-consulting.com; market research; contact dimo.atheneos@gmail.com)";
