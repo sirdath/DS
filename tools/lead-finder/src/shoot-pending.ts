@@ -18,7 +18,8 @@ process.on("uncaughtException", (e) => log.warn(`uncaught (continuing): ${e inst
 process.on("unhandledRejection", (e) => log.warn(`unhandled (continuing): ${e instanceof Error ? e.message : String(e)}`));
 
 const BATCH = 80;
-const CONCURRENCY = 4;
+const CONCURRENCY = 3; // gentler on the machine; fewer concurrent Chrome renders
+const TIMEOUT_MS = 35000; // 22s was too short — many live sites render slowly under load
 const WINDOW = "1100,720"; // a touch smaller → keeps PNGs ~250-350KB (storage budget)
 const SHOTS_DIR = join(process.cwd(), "shots");
 
@@ -46,7 +47,7 @@ async function main(): Promise<void> {
     const rows = await nextBatch(sb);
     if (rows.length === 0) break;
     await mapPool(rows, CONCURRENCY, async (row) => {
-      const png = await screenshot(row.website, 22000, WINDOW);
+      const png = await screenshot(row.website, TIMEOUT_MS, WINDOW);
       if (!png) {
         await sb.from("redesign_targets").update({ vision_status: "failed" }).eq("id", row.id);
         failed++;
