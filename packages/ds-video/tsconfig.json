@@ -1,0 +1,10 @@
+{
+  "extends": "@ds/tsconfig/react-library.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "outDir": "dist",
+    "noEmit": true,
+    "types": ["@types/web", "node"]
+  },
+  "include": ["src", "remotion.config.ts"]
+}

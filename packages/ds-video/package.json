@@ -1,0 +1,35 @@
+{
+  "name": "@ds/video",
+  "version": "0.0.1",
+  "description": "DS2 marketing-video Remotion project — programmatic identity videos (Anti-Consultancy Reel, Method in Motion, Founders Direct). Separate from @ds/motion-editor (which handles the scroll-scrubbed hero frame-sequence pipeline).",
+  "private": true,
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@remotion/cli": "4.0.451",
+    "@remotion/google-fonts": "4.0.451",
+    "@remotion/media": "4.0.451",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remotion": "4.0.451"
+  },
+  "devDependencies": {
+    "@remotion/eslint-config-flat": "4.0.451",
+    "@types/react": "^19.0.7",
+    "@types/web": "0.0.166",
+    "eslint": "^9.17.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.6.3"
+  },
+  "scripts": {
+    "dev": "remotion studio",
+    "studio": "remotion studio",
+    "build": "remotion bundle",
+    "render": "remotion render",
+    "render:reel": "remotion render AntiConsultancyReel out/anti-consultancy-reel.mp4",
+    "upgrade": "remotion upgrade",
+    "lint": "eslint src && tsc"
+  },
+  "sideEffects": [
+    "*.css"
+  ]
+}
