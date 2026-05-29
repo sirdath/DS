@@ -109,17 +109,25 @@ export default async function HuntPage({ searchParams }: PageProps) {
           No targets yet. Run the hunt pipeline (gyms/restaurants first, then lawyers) to populate this.
         </p>
       ) : (
-        <>
-          <div className="admin-leads-pagebar">
-            <span>Showing {((page - 1) * PAGE_SIZE + 1).toLocaleString()}–{Math.min(page * PAGE_SIZE, total).toLocaleString()} of {total.toLocaleString()}</span>
-            <span className="admin-leads-pagenav">
-              {page > 1 ? <Link href={href({ page: String(page - 1) })} className="admin-filter-link">← Prev</Link> : <span className="admin-filter-link is-disabled">← Prev</span>}
-              <span className="dim">page {page} / {pageCount}</span>
-              {page < pageCount ? <Link href={href({ page: String(page + 1) })} className="admin-filter-link">Next →</Link> : <span className="admin-filter-link is-disabled">Next →</span>}
-            </span>
-          </div>
-          <HuntGrid targets={targets} shotBase={shotBase} />
-        </>
+        (() => {
+          const pager = (
+            <div className="admin-leads-pagebar">
+              <span>Showing {((page - 1) * PAGE_SIZE + 1).toLocaleString()}–{Math.min(page * PAGE_SIZE, total).toLocaleString()} of {total.toLocaleString()}</span>
+              <span className="admin-leads-pagenav">
+                {page > 1 ? <Link href={href({ page: String(page - 1) })} className="admin-filter-link">← Prev</Link> : <span className="admin-filter-link is-disabled">← Prev</span>}
+                <span className="dim">page {page} / {pageCount}</span>
+                {page < pageCount ? <Link href={href({ page: String(page + 1) })} className="admin-filter-link">Next →</Link> : <span className="admin-filter-link is-disabled">Next →</span>}
+              </span>
+            </div>
+          )
+          return (
+            <>
+              {pager}
+              <HuntGrid targets={targets} shotBase={shotBase} />
+              {pager}
+            </>
+          )
+        })()
       )}
     </div>
   )
