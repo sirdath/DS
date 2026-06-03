@@ -1875,6 +1875,33 @@ footer { border-color: var(--hairline) !important; }
 .style-switcher__btn:hover { background: rgba(255,255,255,0.08); }
 .style-switcher__btn.on { background: #fff; color: #16181d; }
 
+/* Palette switcher — stacks above the logo switcher. Preview-only (off in production). */
+.palette-switcher {
+  position: fixed; z-index: 200; bottom: 70px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 6px; padding: 7px 9px; border-radius: 999px;
+  background: rgba(20,18,30,0.82); backdrop-filter: blur(14px);
+  box-shadow: 0 14px 40px -18px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.12);
+}
+.palette-switcher__label { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.5); padding: 0 6px; }
+.palette-switcher__btn { cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border: 1px solid transparent; background: transparent; color: rgba(255,255,255,0.82); font-size: 12.5px; font-weight: 500; padding: 6px 12px 6px 8px; border-radius: 999px; transition: background 0.2s ease, color 0.2s ease; }
+.palette-switcher__btn:hover { background: rgba(255,255,255,0.08); }
+.palette-switcher__btn.on { background: #fff; color: #16181d; }
+.palette-switcher__dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18); }
+
+/* ─── Hero — cinematic 3D logo (Three.js port of logo-cinematic.html). ─── */
+.hero--cinematic { position: relative; width: 100%; min-height: 100vh; height: 100vh; padding: 0; margin: 0; overflow: hidden; display: block; }
+.hero-cinematic { position: absolute; inset: 0; overflow: hidden; }
+.hero-cinematic__bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 70% at 50% 46%, #16213C 0%, #0C1426 36%, #060912 68%, #04060B 100%);
+}
+.hero-cinematic__bg::after {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 52%, rgba(0,0,0,0.55) 100%);
+}
+.hero-cinematic__canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
 /* Logo-style modes (set by the switcher via body[data-logo]) */
 body[data-logo="filled"] .logo-svg .ltr-fill { fill: #15161B !important; }
 body[data-logo="filled"] .logo-svg .ltr { stroke: #15161B !important; }

@@ -65,6 +65,9 @@ importers:
       server-only:
         specifier: ^0.0.1
         version: 0.0.1
+      three:
+        specifier: ^0.184.0
+        version: 0.184.0
     devDependencies:
       '@ds/eslint-config':
         specifier: workspace:*
@@ -84,6 +87,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.0.3
         version: 19.2.3(@types/react@19.2.14)
+      '@types/three':
+        specifier: ^0.184.0
+        version: 0.184.0
       eslint:
         specifier: ^9.17.0
         version: 9.39.4(jiti@2.6.1)
@@ -336,6 +342,46 @@ importers:
         version: 3.2.4(@types/node@22.19.17)(jsdom@20.0.3)(lightningcss@1.32.0)(terser@5.46.2)
 
   packages/ds-tokens: {}
+
+  packages/ds-video:
+    dependencies:
+      '@remotion/cli':
+        specifier: 4.0.451
+        version: 4.0.451(@swc/helpers@0.5.15)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@remotion/google-fonts':
+        specifier: 4.0.451
+        version: 4.0.451(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@remotion/media':
+        specifier: 4.0.451
+        version: 4.0.451(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      react:
+        specifier: ^19.0.0
+        version: 19.2.5
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.2.5(react@19.2.5)
+      remotion:
+        specifier: 4.0.451
+        version: 4.0.451(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+    devDependencies:
+      '@remotion/eslint-config-flat':
+        specifier: 4.0.451
+        version: 4.0.451(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
+      '@types/react':
+        specifier: ^19.0.7
+        version: 19.2.14
+      '@types/web':
+        specifier: 0.0.166
+        version: 0.0.166
+      eslint:
+        specifier: ^9.17.0
+        version: 9.39.4(jiti@2.6.1)
+      prettier:
+        specifier: ^3.4.2
+        version: 3.8.3
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
 
   packages/eslint-config:
     devDependencies:
@@ -1875,6 +1921,9 @@ packages:
     resolution: {integrity: sha512-axOn23XzC/A291/dmjwrpNn4doW/X/SU7uzrXfkv4DzZV5DO5RMZEWb3MYIerTOL3X0A6FAaiaUQTyvsP3sLMg==}
     peerDependencies:
       eslint: '>=9'
+
+  '@remotion/google-fonts@4.0.451':
+    resolution: {integrity: sha512-8JBPRQmLX7PKaz8bvkXq7fARzH8DbDM2NgSfV7buhyRVlewsdLfWioZdn1woqMcY9y5Ik6APtxWOrWuF8acEig==}
 
   '@remotion/licensing@4.0.451':
     resolution: {integrity: sha512-LQKL1gKZEWY71ueW+cSTFP3pR/kbNfzoOgu+pplYMPXLf/jtNrlkDW5cr6Bnl5xtSUQczrP3L8J18gwCi2kH7Q==}
@@ -5910,7 +5959,7 @@ snapshots:
 
   '@babel/parser@7.24.1':
     dependencies:
-      '@babel/types': 7.24.0
+      '@babel/types': 7.29.0
 
   '@babel/parser@7.29.3':
     dependencies:
@@ -7232,6 +7281,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
       - typescript
+
+  '@remotion/google-fonts@4.0.451(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+    dependencies:
+      remotion: 4.0.451(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+    transitivePeerDependencies:
+      - react
+      - react-dom
 
   '@remotion/licensing@4.0.451': {}
 

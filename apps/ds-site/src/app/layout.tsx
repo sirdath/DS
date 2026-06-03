@@ -3,6 +3,7 @@ import { Inter, Orbitron } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "./i18n";
 import LogoStyleSwitcher from "./logo-style-switcher";
+import PaletteSwitcher from "./palette-switcher";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -31,7 +32,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           deploys + local dev the style switcher below can override it for review. */}
       <body data-logo="gradient">
         <LanguageProvider>{children}</LanguageProvider>
-        {process.env.VERCEL_ENV !== "production" && <LogoStyleSwitcher />}
+        {process.env.VERCEL_ENV !== "production" && (
+          <>
+            <PaletteSwitcher />
+            <LogoStyleSwitcher />
+          </>
+        )}
       </body>
     </html>
   );
