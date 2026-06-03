@@ -1,0 +1,30 @@
+# Normalize line endings: store LF in the repo, check out LF everywhere.
+# Keeps commits identical across the Windows and macOS machines (no CRLF churn).
+* text=auto eol=lf
+
+# Explicit binary types — never EOL-convert or text-diff these
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.webp   binary
+*.avif   binary
+*.ico    binary
+*.svg    text eol=lf
+*.woff   binary
+*.woff2  binary
+*.ttf    binary
+*.otf    binary
+*.eot    binary
+*.mp4    binary
+*.webm   binary
+*.mov    binary
+*.mp3    binary
+*.wav    binary
+*.pdf    binary
+*.zip    binary
+*.lockb  binary
+
+# Lockfiles: text, LF, but don't clutter diffs
+pnpm-lock.yaml   text eol=lf -diff
+package-lock.json text eol=lf -diff
