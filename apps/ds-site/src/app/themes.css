@@ -1,0 +1,114 @@
+/* ============================================================================
+   themes.css — site-wide alternating "surface" system for ds-site.
+
+   ThemeSwitcher sets body[data-theme] and stamps data-surface="..." onto each
+   section per theme. Surfaces redefine the LOCAL design tokens (--black bg,
+   --white ink, --silver, --ghost, --hairline, --surface) so the whole token-
+   driven component layer flips for free, plus a ::after overlay for aurora /
+   gradient-flow / dot+grid patterns.
+
+   Adapted from packages/frontendmaxxing-reference (backgrounds/aurora.css,
+   backgrounds/patterns.css) and retuned to the periwinkle brand palette.
+   ============================================================================ */
+
+@keyframes ds-aurora-drift {
+  0%   { transform: translate(0%, 0%)  rotate(0deg)  scale(1);    }
+  33%  { transform: translate(4%, -3%) rotate(3deg)  scale(1.06); }
+  66%  { transform: translate(-3%, 4%) rotate(-2deg) scale(0.98); }
+  100% { transform: translate(2%, -2%) rotate(1deg)  scale(1.03); }
+}
+@keyframes ds-grad-flow {
+  0%   { background-position: 0% 50%;   }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%;   }
+}
+
+/* Any themed section lifts its content above the ::after overlays. */
+[data-surface] > * { position: relative; z-index: 1; }
+
+/* ── INK: a deeper/alternate dark surface for focal sections (scheme-driven) ── */
+[data-surface~="ink"] {
+  background: var(--ink-bg, #141520);
+  position: relative;
+  overflow: hidden;
+}
+/* Fine grain over the dark focal surfaces — Apple/Stripe polish, kills banding. */
+[data-surface~="ink"]::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── AURORA overlay (use on an ink section) ─────────────────────────── */
+[data-surface~="aurora"]::after {
+  content: ""; position: absolute; inset: -35%; z-index: 0; pointer-events: none;
+  /* Soft 3-blob mesh in the scheme's hues (oklch blend = no muddy mid-tones). */
+  background:
+    radial-gradient(42% 56% at 22% 32%, color-mix(in oklch, var(--accent) 42%, transparent), transparent 70%),
+    radial-gradient(48% 58% at 80% 66%, color-mix(in oklch, var(--hue-2) 30%, transparent), transparent 72%),
+    radial-gradient(54% 52% at 58% 14%, color-mix(in oklch, var(--accent-soft) 24%, transparent), transparent 72%);
+  filter: blur(52px) saturate(1.05);
+  animation: ds-aurora-drift 22s ease-in-out infinite alternate;
+}
+
+/* ── FLOW: animated periwinkle gradient (use on an ink section) ─────── */
+[data-surface~="flow"] {
+  background: linear-gradient(120deg, #161427 0%, #221c44 35%, #2a2152 50%, #221c44 65%, #161427 100%);
+  background-size: 220% 220%;
+  animation: ds-grad-flow 20s ease infinite;
+}
+
+/* ── WASH: soft periwinkle bloom on light (keeps dark text) ─────────── */
+[data-surface~="wash"] {
+  background:
+    radial-gradient(120% 90% at 50% -10%, color-mix(in srgb, var(--accent) 13%, #fff) 0%, transparent 56%),
+    radial-gradient(85% 65% at 100% 115%, color-mix(in srgb, var(--hue-2) 16%, #fff) 0%, transparent 54%),
+    radial-gradient(80% 62% at 0% 92%, color-mix(in srgb, var(--accent-soft) 20%, #fff) 0%, transparent 52%),
+    var(--black);
+}
+
+/* ── DOTS: periwinkle dot grid on light, faded at edges ─────────────── */
+[data-surface~="dots"] { position: relative; }
+[data-surface~="dots"]::after {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--accent) 30%, transparent) 1.2px, transparent 1.2px);
+  background-size: 26px 26px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 70% at center, #000 45%, transparent 100%);
+  mask-image: radial-gradient(ellipse 70% 70% at center, #000 45%, transparent 100%);
+}
+
+/* ── GRID: periwinkle line grid on light, faded at edges ────────────── */
+[data-surface~="grid"] { position: relative; }
+[data-surface~="grid"]::after {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--accent) 16%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 16%, transparent) 1px, transparent 1px);
+  background-size: 40px 40px;
+  -webkit-mask-image: radial-gradient(ellipse 75% 75% at center, #000 40%, transparent 100%);
+  mask-image: radial-gradient(ellipse 75% 75% at center, #000 40%, transparent 100%);
+}
+
+/* Cards become frosted glass on dark (ink) surfaces, instead of floating white. */
+[data-surface~="ink"] .feat-card,
+[data-surface~="ink"] .mode,
+[data-surface~="ink"] .svc-cell {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--hairline);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* The contact email window stays a real (light) window → restore dark text tokens
+   inside it so it doesn't inherit the section's flipped light-on-light text. */
+[data-surface~="ink"] .compose-window {
+  --white: #191a22;
+  --silver: #565c6b;
+  --ghost: #9498a6;
+  --hairline: rgba(25, 26, 34, 0.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-surface~="aurora"]::after,
+  [data-surface~="flow"] { animation: none; }
+}

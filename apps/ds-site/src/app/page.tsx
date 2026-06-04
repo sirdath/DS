@@ -5,7 +5,7 @@ import ContactPanel, { ContactCTA } from "./contact-panel";
 import { useT, useLang, LangToggle } from "./i18n";
 import PoweredBy from "./powered-by";
 import { DS2Mark } from "./ds2-mark";
-import HeroCinematicLogo from "./hero-cinematic-logo";
+import HeroGlassLogo from "./hero-glass-logo";
 
 export default function HomePage() {
   const [chatOpen, setChatOpen] = useState(false);
@@ -412,6 +412,37 @@ export default function HomePage() {
         });
       }
 
+      // ─── Scroll-linked page tint (writes --page-tint) + house-style card reveals ───
+      const prefersReduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (!prefersReduce) {
+        const rootEl = document.documentElement;
+        (Array.from(document.querySelectorAll("[data-tint]")) as HTMLElement[]).forEach((sec) => {
+          ScrollTrigger.create({
+            trigger: sec,
+            start: "top center",
+            end: "bottom center",
+            onToggle: (self) => {
+              if (self.isActive) rootEl.style.setProperty("--page-tint", sec.dataset.tint || "transparent");
+            },
+          });
+        });
+        const revealGroup = (selector: string) => {
+          const els = Array.from(document.querySelectorAll(selector)) as HTMLElement[];
+          if (!els.length) return;
+          gsap.set(els, { y: 26, autoAlpha: 0 });
+          ScrollTrigger.batch(els, {
+            start: "top 88%",
+            once: true,
+            onEnter: (batch) =>
+              gsap.to(batch, { y: 0, autoAlpha: 1, duration: 0.6, stagger: 0.07, ease: "power3.out", overwrite: true }),
+          });
+        };
+        revealGroup(".mode");
+        revealGroup(".feat-card");
+        // .founder-half has its own bespoke translateX slide-in (founders-split
+        // is-revealed) — don't double-animate it here or the halves go off-centre.
+      }
+
       // â”€â”€â”€ Magnetic â€” buttons that subtly follow the cursor â”€â”€â”€
       if (window.matchMedia("(hover: hover)").matches) {
         const initMagnetic = (selector: string, strength: number, release: number) => {
@@ -598,6 +629,7 @@ export default function HomePage() {
 
   return (
     <>
+      <div className="ds-atmosphere" aria-hidden="true" />
 
       <nav className="top">
         <div className="nav-inner">
@@ -618,15 +650,21 @@ export default function HomePage() {
       <a id="top" />
 
       {/* â”€â”€â”€ Hero â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <section className="hero hero--cinematic">
-        <HeroCinematicLogo />
+      <section className="hero hero--glass" data-tint="color-mix(in oklab, var(--accent) 26%, transparent)">
+        <HeroGlassLogo />
+        <div className="hero-glass__caption" aria-hidden="true">
+          <div className="tagline">
+            <span className="tagline-1">{t.hero.tag1}</span>
+            <span className="tagline-2">{t.hero.tag2}</span>
+          </div>
+        </div>
       </section>
 
       {/* â”€â”€â”€ Powered by â€” the stack we build on â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <PoweredBy />
 
       {/* â”€â”€â”€ Services â€” index + sticky detail panel â”€â”€â”€â”€ */}
-      <section className="section" id="services">
+      <section className="section" id="services" data-tint="color-mix(in oklab, var(--accent) 16%, transparent)">
         <div className="wrap">
           <div className="section-head">
             <div className="eyebrow">{t.services.eyebrow}</div>
@@ -692,7 +730,7 @@ export default function HomePage() {
       </section>
 
       {/* â”€â”€â”€ Featured work â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <section className="section" id="featured">
+      <section className="section" id="featured" data-surface="ink aurora" data-tint="color-mix(in oklab, var(--hue-2) 18%, transparent)">
         <div className="wrap">
           <div className="section-head">
             <div className="eyebrow">{t.featured.eyebrow}</div>
@@ -722,20 +760,19 @@ export default function HomePage() {
       </section>
 
       {/* â”€â”€â”€ Thesis â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <section className="thesis-section" id="thesis">
+      <section className="thesis-section" id="thesis" data-tint="color-mix(in oklab, var(--accent) 22%, transparent)">
         <figure className="thesis">
           <div className="thesis-eyebrow">{t.thesis.eyebrow}</div>
           <blockquote>{t.thesis.quote}<em>{t.thesis.quoteEm}</em>{t.thesis.quoteEnd}</blockquote>
           <figcaption>
-            <span className="thesis-dash" aria-hidden="true">â€”</span>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="thesis-mark" src="/logos/ds2-logo.png" alt={t.thesis.by} />
+            <span className="thesis-dash" aria-hidden="true">—</span>
+            <DS2Mark className="thesis-mark" aria-label={t.thesis.by} />
           </figcaption>
         </figure>
       </section>
 
       {/* â”€â”€â”€ Engage â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <section className="section" id="engage">
+      <section className="section" id="engage" data-tint="color-mix(in oklab, var(--hue-2) 16%, transparent)">
         <div className="wrap">
           <div className="section-head">
             <div className="eyebrow">{t.engage.eyebrow}</div>
@@ -755,9 +792,9 @@ export default function HomePage() {
               <p>{t.engage.modes[0].desc}</p>
               <div className="mode-stack">
                 <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.strategy}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
-                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.build}</div><div className="stack-tag">{t.engage.tags.none}</div></div>
-                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.handover}</div><div className="stack-tag">{t.engage.tags.none}</div></div>
-                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.stewardship}</div><div className="stack-tag">{t.engage.tags.addon}</div></div>
+                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.build}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
+                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.handover}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
+                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.stewardship}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
               </div>
             </article>
 
@@ -772,9 +809,9 @@ export default function HomePage() {
               </div>
               <p>{t.engage.modes[1].desc}</p>
               <div className="mode-stack">
-                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.strategy}</div><div className="stack-tag">{t.engage.tags.none}</div></div>
-                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.build}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
-                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.handover}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
+                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.strategy}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
+                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.build}</div><div className="stack-tag">{t.engage.tags.none}</div></div>
+                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.handover}</div><div className="stack-tag">{t.engage.tags.none}</div></div>
                 <div className="stack-row"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.stewardship}</div><div className="stack-tag">{t.engage.tags.addon}</div></div>
               </div>
             </article>
@@ -790,10 +827,10 @@ export default function HomePage() {
               </div>
               <p>{t.engage.modes[2].desc}</p>
               <div className="mode-stack">
-                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.strategy}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
+                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.strategy}</div><div className="stack-tag">{t.engage.tags.none}</div></div>
                 <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.build}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
                 <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.handover}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
-                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.stewardship}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
+                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.stewardship}</div><div className="stack-tag">{t.engage.tags.addon}</div></div>
               </div>
             </article>
           </div>
@@ -809,7 +846,7 @@ export default function HomePage() {
       </section>
 
       {/* â”€â”€â”€ Founders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <section className="section" id="founders">
+      <section className="section" id="founders" data-tint="color-mix(in oklab, var(--accent) 14%, transparent)">
         <div className="wrap">
           <div className="section-head">
             <div className="eyebrow">{t.founders.eyebrow}</div>
@@ -836,7 +873,7 @@ export default function HomePage() {
       </section>
 
       {/* â”€â”€â”€ Contact â€” macOS Mail compose â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <section className="section" id="contact">
+      <section className="section" id="contact" data-surface="ink aurora" data-tint="color-mix(in oklab, var(--hue-2) 18%, transparent)">
         <div className="wrap">
           <div className="section-head">
             <div className="eyebrow">{t.contact.eyebrow}</div>
@@ -893,14 +930,23 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer>
-        <div>{t.footer.copyright}</div>
-        <ul className="links">
-          <li><a href="#services">{t.footer.services}</a></li>
-          <li><a href="/portfolio">{t.footer.portfolio}</a></li>
-          <li><a href="/about">{t.footer.about}</a></li>
-          <li><ContactCTA size="sm" label={t.cta.send} onOpen={() => setChatOpen(true)} /></li>
-        </ul>
+      <footer data-surface="ink">
+        <div className="wrap footer-inner">
+          <div className="footer-top">
+            <div className="footer-brand">
+              <DS2Mark className="footer-mark" />
+              <p className="footer-tagline">{t.hero.tag1} {t.hero.tag2}</p>
+              <p className="footer-loc">Athens · London</p>
+            </div>
+            <nav className="footer-nav" aria-label="Footer">
+              <a href="#services">{t.footer.services}</a>
+              <a href="/portfolio">{t.footer.portfolio}</a>
+              <a href="/about">{t.footer.about}</a>
+              <ContactCTA size="sm" label={t.cta.send} onOpen={() => setChatOpen(true)} />
+            </nav>
+          </div>
+          <div className="footer-bottom">{t.footer.copyright}</div>
+        </div>
       </footer>
 
       <ContactPanel open={chatOpen} onClose={() => setChatOpen(false)} />

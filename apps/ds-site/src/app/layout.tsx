@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Inter, Orbitron } from "next/font/google";
 import "./globals.css";
+import "./themes.css";
+import "./schemes.css";
 import { LanguageProvider } from "./i18n";
-import LogoStyleSwitcher from "./logo-style-switcher";
-import PaletteSwitcher from "./palette-switcher";
+import SchemeSwitcher from "./scheme-switcher";
+import GlassSwitcher from "./glass-switcher";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -28,16 +30,17 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${orbitron.variable}`}>
-      {/* data-logo sets the production hero treatment (purple gradient). On preview
-          deploys + local dev the style switcher below can override it for review. */}
-      <body data-logo="gradient">
+      {/* data-logo sets the hero logo treatment; data-scheme drives the colour scheme. */}
+      <body data-logo="gradient" suppressHydrationWarning>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var q=new URLSearchParams(location.search);var s=q.get('scheme')||localStorage.getItem('ds2-scheme')||'azure';document.body.setAttribute('data-scheme',s);var g=q.get('glass')||localStorage.getItem('ds2-glass')||'smoked';document.body.setAttribute('data-glass',g);}catch(e){document.body.setAttribute('data-scheme','azure');document.body.setAttribute('data-glass','smoked');}})();",
+          }}
+        />
         <LanguageProvider>{children}</LanguageProvider>
-        {process.env.VERCEL_ENV !== "production" && (
-          <>
-            <PaletteSwitcher />
-            <LogoStyleSwitcher />
-          </>
-        )}
+        {process.env.VERCEL_ENV !== "production" && <SchemeSwitcher />}
+        {process.env.VERCEL_ENV !== "production" && <GlassSwitcher />}
       </body>
     </html>
   );

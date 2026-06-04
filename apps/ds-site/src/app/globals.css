@@ -64,10 +64,42 @@ body {
 /* soft edge vignette toward the page background, keeps text crisp over the smoke */
 body::before {
   content: ""; position: fixed; inset: 0; z-index: 0;
-  background: radial-gradient(ellipse at center, transparent 0%, rgba(246,246,251,0.55) 78%);
+  background: radial-gradient(ellipse at center, transparent 0%, color-mix(in srgb, var(--black) 55%, transparent) 78%);
   pointer-events: none;
 }
 nav.top, section, footer { position: relative; z-index: 1; }
+
+/* ── Ambient atmosphere — ONE fixed, token-driven layer behind everything.
+   Slow drifting accent/hue-2 orbs + a scroll-linked tint (--page-tint, written
+   by GSAP per section). Scheme-aware; GPU-light (only transform animates). ── */
+.ds-atmosphere { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: var(--black); }
+.ds-atmosphere::before {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(70% 55% at 50% 8%, var(--page-tint, transparent), transparent 70%);
+  opacity: 0.55; transition: background 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.ds-atmosphere::after {
+  content: ""; position: absolute; inset: -15%;
+  background:
+    radial-gradient(38vw 38vw at 18% 22%, color-mix(in oklab, var(--accent) 100%, transparent), transparent 62%),
+    radial-gradient(32vw 32vw at 84% 70%, color-mix(in oklab, var(--hue-2) 100%, transparent), transparent 64%);
+  filter: blur(96px); opacity: 0.18; will-change: transform;
+  animation: ds-atmos-drift 30s ease-in-out infinite alternate;
+}
+@keyframes ds-atmos-drift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(2.5%, -2%, 0) scale(1.06); }
+}
+/* Global colorless grain — de-bands the atmospheric blends, identical per scheme. */
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  opacity: 0.05; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media (prefers-reduced-motion: reduce) {
+  .ds-atmosphere::after { animation: none; }
+  .ds-atmosphere::before { transition: none; }
+}
 
 /* Top Nav */
 nav.top {
@@ -456,7 +488,7 @@ h2.section-title em { font-style: normal; color: var(--silver); }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 
 /* ── Powered-by marquee (the stack we build on) ── */
-.powered { position: relative; z-index: 1; padding: 8px 0 48px; }
+.powered { position: relative; z-index: 1; padding: 34px 0 48px; }
 .powered-eyebrow {
   text-align: center;
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
@@ -484,7 +516,9 @@ h2.section-title em { font-style: normal; color: var(--silver); }
   .powered-logo { width: 28px; height: 28px; margin-right: 42px; }
 }
 
-.section { padding: 120px 0; }
+.section { padding: 120px 0; background: var(--black); }
+/* Section separators — a thin hairline at each boundary (adapts per surface). */
+.powered, .section { border-top: 1px solid var(--hairline); }
 
 /* ── Services — compact grid ── */
 .svc-grid {
@@ -578,7 +612,7 @@ h2.section-title em { font-style: normal; color: var(--silver); }
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(255,255,255,0.018) 0%, transparent 70%);
+  background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(255,255,255,0.015) 0%, transparent 70%);
   pointer-events: none;
 }
 .thesis { max-width: 1080px; margin: 0 auto; padding: 0 32px; text-align: center; position: relative; }
@@ -1090,15 +1124,20 @@ h2.section-title em { font-style: normal; color: var(--silver); }
 .compose-caption a { color: var(--silver); text-decoration: none; }
 .compose-caption a:hover { color: var(--white); }
 
-footer {
-  padding: 36px 24px 28px; max-width: 1100px; margin: 32px auto 0;
-  color: var(--ghost); font-size: 12.5px;
-  border-top: 1px solid var(--hairline);
-  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;
+footer { margin: 0; max-width: none; padding: 0; border-top: 1px solid var(--hairline); }
+.footer-inner { padding-top: 72px; padding-bottom: 40px; }
+.footer-top {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 48px; flex-wrap: wrap;
+  padding-bottom: 36px; border-bottom: 1px solid var(--hairline);
 }
-footer .links { display: flex; gap: 22px; list-style: none; }
-footer a { color: var(--ghost); text-decoration: none; transition: color 0.2s; }
-footer a:hover { color: var(--silver); }
+.footer-brand { display: flex; flex-direction: column; gap: 12px; max-width: 340px; }
+.footer-mark { width: 72px; height: auto; color: var(--white); }
+.footer-tagline { color: var(--silver); font-size: 14px; line-height: 1.5; }
+.footer-loc { color: var(--ghost); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; }
+.footer-nav { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+.footer-nav a { color: var(--silver); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+.footer-nav a:hover { color: var(--white); }
+.footer-bottom { padding-top: 28px; color: var(--ghost); font-size: 12.5px; }
 
 @media (max-width: 960px) {
   .modes { grid-template-columns: 1fr; }
@@ -1756,7 +1795,7 @@ nav.top { background: rgba(255,255,255,0.72) !important; }
 .cpanel-brand { display: flex; justify-content: center; margin-bottom: 4px; }
 .cpanel-brand img { height: 22px; width: auto; }
 /* thesis attribution → purple wordmark instead of the text "DS2" */
-.thesis-mark { height: 26px; width: auto; display: inline-block; }
+.thesis-mark { height: 26px; width: auto; display: inline-block; color: var(--accent); }
 /* minimised tab (bottom-right) */
 .cpanel-tab {
   background: #fff !important; border-color: var(--hairline) !important; color: var(--white) !important;
@@ -1901,6 +1940,17 @@ footer { border-color: var(--hairline) !important; }
   background: radial-gradient(ellipse at center, transparent 52%, rgba(0,0,0,0.55) 100%);
 }
 .hero-cinematic__canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* ─── Hero — DS2 black-glass logo (Three.js port of "DS2 Glass Logo.html"). ─── */
+.hero--glass { position: relative; width: 100%; min-height: 100vh; height: 100vh; padding: 0; margin: 0; overflow: hidden; display: block; }
+.hero-glass { position: absolute; inset: 0; overflow: hidden; }
+.hero-glass__canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.hero-glass__caption { position: absolute; left: 0; right: 0; top: 63%; z-index: 3; display: flex; justify-content: center; pointer-events: none; }
+.hero-glass__cap {
+  position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 3;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px;
+  letter-spacing: 0.24em; text-transform: uppercase; color: rgba(40,40,55,0.7); pointer-events: none;
+}
 
 /* Logo-style modes (set by the switcher via body[data-logo]) */
 body[data-logo="filled"] .logo-svg .ltr-fill { fill: #15161B !important; }

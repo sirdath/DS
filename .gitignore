@@ -52,3 +52,9 @@ assets/icons-website/
 
 # Claude Code ephemeral
 .claude/logs/
+
+# Scratch / working dirs (screenshots, experiments — never deliverable)
+.scratch/
+
+# Original DS2 handoff bundle (123 MB of source HTML/screenshots/uploads — kept local)
+DS2-CONSULTING/

@@ -1,0 +1,83 @@
+/* ============================================================================
+   schemes.css — 3 BOLD dark colour schemes for the bake-off (body[data-scheme]).
+
+   Each is a full 3-colour re-theme (base + accent + secondary) that flips the
+   whole token-driven layer: page bg, surfaces, text, borders, accent, the
+   alternating section surfaces, AND the WebGL nebula hero (via --hero-*).
+   Components are untouched — only colour changes.
+
+   Palettes adapted from frontendmaxxing colors/palettes.css (vetted, contrast-
+   checked) per color.skill.md:
+     · OBSIDIAN — saas-indigo + linear-violet (near-black · electric violet · lilac)
+     · AZURE    — fintech-navy + banking-azure (midnight navy · azure · cyan)
+     · EMERALD  — wealth-emerald (green-black · emerald · gold)
+   ============================================================================ */
+
+/* ── OBSIDIAN — indigo-violet on near-black ─────────────────────────── */
+body[data-scheme="obsidian"] {
+  --black: #0a0a14; --gray-2: #11111f; --gray-3: #16162a; --ink-bg: #07070f;
+  --silver: #a6a3cf; --ghost: #6b6699; --white: #ecebff;
+  --hairline: rgba(140, 130, 255, 0.14); --hairline-strong: rgba(140, 130, 255, 0.24);
+  --accent: #7c6cff; --accent-soft: #b3a8ff; --accent-on: #0a0a14;
+  --hue-2: #a855f7; --hue-3: #4f7bff;
+  --smoke-a: #7c6cff; --smoke-b: #c4b5fd;
+  --surface: #16162a;
+  --hero-base: #0a0a16; --hero-tint: #7c6cff; --hero-tint2: #a855f7; --hero-logo: #8b7cff; --hero-logo-core: #4a3aa8; --hero-trace: #c4b5fd;
+}
+
+/* ── AZURE — azure/cyan on midnight navy ────────────────────────────── */
+body[data-scheme="azure"] {
+  --black: #0a0f1e; --gray-2: #0f1730; --gray-3: #16203c; --ink-bg: #070b18;
+  --silver: #9fb2d4; --ghost: #647aa3; --white: #eaf0fb;
+  --hairline: rgba(120, 150, 200, 0.16); --hairline-strong: rgba(120, 150, 200, 0.26);
+  --accent: #3b82f6; --accent-soft: #93b4f5; --accent-on: #06122e;
+  --hue-2: #22d3ee; --hue-3: #818cf8;
+  --smoke-a: #3b82f6; --smoke-b: #7dd3fc;
+  --surface: #16203c;
+  --hero-base: #0a1022; --hero-tint: #3b82f6; --hero-tint2: #22d3ee; --hero-logo: #4f9bff; --hero-logo-core: #1f5fd0; --hero-trace: #93c5fd;
+}
+
+/* ── EMERALD — emerald + gold on green-black ────────────────────────── */
+body[data-scheme="emerald"] {
+  --black: #07140f; --gray-2: #0c1f17; --gray-3: #112a20; --ink-bg: #050f0b;
+  --silver: #9ccbb3; --ghost: #63937c; --white: #e6f4ec;
+  --hairline: rgba(80, 160, 120, 0.16); --hairline-strong: rgba(80, 160, 120, 0.26);
+  --accent: #10b981; --accent-soft: #6ee7b7; --accent-on: #04130c;
+  --hue-2: #d4b15a; --hue-3: #14b8a6;
+  --smoke-a: #10b981; --smoke-b: #5eead4;
+  --surface: #112a20;
+  --hero-base: #07150f; --hero-tint: #10b981; --hero-tint2: #d4b15a; --hero-logo: #1ed992; --hero-logo-core: #0a8f63; --hero-trace: #6ee7b7;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   DARK FIXUPS — neutralise the few hardcoded light colours from the
+   "soft-light redesign" block so every scheme reads correctly on dark.
+   ════════════════════════════════════════════════════════════════════ */
+/* The light-theme edge vignette (body::before) makes dark pages read as
+   "grey with a black dot in the middle" — kill it on every dark scheme. */
+body[data-scheme]::before { display: none !important; }
+
+/* Accent tints were mixed with #fff (light-theme) → re-mix dark so cards/pills
+   don't render as light panels on a dark scheme. */
+body[data-scheme] {
+  --accent-tint: color-mix(in srgb, var(--accent) 16%, transparent);
+  --accent-tint-2: color-mix(in srgb, var(--accent) 26%, transparent);
+}
+
+body[data-scheme] nav.top {
+  background: color-mix(in srgb, var(--black) 72%, transparent) !important;
+  border-bottom: 1px solid var(--hairline) !important;
+}
+body[data-scheme] .svc-cell,
+body[data-scheme] .case,
+body[data-scheme] .mode,
+body[data-scheme] .founder-half {
+  background: var(--surface) !important;
+}
+body[data-scheme] .stack-marker { background: var(--surface) !important; }
+body[data-scheme] .svc-cell-body { background: rgba(255, 255, 255, 0.04) !important; border-top-color: var(--hairline) !important; }
+body[data-scheme] .stack-row { background: color-mix(in srgb, var(--white) 4%, transparent) !important; }
+body[data-scheme] .tagline-1 { color: var(--white) !important; }
+body[data-scheme] .founder-half .photo::after {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--black) 42%, transparent) 0%, color-mix(in srgb, var(--black) 90%, transparent) 100%) !important;
+}

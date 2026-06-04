@@ -186,24 +186,24 @@ const en: Dict = {
     modes: [
       {
         num: "MODE 01",
+        title: "End-to-end.",
+        bestLabel: "Best for:",
+        best: " early ideas, ambiguous problems, full accountability under one roof.",
+        desc: "Strategy, design, build and handoff under one roof. Where challenge-first pays back the most.",
+      },
+      {
+        num: "MODE 02",
         title: "Consulting only.",
         bestLabel: "Best for:",
         best: " teams who already build, but want a second pair of senior eyes.",
         desc: "We pressure-test the plan, the architecture and the team, without writing a line of code.",
       },
       {
-        num: "MODE 02",
+        num: "MODE 03",
         title: "Build only.",
         bestLabel: "Best for:",
         best: " when the spec is clear and you need senior hands to ship it.",
         desc: "You bring the spec. We ship it with senior engineers and weekly visibility, in code we'd maintain ourselves.",
-      },
-      {
-        num: "MODE 03",
-        title: "End-to-end.",
-        bestLabel: "Best for:",
-        best: " early ideas, ambiguous problems, full accountability under one roof.",
-        desc: "Strategy, design, build and handoff under one roof. Where challenge-first pays back the most.",
       },
     ],
     rows: {
@@ -236,7 +236,7 @@ const en: Dict = {
     title: "Tell us what you're ",
     titleEm: "actually",
     titleEnd: " trying to do.",
-    sub: "We reply within 1-3 business days.",
+    sub: "We reply within one business day.",
     newMessage: "New Message",
     from: "From:",
     to: "To:",
@@ -406,24 +406,24 @@ const el: Dict = {
     modes: [
       {
         num: "ΤΡΟΠΟΣ 01",
+        title: "Από την αρχή ως το τέλος.",
+        bestLabel: "Ιδανικό για:",
+        best: " πρώιμες ιδέες, ασαφή προβλήματα, πλήρη ευθύνη κάτω από μία στέγη.",
+        desc: "Στρατηγική, σχεδιασμός, υλοποίηση και παράδοση κάτω από μία στέγη. Εδώ η προσέγγιση «πρώτα η αμφισβήτηση» αποδίδει περισσότερο.",
+      },
+      {
+        num: "ΤΡΟΠΟΣ 02",
         title: "Μόνο συμβουλευτική.",
         bestLabel: "Ιδανικό για:",
         best: " ομάδες που ήδη χτίζουν, αλλά θέλουν ένα δεύτερο έμπειρο ζευγάρι μάτια.",
         desc: "Δοκιμάζουμε στην πράξη το σχέδιο, την αρχιτεκτονική και την ομάδα, χωρίς να γράψουμε γραμμή κώδικα.",
       },
       {
-        num: "ΤΡΟΠΟΣ 02",
+        num: "ΤΡΟΠΟΣ 03",
         title: "Μόνο υλοποίηση.",
         bestLabel: "Ιδανικό για:",
         best: " όταν η προδιαγραφή είναι ξεκάθαρη και χρειάζεστε έμπειρα χέρια να την υλοποιήσουν.",
         desc: "Φέρνετε την προδιαγραφή. Την υλοποιούμε με έμπειρους μηχανικούς και εβδομαδιαία ενημέρωση, σε κώδικα που θα συντηρούσαμε κι εμείς οι ίδιοι.",
-      },
-      {
-        num: "ΤΡΟΠΟΣ 03",
-        title: "Από την αρχή ως το τέλος.",
-        bestLabel: "Ιδανικό για:",
-        best: " πρώιμες ιδέες, ασαφή προβλήματα, πλήρη ευθύνη κάτω από μία στέγη.",
-        desc: "Στρατηγική, σχεδιασμός, υλοποίηση και παράδοση κάτω από μία στέγη. Εδώ η προσέγγιση «πρώτα η αμφισβήτηση» αποδίδει περισσότερο.",
       },
     ],
     rows: {
@@ -456,7 +456,7 @@ const el: Dict = {
     title: "Πείτε μας τι ",
     titleEm: "πραγματικά",
     titleEnd: " θέλετε να πετύχετε.",
-    sub: "Απαντάμε μέσα σε 1-3 εργάσιμες ημέρες.",
+    sub: "Απαντάμε μέσα σε μία εργάσιμη ημέρα.",
     newMessage: "Νέο μήνυμα",
     from: "Από:",
     to: "Προς:",
