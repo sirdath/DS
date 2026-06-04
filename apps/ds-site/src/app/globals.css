@@ -614,7 +614,7 @@ h2.section-title em { font-style: normal; color: var(--silver); }
 
 /* Thesis quote */
 .thesis-section {
-  padding: clamp(72px, 9vw, 120px) 0 clamp(120px, 16vw, 200px);
+  padding: clamp(88px, 11vw, 150px) 0;
   border-top: 1px solid var(--hairline);
   border-bottom: 1px solid var(--hairline);
   position: relative;
@@ -697,7 +697,7 @@ h2.section-title em { font-style: normal; color: var(--silver); }
   border: 1px solid rgba(255,255,255,0.075);
   border-radius: 16px;
   padding: 38px 32px 28px;
-  display: flex; flex-direction: column; gap: 26px;
+  display: flex; flex-direction: column;
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.06),
     inset 0 0 0 1px rgba(255,255,255,0.005),
@@ -706,6 +706,16 @@ h2.section-title em { font-style: normal; color: var(--silver); }
   overflow: hidden;
   isolation: isolate;
   transition: border-color 0.5s ease, transform 0.5s cubic-bezier(0.22,0.61,0.36,1), box-shadow 0.5s ease;
+}
+/* Keep real content above the ::before stripe (z1) and ::after halo (z0). */
+.mode > * { position: relative; z-index: 2; }
+/* Desktop: align every band (title / best-for / description / checklist) across the
+   three cards via subgrid — each row sizes to the tallest card, so alignment holds
+   under EN and ΕΛ (which wrap differently). Below 961px the grid is a single column,
+   so the cards fall back to the flex layout above (no cross-card alignment needed). */
+@media (min-width: 961px) {
+  .modes { grid-template-rows: auto auto auto auto auto; }
+  .mode { display: grid; grid-row: 1 / -1; grid-template-rows: subgrid; }
 }
 .mode:hover {
   border-color: rgba(255,255,255,0.22);
@@ -755,14 +765,6 @@ h2.section-title em { font-style: normal; color: var(--silver); }
 .mode.m3::before { width: 3px; opacity: 0.85; }
 .mode.m3:hover::before { width: 4px; opacity: 1; }
 
-.mode-head {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  gap: 16px;
-  border-bottom: 1px solid var(--hairline);
-  padding-bottom: 20px;
-  position: relative; z-index: 2;
-}
-.mode-head-text { display: flex; flex-direction: column; gap: 8px; min-width: 0; flex: 1; }
 .mode-num {
   font-family: var(--font-orbitron), "Orbitron", sans-serif;
   font-size: 10.5px;
@@ -776,14 +778,17 @@ h2.section-title em { font-style: normal; color: var(--silver); }
   letter-spacing: -0.028em;
   color: var(--white);
   line-height: 1.08;
+  margin-top: 12px;
+  padding-right: 92px; /* clear the absolutely-positioned big figure */
 }
 .mode-bigfig {
+  position: absolute;
+  top: 32px; right: 32px;
   font-family: var(--font-orbitron), "Orbitron", sans-serif;
   font-size: 64px;
   font-weight: 300;
   line-height: 0.82;
   letter-spacing: -0.04em;
-  flex-shrink: 0;
   background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.32) 100%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -796,12 +801,21 @@ h2.section-title em { font-style: normal; color: var(--silver); }
   font-size: 12px;
   color: var(--ghost);
   letter-spacing: 0.04em;
+  line-height: 1.5;
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  margin-top: 14px;
 }
 .mode-best strong { color: var(--silver); font-weight: 500; }
-.mode p { font-size: 15px; line-height: 1.62; color: var(--silver); }
+/* Description — sits below a hairline divider (was the old mode-head border-bottom). */
+.mode > p {
+  font-size: 15px; line-height: 1.62; color: var(--silver);
+  margin-top: 24px;
+  padding-top: 26px;
+  border-top: 1px solid var(--hairline);
+}
 
-.mode-stack { display: flex; flex-direction: column; gap: 4px; }
+/* Last band; subgrid equalises the rows above so all three checklists already line up. */
+.mode-stack { display: flex; flex-direction: column; gap: 4px; margin-top: 28px; }
 .stack-row {
   display: grid;
   grid-template-columns: 16px 1fr auto;

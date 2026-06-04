@@ -781,14 +781,10 @@ export default function HomePage() {
           </div>
           <div className="modes">
             <article className="mode m1">
-              <div className="mode-head">
-                <div className="mode-head-text">
-                  <div className="mode-num">{t.engage.modes[0].num}</div>
-                  <h3>{t.engage.modes[0].title}</h3>
-                  <div className="mode-best"><strong>{t.engage.modes[0].bestLabel}</strong>{t.engage.modes[0].best}</div>
-                </div>
-                <div className="mode-bigfig">01</div>
-              </div>
+              <div className="mode-bigfig">01</div>
+              <div className="mode-num">{t.engage.modes[0].num}</div>
+              <h3>{t.engage.modes[0].title}</h3>
+              <div className="mode-best"><strong>{t.engage.modes[0].bestLabel}</strong>{t.engage.modes[0].best}</div>
               <p>{t.engage.modes[0].desc}</p>
               <div className="mode-stack">
                 <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.strategy}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
@@ -799,14 +795,10 @@ export default function HomePage() {
             </article>
 
             <article className="mode m2">
-              <div className="mode-head">
-                <div className="mode-head-text">
-                  <div className="mode-num">{t.engage.modes[1].num}</div>
-                  <h3>{t.engage.modes[1].title}</h3>
-                  <div className="mode-best"><strong>{t.engage.modes[1].bestLabel}</strong>{t.engage.modes[1].best}</div>
-                </div>
-                <div className="mode-bigfig">02</div>
-              </div>
+              <div className="mode-bigfig">02</div>
+              <div className="mode-num">{t.engage.modes[1].num}</div>
+              <h3>{t.engage.modes[1].title}</h3>
+              <div className="mode-best"><strong>{t.engage.modes[1].bestLabel}</strong>{t.engage.modes[1].best}</div>
               <p>{t.engage.modes[1].desc}</p>
               <div className="mode-stack">
                 <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.strategy}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
@@ -817,14 +809,10 @@ export default function HomePage() {
             </article>
 
             <article className="mode m3">
-              <div className="mode-head">
-                <div className="mode-head-text">
-                  <div className="mode-num">{t.engage.modes[2].num}</div>
-                  <h3>{t.engage.modes[2].title}</h3>
-                  <div className="mode-best"><strong>{t.engage.modes[2].bestLabel}</strong>{t.engage.modes[2].best}</div>
-                </div>
-                <div className="mode-bigfig">03</div>
-              </div>
+              <div className="mode-bigfig">03</div>
+              <div className="mode-num">{t.engage.modes[2].num}</div>
+              <h3>{t.engage.modes[2].title}</h3>
+              <div className="mode-best"><strong>{t.engage.modes[2].bestLabel}</strong>{t.engage.modes[2].best}</div>
               <p>{t.engage.modes[2].desc}</p>
               <div className="mode-stack">
                 <div className="stack-row"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.strategy}</div><div className="stack-tag">{t.engage.tags.none}</div></div>
