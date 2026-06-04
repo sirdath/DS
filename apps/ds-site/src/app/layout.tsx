@@ -4,8 +4,6 @@ import "./globals.css";
 import "./themes.css";
 import "./schemes.css";
 import { LanguageProvider } from "./i18n";
-import SchemeSwitcher from "./scheme-switcher";
-import GlassSwitcher from "./glass-switcher";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -39,8 +37,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
         <LanguageProvider>{children}</LanguageProvider>
-        {process.env.VERCEL_ENV !== "production" && <SchemeSwitcher />}
-        {process.env.VERCEL_ENV !== "production" && <GlassSwitcher />}
       </body>
     </html>
   );
