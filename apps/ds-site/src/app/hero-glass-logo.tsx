@@ -55,6 +55,11 @@ const LERP = 0.08;
 const TILT_MAX = 9 * DEG;
 const BOB_AMP = 0.045;
 const BOB_OMEGA = 0.16 * 2 * Math.PI;
+// Fit-to-width: resting camera distance + max fraction of the viewport width the
+// logo may span. On portrait/narrow screens the logo is scaled down to fit (it
+// would otherwise overflow and clip, since the camera FOV is vertical).
+const CAM_DIST = 3.0;
+const FILL = 0.78;
 
 // Three switchable dark-glass looks (try via the Glass pill / ?glass=).
 type GlassId = "smoked" | "frosted" | "obsidian";
@@ -226,6 +231,10 @@ export default function HeroGlassLogo() {
         camera.updateProjectionMatrix();
         const pr = renderer.getPixelRatio();
         cloudUniforms.uResolution.value.set(w * pr, h * pr);
+        // Scale the logo to fit the visible width with margin. On wide screens this
+        // resolves to the design size (1 unit); on portrait it shrinks so nothing clips.
+        const visW = 2 * Math.tan((32 * DEG) / 2) * CAM_DIST * camera.aspect;
+        spin.scale.setScalar(Math.min(1, visW * FILL) / size.x);
       };
       window.addEventListener("resize", resize);
 
