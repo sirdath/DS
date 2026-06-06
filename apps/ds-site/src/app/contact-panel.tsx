@@ -202,7 +202,7 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
       {maximized && (
         <div className="cpanel-logo-top">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logos/ds2-logo.png" alt="DS2" />
+          <img src="/logos/ds2-black.png" alt="DS2" />
         </div>
       )}
       <div
@@ -238,7 +238,7 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
           {!maximized && (
             <div className="cpanel-brand">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logos/ds2-logo.png" alt="DS2" />
+              <img src="/logos/ds2-black.png" alt="DS2" />
             </div>
           )}
           <div className="cpanel-intro">
@@ -294,8 +294,9 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
           ))}
 
           {locked && status === "sent" && (
-            <div className="cpanel-ack">
-              {P.ackBase}{email ? P.ackWithEmail : P.ackNoEmail}.
+            <div className="cpanel-ack" role="status" aria-live="polite">
+              <span className="cpanel-ack-check" aria-hidden="true">✓</span>
+              <span>{P.ackBase}{email ? P.ackWithEmail : P.ackNoEmail}.</span>
             </div>
           )}
         </div>

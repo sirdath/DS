@@ -316,8 +316,15 @@ nav.top {
   white-space: pre-wrap; word-break: break-word;
 }
 .cpanel-ack {
-  align-self: flex-start; font-size: 12.5px; color: var(--ghost);
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 7px;
+  font-size: 12.5px; color: #cfd2da;
   font-family: ui-monospace, "SF Mono", Menlo, monospace; letter-spacing: 0.01em;
+}
+.cpanel-ack-check {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px; flex: none; border-radius: 50%;
+  font-size: 10px; font-weight: 700; color: #0a0a0a;
+  background: #4ade80; box-shadow: 0 0 10px rgba(74,222,128,0.5);
 }
 .cpanel-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 .cpanel-compose {
@@ -1791,19 +1798,24 @@ nav.top { background: rgba(255,255,255,0.72) !important; }
   border-bottom: 1px solid var(--hairline) !important;
   box-shadow: none !important;
 }
-.cpanel-bar-title { color: var(--silver) !important; }
-.cpanel-x { color: var(--ghost) !important; }
-.cpanel-x:hover { background: rgba(25,26,34,0.06) !important; color: var(--white) !important; }
+.cpanel-bar-title { color: #565c6b !important; }
+.cpanel-x { color: #8a8f9c !important; }
+.cpanel-x:hover { background: rgba(25,26,34,0.06) !important; color: #191a22 !important; }
 .cpanel-input, .cpanel-textarea {
-  background: rgba(25,26,34,0.03) !important;
-  border-color: var(--hairline) !important;
-  color: var(--white) !important;
+  background: rgba(25,26,34,0.04) !important;
+  border-color: rgba(25,26,34,0.16) !important;
+  color: #191a22 !important;
 }
-.cpanel-input::placeholder, .cpanel-textarea::placeholder { color: var(--ghost) !important; }
+.cpanel-input::placeholder, .cpanel-textarea::placeholder { color: #8a8f9c !important; }
 .cpanel-input:focus, .cpanel-textarea:focus {
   border-color: var(--accent) !important;
   background: color-mix(in srgb, var(--accent) 5%, #fff) !important;
 }
+/* The scheme tokens (--white/--silver) are LIGHT for the dark site; the panel is a
+   white card, so set explicit ink for everything that reads text on it. */
+.cpanel-intro { color: #565c6b !important; }
+.cpanel-intro strong { color: #191a22 !important; }
+.cpanel-ack { color: #565c6b !important; }
 /* outgoing message bubble → brand purple */
 .cpanel-bubble { background: var(--accent) !important; color: var(--accent-on) !important; }
 .cpanel-compose { background: #f3f3f7 !important; border-top: 1px solid var(--hairline) !important; }
@@ -1815,7 +1827,7 @@ nav.top { background: rgba(255,255,255,0.72) !important; }
 .cpanel-send:hover { box-shadow: 0 12px 30px -10px color-mix(in srgb, var(--accent) 80%, transparent) !important; }
 .cpanel-foot {
   background: #f3f3f7 !important; border-top: 1px solid var(--hairline) !important;
-  color: var(--ghost) !important;
+  color: #565c6b !important;
 }
 /* purple wordmark at the top of the message panel (replaces nothing — adds brand) */
 .cpanel-brand { display: flex; justify-content: center; margin-bottom: 4px; }
@@ -1824,7 +1836,7 @@ nav.top { background: rgba(255,255,255,0.72) !important; }
 .thesis-mark { height: 26px; width: auto; display: inline-block; color: var(--accent); }
 /* minimised tab (bottom-right) */
 .cpanel-tab {
-  background: #fff !important; border-color: var(--hairline) !important; color: var(--white) !important;
+  background: #fff !important; border-color: var(--hairline) !important; color: #191a22 !important;
   box-shadow: 0 12px 30px -12px rgba(25,26,34,0.28) !important;
 }
 .cpanel-tab:hover { box-shadow: 0 16px 36px -12px rgba(25,26,34,0.34) !important; }

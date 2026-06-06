@@ -69,13 +69,23 @@ export default function PageChrome({ children }: { children: ReactNode }) {
 
       {children}
 
-      <footer>
-        <div>{t.footer.copyright}</div>
-        <ul className="links">
-          <li><Link href="/about">{t.footer.about}</Link></li>
-          <li><Link href="/portfolio">{t.footer.portfolio}</Link></li>
-          <li><Link href="/#services">{t.footer.services}</Link></li>
-        </ul>
+      <footer data-surface="ink">
+        <div className="wrap footer-inner">
+          <div className="footer-top">
+            <div className="footer-brand">
+              <DS2Mark className="footer-mark" />
+              <p className="footer-tagline">{t.hero.tag1} {t.hero.tag2}</p>
+              <p className="footer-loc">Athens · London</p>
+            </div>
+            <nav className="footer-nav" aria-label="Footer">
+              <Link href="/#services">{t.footer.services}</Link>
+              <Link href="/portfolio">{t.footer.portfolio}</Link>
+              <Link href="/about">{t.footer.about}</Link>
+              <ContactCTA size="sm" label={t.cta.send} onOpen={() => setChatOpen(true)} />
+            </nav>
+          </div>
+          <div className="footer-bottom">{t.footer.copyright}</div>
+        </div>
       </footer>
 
       <ContactPanel open={chatOpen} onClose={() => setChatOpen(false)} />

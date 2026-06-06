@@ -71,7 +71,9 @@ body[data-scheme] nav.top {
 body[data-scheme] .svc-cell,
 body[data-scheme] .case,
 body[data-scheme] .mode,
-body[data-scheme] .founder-half {
+body[data-scheme] .founder-half,
+body[data-scheme] .about-mv-card,
+body[data-scheme] .client-card {
   background: var(--surface) !important;
 }
 body[data-scheme] .stack-marker { background: var(--surface) !important; }
