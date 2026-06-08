@@ -42,7 +42,15 @@ export function ContactCTA({
   );
 }
 
-export default function ContactPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
+export default function ContactPanel({
+  open,
+  onClose,
+  initialDraft,
+}: {
+  open: boolean;
+  onClose: () => void;
+  initialDraft?: string;
+}) {
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
   const [country, setCountry] = useState("");
@@ -67,6 +75,14 @@ export default function ContactPanel({ open, onClose }: { open: boolean; onClose
   if (open && !sessionId.current) sessionId.current = makeId();
 
   const locked = sent.length > 0;
+
+  // Seed a prefilled message (e.g. the "Book a call" CTA) when the panel opens,
+  // without clobbering anything the user has already typed.
+  useEffect(() => {
+    if (open && initialDraft && sent.length === 0) {
+      setDraft((d) => (d.trim() === "" ? initialDraft : d));
+    }
+  }, [open, initialDraft, sent.length]);
 
   // Visible by default via CSS; GSAP only adds polish, never gates visibility.
   useEffect(() => {

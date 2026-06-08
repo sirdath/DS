@@ -26,6 +26,8 @@
     "build": "remotion bundle",
     "render": "remotion render",
     "render:reel": "remotion render AntiConsultancyReel out/anti-consultancy-reel.mp4",
+    "render:brand": "remotion render DS2BrandReel out/ds2-brand-reel.mp4",
+    "render:brief": "remotion render BriefToShipped out/brief-to-shipped.mp4",
     "upgrade": "remotion upgrade",
     "lint": "eslint src && tsc"
   },

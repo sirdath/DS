@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import ContactPanel, { ContactCTA } from "./contact-panel";
 import { useT, LangToggle } from "./i18n";
 import { DS2Mark } from "./ds2-mark";
+import SiteFooter from "./site-footer";
 
 const ContactCtx = createContext<() => void>(() => {});
 /** Open the shared contact panel from anywhere inside a PageChrome. */
@@ -51,15 +52,15 @@ export default function PageChrome({ children }: { children: ReactNode }) {
 
   return (
     <ContactCtx.Provider value={() => setChatOpen(true)}>
-      <nav className="top">
+      <nav className="top nav--solid">
         <div className="nav-inner">
           <Link href="/" className="nav-mark" aria-label="DS2, home">
             <DS2Mark className="nav-mark-svg" />
           </Link>
           <div className="nav-right">
             <ul className="nav-links">
-              <li><Link href="/portfolio">{t.nav.portfolio}</Link></li>
-              <li><Link href="/about">{t.nav.about}</Link></li>
+              <li><Link className="nav-roll" href="/about"><span data-text={t.nav.about}>{t.nav.about}</span></Link></li>
+              <li><Link className="nav-roll" href="/portfolio"><span data-text={t.nav.portfolio}>{t.nav.portfolio}</span></Link></li>
             </ul>
             <LangToggle />
             <ContactCTA size="sm" label={t.cta.send} onOpen={() => setChatOpen(true)} />
@@ -69,24 +70,7 @@ export default function PageChrome({ children }: { children: ReactNode }) {
 
       {children}
 
-      <footer data-surface="ink">
-        <div className="wrap footer-inner">
-          <div className="footer-top">
-            <div className="footer-brand">
-              <DS2Mark className="footer-mark" />
-              <p className="footer-tagline">{t.hero.tag1} {t.hero.tag2}</p>
-              <p className="footer-loc">Athens · London</p>
-            </div>
-            <nav className="footer-nav" aria-label="Footer">
-              <Link href="/#services">{t.footer.services}</Link>
-              <Link href="/portfolio">{t.footer.portfolio}</Link>
-              <Link href="/about">{t.footer.about}</Link>
-              <ContactCTA size="sm" label={t.cta.send} onOpen={() => setChatOpen(true)} />
-            </nav>
-          </div>
-          <div className="footer-bottom">{t.footer.copyright}</div>
-        </div>
-      </footer>
+      <SiteFooter onContact={() => setChatOpen(true)} />
 
       <ContactPanel open={chatOpen} onClose={() => setChatOpen(false)} />
     </ContactCtx.Provider>

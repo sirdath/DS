@@ -106,6 +106,9 @@
   --silver: #565c6b;
   --ghost: #9498a6;
   --hairline: rgba(25, 26, 34, 0.1);
+  /* the mono scheme's --accent is near-white; remap it to the blue CTA so the
+     "to" email pill, highlights and links keep contrast on the white window. */
+  --accent: var(--cta);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,6 +1,6 @@
 /**
  * DS2 site copy, EN + EL.
- * Greek is a first professional draft — review/refine before treating as final.
+ * Greek is a first professional draft, review/refine before treating as final.
  * Inline markup conventions:
  *   - titles split into plain + `Em` (rendered inside <em>)
  *   - <hl>…</hl> in compose-draft strings is parsed by the typewriter
@@ -8,7 +8,8 @@
 
 export type Lang = "en" | "el";
 
-type SvcItem = { name: string; body: string };
+type SvcOffering = { name: string; detail: string };
+type SvcCat = { key: "brand" | "internal" | "custom"; tag: string; name: string; tagline: string; desc: string; example: string; items: SvcOffering[] };
 type EngageMode = { num: string; title: string; best: string; bestLabel: string; desc: string };
 type AboutBlock = { k: string; p: string };
 type FeatItem = { tag: string; name: string; blurb: string; url: string; img: string };
@@ -22,13 +23,23 @@ export interface Dict {
   nav: { portfolio: string; about: string };
   cta: { send: string };
   poweredBy: string;
-  hero: { tag1: string; tag2: string; sub: string; what: string };
+  hero: {
+    tag1: string;
+    tag2: string;
+    sub: string;
+    what: string;
+    tags: string[];
+    build: string[];
+    buildLabel: string;
+    book: { title: string; role: string; cta: string; draft: string };
+  };
   services: {
     eyebrow: string;
     title: string;
     titleEm: string;
     sub: string;
-    items: Six<SvcItem>;
+    detailCta: string;
+    cats: Three<SvcCat>;
   };
   featured: {
     eyebrow: string;
@@ -39,7 +50,12 @@ export interface Dict {
     viewAll: string;
     items: Two<FeatItem>;
   };
-  thesis: { eyebrow: string; quote: string; quoteEm: string; quoteEnd: string; by: string };
+  thesis: {
+    eyebrow: string;
+    s1Title: string; s1Em: string; s1End: string; s1Body: string;
+    s2Eyebrow: string; s2Title: string; s2Em: string; s2Body: string;
+    by: string;
+  };
   engage: {
     eyebrow: string;
     title: string;
@@ -82,7 +98,19 @@ export interface Dict {
     statusReady: string;
     caption: string;
   };
-  footer: { copyright: string; services: string; portfolio: string; about: string };
+  footer: {
+    copyright: string;
+    services: string;
+    portfolio: string;
+    about: string;
+    home: string;
+    headline: string;
+    navLabel: string;
+    reachLabel: string;
+    email: string;
+    basedLabel: string;
+    locations: string;
+  };
   about: {
     eyebrow: string;
     title: string;
@@ -144,19 +172,64 @@ const en: Dict = {
     tag2: "consulting",
     sub: "A senior team for strategy, engineering, and applied AI. We work best when we can be honest early, even if that means challenging the initial idea.",
     what: "What we do",
+    tags: ["AI Automation", "Website Development", "AI Integration", "Data & Predictions"],
+    build: ["Websites", "Automation", "AI Integration"],
+    buildLabel: "What we build",
+    book: { title: "Talk with us", role: "Founders · Athens & London", cta: "Book a 15-min call", draft: "Hi, I'd like to book a 15-minute intro call." },
   },
   services: {
-    eyebrow: "Services",
-    title: "Six things we build,",
-    titleEm: "and we build them seriously.",
-    sub: "No menu padding. Each of these is something we'd take responsibility for end-to-end, or refuse the engagement.",
-    items: [
-      { name: "Websites", body: "Fast, polished sites built to win trust and convert." },
-      { name: "AI assistant", body: "Texts and calls your customers, books jobs and follows up, day and night." },
-      { name: "Automation", body: "The repetitive work between your tools, handled in the background." },
-      { name: "Data", body: "Straight answers from your data, what's going on and what to do next." },
-      { name: "Predictions", body: "Spot demand, risk, and opportunity before they arrive." },
-      { name: "Mobile apps", body: "iOS and Android that feel fast and native." },
+    eyebrow: "What we build",
+    title: "Two standard builds,",
+    titleEm: "or one that's only yours.",
+    sub: "Most work lands in one of two standards. When it doesn't, we scope and build exactly what you describe. Consulting-only, build-only or end-to-end, with optional Stewardship once you launch.",
+    detailCta: "Start a conversation",
+    cats: [
+      {
+        key: "brand",
+        tag: "Standard",
+        name: "Brand Upgrade",
+        tagline: "Your public face, rebuilt to look credible and made to convert.",
+        desc: "The work people see first. We rebuild your public surface so it loads fast, reads as credible, and turns visitors into enquiries. Strategy, design and build, owned end to end.",
+        example: "We built GlobalTeamPlans and dataportfolio.co.uk, focused sites made to be found and to convert.",
+        items: [
+          { name: "Websites", detail: "Fast, polished marketing sites that win trust and rank on Google." },
+          { name: "Web apps", detail: "Logged-in products and tools that feel as smooth as native software." },
+          { name: "Platforms", detail: "Multi-sided products where your users, data and workflows live." },
+          { name: "SaaS products", detail: "Subscription software, from the first screen to billing and onboarding." },
+          { name: "Web shops", detail: "Storefronts built to be found and to check out without friction." },
+          { name: "Applications", detail: "Bespoke browser software shaped around how you actually work." },
+        ],
+      },
+      {
+        key: "internal",
+        tag: "Standard",
+        name: "Internal Rewiring",
+        tagline: "The work behind the work, automated and made to think.",
+        desc: "The systems your customers never see. We connect your tools, remove the repetitive work, and put your own data to work, so the business runs with fewer hands and fewer mistakes.",
+        example: "Invoices, reports, handovers and forecasts, all running on time without you.",
+        items: [
+          { name: "Automation", detail: "The repeating work between your tools, handled quietly in the background." },
+          { name: "AI agents", detail: "Assistants that answer, book and follow up, grounded in your real documents." },
+          { name: "AI integration", detail: "Modern AI wired into the software and workflows you already run." },
+          { name: "Data and prediction", detail: "Straight answers from your data, and forecasts of what comes next." },
+        ],
+      },
+      {
+        key: "custom",
+        tag: "Bespoke",
+        name: "Custom Solution",
+        tagline: "Anything you can describe, scoped and built from scratch. If it does not fit a box above, it fits here.",
+        desc: "When the problem is yours alone, the build should be too. We scope it with you, say where it creates risk, and build exactly what the problem needs, nothing more.",
+        example: "Start with a conversation. We will tell you what we would do, and what we would not.",
+        items: [
+          { name: "CRM systems", detail: "A sales and client hub shaped around your pipeline, not a template." },
+          { name: "Marketplaces", detail: "Two-sided platforms that match supply and demand and take a cut." },
+          { name: "Internal tools", detail: "The dashboards and admin panels your team wishes they had." },
+          { name: "Data pipelines", detail: "Move, clean and join data so it is ready the moment you need it." },
+          { name: "Booking systems", detail: "Calendars, availability and payments that just work." },
+          { name: "Whatever else you need", detail: "If you can describe it, we can scope it and build it." },
+        ],
+      },
     ],
   },
   featured: {
@@ -173,9 +246,14 @@ const en: Dict = {
   },
   thesis: {
     eyebrow: "A working principle",
-    quote: "The biggest cost is ",
-    quoteEm: "lack of knowledge",
-    quoteEnd: ".",
+    s1Title: "The biggest cost is ",
+    s1Em: "lack of knowledge",
+    s1End: ".",
+    s1Body: "We're Athens-based, set on closing the technical-literacy gap that quietly holds local businesses back.",
+    s2Eyebrow: "Athens → London",
+    s2Title: "Trained where the ",
+    s2Em: "standards are set",
+    s2Body: "We keep active clients in London, learning the UK market's best practices first-hand, then bringing them home to every Athens build.",
     by: "DS2",
   },
   engage: {
@@ -256,6 +334,13 @@ const en: Dict = {
     services: "Services",
     portfolio: "Portfolio",
     about: "About",
+    home: "Home",
+    headline: "Senior. Honest. Accountable.",
+    navLabel: "Navigation",
+    reachLabel: "Get in touch",
+    email: "ds2consulting.contact@gmail.com",
+    basedLabel: "Based in",
+    locations: "Athens · London",
   },
   about: {
     eyebrow: "About us",
@@ -364,19 +449,64 @@ const el: Dict = {
     tag2: "συμβουλευτική",
     sub: "Μια έμπειρη ομάδα για στρατηγική, μηχανική και εφαρμοσμένη ΤΝ. Δουλεύουμε καλύτερα όταν μπορούμε να είμαστε ειλικρινείς από νωρίς, ακόμη κι αν αυτό σημαίνει να αμφισβητήσουμε την αρχική ιδέα.",
     what: "Τι κάνουμε",
+    tags: ["Αυτοματισμοί ΤΝ", "Κατασκευή Ιστοσελίδων", "Ενσωμάτωση ΤΝ", "Δεδομένα & Προβλέψεις"],
+    build: ["Ιστοσελίδες", "Αυτοματισμοί", "Ενσωμάτωση ΤΝ"],
+    buildLabel: "Τι φτιάχνουμε",
+    book: { title: "Μιλήστε μαζί μας", role: "Ιδρυτές · Αθήνα & Λονδίνο", cta: "Κλείστε κλήση 15'", draft: "Γεια σας, θα ήθελα να κλείσω μια εισαγωγική κλήση 15 λεπτών." },
   },
   services: {
-    eyebrow: "Υπηρεσίες",
-    title: "Έξι πράγματα που φτιάχνουμε,",
-    titleEm: "και τα φτιάχνουμε σοβαρά.",
-    sub: "Χωρίς περιττά. Για καθένα από αυτά αναλαμβάνουμε την ευθύνη από την αρχή ως το τέλος, αλλιώς δεν αναλαμβάνουμε το έργο.",
-    items: [
-      { name: "Ιστοσελίδες", body: "Γρήγορες, καλοφτιαγμένες ιστοσελίδες που κερδίζουν εμπιστοσύνη και πελάτες." },
-      { name: "Ψηφιακός βοηθός", body: "Στέλνει μηνύματα και τηλεφωνεί στους πελάτες σας, κλείνει ραντεβού και κάνει follow-up, μέρα νύχτα." },
-      { name: "Αυτοματισμοί", body: "Η επαναλαμβανόμενη δουλειά ανάμεσα στα εργαλεία σας, να γίνεται στο παρασκήνιο." },
-      { name: "Δεδομένα", body: "Ξεκάθαρες απαντήσεις από τα δεδομένα σας, τι συμβαίνει και τι να κάνετε στη συνέχεια." },
-      { name: "Προβλέψεις", body: "Εντοπίστε ζήτηση, ρίσκο και ευκαιρίες πριν εμφανιστούν." },
-      { name: "Εφαρμογές κινητού", body: "iOS και Android που μοιάζουν γρήγορες και φυσικές." },
+    eyebrow: "Τι φτιάχνουμε",
+    title: "Δύο σταθερές λύσεις,",
+    titleEm: "ή μία αποκλειστικά δική σας.",
+    sub: "Οι περισσότερες συνεργασίες είναι μία από δύο σταθερές λύσεις. Όταν δεν είναι, σχεδιάζουμε και χτίζουμε ακριβώς αυτό που περιγράφετε. Μόνο συμβουλευτική, μόνο υλοποίηση ή ολοκληρωμένα, με προαιρετικό Stewardship μετά την κυκλοφορία.",
+    detailCta: "Ξεκινήστε μια συζήτηση",
+    cats: [
+      {
+        key: "brand",
+        tag: "Σταθερή",
+        name: "Αναβάθμιση Brand",
+        tagline: "Το δημόσιο πρόσωπό σας, ξαναχτισμένο για κύρος και για αποτέλεσμα.",
+        desc: "Αυτό που βλέπει πρώτο ο κόσμος. Ξαναχτίζουμε τη δημόσια εικόνα σας ώστε να φορτώνει γρήγορα, να εμπνέει εμπιστοσύνη και να μετατρέπει επισκέπτες σε ενδιαφερόμενους. Στρατηγική, σχεδιασμός και υλοποίηση, από την αρχή ως το τέλος.",
+        example: "Φτιάξαμε τα GlobalTeamPlans και dataportfolio.co.uk, στοχευμένες σελίδες που βρίσκονται και πείθουν.",
+        items: [
+          { name: "Ιστοσελίδες", detail: "Γρήγορες, καλοφτιαγμένες σελίδες που κερδίζουν εμπιστοσύνη και βρίσκονται στο Google." },
+          { name: "Web apps", detail: "Προϊόντα και εργαλεία με σύνδεση, τόσο ομαλά όσο μια native εφαρμογή." },
+          { name: "Πλατφόρμες", detail: "Προϊόντα πολλαπλών πλευρών όπου ζουν οι χρήστες, τα δεδομένα και οι ροές σας." },
+          { name: "Προϊόντα SaaS", detail: "Λογισμικό με συνδρομή, από την πρώτη οθόνη ως τη χρέωση και το onboarding." },
+          { name: "Ηλεκτρονικά καταστήματα", detail: "Καταστήματα φτιαγμένα για να βρίσκονται και να ολοκληρώνουν αγορές χωρίς τριβή." },
+          { name: "Εφαρμογές", detail: "Λογισμικό browser φτιαγμένο γύρω από τον τρόπο που πραγματικά δουλεύετε." },
+        ],
+      },
+      {
+        key: "internal",
+        tag: "Σταθερή",
+        name: "Εσωτερική Αναδιάρθρωση",
+        tagline: "Η δουλειά πίσω από τη δουλειά, αυτοματοποιημένη και έξυπνη.",
+        desc: "Τα συστήματα που δεν βλέπουν οι πελάτες σας. Συνδέουμε τα εργαλεία σας, αφαιρούμε την επαναλαμβανόμενη δουλειά και αξιοποιούμε τα δικά σας δεδομένα, ώστε η επιχείρηση να τρέχει με λιγότερα χέρια και λιγότερα λάθη.",
+        example: "Τιμολόγια, αναφορές, παραδόσεις και προβλέψεις, όλα στην ώρα τους χωρίς εσάς.",
+        items: [
+          { name: "Αυτοματισμοί", detail: "Η επαναλαμβανόμενη δουλειά ανάμεσα στα εργαλεία σας, ήσυχα στο παρασκήνιο." },
+          { name: "AI agents", detail: "Βοηθοί που απαντούν, κλείνουν ραντεβού και κάνουν follow-up, με βάση τα έγγραφά σας." },
+          { name: "Ενσωμάτωση AI", detail: "Σύγχρονο AI ενσωματωμένο στο λογισμικό και τις ροές που ήδη έχετε." },
+          { name: "Δεδομένα και προβλέψεις", detail: "Ξεκάθαρες απαντήσεις από τα δεδομένα σας, και προβλέψεις για το τι έρχεται." },
+        ],
+      },
+      {
+        key: "custom",
+        tag: "Κατά παραγγελία",
+        name: "Custom Λύση",
+        tagline: "Ό,τι μπορείτε να περιγράψετε, σχεδιασμένο και φτιαγμένο από την αρχή. Αν δεν χωράει σε κάποιο κουτί παραπάνω, χωράει εδώ.",
+        desc: "Όταν το πρόβλημα είναι μόνο δικό σας, το ίδιο πρέπει να είναι και η λύση. Το σχεδιάζουμε μαζί σας, λέμε πού δημιουργεί ρίσκο, και χτίζουμε ακριβώς αυτό που χρειάζεται, τίποτα παραπάνω.",
+        example: "Ξεκινήστε με μια συζήτηση. Θα σας πούμε τι θα κάναμε, και τι δεν θα κάναμε.",
+        items: [
+          { name: "Συστήματα CRM", detail: "Ένα κέντρο πωλήσεων και πελατών φτιαγμένο γύρω από το pipeline σας, όχι template." },
+          { name: "Marketplaces", detail: "Πλατφόρμες δύο πλευρών που ενώνουν ζήτηση και προσφορά και κρατούν προμήθεια." },
+          { name: "Εσωτερικά εργαλεία", detail: "Τα dashboards και τα admin panel που εύχεται η ομάδα σας." },
+          { name: "Data pipelines", detail: "Μεταφορά, καθαρισμός και ένωση δεδομένων, έτοιμα τη στιγμή που τα χρειάζεστε." },
+          { name: "Συστήματα κρατήσεων", detail: "Ημερολόγια, διαθεσιμότητα και πληρωμές που απλώς δουλεύουν." },
+          { name: "Ό,τι άλλο χρειάζεστε", detail: "Αν μπορείτε να το περιγράψετε, μπορούμε να το σχεδιάσουμε και να το χτίσουμε." },
+        ],
+      },
     ],
   },
   featured: {
@@ -393,9 +523,14 @@ const el: Dict = {
   },
   thesis: {
     eyebrow: "Μια αρχή που μας καθοδηγεί",
-    quote: "Το μεγαλύτερο κόστος είναι ",
-    quoteEm: "η έλλειψη γνώσης",
-    quoteEnd: ".",
+    s1Title: "Το μεγαλύτερο κόστος είναι ",
+    s1Em: "η έλλειψη γνώσης",
+    s1End: ".",
+    s1Body: "Έχουμε έδρα την Αθήνα, με στόχο να κλείσουμε το χάσμα τεχνικής εξοικείωσης που κρατά πίσω τις τοπικές επιχειρήσεις.",
+    s2Eyebrow: "Αθήνα → Λονδίνο",
+    s2Title: "Εκπαιδευμένοι εκεί που ",
+    s2Em: "ορίζονται τα πρότυπα",
+    s2Body: "Διατηρούμε ενεργούς πελάτες στο Λονδίνο, μαθαίνοντας από πρώτο χέρι τις βέλτιστες πρακτικές της αγοράς του Ηνωμένου Βασιλείου και φέρνοντάς τες σε κάθε έργο στην Αθήνα.",
     by: "DS2",
   },
   engage: {
@@ -476,6 +611,13 @@ const el: Dict = {
     services: "Υπηρεσίες",
     portfolio: "Έργα",
     about: "Σχετικά",
+    home: "Αρχική",
+    headline: "Έμπειροι. Ειλικρινείς. Υπεύθυνοι.",
+    navLabel: "Πλοήγηση",
+    reachLabel: "Επικοινωνία",
+    email: "ds2consulting.contact@gmail.com",
+    basedLabel: "Έδρα",
+    locations: "Αθήνα · Λονδίνο",
   },
   about: {
     eyebrow: "Σχετικά με εμάς",

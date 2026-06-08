@@ -1,6 +1,12 @@
 {
   "$schema": "https://modelcontextprotocol.io/mcp-config.schema.json",
   "mcpServers": {
+    "neurovault": {
+      "type": "stdio",
+      "command": "/Applications/NeuroVault.app/Contents/MacOS/neurovault-server",
+      "args": ["--mcp-only"]
+    },
+
     "chrome-devtools": {
       "command": "npx",
       "args": ["-y", "chrome-devtools-mcp@latest"]
@@ -30,6 +36,63 @@
     "blender": {
       "command": "uvx",
       "args": ["blender-mcp"]
+    },
+
+    "serena": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--context",
+        "ide-assistant"
+      ]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    },
+    "iconify": {
+      "command": "npx",
+      "args": ["-y", "iconify-mcp-server@latest"]
+    },
+    "a11y-accessibility": {
+      "command": "npx",
+      "args": ["-y", "a11y-mcp-server"]
+    },
+    "gsap-master": {
+      "command": "npx",
+      "args": ["-y", "bruzethegreat-gsap-master-mcp-server@latest"]
+    },
+
+    "deepwiki": {
+      "type": "http",
+      "url": "https://mcp.deepwiki.com/mcp"
+    },
+    "gitmcp": {
+      "type": "http",
+      "url": "https://gitmcp.io/docs"
+    },
+    "semgrep": {
+      "command": "uvx",
+      "args": ["semgrep-mcp"]
+    },
+    "repomix": {
+      "command": "npx",
+      "args": ["-y", "repomix", "--mcp"]
+    },
+
+    "comfyui": {
+      "command": "npx",
+      "args": ["-y", "comfyui-mcp"]
+    },
+    "fal": {
+      "type": "http",
+      "url": "https://mcp.fal.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer ${FAL_KEY}"
+      }
     }
   }
 }

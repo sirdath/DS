@@ -29,6 +29,23 @@ const nextConfig = {
       },
     ];
   },
+  // Long-lived immutable caching for the heavy, settled media (hero films + posters,
+  // portal images) so repeat visits load them straight from cache — the Sanjaya /
+  // CloudFront approach (Vercel already serves these with 206 range requests).
+  // NOTE: filenames are stable, so if you REPLACE one of these assets, rename it or
+  // append a ?v= query param to bust the year-long cache.
+  async headers() {
+    return [
+      {
+        source: "/hero/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+      {
+        source: "/portals/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

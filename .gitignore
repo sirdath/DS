@@ -58,3 +58,14 @@ assets/icons-website/
 
 # Original DS2 handoff bundle (123 MB of source HTML/screenshots/uploads — kept local)
 DS2-CONSULTING/
+
+# Secrets (local only)
+.webui_secret_key
+
+# Raw video source recordings (heavy; site ships compressed mp4s in public/hero)
+*.mov
+/assets/VIDEO-SCROLL-clean/
+
+# Claude Code ephemeral
+.claude/tmp/
+Icon

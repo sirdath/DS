@@ -49,6 +49,21 @@ body[data-scheme="emerald"] {
   --hero-base: #07150f; --hero-tint: #10b981; --hero-tint2: #d4b15a; --hero-logo: #1ed992; --hero-logo-core: #0a8f63; --hero-trace: #6ee7b7;
 }
 
+/* ── MONO — black & white (the site default). The ONE kept colour is the
+   blue "Send a message" CTA (--cta), so the monochrome site has a single pop. ── */
+body[data-scheme="mono"] {
+  --black: #0b0b0c; --gray-2: #141416; --gray-3: #1e1e21; --ink-bg: #060607;
+  --silver: #b9bcc4; --ghost: #80838c; --white: #f4f5f7;
+  --hairline: rgba(255,255,255,0.13); --hairline-strong: rgba(255,255,255,0.24);
+  --accent: #f4f5f7; --accent-soft: #cdd0d6; --accent-on: #0b0b0c;
+  --hue-2: #c9ccd2; --hue-3: #9a9ea6;
+  --smoke-a: #ffffff; --smoke-b: #c9ccd2;
+  --surface: #1a1a1d;
+  --hero-base: #0b0b0c; --hero-tint: #ffffff; --hero-tint2: #c9ccd2; --hero-logo: #ffffff; --hero-logo-core: #888888; --hero-trace: #dddddd;
+  /* the single kept colour — Send-a-message CTA + contact-panel accents */
+  --cta: #3b82f6; --cta-hover: #2f6fe0; --cta-on: #ffffff;
+}
+
 /* ════════════════════════════════════════════════════════════════════
    DARK FIXUPS — neutralise the few hardcoded light colours from the
    "soft-light redesign" block so every scheme reads correctly on dark.
@@ -83,3 +98,109 @@ body[data-scheme] .tagline-1 { color: var(--white) !important; }
 body[data-scheme] .founder-half .photo::after {
   background: linear-gradient(180deg, color-mix(in srgb, var(--black) 42%, transparent) 0%, color-mix(in srgb, var(--black) 90%, transparent) 100%) !important;
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   MONO — keep the blue accent ONLY on the Send-a-message CTA + the contact
+   panel's send button / sent bubbles / focus ring. Everything else stays B&W
+   because --accent is white in this scheme.
+   ════════════════════════════════════════════════════════════════════ */
+body[data-scheme="mono"] .cta {
+  background: var(--cta) !important; color: var(--cta-on) !important;
+  box-shadow: 0 10px 26px -12px color-mix(in srgb, var(--cta) 60%, transparent) !important;
+}
+body[data-scheme="mono"] .cta:hover {
+  background: var(--cta-hover) !important;
+  box-shadow: 0 16px 32px -12px color-mix(in srgb, var(--cta) 78%, transparent) !important;
+}
+body[data-scheme="mono"] .cpanel-send {
+  background: var(--cta) !important; color: var(--cta-on) !important;
+  box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--cta) 70%, transparent) !important;
+}
+body[data-scheme="mono"] .cpanel-bubble { background: var(--cta) !important; color: var(--cta-on) !important; }
+body[data-scheme="mono"] .cpanel-input:focus,
+body[data-scheme="mono"] .cpanel-textarea:focus {
+  border-color: var(--cta) !important;
+  background: color-mix(in srgb, var(--cta) 5%, #fff) !important;
+}
+
+/* Branded blue accents kept on top of the mono base: the hero "consulting"
+   tagline, and the whole Services section (icons + eyebrow + title emphasis +
+   card hover) — as they were before the B&W switch. */
+body[data-scheme="mono"] #services .eyebrow,
+body[data-scheme="mono"] #services .section-title em,
+body[data-scheme="mono"] #services .svc-cell-icon { color: var(--cta) !important; }
+body[data-scheme="mono"] #services .svc-cell:hover { border-color: var(--cta) !important; }
+
+/* More kept-blue accents per section (on the mono base). */
+
+/* Working principle (thesis) — eyebrow + the "lack of knowledge" emphasis. */
+body[data-scheme="mono"] #thesis .thesis-eyebrow,
+body[data-scheme="mono"] #thesis blockquote em { color: var(--cta) !important; }
+
+/* How we engage — eyebrow, title emphasis, mode numbers + big figures. */
+body[data-scheme="mono"] #engage .eyebrow,
+body[data-scheme="mono"] #engage .section-title em,
+body[data-scheme="mono"] #engage .mode-num { color: var(--cta) !important; }
+body[data-scheme="mono"] #engage .mode-bigfig {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--cta) 58%, #ffffff), var(--cta)) !important;
+  -webkit-background-clip: text !important; background-clip: text !important;
+  -webkit-text-fill-color: transparent !important; color: transparent !important;
+}
+
+/* Featured work — eyebrow, "what we ship" emphasis, "See all work", + blue glow. */
+body[data-scheme="mono"] #featured .eyebrow,
+body[data-scheme="mono"] #featured .section-title em,
+body[data-scheme="mono"] #featured .feat-viewall { color: var(--cta) !important; }
+body[data-scheme="mono"] #featured .feat-viewall:hover { border-color: var(--cta) !important; }
+body[data-scheme="mono"] #featured[data-surface~="aurora"]::after {
+  background:
+    radial-gradient(42% 56% at 22% 32%, color-mix(in oklch, var(--cta) 44%, transparent), transparent 70%),
+    radial-gradient(48% 58% at 80% 66%, color-mix(in oklch, var(--cta) 28%, transparent), transparent 72%),
+    radial-gradient(54% 52% at 58% 14%, color-mix(in oklch, var(--cta) 32%, transparent), transparent 72%) !important;
+}
+
+/* Powered by — tint the tech logos blue. */
+body[data-scheme="mono"] .powered-logo { background: var(--cta) !important; opacity: 0.8 !important; }
+
+/* Transparent navbar over the hero — no fill, a thicker white separator line, and
+   text-shadows so the words stay legible over the film. */
+body[data-scheme="mono"] nav.top {
+  background: transparent !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.28) !important;
+}
+body[data-scheme="mono"] nav.top .nav-mark-svg { filter: drop-shadow(0 1px 4px rgba(0,0,0,0.55)); }
+body[data-scheme="mono"] nav.top .nav-links a,
+body[data-scheme="mono"] nav.top .lang-toggle { text-shadow: 0 1px 4px rgba(0,0,0,0.65); }
+/* Nav-item geometry is IDENTICAL in both states (chip-sized always) so toggling
+   the chip fill on scroll never shifts anything — only the background/border
+   fades. The chip sits on the <li> wrapper (not the overflow-clipped roll) so
+   the roll's duplicate stays hidden. */
+body[data-scheme="mono"] nav.top .nav-links { gap: 12px; }
+body[data-scheme="mono"] nav.top .nav-links li,
+body[data-scheme="mono"] nav.top .lang-toggle {
+  height: 33px; padding: 0 14px; box-sizing: border-box;
+  display: inline-flex; align-items: center; border-radius: 999px;
+  background: transparent; border: 1px solid transparent;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+/* Hero (transparent nav): frosted chips for contrast over the film. */
+body[data-scheme="mono"] nav.top:not(.nav--solid) .nav-links li,
+body[data-scheme="mono"] nav.top:not(.nav--solid) .lang-toggle {
+  background: rgba(8, 8, 11, 0.52);
+  border-color: rgba(255, 255, 255, 0.09);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+}
+
+/* Adaptive: once scrolled off the hero (or on sub-pages), the bar goes opaque so
+   the words read over the light content sections. */
+body[data-scheme="mono"] nav.top.nav--solid {
+  background: rgba(11,11,13,0.92) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(140%) !important;
+  backdrop-filter: blur(16px) saturate(140%) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.12) !important;
+}
+body[data-scheme="mono"] nav.top.nav--solid .nav-mark-svg { filter: none; }
+body[data-scheme="mono"] nav.top.nav--solid .nav-links a,
+body[data-scheme="mono"] nav.top.nav--solid .lang-toggle { text-shadow: none; }

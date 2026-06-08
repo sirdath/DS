@@ -5,12 +5,37 @@ import ContactPanel, { ContactCTA } from "./contact-panel";
 import { useT, useLang, LangToggle } from "./i18n";
 import PoweredBy from "./powered-by";
 import { DS2Mark } from "./ds2-mark";
-import HeroGlassLogo from "./hero-glass-logo";
+import HeroVideo from "./hero-video";
+import Preloader from "./preloader";
+import SiteFooter from "./site-footer";
+import ServicesCircle from "./services-circle";
+import PortalJourney from "./portal-journey";
 
 export default function HomePage() {
   const [chatOpen, setChatOpen] = useState(false);
+  const [chatDraft, setChatDraft] = useState("");
+  const openChat = (draft = "") => {
+    setChatDraft(draft);
+    setChatOpen(true);
+  };
   const t = useT();
   const { lang } = useLang();
+
+  // Navbar: transparent over the hero film, opaque once scrolled past it.
+  useEffect(() => {
+    const nav = document.querySelector("nav.top");
+    const hero = document.querySelector(".hero--glass");
+    if (!nav || !hero) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        if (e) nav.classList.toggle("nav--solid", !e.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+    io.observe(hero);
+    return () => io.disconnect();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -441,6 +466,55 @@ export default function HomePage() {
         revealGroup(".feat-card");
         // .founder-half has its own bespoke translateX slide-in (founders-split
         // is-revealed) — don't double-animate it here or the halves go off-centre.
+
+        // ─── Hero "Talk with us" card → navbar "Send a message" merge ───
+        // The nav CTA stays hidden while the hero is in view (so About/Portfolio
+        // sit flush right). The bottom-right hero card scrolls up under the fixed
+        // navbar and dissolves; right then the CTA "extends" into the bar — so the
+        // card reads as merging up into the navbar, pushing the links left.
+        const navEl = document.querySelector("nav.top");
+        const heroEl = document.querySelector(".hero");
+        if (navEl && heroEl) {
+          navEl.classList.add("merge-armed");
+          const heroBook = document.querySelector(".hero-book");
+          if (heroBook) {
+            gsap.to(heroBook, {
+              scale: 0.32,
+              autoAlpha: 0,
+              ease: "none",
+              transformOrigin: "top right",
+              scrollTrigger: { trigger: heroEl, start: "top top", end: "bottom 22%", scrub: true },
+            });
+          }
+          ScrollTrigger.create({
+            trigger: heroEl,
+            start: "bottom 24%",
+            onEnter: () => navEl.classList.add("cta-in"),
+            onLeaveBack: () => navEl.classList.remove("cta-in"),
+          });
+        }
+      }
+
+      // ─── Featured work — touch reveal ───
+      // Pointer devices reveal each project's preview on :hover. Touch devices
+      // (iPad Mini and up) have no hover, so the row crossing the viewport
+      // centre becomes .is-active and shows its preview as you scroll.
+      if (window.matchMedia("(hover: none)").matches) {
+        const featRows = Array.from(document.querySelectorAll(".feat-row")) as HTMLElement[];
+        if (featRows.length) {
+          const featIO = new IntersectionObserver(
+            (entries) => {
+              for (const e of entries) {
+                if (e.isIntersecting) {
+                  featRows.forEach((r) => r.classList.toggle("is-active", r === e.target));
+                }
+              }
+            },
+            { rootMargin: "-48% 0px -48% 0px", threshold: 0 },
+          );
+          featRows.forEach((r) => featIO.observe(r));
+          disposers.push(() => featIO.disconnect());
+        }
       }
 
       // â”€â”€â”€ Magnetic â€” buttons that subtly follow the cursor â”€â”€â”€
@@ -629,6 +703,7 @@ export default function HomePage() {
 
   return (
     <>
+      <Preloader />
       <div className="ds-atmosphere" aria-hidden="true" />
 
       <nav className="top">
@@ -638,11 +713,13 @@ export default function HomePage() {
           </a>
           <div className="nav-right">
             <ul className="nav-links">
-              <li><a href="/portfolio">{t.nav.portfolio}</a></li>
-              <li><a href="/about">{t.nav.about}</a></li>
+              <li><a className="nav-roll" href="/about"><span data-text={t.nav.about}>{t.nav.about}</span></a></li>
+              <li><a className="nav-roll" href="/portfolio"><span data-text={t.nav.portfolio}>{t.nav.portfolio}</span></a></li>
             </ul>
             <LangToggle />
-            <ContactCTA size="sm" label={t.cta.send} onOpen={() => setChatOpen(true)} />
+            <span className="nav-merge">
+              <ContactCTA size="sm" label={t.cta.send} onOpen={() => openChat()} />
+            </span>
           </div>
         </div>
       </nav>
@@ -651,83 +728,48 @@ export default function HomePage() {
 
       {/* â”€â”€â”€ Hero â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="hero hero--glass" data-tint="color-mix(in oklab, var(--accent) 26%, transparent)">
-        <HeroGlassLogo />
+        <HeroVideo />
         <div className="hero-glass__caption" aria-hidden="true">
           <div className="tagline">
             <span className="tagline-1">{t.hero.tag1}</span>
             <span className="tagline-2">{t.hero.tag2}</span>
           </div>
         </div>
-      </section>
 
-      {/* â”€â”€â”€ Powered by â€” the stack we build on â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <PoweredBy />
+        {/* Top-left: what we build */}
+        <ul className="hero-tags" aria-label={t.hero.what}>
+          {t.hero.tags.map((tag) => (
+            <li key={tag}>
+              <span className="hero-tags__slash" aria-hidden="true">/</span>
+              {tag}
+            </li>
+          ))}
+        </ul>
 
-      {/* â”€â”€â”€ Services â€” index + sticky detail panel â”€â”€â”€â”€ */}
-      <section className="section" id="services" data-tint="color-mix(in oklab, var(--accent) 16%, transparent)">
-        <div className="wrap">
-          <div className="section-head">
-            <div className="eyebrow">{t.services.eyebrow}</div>
-            <h2 key={lang} className="section-title">{t.services.title} <em>{t.services.titleEm}</em></h2>
-            <p className="section-sub">{t.services.sub}</p>
+        {/* Bottom-right: book a call (opens the Telegram contact panel) */}
+        <div className="hero-book">
+          <div className="hero-book__avatar" aria-hidden="true">
+            <DS2Mark />
           </div>
-          <div className="svc-grid">
-            <article className="svc-cell">
-              <div className="svc-cell-top">
-                <div className="svc-cell-icon"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="7" width="30" height="22" rx="2"/><path d="M5 13h30"/><circle cx="9" cy="10" r="0.7" fill="currentColor"/><circle cx="12" cy="10" r="0.7" fill="currentColor"/><path d="M14 33h12"/><path d="M20 29v4"/></svg></div>
-                <span className="svc-cell-num">01</span>
-              </div>
-              <h3 className="svc-cell-name">{t.services.items[0].name}</h3>
-              <p className="svc-cell-body">{t.services.items[0].body}</p>
-            </article>
-
-            <article className="svc-cell">
-              <div className="svc-cell-top">
-                <div className="svc-cell-icon"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M7 9h20a4 4 0 0 1 4 4v9a4 4 0 0 1-4 4H17l-6 5v-5H7a4 4 0 0 1-4-4v-9a4 4 0 0 1 4-4z"/><circle cx="13" cy="17.5" r="1" fill="currentColor"/><circle cx="19" cy="17.5" r="1" fill="currentColor"/><circle cx="25" cy="17.5" r="1" fill="currentColor"/></svg></div>
-                <span className="svc-cell-num">02</span>
-              </div>
-              <h3 className="svc-cell-name">{t.services.items[1].name}</h3>
-              <p className="svc-cell-body">{t.services.items[1].body}</p>
-            </article>
-
-            <article className="svc-cell">
-              <div className="svc-cell-top">
-                <div className="svc-cell-icon"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><circle cx="20" cy="20" r="4"/><circle cx="8" cy="8" r="2.5"/><circle cx="32" cy="8" r="2.5"/><circle cx="8" cy="32" r="2.5"/><circle cx="32" cy="32" r="2.5"/><path d="M10 10l7 7M30 10l-7 7M10 30l7-7M30 30l-7-7"/></svg></div>
-                <span className="svc-cell-num">03</span>
-              </div>
-              <h3 className="svc-cell-name">{t.services.items[2].name}</h3>
-              <p className="svc-cell-body">{t.services.items[2].body}</p>
-            </article>
-
-            <article className="svc-cell">
-              <div className="svc-cell-top">
-                <div className="svc-cell-icon"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 33V20"/><path d="M13 33V14"/><path d="M21 33V8"/><path d="M29 33V17"/><path d="M5 33h32"/><circle cx="5" cy="20" r="1.4" fill="currentColor"/><circle cx="13" cy="14" r="1.4" fill="currentColor"/><circle cx="21" cy="8" r="1.4" fill="currentColor"/><circle cx="29" cy="17" r="1.4" fill="currentColor"/></svg></div>
-                <span className="svc-cell-num">04</span>
-              </div>
-              <h3 className="svc-cell-name">{t.services.items[3].name}</h3>
-              <p className="svc-cell-body">{t.services.items[3].body}</p>
-            </article>
-
-            <article className="svc-cell">
-              <div className="svc-cell-top">
-                <div className="svc-cell-icon"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="10" cy="10" rx="5" ry="2.5"/><path d="M5 10v6c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5v-6"/><path d="M5 16v6c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5v-6"/><path d="M15 18l5 4 5-4"/><path d="M20 22v-6"/><circle cx="30" cy="22" r="5"/><path d="M30 19v6M27 22h6"/></svg></div>
-                <span className="svc-cell-num">05</span>
-              </div>
-              <h3 className="svc-cell-name">{t.services.items[4].name}</h3>
-              <p className="svc-cell-body">{t.services.items[4].body}</p>
-            </article>
-
-            <article className="svc-cell">
-              <div className="svc-cell-top">
-                <div className="svc-cell-icon"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><rect x="12" y="4" width="16" height="32" rx="3"/><path d="M12 9h16"/><path d="M12 31h16"/><circle cx="20" cy="33.5" r="0.9" fill="currentColor"/></svg></div>
-                <span className="svc-cell-num">06</span>
-              </div>
-              <h3 className="svc-cell-name">{t.services.items[5].name}</h3>
-              <p className="svc-cell-body">{t.services.items[5].body}</p>
-            </article>
+          <div className="hero-book__body">
+            <div className="hero-book__title">{t.hero.book.title}</div>
+            <button
+              type="button"
+              className="hero-book__cta"
+              onClick={() => openChat(t.hero.book.draft)}
+            >
+              {t.hero.book.cta}
+              <span className="hero-book__arrow" aria-hidden="true">→</span>
+            </button>
           </div>
         </div>
       </section>
+
+      {/* ─── Services — scroll-driven circle ─── */}
+      <ServicesCircle onContact={() => openChat()} />
+
+      {/* â”€â”€â”€ Powered by â€” the stack we build on (between Services & Featured) â”€â”€â”€â”€ */}
+      <PoweredBy />
 
       {/* â”€â”€â”€ Featured work â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="section" id="featured" data-surface="ink aurora" data-tint="color-mix(in oklab, var(--hue-2) 18%, transparent)">
@@ -737,19 +779,18 @@ export default function HomePage() {
             <h2 key={lang} className="section-title">{t.featured.title}<em>{t.featured.titleEm}</em></h2>
             <p className="section-sub">{t.featured.sub}</p>
           </div>
-          <div className="feat-grid">
+          <div className="feat-list">
             {t.featured.items.map((it) => (
-              <a key={it.url} className="feat-card" href={it.url} target="_blank" rel="noopener noreferrer">
-                <div className="feat-media">
+              <a key={it.url} className="feat-row" href={it.url} target="_blank" rel="noopener noreferrer">
+                <span className="feat-row__main">
+                  <span className="feat-row__name">{it.name}</span>
+                  <span className="feat-row__tag">{it.tag}</span>
+                </span>
+                <span className="feat-thumb" aria-hidden="true">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={`/portfolio/${it.img}.png`} alt={`${it.name} website`} />
-                </div>
-                <div className="feat-body">
-                  <span className="feat-tag">{it.tag}</span>
-                  <h3 className="feat-name">{it.name}</h3>
-                  <p className="feat-blurb">{it.blurb}</p>
-                  <span className="feat-link">{t.featured.visit} &#8599;</span>
-                </div>
+                  <img src={`/portfolio/${it.img}.png`} alt="" loading="lazy" />
+                </span>
+                <span className="feat-row__arrow" aria-hidden="true">&#8599;</span>
               </a>
             ))}
           </div>
@@ -760,105 +801,13 @@ export default function HomePage() {
       </section>
 
       {/* â”€â”€â”€ Thesis â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <section className="thesis-section" id="thesis" data-tint="color-mix(in oklab, var(--accent) 22%, transparent)">
-        <figure className="thesis">
-          <div className="thesis-eyebrow">{t.thesis.eyebrow}</div>
-          <blockquote>{t.thesis.quote}<em>{t.thesis.quoteEm}</em>{t.thesis.quoteEnd}</blockquote>
-          <figcaption>
-            <span className="thesis-dash" aria-hidden="true">—</span>
-            <DS2Mark className="thesis-mark" aria-label={t.thesis.by} />
-          </figcaption>
-        </figure>
-      </section>
+      <PortalJourney />
 
-      {/* â”€â”€â”€ Engage â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <section className="section" id="engage" data-tint="color-mix(in oklab, var(--hue-2) 16%, transparent)">
-        <div className="wrap">
-          <div className="section-head">
-            <div className="eyebrow">{t.engage.eyebrow}</div>
-            <h2 key={lang} className="section-title">{t.engage.title} <em>{t.engage.titleEm}</em></h2>
-            <p className="section-sub">{t.engage.sub}</p>
-          </div>
-          <div className="modes">
-            <article className="mode m1">
-              <div className="mode-bigfig">01</div>
-              <div className="mode-num">{t.engage.modes[0].num}</div>
-              <h3>{t.engage.modes[0].title}</h3>
-              <div className="mode-best"><strong>{t.engage.modes[0].bestLabel}</strong>{t.engage.modes[0].best}</div>
-              <p>{t.engage.modes[0].desc}</p>
-              <div className="mode-stack">
-                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.strategy}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
-                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.build}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
-                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.handover}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
-                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.stewardship}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
-              </div>
-            </article>
-
-            <article className="mode m2">
-              <div className="mode-bigfig">02</div>
-              <div className="mode-num">{t.engage.modes[1].num}</div>
-              <h3>{t.engage.modes[1].title}</h3>
-              <div className="mode-best"><strong>{t.engage.modes[1].bestLabel}</strong>{t.engage.modes[1].best}</div>
-              <p>{t.engage.modes[1].desc}</p>
-              <div className="mode-stack">
-                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.strategy}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
-                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.build}</div><div className="stack-tag">{t.engage.tags.none}</div></div>
-                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.handover}</div><div className="stack-tag">{t.engage.tags.none}</div></div>
-                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.stewardship}</div><div className="stack-tag">{t.engage.tags.addon}</div></div>
-              </div>
-            </article>
-
-            <article className="mode m3">
-              <div className="mode-bigfig">03</div>
-              <div className="mode-num">{t.engage.modes[2].num}</div>
-              <h3>{t.engage.modes[2].title}</h3>
-              <div className="mode-best"><strong>{t.engage.modes[2].bestLabel}</strong>{t.engage.modes[2].best}</div>
-              <p>{t.engage.modes[2].desc}</p>
-              <div className="mode-stack">
-                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.strategy}</div><div className="stack-tag">{t.engage.tags.none}</div></div>
-                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.build}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
-                <div className="stack-row on"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.handover}</div><div className="stack-tag">{t.engage.tags.included}</div></div>
-                <div className="stack-row"><div className="stack-marker" /><div className="stack-label">{t.engage.rows.stewardship}</div><div className="stack-tag">{t.engage.tags.addon}</div></div>
-              </div>
-            </article>
-          </div>
-          <div className="stewardship">
-            <span className="stewardship-tag">{t.engage.stewardshipTag}</span>
-            <p><strong>{t.engage.stewardshipLead}</strong>{t.engage.stewardshipRest}</p>
-          </div>
-          <div className="engage-cta">
-            <p>{t.engage.ctaText}</p>
-            <ContactCTA label={t.cta.send} onOpen={() => setChatOpen(true)} />
-          </div>
-        </div>
-      </section>
+      {/* Engagement modes (consulting-only / build-only / end-to-end) were folded
+          into the Services copy — clients pick one of three buyable categories. */}
 
       {/* â”€â”€â”€ Founders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <section className="section" id="founders" data-tint="color-mix(in oklab, var(--accent) 14%, transparent)">
-        <div className="wrap">
-          <div className="section-head">
-            <div className="eyebrow">{t.founders.eyebrow}</div>
-            <h2 key={lang} className="section-title">{t.founders.title} <em>{t.founders.titleEm}</em></h2>
-            <p className="section-sub">{t.founders.sub}</p>
-          </div>
-          <div className="founders-split" id="founders-split">
-            <article className="founder-half left">
-              <div className="photo" />
-              <div className="founder-role">{t.founders.role}</div>
-              <h3>{t.founders.f1Title}</h3>
-              <p>{t.founders.f1Desc}</p>
-              <div className="founder-loc">{t.founders.f1Loc}</div>
-            </article>
-            <article className="founder-half right">
-              <div className="photo" />
-              <div className="founder-role">{t.founders.role}</div>
-              <h3>{t.founders.f2Title}</h3>
-              <p>{t.founders.f2Desc}</p>
-              <div className="founder-loc">{t.founders.f2Loc}</div>
-            </article>
-          </div>
-        </div>
-      </section>
+      {/* Founders / team section now lives on the About page. */}
 
       {/* â”€â”€â”€ Contact â€” macOS Mail compose â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="section" id="contact" data-surface="ink aurora" data-tint="color-mix(in oklab, var(--hue-2) 18%, transparent)">
@@ -906,7 +855,7 @@ export default function HomePage() {
                   <span id="compose-status">{t.contact.statusDrafting}</span>
                 </div>
                 <div className="compose-actions">
-                  <ContactCTA size="sm" label={t.cta.send} onOpen={() => setChatOpen(true)} />
+                  <ContactCTA size="sm" label={t.cta.send} onOpen={() => openChat()} />
                 </div>
               </div>
             </div>
@@ -918,26 +867,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer data-surface="ink">
-        <div className="wrap footer-inner">
-          <div className="footer-top">
-            <div className="footer-brand">
-              <DS2Mark className="footer-mark" />
-              <p className="footer-tagline">{t.hero.tag1} {t.hero.tag2}</p>
-              <p className="footer-loc">Athens · London</p>
-            </div>
-            <nav className="footer-nav" aria-label="Footer">
-              <a href="#services">{t.footer.services}</a>
-              <a href="/portfolio">{t.footer.portfolio}</a>
-              <a href="/about">{t.footer.about}</a>
-              <ContactCTA size="sm" label={t.cta.send} onOpen={() => setChatOpen(true)} />
-            </nav>
-          </div>
-          <div className="footer-bottom">{t.footer.copyright}</div>
-        </div>
-      </footer>
+      <SiteFooter onContact={() => openChat()} />
 
-      <ContactPanel open={chatOpen} onClose={() => setChatOpen(false)} />
+      <ContactPanel open={chatOpen} onClose={() => setChatOpen(false)} initialDraft={chatDraft} />
     </>
   );
 }

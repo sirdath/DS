@@ -39,6 +39,28 @@ function AboutBody() {
           </article>
         </div>
 
+        <div className="section-head reveal about-founders-head">
+          <div className="eyebrow">{t.founders.eyebrow}</div>
+          <h2 className="section-title">{t.founders.title} <em>{t.founders.titleEm}</em></h2>
+          <p className="section-sub">{t.founders.sub}</p>
+        </div>
+        <div className="founders-split is-revealed reveal">
+          <article className="founder-half left">
+            <div className="photo" />
+            <div className="founder-role">{t.founders.role}</div>
+            <h3>{t.founders.f1Title}</h3>
+            <p>{t.founders.f1Desc}</p>
+            <div className="founder-loc">{t.founders.f1Loc}</div>
+          </article>
+          <article className="founder-half right">
+            <div className="photo" />
+            <div className="founder-role">{t.founders.role}</div>
+            <h3>{t.founders.f2Title}</h3>
+            <p>{t.founders.f2Desc}</p>
+            <div className="founder-loc">{t.founders.f2Loc}</div>
+          </article>
+        </div>
+
         <div className="founder-photo reveal">
           <div className="about-cities">
             <figure className="about-city">
