@@ -44,6 +44,9 @@
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { background: var(--black); }
+/* clip (not hidden) so decorative pseudo-elements that bleed past the viewport
+   (e.g. the portfolio smoke clouds) can't create phantom horizontal scrolling */
+html { overflow-x: clip; }
 body {
   font-family: var(--font-inter), ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
   color: var(--white);
@@ -1419,7 +1422,7 @@ footer { margin: 0; max-width: none; padding: 0; border-top: 1px solid var(--hai
 
 /* ── Footer (.site-footer / .sf-*) ── */
 .site-footer { position: relative; z-index: 1; border-top: 1px solid var(--hairline); }
-.sf-top {
+.site-footer .sf-top {
   display: grid; grid-template-columns: 1.5fr 0.9fr 1.1fr; gap: 56px; align-items: start;
   padding-top: clamp(64px, 8vh, 104px); padding-bottom: clamp(40px, 5vh, 64px);
 }
@@ -1449,7 +1452,7 @@ footer { margin: 0; max-width: none; padding: 0; border-top: 1px solid var(--hai
 .sf-email:hover { color: var(--cta); }
 .sf-place { display: flex; flex-direction: column; gap: 5px; margin-top: 8px; }
 .sf-locations { color: var(--silver); font-size: 15px; }
-.sf-bottom {
+.site-footer .sf-bottom {
   display: flex; align-items: center; justify-content: space-between; gap: 20px;
   padding-top: 26px; padding-bottom: clamp(28px, 4vh, 40px);
   border-top: 1px solid var(--hairline);
@@ -1471,13 +1474,13 @@ footer { margin: 0; max-width: none; padding: 0; border-top: 1px solid var(--hai
 @keyframes sf-spin { to { transform: rotateY(360deg); } }
 
 @media (max-width: 860px) {
-  .sf-top { grid-template-columns: 1fr 1fr; gap: 40px 28px; }
+  .site-footer .sf-top { grid-template-columns: 1fr 1fr; gap: 40px 28px; }
   .sf-lead { grid-column: 1 / -1; gap: 24px; }
   .sf-headline { max-width: 20ch; }
 }
 @media (max-width: 520px) {
-  .sf-top { grid-template-columns: 1fr; gap: 36px; }
-  .sf-bottom { flex-direction: column-reverse; align-items: flex-start; gap: 18px; }
+  .site-footer .sf-top { grid-template-columns: 1fr; gap: 36px; }
+  .site-footer .sf-bottom { flex-direction: column-reverse; align-items: flex-start; gap: 18px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .sf-spin__inner { animation: none; }
@@ -2791,7 +2794,26 @@ body[data-logo="laser"] .laser-beam {
 /* ── About story page (.abs) ─────────────────────────────────────────────────
    Bold Mission & Vision side-by-side first, then the gap, the founders (image +
    logos) and what DS2 is. Calm fade-up reveals only (driven by .reveal). */
-.abs { position: relative; }
+.abs { position: relative; isolation: isolate; }
+/* quiet atmosphere — blue light fields + a masked grid behind the hero — so the
+   page has depth on every screen size, with no motion */
+.abs::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(56% 30% at 18% 2%, color-mix(in srgb, var(--cta) 15%, transparent), transparent 68%),
+    radial-gradient(48% 24% at 88% 34%, color-mix(in srgb, var(--cta) 8%, transparent), transparent 70%),
+    radial-gradient(52% 22% at 12% 78%, color-mix(in srgb, #6366f1 9%, transparent), transparent 72%);
+}
+.abs::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--cta) 10%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--cta) 10%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(86% 26% at 50% 4%, #000 14%, transparent 80%);
+  mask-image: radial-gradient(86% 26% at 50% 4%, #000 14%, transparent 80%);
+  opacity: 0.42;
+}
 
 /* Mission / Vision — two bold panels, side by side */
 .abs-mv {
@@ -2853,11 +2875,18 @@ body[data-logo="laser"] .laser-beam {
 .abs-ds2__body { margin: 20px 0 0; font-size: clamp(16px, 1.4vw, 19px); line-height: 1.65; color: var(--silver); max-width: 58ch; text-wrap: pretty; }
 .abs-ds2 .cta { margin-top: 30px; }
 
-/* Tablets (iPad portrait) and below: stack Mission/Vision and the founder rows */
+/* Tablets (iPad portrait) and below: stack Mission/Vision as premium glass cards
+   (the side-by-side + divider doesn't survive a single column, so the cards carry
+   the visual weight instead) and stack the founder rows */
 @media (max-width: 880px) {
-  .abs-mv { grid-template-columns: 1fr; gap: clamp(40px, 8vh, 60px); padding-top: clamp(96px, 14vh, 150px); }
+  .abs-mv { grid-template-columns: 1fr; gap: 22px; padding-top: clamp(92px, 13vh, 140px); }
   .abs-mv::before { display: none; }
-  .abs-mv__panel + .abs-mv__panel { border-top: 1px solid var(--hairline); padding-top: clamp(40px, 8vh, 60px); }
+  .abs-mv__panel {
+    border-radius: 20px; padding: clamp(26px, 7vw, 36px);
+    background: linear-gradient(165deg, color-mix(in srgb, var(--cta) 14%, transparent), color-mix(in srgb, var(--cta) 4%, transparent) 58%, color-mix(in srgb, var(--white) 2%, transparent));
+    border: 1px solid color-mix(in srgb, var(--cta) 38%, var(--hairline-strong));
+    box-shadow: 0 36px 80px -48px color-mix(in srgb, var(--cta) 45%, rgba(0,0,0,0.9)), inset 0 1px 0 color-mix(in srgb, var(--cta) 20%, transparent);
+  }
   .abs-founder { grid-template-columns: 1fr; gap: 24px; }
   .abs-founder--flip .abs-founder__media { order: 0; }
   .abs-founder__media { aspect-ratio: 16 / 10; }
