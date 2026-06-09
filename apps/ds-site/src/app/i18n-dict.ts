@@ -9,6 +9,7 @@
 export type Lang = "en" | "el";
 
 type SvcOffering = { name: string; detail: string };
+type PanelChip = { label: string; draft: string };
 type SvcCat = { key: "brand" | "internal" | "custom"; tag: string; name: string; tagline: string; desc: string; example: string; items: SvcOffering[] };
 type EngageMode = { num: string; title: string; best: string; bestLabel: string; desc: string };
 type AboutBlock = { k: string; p: string };
@@ -167,6 +168,11 @@ export interface Dict {
     errGeneric: string;
     errNetwork: string;
     close: string; minimise: string; maximise: string; restore: string; reopen: string;
+    chips: Three<PanelChip>;
+    detailsTitle: string;
+    detailsHint: string;
+    back: string;
+    promise: string;
     tab: string;
   };
 }
@@ -468,7 +474,7 @@ const en: Dict = {
     introUnlocked: "No forms, no login. Tell us what you’re trying to do and it lands straight with the two of us.",
     introLockedPrefix: "Talking to ",
     introLockedSuffix: ". We read every message.",
-    phName: "Your name",
+    phName: "Your name (optional)",
     phCompany: "Company (optional)",
     phCountry: "Where you're based (optional)",
     phEmail: "Email (so we can reply)",
@@ -488,6 +494,15 @@ const en: Dict = {
     errGeneric: "Something went wrong. Try again.",
     errNetwork: "Couldn't reach us. Check your connection and retry.",
     close: "Close", minimise: "Minimise", maximise: "Maximise", restore: "Restore", reopen: "Reopen your message to DS2",
+    chips: [
+      { label: "I need a website", draft: "Hi DS2, we need a website that " },
+      { label: "Automate something", draft: "Hi DS2, we want to automate " },
+      { label: "Not sure, let's talk", draft: "Hi DS2, not sure exactly what we need yet. Our situation: " },
+    ],
+    detailsTitle: "Where should we reply?",
+    detailsHint: "Your message is ready. We just need a way to get back to you.",
+    back: "Edit message",
+    promise: "We reply the same day.",
     tab: "Message DS2",
   },
 };
@@ -789,7 +804,7 @@ const el: Dict = {
     introUnlocked: "Χωρίς φόρμες, χωρίς σύνδεση. Πείτε μας τι θέλετε να κάνετε και φτάνει κατευθείαν στους δυο μας.",
     introLockedPrefix: "Μιλάτε με ",
     introLockedSuffix: ". Διαβάζουμε κάθε μήνυμα.",
-    phName: "Το όνομά σας",
+    phName: "Το όνομά σας (προαιρετικό)",
     phCompany: "Εταιρεία (προαιρετικό)",
     phCountry: "Πού εδρεύετε (προαιρετικό)",
     phEmail: "Email (για να απαντήσουμε)",
@@ -809,6 +824,15 @@ const el: Dict = {
     errGeneric: "Κάτι πήγε στραβά. Δοκιμάστε ξανά.",
     errNetwork: "Δεν μπορέσαμε να επικοινωνήσουμε. Ελέγξτε τη σύνδεσή σας και ξαναδοκιμάστε.",
     close: "Κλείσιμο", minimise: "Ελαχιστοποίηση", maximise: "Μεγιστοποίηση", restore: "Επαναφορά", reopen: "Ξανανοίξτε το μήνυμά σας στη DS2",
+    chips: [
+      { label: "Θέλω ιστοσελίδα", draft: "Γεια σας DS2, χρειαζόμαστε μια ιστοσελίδα που " },
+      { label: "Αυτοματοποίηση", draft: "Γεια σας DS2, θέλουμε να αυτοματοποιήσουμε " },
+      { label: "Δεν είμαι σίγουρος, ας τα πούμε", draft: "Γεια σας DS2, δεν ξέρουμε ακόμη τι ακριβώς χρειαζόμαστε. Η κατάστασή μας: " },
+    ],
+    detailsTitle: "Πού να απαντήσουμε;",
+    detailsHint: "Το μήνυμά σας είναι έτοιμο. Χρειαζόμαστε μόνο έναν τρόπο να σας απαντήσουμε.",
+    back: "Επεξεργασία μηνύματος",
+    promise: "Απαντάμε την ίδια μέρα.",
     tab: "Μήνυμα στη DS2",
   },
 };

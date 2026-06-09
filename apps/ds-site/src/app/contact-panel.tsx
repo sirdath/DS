@@ -42,6 +42,10 @@ export function ContactCTA({
   );
 }
 
+/** Message-first contact panel. The visitor writes (or taps a starter chip) FIRST;
+ *  only when they hit Send do we ask where to reply (name + email slide in). Once
+ *  the writing is done, supplying contact details is easy — the investment is
+ *  already made. The Telegram payload (/api/contact) is unchanged. */
 export default function ContactPanel({
   open,
   onClose,
@@ -61,12 +65,15 @@ export default function ContactPanel({
   const [error, setError] = useState("");
   const [minimized, setMinimized] = useState(false);
   const [maximized, setMaximized] = useState(false);
+  // Pre-send flow: write the message first, then give reply details.
+  const [step, setStep] = useState<"write" | "details">("write");
   const sessionId = useRef<string>("");
   const thread = useRef<Thread | null>(null);
   const hp = useRef<HTMLInputElement>(null); // honeypot (named "website" in the DOM)
   const overlayRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
-  const firstFieldRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
@@ -75,6 +82,7 @@ export default function ContactPanel({
   if (open && !sessionId.current) sessionId.current = makeId();
 
   const locked = sent.length > 0;
+  const writing = !locked && step === "write";
 
   // Seed a prefilled message (e.g. the "Book a call" CTA) when the panel opens,
   // without clobbering anything the user has already typed.
@@ -91,7 +99,7 @@ export default function ContactPanel({
       return;
     }
     document.body.style.overflow = "hidden";
-    const t = window.setTimeout(() => firstFieldRef.current?.focus(), 120);
+    const t = window.setTimeout(() => textareaRef.current?.focus(), 120);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onCloseRef.current();
     };
@@ -125,18 +133,16 @@ export default function ContactPanel({
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [sent, status]);
+  }, [sent, status, step]);
 
   if (!open) return null;
 
-  async function send() {
-    const n = name.trim();
+  async function post() {
     const em = email.trim();
     const msg = draft.trim();
-    if (!n) {
-      setError(P.errName);
-      return;
-    }
+    // Name is optional friction-wise: if it's left empty we derive one from the
+    // email's local part so the API/Telegram format stays unchanged.
+    const n = name.trim() || em.split("@")[0] || "";
     if (!em) {
       setError(P.errEmail);
       return;
@@ -147,6 +153,7 @@ export default function ContactPanel({
     }
     if (!msg) {
       setError(P.errMsg);
+      setStep("write");
       return;
     }
     setStatus("sending");
@@ -185,16 +192,43 @@ export default function ContactPanel({
       setSent((s) => [...s, msg]);
       setDraft("");
       setStatus("sent");
+      setStep("write");
     } catch {
       setStatus("error");
       setError(P.errNetwork);
     }
   }
 
+  /** One send entry point: writing → advance to details; details/locked → post. */
+  function send() {
+    if (writing) {
+      if (!draft.trim()) {
+        setError(P.errMsg);
+        textareaRef.current?.focus();
+        return;
+      }
+      setError("");
+      setStep("details");
+      window.setTimeout(() => nameRef.current?.focus(), 60);
+      return;
+    }
+    void post();
+  }
+
   function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
-      void send();
+      send();
+    }
+  }
+
+  function useChip(chipDraft: string) {
+    setDraft(chipDraft);
+    setError("");
+    const ta = textareaRef.current;
+    if (ta) {
+      ta.focus();
+      window.setTimeout(() => ta.setSelectionRange(ta.value.length, ta.value.length), 0);
     }
   }
 
@@ -257,58 +291,89 @@ export default function ContactPanel({
               <img src="/logos/ds2-black.png" alt="DS2" />
             </div>
           )}
-          <div className="cpanel-intro">
-            {locked ? (
-              <>{P.introLockedPrefix}<strong>{name}</strong>{company ? <> · {company}</> : null}{email ? <> · {email}</> : null}{P.introLockedSuffix}</>
-            ) : (
-              <>{P.introUnlocked}</>
-            )}
-          </div>
 
-          {!locked && (
-            <div className="cpanel-fields">
-              <input
-                ref={firstFieldRef}
-                className="cpanel-input"
-                placeholder={P.phName}
-                value={name}
-                maxLength={80}
-                onChange={(e) => setName(e.target.value)}
-              />
-              <div className="cpanel-fields-row">
+          {/* ── Step 1: write the message ── */}
+          {writing && (
+            <>
+              <div className="cpanel-intro">{P.introUnlocked}</div>
+              {draft.trim() === "" && (
+                <div className="cpanel-chips" role="group" aria-label={P.composeUnlocked}>
+                  {P.chips.map((c) => (
+                    <button key={c.label} type="button" className="cpanel-chip" onClick={() => useChip(c.draft)}>
+                      {c.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          {/* ── Step 2: where do we reply ── */}
+          {!locked && step === "details" && (
+            <div className="cpanel-details">
+              <button type="button" className="cpanel-back" onClick={() => setStep("write")}>
+                <span aria-hidden="true">←</span> {P.back}
+              </button>
+              <div className="cpanel-details-title">{P.detailsTitle}</div>
+              <div className="cpanel-details-hint">{P.detailsHint}</div>
+              <div className="cpanel-bubble cpanel-bubble--preview">{draft}</div>
+              <div className="cpanel-fields">
                 <input
+                  ref={nameRef}
                   className="cpanel-input"
-                  placeholder={P.phCompany}
-                  value={company}
-                  maxLength={100}
-                  onChange={(e) => setCompany(e.target.value)}
+                  placeholder={P.phName}
+                  value={name}
+                  maxLength={80}
+                  autoComplete="name"
+                  onChange={(e) => setName(e.target.value)}
                 />
                 <input
                   className="cpanel-input"
-                  placeholder={P.phCountry}
-                  value={country}
-                  maxLength={64}
-                  onChange={(e) => setCountry(e.target.value)}
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  aria-required="true"
+                  placeholder={P.phEmail}
+                  value={email}
+                  maxLength={160}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); send(); } }}
                 />
+                <div className="cpanel-fields-row">
+                  <input
+                    className="cpanel-input"
+                    placeholder={P.phCompany}
+                    value={company}
+                    maxLength={100}
+                    autoComplete="organization"
+                    onChange={(e) => setCompany(e.target.value)}
+                  />
+                  <input
+                    className="cpanel-input"
+                    placeholder={P.phCountry}
+                    value={country}
+                    maxLength={64}
+                    onChange={(e) => setCountry(e.target.value)}
+                  />
+                </div>
               </div>
-              <input
-                className="cpanel-input"
-                type="email"
-                inputMode="email"
-                autoComplete="email"
-                aria-required="true"
-                placeholder={P.phEmail}
-                value={email}
-                maxLength={160}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <button type="button" className="cpanel-send cpanel-send--final" onClick={send} disabled={status === "sending"}>
+                {status === "sending" ? P.sending : P.send}
+                <span className="cpanel-send-arrow" aria-hidden="true">→</span>
+              </button>
+              <div className="cpanel-promise">{P.promise}</div>
             </div>
           )}
 
+          {/* ── Locked thread (after first send) ── */}
+          {locked && (
+            <div className="cpanel-intro">
+              {P.introLockedPrefix}<strong>{name}</strong>{company ? <> · {company}</> : null}{email ? <> · {email}</> : null}{P.introLockedSuffix}
+            </div>
+          )}
           {sent.map((m, i) => (
             <div key={i} className="cpanel-bubble">{m}</div>
           ))}
-
           {locked && status === "sent" && (
             <div className="cpanel-ack" role="status" aria-live="polite">
               <span className="cpanel-ack-check" aria-hidden="true">✓</span>
@@ -327,21 +392,28 @@ export default function ContactPanel({
           aria-hidden="true"
         />
 
-        <div className="cpanel-compose">
-          <textarea
-            className="cpanel-textarea"
-            placeholder={locked ? P.composeLocked : P.composeUnlocked}
-            value={draft}
-            maxLength={2000}
-            rows={2}
-            onChange={(e) => setDraft(e.target.value)}
-            onKeyDown={onKeyDown}
-          />
-          <button type="button" className="cpanel-send" onClick={() => void send()} disabled={status === "sending"}>
-            {status === "sending" ? P.sending : P.send}
-            <span className="cpanel-send-arrow" aria-hidden="true">→</span>
-          </button>
-        </div>
+        {/* Compose bar — the star of step 1, and the follow-up box once locked */}
+        {(writing || locked) && (
+          <div className={`cpanel-compose${writing ? " cpanel-compose--writing" : ""}`}>
+            <textarea
+              ref={textareaRef}
+              className="cpanel-textarea"
+              placeholder={locked ? P.composeLocked : P.composeUnlocked}
+              value={draft}
+              maxLength={2000}
+              rows={writing ? 4 : 2}
+              onChange={(e) => setDraft(e.target.value)}
+              onKeyDown={onKeyDown}
+            />
+            <div className="cpanel-compose-foot">
+              {writing && <span className="cpanel-promise">{P.promise}</span>}
+              <button type="button" className="cpanel-send" onClick={send} disabled={status === "sending"}>
+                {status === "sending" ? P.sending : P.send}
+                <span className="cpanel-send-arrow" aria-hidden="true">→</span>
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="cpanel-foot">
           <span className={`cpanel-dot${status === "error" ? " err" : ""}`} />

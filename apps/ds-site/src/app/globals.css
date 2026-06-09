@@ -482,11 +482,15 @@ nav.top .cta { height: 33px; padding-top: 0; padding-bottom: 0; box-sizing: bord
 }
 .cpanel-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 .cpanel-compose {
-  display: flex; gap: 10px; align-items: flex-end;
+  display: flex; flex-direction: column; gap: 10px;
   padding: 14px 16px; border-top: 1px solid rgba(255,255,255,0.06);
   background: #1a1a1c;
 }
 .cpanel-textarea { flex: 1; resize: none; line-height: 1.5; }
+.cpanel-compose-foot { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+.cpanel-compose--writing .cpanel-compose-foot { justify-content: space-between; }
+/* writing step: the textarea is the star — give it room */
+.cpanel-compose--writing .cpanel-textarea { min-height: 116px; }
 .cpanel-send {
   display: inline-flex; align-items: center; gap: 7px;
   border: 0; cursor: pointer; font-family: inherit;
@@ -2150,7 +2154,7 @@ nav.top { background: rgba(255,255,255,0.72) !important; }
 }
 /* purple wordmark at the top of the message panel (replaces nothing — adds brand) */
 .cpanel-brand { display: flex; justify-content: center; margin-bottom: 18px; }
-.cpanel-brand img { height: 44px; width: auto; }
+.cpanel-brand img { height: 60px; width: auto; }
 /* thesis attribution → purple wordmark instead of the text "DS2" */
 .thesis-mark { height: 26px; width: auto; display: inline-block; color: var(--accent); }
 /* minimised tab (bottom-right) */
@@ -2159,6 +2163,58 @@ nav.top { background: rgba(255,255,255,0.72) !important; }
   box-shadow: 0 12px 30px -12px rgba(25,26,34,0.28) !important;
 }
 .cpanel-tab:hover { box-shadow: 0 16px 36px -12px rgba(25,26,34,0.34) !important; }
+
+/* ── Message-first flow: starter chips, details step, reply promise ── */
+/* chips that write the first sentence for you (kill the blank-box) */
+.cpanel-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.cpanel-chip {
+  appearance: none; cursor: pointer; font-family: inherit;
+  padding: 9px 15px; border-radius: 999px; font-size: 13px; font-weight: 600;
+  color: #191a22; background: rgba(25,26,34,0.05); border: 1px solid rgba(25,26,34,0.14);
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+.cpanel-chip:hover {
+  background: color-mix(in srgb, var(--accent) 10%, #fff);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  transform: translateY(-1px);
+}
+.cpanel-chip:active { animation: cpanel-chip-pop 0.35s ease; }
+@keyframes cpanel-chip-pop {
+  0% { transform: scale(1); } 30% { transform: scale(1.08); } 60% { transform: scale(0.96); } 100% { transform: scale(1); }
+}
+.cpanel-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* details step — slides in once the message exists */
+.cpanel-details { display: flex; flex-direction: column; gap: 12px; animation: cpanel-step-in 0.34s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+@keyframes cpanel-step-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.cpanel-back {
+  appearance: none; border: 0; background: transparent; cursor: pointer; font-family: inherit;
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 6px;
+  padding: 2px 0; font-size: 12.5px; font-weight: 600; color: #8a8f9c;
+  transition: color 0.2s ease;
+}
+.cpanel-back:hover { color: var(--accent); }
+.cpanel-details-title { font-size: 19px; font-weight: 600; letter-spacing: -0.02em; color: #191a22; }
+.cpanel-details-hint { font-size: 13.5px; line-height: 1.5; color: #565c6b; margin-top: -6px; }
+.cpanel-bubble--preview { align-self: stretch; max-width: none; max-height: 132px; overflow: auto; opacity: 0.92; }
+.cpanel-send--final { justify-content: center; width: 100%; margin-top: 2px; padding: 13px 18px; font-size: 14px; }
+
+/* the reply-time promise — sits exactly where doubt peaks */
+.cpanel-promise {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; letter-spacing: 0.01em;
+  color: #565c6b;
+}
+.cpanel-promise::before { content: ""; width: 7px; height: 7px; border-radius: 50%; flex: none; background: #4ade80; box-shadow: 0 0 8px rgba(74,222,128,0.6); }
+.cpanel-details .cpanel-promise { align-self: center; }
+
+/* frontendmaxxing focus ring on the panel inputs (accent ring, not just border) */
+.cpanel-input:focus, .cpanel-textarea:focus { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cpanel-details { animation: none; }
+  .cpanel-chip:active { animation: none; }
+}
 
 footer { border-color: var(--hairline) !important; }
 
