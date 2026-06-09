@@ -43,7 +43,7 @@ export default function PortalJourney() {
         // On phones, use the portrait-framed cut so the full-screen film keeps the
         // Athens→London landmarks centred (a landscape cover-crop would clip them).
         if (window.matchMedia("(max-width: 768px)").matches) {
-          video.src = "/portals/journey-mobile.mp4?v=1";
+          video.src = "/portals/journey-mobile.mp4?v=2";
         }
 
         // Pull the whole clip into the buffer so seeking renders frames on mobile
