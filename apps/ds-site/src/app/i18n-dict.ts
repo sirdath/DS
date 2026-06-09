@@ -12,6 +12,7 @@ type SvcOffering = { name: string; detail: string };
 type SvcCat = { key: "brand" | "internal" | "custom"; tag: string; name: string; tagline: string; desc: string; example: string; items: SvcOffering[] };
 type EngageMode = { num: string; title: string; best: string; bestLabel: string; desc: string };
 type AboutBlock = { k: string; p: string };
+type ScrollPage = { id: string; eyebrow: string; title: string; body: string };
 type FeatItem = { tag: string; name: string; blurb: string; url: string; img: string };
 type Two<T> = [T, T];
 type CaseItem = { tag: string; meta: string; title: string; text: string; list: string[] };
@@ -39,6 +40,8 @@ export interface Dict {
     titleEm: string;
     sub: string;
     detailCta: string;
+    expand: string;
+    collapse: string;
     cats: Three<SvcCat>;
   };
   featured: {
@@ -118,6 +121,7 @@ export interface Dict {
     titleEnd: string;
     sub: string;
     blocks: Four<AboutBlock>;
+    scrollbook: Six<ScrollPage>;
     missionK: string;
     mission: string;
     visionK: string;
@@ -183,6 +187,8 @@ const en: Dict = {
     titleEm: "or one that's only yours.",
     sub: "Most work lands in one of two standards. When it doesn't, we scope and build exactly what you describe. Consulting-only, build-only or end-to-end, with optional Stewardship once you launch.",
     detailCta: "Start a conversation",
+    expand: "Expand for more info",
+    collapse: "Minimise",
     cats: [
       {
         key: "brand",
@@ -335,7 +341,7 @@ const en: Dict = {
     portfolio: "Portfolio",
     about: "About",
     home: "Home",
-    headline: "Senior. Honest. Accountable.",
+    headline: "Digital solutions, built and owned end to end.",
     navLabel: "Navigation",
     reachLabel: "Get in touch",
     email: "ds2consulting.contact@gmail.com",
@@ -364,6 +370,44 @@ const en: Dict = {
       {
         k: "04 · The standard we hold",
         p: "Our work is premium and we keep the quality high, on purpose. A lot of that comes from working in London, inside a more advanced and more organised working culture. We took what works there and brought it home, without the bloat.",
+      },
+    ],
+    scrollbook: [
+      {
+        id: "mission",
+        eyebrow: "Mission",
+        title: "Make Greek businesses genuinely proficient with technology.",
+        body: "Close the gap between what they do well and the tools that could take them much further.",
+      },
+      {
+        id: "vision",
+        eyebrow: "Vision",
+        title: "A Greece that evolves drastically.",
+        body: "Where small and medium businesses compete on a global level, because technology stopped holding them back.",
+      },
+      {
+        id: "gap",
+        eyebrow: "The gap",
+        title: "The work is serious. The tools are not.",
+        body: "Real businesses run on systems that quietly hold them back: thin tooling, manual process, low technical literacy. Left alone, the gap compounds.",
+      },
+      {
+        id: "dimitris",
+        eyebrow: "Engineering & Data · London",
+        title: "Dimitris",
+        body: "Studied and built in London. He brings the technical core, architecture, data systems, automation and applied AI, held to the standard of a more demanding market.",
+      },
+      {
+        id: "stelios",
+        eyebrow: "Consulting & Strategy · Athens",
+        title: "Stelios",
+        body: "Studied in the Netherlands, then consulting at PwC in Athens. He brings business structure, operating discipline and a clear read of the Greek market.",
+      },
+      {
+        id: "ds2",
+        eyebrow: "Why DS2",
+        title: "Two disciplines, one team.",
+        body: "Engineering depth and consulting discipline, with real proximity to the Greek market. That combination is what lets us deliver the mission.",
       },
     ],
     missionK: "Mission",
@@ -460,6 +504,8 @@ const el: Dict = {
     titleEm: "ή μία αποκλειστικά δική σας.",
     sub: "Οι περισσότερες συνεργασίες είναι μία από δύο σταθερές λύσεις. Όταν δεν είναι, σχεδιάζουμε και χτίζουμε ακριβώς αυτό που περιγράφετε. Μόνο συμβουλευτική, μόνο υλοποίηση ή ολοκληρωμένα, με προαιρετικό Stewardship μετά την κυκλοφορία.",
     detailCta: "Ξεκινήστε μια συζήτηση",
+    expand: "Δείτε περισσότερα",
+    collapse: "Σύμπτυξη",
     cats: [
       {
         key: "brand",
@@ -612,7 +658,7 @@ const el: Dict = {
     portfolio: "Έργα",
     about: "Σχετικά",
     home: "Αρχική",
-    headline: "Έμπειροι. Ειλικρινείς. Υπεύθυνοι.",
+    headline: "Ψηφιακές λύσεις, χτισμένες και υποστηριγμένες ως το τέλος.",
     navLabel: "Πλοήγηση",
     reachLabel: "Επικοινωνία",
     email: "ds2consulting.contact@gmail.com",
@@ -641,6 +687,44 @@ const el: Dict = {
       {
         k: "04 · Ο πήχης που κρατάμε",
         p: "Η δουλειά μας είναι premium και κρατάμε την ποιότητα ψηλά, επίτηδες. Πολύ απ’ αυτό έρχεται από τη δουλειά στο Λονδίνο, μέσα σε μια πιο προχωρημένη και πιο οργανωμένη κουλτούρα εργασίας. Πήραμε αυτό που δουλεύει εκεί και το φέραμε στην πατρίδα, χωρίς τα περιττά.",
+      },
+    ],
+    scrollbook: [
+      {
+        id: "mission",
+        eyebrow: "Αποστολή",
+        title: "Να κάνουμε τις ελληνικές επιχειρήσεις πραγματικά ικανές με την τεχνολογία.",
+        body: "Να κλείσουμε το κενό ανάμεσα σε αυτό που κάνουν καλά και στα εργαλεία που θα μπορούσαν να τις πάνε πολύ πιο μακριά.",
+      },
+      {
+        id: "vision",
+        eyebrow: "Όραμα",
+        title: "Μια Ελλάδα που εξελίσσεται δραστικά.",
+        body: "Όπου οι μικρομεσαίες επιχειρήσεις ανταγωνίζονται σε παγκόσμιο επίπεδο, επειδή η τεχνολογία σταμάτησε να τις κρατά πίσω.",
+      },
+      {
+        id: "gap",
+        eyebrow: "Το κενό",
+        title: "Η δουλειά είναι σοβαρή. Τα εργαλεία όχι.",
+        body: "Πραγματικές επιχειρήσεις τρέχουν πάνω σε συστήματα που τις κρατούν πίσω: φτωχά εργαλεία, χειροκίνητες διαδικασίες, χαμηλό τεχνολογικό επίπεδο. Αν το αφήσεις, το κενό μεγαλώνει.",
+      },
+      {
+        id: "dimitris",
+        eyebrow: "Μηχανική & Δεδομένα · Λονδίνο",
+        title: "Δημήτρης",
+        body: "Σπούδασε και δούλεψε στο Λονδίνο. Φέρνει τον τεχνικό πυρήνα, αρχιτεκτονική, συστήματα δεδομένων, αυτοματισμό και εφαρμοσμένη AI, σε ένα επίπεδο που ορίζει μια πιο απαιτητική αγορά.",
+      },
+      {
+        id: "stelios",
+        eyebrow: "Συμβουλευτική & Στρατηγική · Αθήνα",
+        title: "Στέλιος",
+        body: "Σπούδασε στην Ολλανδία και συνέχισε στη συμβουλευτική, στην PwC στην Αθήνα. Φέρνει επιχειρηματική δομή, πειθαρχία στη λειτουργία και καθαρή ανάγνωση της ελληνικής αγοράς.",
+      },
+      {
+        id: "ds2",
+        eyebrow: "Γιατί η DS2",
+        title: "Δύο κόσμοι, μία ομάδα.",
+        body: "Τεχνικό βάθος και συμβουλευτική πειθαρχία, με πραγματική εγγύτητα στην ελληνική αγορά. Αυτός ο συνδυασμός είναι που μας επιτρέπει να υλοποιούμε την αποστολή.",
       },
     ],
     missionK: "Αποστολή",

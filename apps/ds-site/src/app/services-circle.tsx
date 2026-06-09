@@ -31,35 +31,40 @@ function CatIcon({ k }: { k: string }) {
   }
 }
 
-/** Services — three buyable categories. Hovering a card (or tapping, on touch)
- *  morphs a full-width "mini page" over the row with the category's full detail:
- *  description, every offering explained, a proof line and a CTA. On phones the
- *  detail opens as a full-screen sheet instead. */
+/** Services — three buyable categories. Each card has an explicit "Expand for more
+ *  info" button; pressing it grows that card into a panel that covers the other
+ *  two, with the full detail (every offering explained, a proof line, a CTA). A
+ *  minimise (✕) button — or Esc — reverts to the three-card row. Nothing opens on
+ *  hover, so it never triggers by accident, and the cards never disappear. */
 export default function ServicesCircle({ onContact }: { onContact?: () => void }) {
   const t = useT();
   const ref = useRef<HTMLElement>(null);
   const cats = t.services.cats;
-  const hoverCapable = useRef(false);
 
-  // `active` drives open/close; `shown` lags so the panel can fade OUT with content.
+  // `active` is the expanded card; `shown` lags so the cover keeps its content
+  // while it collapses on minimise.
   const [active, setActive] = useState<number | null>(null);
   const [shown, setShown] = useState<number | null>(null);
+  const [revealed, setRevealed] = useState<Set<number>>(new Set());
 
+  // Cards fade up as they enter the viewport. Tracked in React state (not via an
+  // imperative classList) so a re-render on expand/minimise can never strip the
+  // reveal class — that overwrite was the "card disappears" bug.
   useEffect(() => {
-    hoverCapable.current = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     const section = ref.current;
     if (!section) return;
     const cards = Array.from(section.querySelectorAll<HTMLElement>(".svc__cat"));
     if (!cards.length) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      cards.forEach((c) => c.classList.add("is-in"));
+      setRevealed(new Set(cards.map((_, i) => i)));
       return;
     }
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
           if (e.isIntersecting) {
-            e.target.classList.add("is-in");
+            const i = Number((e.target as HTMLElement).dataset.i);
+            setRevealed((prev) => (prev.has(i) ? prev : new Set(prev).add(i)));
             io.unobserve(e.target);
           }
         }
@@ -76,11 +81,11 @@ export default function ServicesCircle({ onContact }: { onContact?: () => void }
       setShown(active);
       return;
     }
-    const id = setTimeout(() => setShown(null), 460);
+    const id = setTimeout(() => setShown(null), 420);
     return () => clearTimeout(id);
   }, [active]);
 
-  // Escape closes; lock body scroll while the phone sheet is open.
+  // Escape minimises; lock body scroll while a panel covers the row on phones.
   useEffect(() => {
     if (active === null) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setActive(null); };
@@ -103,25 +108,13 @@ export default function ServicesCircle({ onContact }: { onContact?: () => void }
           <p className="svc__sub">{t.services.sub}</p>
         </div>
 
-        <div
-          className={`svc__cards${active !== null ? " is-detail" : ""}`}
-          onMouseLeave={() => { if (hoverCapable.current) setActive(null); }}
-        >
+        <div className={`svc__cards${active !== null ? " is-detail" : ""}`}>
           {cats.map((c, i) => (
-            <article
-              key={c.key}
-              className={`svc__cat svc__cat--${c.key}`}
-              style={{ transitionDelay: `${i * 90}ms` }}
-              role="button"
-              tabIndex={0}
-              aria-haspopup="dialog"
-              aria-label={`${c.name}. ${c.tagline}`}
-              onMouseEnter={() => { if (hoverCapable.current) setActive(i); }}
-              onClick={() => setActive(i)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActive(i); }
-              }}
-            >
+            <article key={c.key} className={`svc__cat svc__cat--${c.key}${revealed.has(i) ? " is-in" : ""}`} data-i={i} style={{ transitionDelay: `${i * 90}ms` }}>
+              <div className="svc__cat-bg" aria-hidden="true">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`/services/atmos-${c.key}.webp`} alt="" loading="lazy" />
+              </div>
               <div className="svc__cat-glow" aria-hidden="true" />
               <div className="svc__cat-body">
                 <div className="svc__cat-top">
@@ -146,13 +139,26 @@ export default function ServicesCircle({ onContact }: { onContact?: () => void }
                     ))}
                   </ul>
                 )}
-                <span className="svc__cat-more" aria-hidden="true">View details &rarr;</span>
+                <button
+                  type="button"
+                  className="svc__cat-expand"
+                  aria-label={t.services.expand}
+                  title={t.services.expand}
+                  aria-expanded={active === i}
+                  aria-controls="svc-panel"
+                  onClick={() => setActive(i)}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M9 4H5a1 1 0 0 0-1 1v4M15 4h4a1 1 0 0 1 1 1v4M9 20H5a1 1 0 0 1-1-1v-4M15 20h4a1 1 0 0 0 1-1v-4" />
+                  </svg>
+                </button>
               </div>
             </article>
           ))}
 
-          {/* Full detail takeover — morphs over the row from the hovered card */}
+          {/* Cover panel — grows from the chosen card and covers the other two. */}
           <div
+            id="svc-panel"
             className={`svc__detail${active !== null ? " is-open" : ""}${detail ? ` svc__detail--${detail.key}` : ""}`}
             style={{ transformOrigin: `${originX} 50%` }}
             role="dialog"
@@ -161,8 +167,13 @@ export default function ServicesCircle({ onContact }: { onContact?: () => void }
             aria-hidden={active === null}
           >
             {detail && (
-              <div className="svc__detail-inner">
-                <button className="svc__detail-close" type="button" onClick={() => setActive(null)} aria-label="Close details">
+              <div
+                className="svc__detail-inner"
+                style={{
+                  backgroundImage: `linear-gradient(160deg, rgba(7,9,10,0.72) 0%, rgba(7,9,10,0.86) 58%, rgba(7,9,10,0.95) 100%), url(/services/atmos-${detail.key}-wide.webp)`,
+                }}
+              >
+                <button className="svc__detail-close" type="button" onClick={() => setActive(null)} aria-label={t.services.collapse}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
                 </button>
                 <div className="svc__detail-main">

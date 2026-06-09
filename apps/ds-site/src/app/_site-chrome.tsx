@@ -5,6 +5,7 @@ import ContactPanel, { ContactCTA } from "./contact-panel";
 import { useT, LangToggle } from "./i18n";
 import { DS2Mark } from "./ds2-mark";
 import SiteFooter from "./site-footer";
+import { MobileMenu } from "./mobile-menu";
 
 const ContactCtx = createContext<() => void>(() => {});
 /** Open the shared contact panel from anywhere inside a PageChrome. */
@@ -64,6 +65,7 @@ export default function PageChrome({ children }: { children: ReactNode }) {
             </ul>
             <LangToggle />
             <ContactCTA size="sm" label={t.cta.send} onOpen={() => setChatOpen(true)} />
+            <MobileMenu onContact={() => setChatOpen(true)} />
           </div>
         </div>
       </nav>

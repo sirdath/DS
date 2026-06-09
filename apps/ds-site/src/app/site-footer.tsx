@@ -4,22 +4,18 @@ import { useT } from "./i18n";
 import { DS2Mark } from "./ds2-mark";
 import { ContactCTA } from "./contact-panel";
 
-/** Reimagined footer: a big brand statement, a slowly self-rotating DS2 mark
- *  (CSS 3D coin-flip — double-sided so the wordmark reads on both faces),
- *  a navigation column, and a "get in touch" column. Shared by the home page
- *  and the sub-page chrome. */
+/** Footer: a brand statement + primary CTA on the left, a navigation column and a
+ *  "get in touch" column on the right, and a bottom bar with the slowly
+ *  self-rotating DS2 mark (CSS 3D coin-flip) beside the copyright. Shared by the
+ *  home page and the sub-page chrome. */
 export default function SiteFooter({ onContact }: { onContact: () => void }) {
   const t = useT();
   return (
     <footer data-surface="ink" className="site-footer">
-      <div className="wrap sf-grid">
+      <div className="wrap sf-top">
         <div className="sf-lead">
-          <div className="sf-spin" aria-hidden="true">
-            <div className="sf-spin__inner">
-              <DS2Mark className="sf-spin__face sf-spin__front" />
-              <DS2Mark className="sf-spin__face sf-spin__back" />
-            </div>
-          </div>
+          <p className="sf-headline">{t.footer.headline}</p>
+          <ContactCTA label={t.cta.send} onOpen={onContact} className="sf-cta" />
         </div>
 
         <nav className="sf-col" aria-label={t.footer.navLabel}>
@@ -33,12 +29,22 @@ export default function SiteFooter({ onContact }: { onContact: () => void }) {
         <div className="sf-col sf-reach">
           <div className="sf-label">{t.footer.reachLabel}</div>
           <a className="sf-email" href={`mailto:${t.footer.email}`}>{t.footer.email}</a>
-          <div className="sf-label sf-based">{t.footer.basedLabel}</div>
-          <div className="sf-locations">{t.footer.locations}</div>
-          <ContactCTA size="sm" label={t.cta.send} onOpen={onContact} className="sf-cta" />
+          <div className="sf-place">
+            <span className="sf-label sf-based">{t.footer.basedLabel}</span>
+            <span className="sf-locations">{t.footer.locations}</span>
+          </div>
         </div>
       </div>
-      <div className="wrap sf-bottom">{t.footer.copyright}</div>
+
+      <div className="wrap sf-bottom">
+        <div className="sf-spin" aria-hidden="true">
+          <div className="sf-spin__inner">
+            <DS2Mark className="sf-spin__face sf-spin__front" />
+            <DS2Mark className="sf-spin__face sf-spin__back" />
+          </div>
+        </div>
+        <span className="sf-copy">{t.footer.copyright}</span>
+      </div>
     </footer>
   );
 }

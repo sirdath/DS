@@ -10,6 +10,7 @@ import Preloader from "./preloader";
 import SiteFooter from "./site-footer";
 import ServicesCircle from "./services-circle";
 import PortalJourney from "./portal-journey";
+import { MobileMenu } from "./mobile-menu";
 
 export default function HomePage() {
   const [chatOpen, setChatOpen] = useState(false);
@@ -720,6 +721,7 @@ export default function HomePage() {
             <span className="nav-merge">
               <ContactCTA size="sm" label={t.cta.send} onOpen={() => openChat()} />
             </span>
+            <MobileMenu onContact={() => openChat()} />
           </div>
         </div>
       </nav>

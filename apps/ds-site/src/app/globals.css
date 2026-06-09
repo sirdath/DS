@@ -72,7 +72,16 @@ nav.top, section, footer { position: relative; z-index: 1; }
 /* ── Ambient atmosphere — ONE fixed, token-driven layer behind everything.
    Slow drifting accent/hue-2 orbs + a scroll-linked tint (--page-tint, written
    by GSAP per section). Scheme-aware; GPU-light (only transform animates). ── */
-.ds-atmosphere { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: var(--black); }
+.ds-atmosphere {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  /* A living slate field: deepest ink base, lifted a touch toward the top of the
+     viewport and settling darker at the bottom — a soft cinematic frame that the
+     whole page sits in. The drifting orbs (::after) + scroll tint (::before) move on top. */
+  background:
+    radial-gradient(130% 78% at 50% -12%, #161a1c 0%, transparent 56%),
+    radial-gradient(130% 80% at 50% 112%, #090b0c 0%, transparent 58%),
+    var(--ink-bg);
+}
 .ds-atmosphere::before {
   content: ""; position: absolute; inset: 0;
   background: radial-gradient(70% 55% at 50% 8%, var(--page-tint, transparent), transparent 70%);
@@ -211,6 +220,98 @@ nav.top .cta { height: 33px; padding-top: 0; padding-bottom: 0; box-sizing: bord
 .lang-opt:hover { color: var(--silver); }
 .lang-opt.is-active { color: var(--white); }
 .lang-sep { color: var(--ghost); font-size: 11px; opacity: 0.45; }
+
+/* ── Mobile menu (hamburger + full-screen sheet) — hidden on desktop ── */
+.nav-mobile { display: none; }
+.nav-burger {
+  position: relative; z-index: 60; width: 42px; height: 42px; padding: 0; border: 0; background: transparent;
+  display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.nav-burger span { display: block; width: 22px; height: 2px; border-radius: 2px; background: var(--white); transition: transform .3s ease, opacity .25s ease; }
+.nav-burger.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-burger.is-open span:nth-child(2) { opacity: 0; }
+.nav-burger.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+/* Full-screen sheet, portalled to <body> so it covers the whole viewport (the
+   nav bar's backdrop-filter would otherwise clip a fixed child to its own box).
+   It sits ABOVE the nav (z 90) and carries its own top bar — logo + close.
+   Links + foot reveal in a soft stagger when open. */
+.nav-sheet {
+  position: fixed; inset: 0; z-index: 90;
+  display: flex; flex-direction: column;
+  background-color: var(--ink-bg);
+  background-image: radial-gradient(120% 82% at 50% -12%, rgba(59, 130, 246, 0.16) 0%, transparent 60%);
+  -webkit-backdrop-filter: blur(22px) saturate(135%); backdrop-filter: blur(22px) saturate(135%);
+  opacity: 0; visibility: hidden;
+  transition: opacity .34s ease, visibility .34s;
+}
+.nav-sheet.is-open { opacity: 1; visibility: visible; }
+.nav-sheet__bar {
+  flex: 0 0 auto; height: 56px; padding: calc(env(safe-area-inset-top, 0px)) 28px 0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-sheet__mark { display: flex; align-items: center; height: 28px; }
+.nav-sheet__mark .nav-mark-svg { height: 26px; width: auto; display: block; opacity: 0.96; }
+.nav-sheet__close {
+  width: 42px; height: 42px; margin-right: -9px; padding: 0; border: 0; background: transparent;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--white); cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.nav-sheet__close svg { width: 24px; height: 24px; display: block; }
+.nav-sheet__inner {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto;
+  display: flex; flex-direction: column;
+  padding: 16px 28px calc(34px + env(safe-area-inset-bottom, 0px));
+}
+.nav-sheet__eyebrow {
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ghost);
+  opacity: 0; transform: translateY(8px);
+  transition: opacity .4s ease, transform .4s ease;
+}
+.nav-sheet.is-open .nav-sheet__eyebrow { opacity: 1; transform: none; transition-delay: .05s; }
+
+.nav-sheet__links { display: flex; flex-direction: column; margin-top: 20px; }
+.nav-sheet__link {
+  position: relative; display: flex; align-items: baseline; gap: 16px;
+  padding: 19px 4px; min-height: 56px;
+  color: var(--white); text-decoration: none; border-top: 1px solid var(--hairline);
+  opacity: 0; transform: translateY(16px);
+  transition: opacity .5s cubic-bezier(0.22,0.61,0.36,1), transform .5s cubic-bezier(0.22,0.61,0.36,1), color .2s ease;
+}
+.nav-sheet__links .nav-sheet__link:last-child { border-bottom: 1px solid var(--hairline); }
+.nav-sheet.is-open .nav-sheet__link { opacity: 1; transform: none; }
+.nav-sheet__num { font-size: 12px; letter-spacing: 0.06em; color: var(--ghost); font-variant-numeric: tabular-nums; }
+.nav-sheet__label { font-size: clamp(34px, 11vw, 46px); font-weight: 300; letter-spacing: -0.03em; line-height: 1; margin-right: auto; }
+.nav-sheet__arrow {
+  align-self: center; width: 21px; height: 21px; color: var(--ghost);
+  opacity: 0; transform: translate(-6px, 6px);
+  transition: opacity .25s ease, transform .25s ease, color .25s ease;
+}
+.nav-sheet__arrow svg { width: 100%; height: 100%; display: block; }
+.nav-sheet__link:active { color: var(--cta); }
+.nav-sheet__link:active .nav-sheet__arrow,
+.nav-sheet__link:focus-visible .nav-sheet__arrow { opacity: 1; transform: none; color: var(--cta); }
+
+.nav-sheet__foot {
+  margin-top: auto; padding-top: 26px;
+  display: flex; flex-direction: column; gap: 16px;
+  opacity: 0; transform: translateY(16px);
+  transition: opacity .5s cubic-bezier(0.22,0.61,0.36,1), transform .5s cubic-bezier(0.22,0.61,0.36,1);
+}
+.nav-sheet.is-open .nav-sheet__foot { opacity: 1; transform: none; }
+.nav-sheet__cue { font-size: 13.5px; color: var(--silver); letter-spacing: -0.01em; }
+.nav-sheet__cta.cta { width: 100%; justify-content: center; height: 52px; font-size: 15px; }
+.nav-sheet__meta { display: flex; align-items: center; justify-content: space-between; padding-top: 2px; }
+.nav-sheet__place { font-size: 12px; letter-spacing: 0.08em; color: var(--ghost); }
+
+@media (max-width: 760px) {
+  .nav-mobile { display: inline-flex; align-items: center; }
+  .nav-right > .lang-toggle, .nav-right > .nav-merge, .nav-right > .cta { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-sheet, .nav-sheet__eyebrow, .nav-sheet__link, .nav-sheet__foot, .nav-burger span { transition-duration: .01ms !important; }
+  .nav-sheet__eyebrow, .nav-sheet__link, .nav-sheet__foot { transform: none; }
+}
 
 /* ── Unified call-to-action (used everywhere, opens the contact panel) — v4 ── */
 .cta {
@@ -573,9 +674,11 @@ h2.section-title em { font-style: normal; color: var(--silver); }
   .powered-logo { width: 28px; height: 28px; margin-right: 42px; }
 }
 
-.section { padding: 120px 0; background: var(--black); }
-/* Section separators — a thin hairline at each boundary (adapts per surface). */
-.powered, .section { border-top: 1px solid var(--hairline); }
+/* Sections are transparent so the single fixed atmosphere flows continuously
+   behind them — no flat per-section fills, no hard separator lines. Focal
+   sections (data-surface ink/aurora) and section-specific backgrounds layer
+   on top and blend into the same field. */
+.section { padding: 120px 0; background: transparent; }
 
 /* ── Services — compact grid ── */
 .svc-grid {
@@ -669,21 +772,73 @@ h2.section-title em { font-style: normal; color: var(--silver); }
 .quote-band blockquote::before { content: "\201C"; color: var(--ghost); }
 .quote-band blockquote::after { content: "\201D"; color: var(--ghost); }
 
-/* Thesis quote */
+/* ════════════ Working principle — plain editorial beats ════════════ */
+/* Placeholder layout while the scroll "journey" visual is rebuilt separately. */
+.principle__inner { max-width: 820px; margin: 0 auto; text-align: center; display: flex; flex-direction: column; gap: clamp(46px, 7vw, 92px); }
+.principle__beat .eyebrow { justify-content: center; }
+.principle__quote, .principle__title {
+  margin: 18px 0 0; font-size: clamp(28px, 4vw, 48px); font-weight: 300; line-height: 1.16;
+  letter-spacing: -0.025em; color: var(--white); font-style: normal; text-wrap: balance;
+}
+.principle__quote em, .principle__title em { font-style: italic; font-weight: 300; color: var(--cta); }
+.principle__body { margin: 18px auto 0; max-width: 54ch; font-size: clamp(15px, 1.3vw, 17px); line-height: 1.6; color: var(--silver); text-wrap: pretty; }
+.principle__mark { height: 24px; width: auto; color: var(--white); margin: 22px auto 0; display: block; opacity: 0.9; }
+
 /* ════════════ Portal journey — pinned scroll-through (working principle) ════════════ */
+/* (Unused for now — the section renders the plain .principle layout above.) */
 .portal {
   position: relative; height: 100vh; overflow: hidden;
   background: var(--ink-bg);
-  border-bottom: 1px solid var(--hairline);
 }
-/* Soften the entry: the marble columns fade up out of the dark Featured section
-   at the very top instead of hard-cutting against a hairline. Sits above the
-   gateways (z 1-2) but below the copy (z 5). Short, so it never dims the London
-   skyline once the scene has opened. */
+/* ── Working-principle video: scroll-scrubbed Athens→London film ──
+   Opaque (no blend) so the marble stays crisp and it's light on the GPU; the
+   watermark is gone (crushed to pure black) and the film's black ≈ the dark
+   section, so it reads as the scene rather than a rectangle. Top/bottom ink
+   fades (.portal::before/::after) melt the black into the neighbouring sections. */
+.portal--video { background: #040506; }
+.portal__video-wrap { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.portal__video {
+  width: 100%; height: 100%; object-fit: cover; object-position: 50% 46%;
+}
+.portal__video::-webkit-media-controls,
+.portal__video::-webkit-media-controls-enclosure,
+.portal__video::-webkit-media-controls-panel,
+.portal__video::-webkit-media-controls-start-playback-button,
+.portal__video::-webkit-media-controls-overlay-play-button { display: none !important; -webkit-appearance: none; }
+/* Soft backdrop behind the copy so the text + DS2 mark keep strong contrast
+   over the bright marble. */
+.portal--video .portal__copy { isolation: isolate; }
+.portal--video .portal__copy::before {
+  content: ""; position: absolute; z-index: -1; inset: -12% -16%;
+  background: radial-gradient(58% 64% at 50% 50%, rgba(3,4,6,0.82), rgba(3,4,6,0.5) 52%, transparent 80%);
+  pointer-events: none;
+}
+.portal__copy--2 { opacity: 0; } /* default-hidden; reduced-motion shows only the principle, no overlap */
+@media (prefers-reduced-motion: reduce) {
+  .portal--video { height: auto; min-height: 100vh; }
+  .portal--video .portal__copy--2 { display: none; }
+}
+/* Mobile keeps the scroll-scrub full-screen (the copy stays centred, overlaid on
+   the film). portal-journey.tsx swaps in a portrait journey-mobile.mp4 on phones
+   so the Athens→London landmarks are framed for a tall screen (a landscape cover
+   crop would clip them). */
+@media (max-width: 768px) {
+  .portal--video .portal__video { object-fit: cover; object-position: 50% 50%; }
+}
+/* Soften both ends: the gateway fades up out of the dark Featured section at the
+   top, and the scene melts back into ink at the bottom so it dissolves into the
+   Contact section instead of hard-cutting against a hairline. Both sit above the
+   gateways (z 1-2) but below the copy (z 5), and are short so they never dim the
+   London skyline once the scene has opened. */
 .portal::after {
   content: ""; position: absolute; top: 0; left: 0; right: 0; height: clamp(80px, 11vh, 130px);
   z-index: 3; pointer-events: none;
   background: linear-gradient(180deg, var(--ink-bg) 0%, color-mix(in srgb, var(--ink-bg) 45%, transparent) 42%, transparent 100%);
+}
+.portal::before {
+  content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: clamp(70px, 10vh, 120px);
+  z-index: 3; pointer-events: none;
+  background: linear-gradient(0deg, var(--ink-bg) 0%, color-mix(in srgb, var(--ink-bg) 42%, transparent) 46%, transparent 100%);
 }
 /* Depth (atmosphere) + glow (the light at the end of the gateway) sit behind the
    gateways and are scrubbed forward WITH the zoom in portal-journey.tsx — they
@@ -695,21 +850,28 @@ h2.section-title em { font-style: normal; color: var(--silver); }
 }
 .portal__depth {
   transform-origin: 50% 42%;
-  background: radial-gradient(125% 108% at 50% 30%, #16161e, var(--ink-bg) 70%);
+  background: radial-gradient(125% 108% at 50% 30%, #181c1e, var(--ink-bg) 70%);
 }
 .portal__glow {
-  transform-origin: 50% 46%; opacity: 0.45;
-  background: radial-gradient(42% 42% at 50% 46%, color-mix(in srgb, var(--cta) 20%, transparent), transparent 66%);
+  transform-origin: 50% 40%; opacity: 0.45;
+  background: radial-gradient(38% 38% at 50% 40%, color-mix(in srgb, var(--cta) 20%, transparent), transparent 64%);
 }
 
 .portal__layer { position: absolute; inset: 0; display: grid; place-items: center; will-change: transform, opacity; }
-.portal__layer--greece { z-index: 2; }
+/* corridor depth order: London (destination) furthest back, the far colonnade
+   nested at the vanishing point, the near colonnade closest to the camera */
 .portal__layer--london { z-index: 1; }
+.portal__layer--far { z-index: 2; }
+.portal__layer--near { z-index: 3; }
 .portal__img {
   width: 100%; height: 100%; object-fit: contain; transform-origin: center center;
   will-change: transform; backface-visibility: hidden;
   -webkit-user-select: none; user-select: none; pointer-events: none;
 }
+/* colonnade layers fill the frame so the columns reach the edges and the road
+   recedes to the vanishing point in the upper centre */
+.portal__img--near { object-fit: cover; object-position: 50% 46%; }
+.portal__img--far { object-fit: cover; object-position: 50% 46%; }
 
 /* copy sits in the lower third with a soft scrim so it stays legible while the
    bright gateway zooms behind it */
@@ -1048,9 +1210,11 @@ h2.section-title em { font-style: normal; color: var(--silver); }
    dark scrim so the heading and the white email card stay legible over the bright
    sky in the middle of the image. */
 #contact {
-  background-color: #08080b !important;
+  background-color: var(--ink-bg) !important;
   background-image:
-    linear-gradient(180deg, rgba(5,6,10,0.86) 0%, rgba(5,6,10,0.5) 38%, rgba(5,6,10,0.56) 64%, rgba(5,6,10,0.92) 100%),
+    /* solid ink at the very top so the portal's dark bottom dissolves straight in,
+       then the landscape surfaces, with a top-weighted scrim for legibility */
+    linear-gradient(180deg, var(--ink-bg) 0%, color-mix(in srgb, var(--ink-bg) 74%, transparent) 15%, rgba(11,13,14,0.5) 42%, rgba(11,13,14,0.58) 66%, rgba(11,13,14,0.93) 100%),
     url('/contact-section-bg.png') !important;
   background-size: cover !important;
   background-position: center center !important;
@@ -1253,45 +1417,48 @@ footer { margin: 0; max-width: none; padding: 0; border-top: 1px solid var(--hai
 .footer-nav a:hover { color: var(--white); }
 .footer-bottom { padding-top: 28px; color: var(--ghost); font-size: 12.5px; }
 
-/* ── Reimagined footer (.site-footer / .sf-*) ── */
-.site-footer { position: relative; z-index: 1; }
-.sf-grid {
-  display: grid; grid-template-columns: 1.7fr 0.9fr 1.2fr; gap: 48px;
-  padding-top: 88px; padding-bottom: 36px; align-items: start;
+/* ── Footer (.site-footer / .sf-*) ── */
+.site-footer { position: relative; z-index: 1; border-top: 1px solid var(--hairline); }
+.sf-top {
+  display: grid; grid-template-columns: 1.5fr 0.9fr 1.1fr; gap: 56px; align-items: start;
+  padding-top: clamp(64px, 8vh, 104px); padding-bottom: clamp(40px, 5vh, 64px);
 }
-.sf-lead { display: flex; flex-direction: column; gap: 44px; }
+.sf-lead { display: flex; flex-direction: column; align-items: flex-start; gap: 28px; }
 .sf-headline {
-  font-size: clamp(34px, 4.6vw, 62px); line-height: 1.0; font-weight: 600;
-  letter-spacing: -0.025em; color: var(--white); max-width: 9ch; margin: 0;
+  font-size: clamp(28px, 3.4vw, 46px); line-height: 1.04; font-weight: 600;
+  letter-spacing: -0.025em; color: var(--white); max-width: 15ch; margin: 0;
+  text-wrap: balance;
 }
-.sf-col { display: flex; flex-direction: column; gap: 13px; }
+.sf-cta { align-self: flex-start; }
+.sf-col { display: flex; flex-direction: column; gap: 14px; }
 .sf-label {
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ghost);
 }
 .sf-link {
-  color: var(--silver); text-decoration: none; font-size: 16px; width: fit-content;
+  color: var(--silver); text-decoration: none; font-size: 15px; width: fit-content;
   transition: color 0.2s ease, transform 0.2s ease;
 }
 .sf-link:hover { color: var(--white); transform: translateX(3px); }
-.sf-reach { gap: 10px; }
+.sf-reach { gap: 14px; }
 .sf-email {
   color: var(--white); text-decoration: none; font-weight: 500;
-  font-size: clamp(18px, 2vw, 26px); letter-spacing: -0.01em; transition: color 0.2s ease;
+  font-size: clamp(17px, 1.9vw, 24px); letter-spacing: -0.01em; transition: color 0.2s ease;
   word-break: break-word;
 }
 .sf-email:hover { color: var(--cta); }
-.sf-based { margin-top: 16px; }
+.sf-place { display: flex; flex-direction: column; gap: 5px; margin-top: 8px; }
 .sf-locations { color: var(--silver); font-size: 15px; }
-.sf-cta { margin-top: 20px; }
 .sf-bottom {
-  padding-top: 30px; margin-top: 28px;
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  padding-top: 26px; padding-bottom: clamp(28px, 4vh, 40px);
   border-top: 1px solid var(--hairline);
   color: var(--ghost); font-size: 12.5px;
 }
+.sf-copy { font-variant-numeric: tabular-nums; }
 
 /* Self-rotating DS2 mark — CSS 3D coin-flip, double-sided so it reads both ways. */
-.sf-spin { width: 132px; height: 33px; perspective: 700px; }
+.sf-spin { width: 108px; height: 27px; perspective: 700px; flex: none; }
 .sf-spin__inner {
   position: relative; width: 100%; height: 100%;
   transform-style: preserve-3d; animation: sf-spin 11s linear infinite;
@@ -1304,12 +1471,13 @@ footer { margin: 0; max-width: none; padding: 0; border-top: 1px solid var(--hai
 @keyframes sf-spin { to { transform: rotateY(360deg); } }
 
 @media (max-width: 860px) {
-  .sf-grid { grid-template-columns: 1fr 1fr; gap: 36px 28px; padding-top: 64px; }
-  .sf-lead { grid-column: 1 / -1; gap: 30px; }
-  .sf-headline { max-width: 14ch; }
+  .sf-top { grid-template-columns: 1fr 1fr; gap: 40px 28px; }
+  .sf-lead { grid-column: 1 / -1; gap: 24px; }
+  .sf-headline { max-width: 20ch; }
 }
 @media (max-width: 520px) {
-  .sf-grid { grid-template-columns: 1fr; }
+  .sf-top { grid-template-columns: 1fr; gap: 36px; }
+  .sf-bottom { flex-direction: column-reverse; align-items: flex-start; gap: 18px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .sf-spin__inner { animation: none; }
@@ -1812,7 +1980,9 @@ footer { margin: 0; max-width: none; padding: 0; border-top: 1px solid var(--hai
   .nav-mark img { height: 22px; }
   .lang-opt { padding: 6px 3px; }
   .section { padding: 72px 0; }
-  .wrap { padding: 0 18px; }
+  .wrap { padding: 0 22px; }
+  h2.section-title { font-size: clamp(26px, 7.2vw, 34px); }
+  .section-sub { font-size: 16px; }
   .section-head { margin-bottom: 40px; }
   .hero { padding: 104px 20px 64px; }
   .hero-sub { font-size: 17px; margin-top: 40px; }
@@ -2035,9 +2205,27 @@ footer { border-color: var(--hairline) !important; }
 .feat-viewall { color: var(--cta); font-weight: 600; font-size: 14.5px; text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s ease; }
 .feat-viewall:hover { border-color: var(--cta); }
 
+/* Mobile featured work: a scroll-driven showcase. Each row stacks its name over a
+   full-width website preview; the row crossing the viewport centre (.is-active,
+   set by the observer in page.tsx) lifts and brightens its preview. */
 @media (max-width: 760px) {
-  .feat-thumb { display: none; }
-  .feat-row { padding: 16px 4px; }
+  .feat-list { max-width: 520px; }
+  .feat-row { flex-direction: column; align-items: stretch; gap: 14px; padding: 26px 0; }
+  .feat-row__main { flex-direction: row; align-items: baseline; justify-content: space-between; gap: 12px; width: 100%; }
+  .feat-row__name { font-size: clamp(22px, 6.4vw, 30px); }
+  .feat-row__arrow { display: none; }
+  .feat-thumb {
+    position: static; display: block; width: 100%; height: auto; right: auto; top: auto;
+    aspect-ratio: 16 / 10; border-radius: 14px; opacity: 1;
+    transform: scale(0.985) translateY(0); transform-origin: center;
+    filter: saturate(0.92) brightness(0.74); box-shadow: 0 14px 30px -22px rgba(0,0,0,0.8);
+    transition: filter 0.45s ease, transform 0.45s cubic-bezier(0.22,0.61,0.36,1), box-shadow 0.45s ease;
+  }
+  .feat-row.is-active .feat-thumb {
+    transform: scale(1) translateY(0); filter: none;
+    box-shadow: 0 24px 50px -26px rgba(0,0,0,0.92);
+  }
+  .feat-row.is-active .feat-row__name { transform: none; }
 }
 
 /* Portfolio — each project sits in its own drifting smoke cloud (the page's
@@ -2186,7 +2374,7 @@ footer { border-color: var(--hairline) !important; }
    melts into the Services section instead of hard-cutting into it */
 .hero-glass::after {
   content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  background: linear-gradient(180deg, rgba(7,11,24,0.10) 0%, transparent 30%, transparent 48%, rgba(6,6,7,0.5) 78%, var(--ink-bg) 100%);
+  background: linear-gradient(180deg, transparent 0%, transparent 52%, rgba(6,6,7,0.5) 80%, var(--ink-bg) 100%);
 }
 .hero-glass__caption {
   position: absolute; left: 0; right: 0; top: 63%; z-index: 3;
@@ -2313,7 +2501,7 @@ body[data-logo="laser"] .laser-beam {
      faint slate in the middle, settles back to ink */
   background:
     radial-gradient(120% 70% at 50% 0%, color-mix(in srgb, var(--cta) 6%, transparent), transparent 62%),
-    linear-gradient(180deg, var(--ink-bg) 0%, #101016 26%, #15151c 56%, var(--ink-bg) 100%);
+    linear-gradient(180deg, var(--ink-bg) 0%, #14181a 26%, #1b2123 56%, var(--ink-bg) 100%);
 }
 /* faint glow at the seam so the top of the section has a little atmosphere */
 .svc__seam {
@@ -2321,7 +2509,7 @@ body[data-logo="laser"] .laser-beam {
   z-index: 0; pointer-events: none;
   background: radial-gradient(60% 100% at 50% 0%, color-mix(in srgb, var(--cta) 9%, transparent), transparent 72%);
 }
-.svc__inner { position: relative; z-index: 1; padding: clamp(76px, 12vh, 156px) 0 clamp(60px, 9vh, 124px); }
+.svc__inner { position: relative; z-index: 1; padding-block: clamp(76px, 12vh, 156px) clamp(60px, 9vh, 124px); }
 
 .svc__head { max-width: 760px; }
 .svc__title { font-size: clamp(28px, 4.4vw, 52px); margin: 14px 0 0; }
@@ -2344,6 +2532,7 @@ body[data-logo="laser"] .laser-beam {
 
 .svc__cat {
   position: relative; isolation: isolate; overflow: hidden; display: flex;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
   border-radius: 20px; padding: clamp(26px, 2vw, 34px);
   background: color-mix(in srgb, var(--white) 3.5%, transparent);
   border: 1px solid var(--hairline);
@@ -2360,7 +2549,27 @@ body[data-logo="laser"] .laser-beam {
   background: color-mix(in srgb, var(--white) 5.5%, transparent);
   box-shadow: 0 44px 88px -44px rgba(0,0,0,0.95);
 }
-.svc__cat-glow { position: absolute; inset: 0; z-index: 0; opacity: 0; pointer-events: none; transition: opacity .4s ease; }
+/* Ambient atmospheric image per card — dark base keeps the image's blacks rich;
+   the light in each image sits toward the top, so text reads over the darker
+   lower half (plus a scrim). Comes alive on hover: brightens + slow ken-burns. */
+.svc__cat-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; border-radius: inherit; background: #090b0c; }
+.svc__cat-bg img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: 50% 14%;
+  opacity: 0.58; filter: brightness(0.86) saturate(1.05);
+  transform: scale(1.04);
+  transition: opacity .55s ease, transform 7s cubic-bezier(0.22,0.61,0.36,1), filter .55s ease;
+}
+.svc__cat-bg::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(7,9,10,0.32) 0%, rgba(7,9,10,0.6) 48%, rgba(7,9,10,0.9) 100%);
+}
+.svc__cat:hover .svc__cat-bg img,
+.svc__cat:focus-visible .svc__cat-bg img { opacity: 0.74; transform: scale(1.12); filter: brightness(1.02) saturate(1.12); }
+.svc__cat--custom .svc__cat-bg img { opacity: 0.66; }
+.svc__cat--custom:hover .svc__cat-bg img { opacity: 0.82; }
+
+.svc__cat-glow { position: absolute; inset: 0; z-index: 1; opacity: 0; pointer-events: none; transition: opacity .4s ease; }
 .svc__cat-body { position: relative; z-index: 2; display: flex; flex-direction: column; width: 100%; }
 
 .svc__cat-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
@@ -2416,34 +2625,44 @@ body[data-logo="laser"] .laser-beam {
 .svc__cat--custom .svc__cat-line { color: color-mix(in srgb, #fff 78%, var(--cta)); }
 .svc__cat--custom .svc__cat-list { border-top-color: color-mix(in srgb, var(--cta) 28%, transparent); }
 
-/* "View details" affordance, pinned to the base of every card */
-.svc__cat-more { margin-top: auto; padding-top: 22px; font-size: 13px; font-weight: 500; color: var(--ghost); transition: color .3s ease; }
-.svc__cat:hover .svc__cat-more { color: var(--cta); }
-.svc__cat--custom .svc__cat-more { color: color-mix(in srgb, var(--cta) 66%, var(--silver)); }
-.svc__cat--custom:hover .svc__cat-more { color: var(--cta); }
+/* Compact expand affordance — a small icon button in the card's bottom-right */
+.svc__cat-expand {
+  margin-top: auto; align-self: flex-end;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; padding: 0; border-radius: 11px; cursor: pointer;
+  color: var(--silver);
+  background: color-mix(in srgb, var(--white) 7%, transparent);
+  border: 1px solid var(--hairline-strong); -webkit-tap-highlight-color: transparent;
+  transition: background .25s ease, border-color .25s ease, color .25s ease, transform .25s ease;
+}
+.svc__cat-expand:hover { background: color-mix(in srgb, var(--cta) 20%, transparent); border-color: color-mix(in srgb, var(--cta) 52%, transparent); color: #fff; transform: translateY(-1px); }
+.svc__cat-expand:focus-visible { outline: 2px solid var(--cta); outline-offset: 2px; }
+.svc__cat-expand svg { width: 17px; height: 17px; flex: none; }
+.svc__cat--custom .svc__cat-expand { background: color-mix(in srgb, var(--cta) 15%, transparent); border-color: color-mix(in srgb, var(--cta) 44%, transparent); color: #fff; }
+.svc__cat--custom .svc__cat-expand:hover { background: color-mix(in srgb, var(--cta) 26%, transparent); border-color: color-mix(in srgb, var(--cta) 60%, transparent); }
 
-/* ── Full detail takeover ──────────────────────────────────────────────────
-   Phones: a centred sheet over a blurred backdrop. Desktop (≥1040): an in-row
-   panel that scales out of the hovered card while the others dim behind it. */
+/* ── Expand → cover panel ─────────────────────────────────────────────────────
+   The chosen card grows into a panel that covers the other two (absolute over the
+   cards grid, scaling out of the chosen card). Minimise (✕) or Esc reverts. The
+   opaque base means the covered cards never show through. */
 .svc__detail {
-  position: fixed; inset: 0; z-index: 120;
-  display: grid; place-items: center; padding: 18px;
-  background: color-mix(in srgb, #05050a 80%, transparent);
-  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  position: absolute; inset: 0; z-index: 6;
   opacity: 0; visibility: hidden; pointer-events: none;
-  transition: opacity .4s ease, visibility .4s ease;
+  transform: scale(0.96); transform-origin: 50% 50%;
+  transition: opacity .36s ease, transform .44s cubic-bezier(.22,.61,.36,1), visibility .44s;
 }
-.svc__detail.is-open { opacity: 1; visibility: visible; pointer-events: auto; }
+.svc__detail.is-open { opacity: 1; visibility: visible; pointer-events: auto; transform: scale(1); }
 .svc__detail-inner {
-  position: relative; width: min(640px, 100%); max-height: 86vh; overflow: auto;
-  background: linear-gradient(180deg, #15151d, #0d0d12);
-  border: 1px solid var(--hairline-strong); border-radius: 22px;
-  padding: clamp(26px, 6vw, 38px);
-  transform: translateY(20px) scale(.97);
-  transition: transform .42s cubic-bezier(.22,.61,.36,1);
-  box-shadow: 0 50px 120px -40px rgba(0,0,0,0.92);
+  position: relative; width: 100%; min-height: 100%; height: auto; overflow: visible;
+  border-radius: 20px; border: 1px solid var(--hairline-strong);
+  background-color: #0b0f11; background-size: cover; background-position: center;
+  padding: clamp(26px, 2.6vw, 44px);
+  box-shadow: 0 40px 90px -46px rgba(0,0,0,0.92);
+  display: grid; grid-template-columns: 1fr; gap: clamp(20px, 2.4vw, 30px); align-content: center;
 }
-.svc__detail.is-open .svc__detail-inner { transform: translateY(0) scale(1); }
+@media (min-width: 880px) {
+  .svc__detail-inner { grid-template-columns: 1.05fr 1fr; gap: clamp(34px, 3.6vw, 56px); align-items: start; align-content: center; }
+}
 
 .svc__detail-close {
   position: absolute; top: 14px; right: 14px; z-index: 3;
@@ -2454,56 +2673,36 @@ body[data-logo="laser"] .laser-beam {
 .svc__detail-close:hover { background: color-mix(in srgb, var(--white) 15%, transparent); color: #fff; }
 .svc__detail-close svg { width: 16px; height: 16px; }
 
-.svc__detail-name { margin: 18px 0 0; font-size: clamp(26px, 3vw, 38px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.05; color: #fff; }
-.svc__detail-desc { margin: 16px 0 0; font-size: clamp(15px, 1.3vw, 17px); line-height: 1.6; color: var(--silver); }
-.svc__detail-eg { margin: 16px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--ghost); font-style: italic; }
+.svc__detail-main { min-width: 0; }
+.svc__detail-name { margin: 18px 0 0; font-size: clamp(25px, 3vw, 36px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.05; color: #fff; }
+.svc__detail-desc { margin: 14px 0 0; font-size: clamp(15px, 1.3vw, 17px); line-height: 1.6; color: var(--silver); }
+.svc__detail-eg { margin: 14px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--ghost); font-style: italic; }
 .svc__detail-cta {
-  margin-top: 24px; display: inline-flex; align-items: center; gap: 9px;
+  margin-top: 22px; display: inline-flex; align-items: center; gap: 9px;
   padding: 12px 20px; border-radius: 999px; border: 0; cursor: pointer; font-family: inherit;
   font-size: 14px; font-weight: 600; color: var(--cta-on); background: var(--cta);
   transition: background .2s ease, transform .2s ease;
 }
 .svc__detail-cta:hover { background: var(--cta-hover); transform: translateY(-1px); }
 
-.svc__detail-list { list-style: none; margin: 28px 0 0; padding: 26px 0 0; border-top: 1px solid var(--hairline); display: flex; flex-direction: column; gap: 15px; }
+.svc__detail-list { list-style: none; margin: 0; padding: 22px 0 0; border-top: 1px solid var(--hairline); display: flex; flex-direction: column; gap: 15px; }
+@media (min-width: 880px) { .svc__detail-list { padding-top: 0; border-top: 0; } }
 .svc__detail-list li { position: relative; padding-left: 17px; display: flex; flex-direction: column; gap: 3px; }
 .svc__detail-list li::before { content: ""; position: absolute; left: 0; top: 7px; width: 7px; height: 7px; border-radius: 2px; background: var(--cta); box-shadow: 0 0 8px -1px color-mix(in srgb, var(--cta) 70%, transparent); }
 .svc__detail-oname { font-size: 15px; font-weight: 600; color: var(--white); }
 .svc__detail-odetail { font-size: 13.5px; line-height: 1.45; color: var(--silver); }
 
-/* custom takeover keeps the bespoke blue accents */
-.svc__detail--custom .svc__detail-inner { border-color: color-mix(in srgb, var(--cta) 40%, var(--hairline-strong)); box-shadow: 0 50px 120px -40px color-mix(in srgb, var(--cta) 36%, rgba(0,0,0,0.92)); }
+/* custom panel keeps the bespoke blue accents */
+.svc__detail--custom .svc__detail-inner { border-color: color-mix(in srgb, var(--cta) 40%, var(--hairline-strong)); box-shadow: 0 40px 90px -52px color-mix(in srgb, var(--cta) 36%, rgba(0,0,0,0.92)); }
 .svc__detail--custom .svc__cat-ic { color: var(--cta); background: color-mix(in srgb, var(--cta) 16%, transparent); border-color: color-mix(in srgb, var(--cta) 42%, transparent); }
 .svc__detail--custom .svc__cat-tag { color: var(--cta); border-color: color-mix(in srgb, var(--cta) 48%, transparent); background: color-mix(in srgb, var(--cta) 10%, transparent); }
-
-@media (min-width: 1040px) {
-  /* dim + push back the other cards while one is open */
-  .svc__cards.is-detail .svc__cat { opacity: .18; filter: blur(2px); pointer-events: none; transition: opacity .4s ease, filter .4s ease; }
-  /* in-row overlay that grows out of the hovered card */
-  .svc__detail {
-    position: absolute; inset: 0; z-index: 6;
-    display: block; padding: 0; background: none;
-    -webkit-backdrop-filter: none; backdrop-filter: none;
-    transform: scale(.95);
-    transition: opacity .42s cubic-bezier(.22,.61,.36,1), transform .42s cubic-bezier(.22,.61,.36,1), visibility .42s;
-  }
-  .svc__detail.is-open { transform: scale(1); }
-  .svc__detail-inner {
-    width: 100%; min-height: 100%; max-height: none; overflow: visible;
-    transform: none; transition: none;
-    display: grid; grid-template-columns: 1.04fr 1fr; gap: clamp(30px, 3vw, 52px); align-items: center;
-    padding: clamp(30px, 3vw, 48px);
-    border-radius: 20px;
-    background: linear-gradient(155deg, #16161e, #0e0e14);
-  }
-  .svc__detail-list { margin-top: 0; padding-top: 0; border-top: 0; }
-}
 
 @media (prefers-reduced-motion: reduce) {
   .svc__cat { transition: border-color .3s ease, background .3s ease; opacity: 1; translate: none; transform: none; }
   .svc__cat:hover { transform: none; }
   .svc__cat--custom .svc__cat-glow { animation: none; }
-  .svc__detail, .svc__detail-inner { transition: opacity .2s ease, visibility .2s ease; transform: none; }
+  .svc__detail { transition: grid-template-rows .2s ease; }
+  .svc__detail-inner { transition: none; }
 }
 
 /* ── Preview compositions (CSS/SVG, theme-token driven) ── */
@@ -2587,4 +2786,79 @@ body[data-logo="laser"] .laser-beam {
 /* pause the decorative mock loops for reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   .pv-flow__pulse, .pv-pred__dot, .pv-chat__typing i { animation: none !important; }
+}
+
+/* ── About story page (.abs) ─────────────────────────────────────────────────
+   Bold Mission & Vision side-by-side first, then the gap, the founders (image +
+   logos) and what DS2 is. Calm fade-up reveals only (driven by .reveal). */
+.abs { position: relative; }
+
+/* Mission / Vision — two bold panels, side by side */
+.abs-mv {
+  position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(36px, 5vw, 84px);
+  padding-top: clamp(116px, 17vh, 200px); padding-bottom: clamp(60px, 9vh, 120px);
+}
+.abs-mv::before {
+  content: ""; position: absolute; top: clamp(132px, 18vh, 216px); bottom: clamp(64px, 9vh, 124px);
+  left: 50%; width: 1px; background: var(--hairline); transform: translateX(-50%);
+}
+.abs-mv__panel { display: flex; flex-direction: column; }
+.abs-mv__label {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: clamp(13px, 1.1vw, 15px);
+  letter-spacing: 0.24em; text-transform: uppercase; font-weight: 600; color: var(--cta);
+  display: inline-flex; align-items: center; gap: 13px;
+}
+.abs-mv__label::before { content: ""; width: 28px; height: 2px; background: var(--cta); border-radius: 2px; box-shadow: 0 0 10px -1px var(--cta); }
+.abs-mv__statement {
+  margin: clamp(20px, 2.4vw, 30px) 0 0; font-size: clamp(27px, 3.5vw, 46px); font-weight: 600;
+  line-height: 1.1; letter-spacing: -0.03em; color: var(--white); text-wrap: balance;
+}
+.abs-mv__sub { margin: clamp(18px, 2vw, 26px) 0 0; font-size: clamp(15px, 1.35vw, 18px); line-height: 1.6; color: var(--silver); max-width: 44ch; text-wrap: pretty; }
+
+/* shared eyebrow for the story sections */
+.abs-eyebrow {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--cta); font-weight: 600;
+}
+.abs-eyebrow::before { content: ""; width: 24px; height: 2px; background: var(--cta); border-radius: 2px; box-shadow: 0 0 9px -1px var(--cta); }
+
+/* The gap */
+.abs-gap { padding-block: clamp(64px, 10vh, 128px); border-top: 1px solid var(--hairline); }
+.abs-gap__title { margin: 18px 0 0; font-size: clamp(26px, 3.2vw, 42px); font-weight: 600; line-height: 1.12; letter-spacing: -0.025em; color: var(--white); text-wrap: balance; max-width: 18ch; }
+.abs-gap__body { margin: 20px 0 0; font-size: clamp(16px, 1.4vw, 19px); line-height: 1.65; color: var(--silver); max-width: 62ch; text-wrap: pretty; }
+
+/* Founders — image + name + role + logos */
+.abs-founders { display: flex; flex-direction: column; gap: clamp(56px, 9vh, 112px); padding-block: clamp(40px, 6vh, 80px); }
+.abs-founder { display: grid; grid-template-columns: 0.92fr 1.08fr; gap: clamp(32px, 4.5vw, 72px); align-items: center; }
+.abs-founder--flip .abs-founder__media { order: 2; }
+.abs-founder__media {
+  position: relative; aspect-ratio: 4 / 3; border-radius: 18px; overflow: hidden;
+  border: 1px solid var(--hairline-strong); box-shadow: 0 40px 90px -50px rgba(0,0,0,0.9);
+}
+.abs-founder__media img { width: 100%; height: 100%; object-fit: cover; display: block; filter: brightness(0.84) saturate(0.95); }
+.abs-founder__media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(120deg, transparent 42%, color-mix(in srgb, var(--ink-bg) 55%, transparent)); }
+.abs-founder__name { margin: 14px 0 0; font-size: clamp(30px, 3.4vw, 46px); font-weight: 600; letter-spacing: -0.03em; line-height: 1; color: var(--white); }
+.abs-founder__bio { margin: 18px 0 0; font-size: clamp(15px, 1.35vw, 18px); line-height: 1.65; color: var(--silver); max-width: 48ch; text-wrap: pretty; }
+.abs-founder__logos { margin: 24px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.abs-logo {
+  display: inline-flex; align-items: center; height: 34px; padding: 0 16px; border-radius: 9px;
+  font-size: 13px; font-weight: 600; letter-spacing: 0.01em; color: var(--silver);
+  background: color-mix(in srgb, var(--white) 5%, transparent); border: 1px solid var(--hairline-strong);
+}
+
+/* What DS2 is */
+.abs-ds2 { padding-block: clamp(64px, 10vh, 128px) clamp(80px, 12vh, 150px); border-top: 1px solid var(--hairline); }
+.abs-ds2__title { margin: 18px 0 0; font-size: clamp(28px, 3.6vw, 48px); font-weight: 600; line-height: 1.1; letter-spacing: -0.03em; color: var(--white); text-wrap: balance; max-width: 20ch; }
+.abs-ds2__body { margin: 20px 0 0; font-size: clamp(16px, 1.4vw, 19px); line-height: 1.65; color: var(--silver); max-width: 58ch; text-wrap: pretty; }
+.abs-ds2 .cta { margin-top: 30px; }
+
+/* Tablets (iPad portrait) and below: stack Mission/Vision and the founder rows */
+@media (max-width: 880px) {
+  .abs-mv { grid-template-columns: 1fr; gap: clamp(40px, 8vh, 60px); padding-top: clamp(96px, 14vh, 150px); }
+  .abs-mv::before { display: none; }
+  .abs-mv__panel + .abs-mv__panel { border-top: 1px solid var(--hairline); padding-top: clamp(40px, 8vh, 60px); }
+  .abs-founder { grid-template-columns: 1fr; gap: 24px; }
+  .abs-founder--flip .abs-founder__media { order: 0; }
+  .abs-founder__media { aspect-ratio: 16 / 10; }
 }

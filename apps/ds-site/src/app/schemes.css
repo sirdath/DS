@@ -52,14 +52,17 @@ body[data-scheme="emerald"] {
 /* ── MONO — black & white (the site default). The ONE kept colour is the
    blue "Send a message" CTA (--cta), so the monochrome site has a single pop. ── */
 body[data-scheme="mono"] {
-  --black: #0b0b0c; --gray-2: #141416; --gray-3: #1e1e21; --ink-bg: #060607;
-  --silver: #b9bcc4; --ghost: #80838c; --white: #f4f5f7;
-  --hairline: rgba(255,255,255,0.13); --hairline-strong: rgba(255,255,255,0.24);
-  --accent: #f4f5f7; --accent-soft: #cdd0d6; --accent-on: #0b0b0c;
-  --hue-2: #c9ccd2; --hue-3: #9a9ea6;
-  --smoke-a: #ffffff; --smoke-b: #c9ccd2;
-  --surface: #1a1a1d;
-  --hero-base: #0b0b0c; --hero-tint: #ffffff; --hero-tint2: #c9ccd2; --hero-logo: #ffffff; --hero-logo-core: #888888; --hero-trace: #dddddd;
+  /* Neutrals tuned to the hero film: a cool slate ramp (hue ~205, low sat)
+     sampled from the video's dominant gunmetal/charcoal/silver tones, so the UI
+     reads as an extension of the hero instead of flat neutral grey. */
+  --black: #121516; --gray-2: #1b2022; --gray-3: #2b3133; --ink-bg: #0b0d0e;
+  --silver: #9da2a8; --ghost: #7e868c; --white: #e9ecef;
+  --hairline: rgba(154,166,174,0.13); --hairline-strong: rgba(154,166,174,0.24);
+  --accent: #e9ecef; --accent-soft: #c2c7cd; --accent-on: #0b0d0e;
+  --hue-2: #bfc5cb; --hue-3: #8b9298;
+  --smoke-a: #e9ecef; --smoke-b: #bfc5cb;
+  --surface: #232a2c;
+  --hero-base: #0b0d0e; --hero-tint: #ffffff; --hero-tint2: #c9ccd2; --hero-logo: #ffffff; --hero-logo-core: #888888; --hero-trace: #dddddd;
   /* the single kept colour — Send-a-message CTA + contact-panel accents */
   --cta: #3b82f6; --cta-hover: #2f6fe0; --cta-on: #ffffff;
 }
@@ -168,7 +171,7 @@ body[data-scheme="mono"] nav.top {
   background: transparent !important;
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.28) !important;
+  border-bottom: none !important;
 }
 body[data-scheme="mono"] nav.top .nav-mark-svg { filter: drop-shadow(0 1px 4px rgba(0,0,0,0.55)); }
 body[data-scheme="mono"] nav.top .nav-links a,
