@@ -55,7 +55,7 @@ export default function PageChrome({ children }: { children: ReactNode }) {
     <ContactCtx.Provider value={() => setChatOpen(true)}>
       <nav className="top nav--solid">
         <div className="nav-inner">
-          <Link href="/" className="nav-mark" aria-label="DS2, home">
+          <Link href="/" className="nav-mark" aria-label={t.a11y.home}>
             <DS2Mark className="nav-mark-svg" />
           </Link>
           <div className="nav-right">

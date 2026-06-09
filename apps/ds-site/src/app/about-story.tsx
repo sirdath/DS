@@ -13,8 +13,11 @@ const FOUNDERS: Record<string, { img: string; logos: string[] }> = {
 };
 
 function FounderRow({ p, flip }: { p: Page; flip: boolean }) {
+  const t = useT();
   const meta = FOUNDERS[p.id];
   if (!meta) return null;
+  // Logos are brand names (kept as-is) except the country, which translates.
+  const logos = meta.logos.map((l) => (l === "Netherlands" ? t.about.cityNetherlands : l));
   return (
     <article className={`abs-founder reveal${flip ? " abs-founder--flip" : ""}`}>
       <div className="abs-founder__media">
@@ -25,8 +28,8 @@ function FounderRow({ p, flip }: { p: Page; flip: boolean }) {
         <span className="abs-eyebrow">{p.eyebrow}</span>
         <h3 className="abs-founder__name">{p.title}</h3>
         <p className="abs-founder__bio">{p.body}</p>
-        <div className="abs-founder__logos" aria-label="Background">
-          {meta.logos.map((l) => (
+        <div className="abs-founder__logos" aria-label={t.a11y.background}>
+          {logos.map((l) => (
             <span className="abs-logo" key={l}>{l}</span>
           ))}
         </div>

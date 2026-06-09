@@ -70,7 +70,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 export function LangToggle({ className = "" }: { className?: string }) {
   const { lang, setLang } = useLang();
   return (
-    <div className={`lang-toggle${className ? ` ${className}` : ""}`} role="group" aria-label="Language">
+    <div className={`lang-toggle${className ? ` ${className}` : ""}`} role="group" aria-label={dict[lang].a11y.language}>
       <button
         type="button"
         className={`lang-opt${lang === "en" ? " is-active" : ""}`}

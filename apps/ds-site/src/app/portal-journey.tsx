@@ -40,9 +40,11 @@ export default function PortalJourney() {
         if (!copy1 || !copy2) return;
         gsap.set(copy2, { autoAlpha: 0, yPercent: 26 });
 
-        // (When a portrait-framed journey-mobile.mp4 is added, swap video.src to it
-        // on phones so the full-screen film keeps the Athens→London landmarks
-        // centred. Until then the landscape master is used full-screen on mobile.)
+        // On phones, use the portrait-framed cut so the full-screen film keeps the
+        // Athens→London landmarks centred (a landscape cover-crop would clip them).
+        if (window.matchMedia("(max-width: 768px)").matches) {
+          video.src = "/portals/journey-mobile.mp4?v=1";
+        }
 
         // Pull the whole clip into the buffer so seeking renders frames on mobile
         // (phones barely preload; a muted play→pause kick forces the download).

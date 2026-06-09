@@ -200,7 +200,7 @@ export default function ContactPanel({
 
   if (minimized) {
     return (
-      <button type="button" className="cpanel-tab" onClick={() => setMinimized(false)} aria-label="Reopen your message to DS2">
+      <button type="button" className="cpanel-tab" onClick={() => setMinimized(false)} aria-label={P.reopen}>
         <span className="cpanel-tab-dot" />
         {P.tab}
       </button>
@@ -226,28 +226,28 @@ export default function ContactPanel({
         ref={cardRef}
         role="dialog"
         aria-modal="true"
-        aria-label="Message DS2"
+        aria-label={P.title}
       >
         <div className="cpanel-bar">
           <div className="cpanel-lights">
-            <button type="button" className="cpl cpl--red" aria-label="Close" title="Close" onClick={onClose} />
+            <button type="button" className="cpl cpl--red" aria-label={P.close} title={P.close} onClick={onClose} />
             <button
               type="button"
               className="cpl cpl--yellow"
-              aria-label="Minimise"
-              title="Minimise"
+              aria-label={P.minimise}
+              title={P.minimise}
               onClick={() => setMinimized(true)}
             />
             <button
               type="button"
               className="cpl cpl--green"
-              aria-label={maximized ? "Restore" : "Maximise"}
-              title={maximized ? "Restore" : "Maximise"}
+              aria-label={maximized ? P.restore : P.maximise}
+              title={maximized ? P.restore : P.maximise}
               onClick={() => setMaximized((m) => !m)}
             />
           </div>
           <div className="cpanel-bar-title">{P.title}</div>
-          <button type="button" className="cpanel-x" aria-label="Close" onClick={onClose}>✕</button>
+          <button type="button" className="cpanel-x" aria-label={P.close} onClick={onClose}>✕</button>
         </div>
 
         <div className="cpanel-body" ref={scrollRef}>
