@@ -209,7 +209,7 @@ export interface Dict {
 }
 
 const en: Dict = {
-  nav: { portfolio: "Portfolio", about: "About", tools: "Tools" },
+  nav: { portfolio: "Projects", about: "About", tools: "Tools" },
   cta: { send: "Send a message" },
   poweredBy: "Powered by",
   a11y: { home: "DS2, home", openMenu: "Open menu", closeMenu: "Close menu", language: "Language", loading: "DS2 loading", logo: "DS2 logo", background: "Background" },
@@ -286,7 +286,7 @@ const en: Dict = {
     titleEm: "what we ship.",
     sub: "A couple of recent builds, the rest live in the portfolio.",
     visit: "Visit",
-    viewAll: "See all work",
+    viewAll: "See all projects",
     items: [
       { tag: "Website · SEO · Ads", name: "GlobalTeamPlans", blurb: "A focused marketing site, built to be found.", url: "https://globalteamplans.com", img: "globalteamplans" },
       { tag: "SaaS · Product", name: "dataportfolio.co.uk", blurb: "From idea to a working portfolio-builder SaaS.", url: "https://dataportfolio.co.uk", img: "dataportfolio" },
@@ -381,7 +381,7 @@ const en: Dict = {
   footer: {
     copyright: "© 2026 DS2, Digital Solutions Consulting · Athens · London",
     services: "Services",
-    portfolio: "Portfolio",
+    portfolio: "Projects",
     about: "About",
     home: "Home",
     tools: "Tools",

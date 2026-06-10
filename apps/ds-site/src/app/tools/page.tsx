@@ -11,6 +11,7 @@ function ToolsBody() {
   const T = t.tools;
   return (
     <main className="section section--first tools">
+      <div className="tools-beams" aria-hidden="true" />
       <div className="wrap">
         <div className="section-head reveal">
           <div className="eyebrow">{T.eyebrow}</div>

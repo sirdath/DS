@@ -3035,3 +3035,41 @@ body[data-logo="laser"] .laser-beam {
   .tdetail__grid { grid-template-columns: 1fr; gap: 30px; }
 }
 .tmedia__poster { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ── Tools atmosphere — minimal, abstract, futuristic ─────────────────────────
+   A fine dot-matrix fading from the top, two cool light fields, and a sparse
+   sweep of thin luminous beams drifting very slowly. transform-only animation,
+   no blur filters, so the pages stay cheap to composite. */
+.tools { position: relative; isolation: isolate; overflow: clip; }
+.tools::before {
+  content: ""; position: absolute; inset: 0; z-index: -2; pointer-events: none;
+  background:
+    radial-gradient(58% 34% at 22% 0%, color-mix(in srgb, var(--cta) 17%, transparent), transparent 66%),
+    radial-gradient(46% 30% at 84% 18%, color-mix(in srgb, #22d3ee 8%, transparent), transparent 70%),
+    radial-gradient(50% 26% at 50% 100%, color-mix(in srgb, var(--cta) 9%, transparent), transparent 72%),
+    linear-gradient(170deg, #0b1016 0%, #08090b 55%, #060708 100%);
+}
+.tools::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--cta) 36%, transparent) 1px, transparent 1.4px);
+  background-size: 26px 26px;
+  -webkit-mask-image: radial-gradient(90% 46% at 50% 0%, #000 8%, transparent 76%);
+  mask-image: radial-gradient(90% 46% at 50% 0%, #000 8%, transparent 76%);
+  opacity: 0.5;
+}
+/* sparse luminous beams, drifting imperceptibly */
+.tools-beams {
+  position: absolute; inset: -12%; z-index: -1; pointer-events: none;
+  background: repeating-linear-gradient(
+    115deg,
+    transparent 0px, transparent 220px,
+    color-mix(in srgb, var(--cta) 9%, transparent) 220px,
+    color-mix(in srgb, var(--cta) 9%, transparent) 221.5px,
+    transparent 221.5px, transparent 460px
+  );
+  -webkit-mask-image: radial-gradient(75% 60% at 50% 30%, #000 20%, transparent 80%);
+  mask-image: radial-gradient(75% 60% at 50% 30%, #000 20%, transparent 80%);
+  animation: toolsBeams 38s linear infinite alternate;
+}
+@keyframes toolsBeams { from { transform: translate3d(-1.5%, 0, 0); } to { transform: translate3d(1.5%, 0, 0); } }
+@media (prefers-reduced-motion: reduce) { .tools-beams { animation: none; } }

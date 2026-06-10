@@ -34,8 +34,8 @@ export function MobileMenu({ onContact }: { onContact: () => void }) {
   const close = () => setOpen(false);
   const links = [
     { href: "/", label: t.footer.home },
-    { href: "/tools", label: t.nav.tools },
     { href: "/about", label: t.nav.about },
+    { href: "/tools", label: t.nav.tools },
     { href: "/portfolio", label: t.nav.portfolio },
   ];
 

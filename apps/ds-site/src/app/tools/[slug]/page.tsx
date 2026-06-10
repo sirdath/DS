@@ -18,6 +18,7 @@ function ToolBody() {
   if (!tool) {
     return (
       <main className="section section--first tools">
+      <div className="tools-beams" aria-hidden="true" />
         <div className="wrap">
           <Link className="tdetail__back" href="/tools">&larr; {T.backAll}</Link>
         </div>
