@@ -41,7 +41,7 @@ export function ToolIcon({ slug }: { slug: string }) {
 
 /** Asset manifests — add a slug when its file lands (keeps pages free of 404s).
  *  Posters: /tools/posters/{slug}.webp · Videos: /tools/videos/{slug}.mp4 */
-const HAS_POSTER = new Set<string>([]);
+const HAS_POSTER = new Set<string>(["competitor-watch", "review-intelligence", "site-selection", "ai-receptionist"]);
 const HAS_VIDEO = new Set<string>([]);
 
 /** The tool's media slot, two modes:

@@ -60,6 +60,19 @@ function ToolBody() {
           <ToolMedia slug={tool.slug} name={tool.name} mode="video" />
         </div>
 
+        <section className="troi reveal" aria-label={T.roiLabel}>
+          <h2 className="tdetail__label">{T.roiLabel}</h2>
+          <div className="troi__stats">
+            {tool.stats.map((st) => (
+              <div className="troi__stat" key={st.label}>
+                <span className="troi__value">{st.value}</span>
+                <span className="troi__slabel">{st.label}</span>
+              </div>
+            ))}
+          </div>
+          <p className="troi__body">{tool.roiBody}</p>
+        </section>
+
         <div className="tdetail__grid reveal">
           <section className="tdetail__features" aria-label={T.featuresLabel}>
             <h2 className="tdetail__label">{T.featuresLabel}</h2>

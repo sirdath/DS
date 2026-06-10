@@ -23,7 +23,7 @@ function ToolsBody() {
 
         <div className="tools-grid">
           {T.items.map((tool) => (
-            <Link key={tool.slug} className="tcard reveal" href={`/tools/${tool.slug}`}>
+            <Link key={tool.slug} className={`tcard reveal tcard--${tool.status}`} href={`/tools/${tool.slug}`}>
               <ToolMedia slug={tool.slug} name={tool.name} />
               <span className="tcard__row">
                 <span className="tcard__name">{tool.name}</span>
@@ -32,6 +32,11 @@ function ToolsBody() {
                 </span>
               </span>
               <span className="tcard__tagline">{tool.tagline}</span>
+              {tool.stats[0] && (
+                <span className="tcard__stat">
+                  <strong>{tool.stats[0].value}</strong> {tool.stats[0].label}
+                </span>
+              )}
               <span className="tcard__view">
                 {T.view} <span aria-hidden="true">&rarr;</span>
               </span>

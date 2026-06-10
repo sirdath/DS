@@ -11,12 +11,15 @@ export type Lang = "en" | "el";
 type SvcOffering = { name: string; detail: string };
 type PanelChip = { label: string; draft: string };
 type ToolFeature = { name: string; detail: string };
+type ToolStat = { value: string; label: string };
 type ToolDef = {
   slug: string;
   status: "early" | "soon";
   name: string;
   tagline: string;
   desc: string;
+  roiBody: string;
+  stats: ToolStat[];
   features: ToolFeature[];
   audience: string;
   deliverable: string;
@@ -170,6 +173,7 @@ export interface Dict {
     deliverableLabel: string;
     pricingLabel: string;
     featuresLabel: string;
+    roiLabel: string;
     backAll: string;
     videoSoon: string;
     items: Four<ToolDef>;
@@ -515,6 +519,7 @@ const en: Dict = {
     deliverableLabel: "What you receive",
     pricingLabel: "Pricing",
     featuresLabel: "What it does",
+    roiLabel: "What it's worth",
     backAll: "All tools",
     videoSoon: "Short demo film coming here.",
     items: [
@@ -523,32 +528,44 @@ const en: Dict = {
         status: "early",
         name: "Competitor Watch",
         tagline: "We watch your competitors so you don't have to.",
-        desc: "Pick up to five competitors you already know by name. Every week our agents read their websites, prices, offers, reviews and search visibility, and you get a short digest with only what changed and why it matters.",
+        desc: "Define the competitive set your board already asks about. Every week our agents read their websites, prices, offers, reviews and search visibility, and your team gets a digest with only what changed and why it matters.",
+        roiBody: "Strategy teams pay agencies €2,000+ for a one-off competitor report that is stale within a month, or burn analyst days rebuilding the same picture by hand. This is the same intelligence, continuous, at a fraction of either.",
+        stats: [
+          { value: "10+ h", label: "of analyst time returned, every week" },
+          { value: "€2,000+", label: "the going rate for one static agency report" },
+          { value: "52×", label: "briefings a year, not one stale deck" },
+        ],
         features: [
           { name: "Weekly digest", detail: "A short Monday brief, written for an owner, not an analyst. Only the changes that matter." },
           { name: "Price & offer tracking", detail: "New packages, discounts and menu or price changes, caught the week they happen." },
           { name: "Review monitoring", detail: "What customers praise and complain about across your rivals, summarised." },
           { name: "Search visibility", detail: "Who ranks where for the searches that bring you customers, tracked over time." },
         ],
-        audience: "Hotels, clinics, e-shops and local service businesses that compete against a few names they already know.",
+        audience: "Strategy, commercial and marketing teams at groups, chains and scale-ups that answer for market position.",
         deliverable: "A Monday email digest, with the full archive in your DS2 portal.",
-        priceNote: "From €149/month",
+        priceNote: "From €490/month",
       },
       {
         slug: "review-intelligence",
         status: "early",
         name: "Review Intelligence",
         tagline: "Every review, every platform, one clear picture.",
-        desc: "We pull your reviews from Google, Booking and TripAdvisor into one place, read them in Greek and English, and tell you what is actually driving your rating, with reply drafts ready to post.",
+        desc: "We pull every location's reviews from Google, Booking and TripAdvisor into one feed, read them in Greek and English, and tell you what is actually driving your ratings, with reply drafts ready for your team to approve.",
+        roiBody: "Nine in ten guests read reviews before they book, and at portfolio scale nobody is actually reading them all. One recovered rating point moves direct bookings more than any campaign of the same cost.",
+        stats: [
+          { value: "9 / 10", label: "guests read reviews before booking" },
+          { value: "15+ h", label: "of weekly reading and drafting, across locations" },
+          { value: "1 feed", label: "for every property and platform" },
+        ],
         features: [
           { name: "All platforms together", detail: "Google, Booking and TripAdvisor in one feed, deduplicated and translated." },
           { name: "Real sentiment, in Greek too", detail: "What guests praise and what costs you stars, across both languages." },
           { name: "Reply drafts", detail: "Considered responses drafted for every review, in your voice, ready to approve." },
           { name: "Monthly trend report", detail: "Rating trajectory and the three things to fix next, ranked by impact." },
         ],
-        audience: "Hotels, restaurants and clinics whose next booking depends on their last review.",
+        audience: "Hotel groups, restaurant chains and clinic networks managing reputation across many properties.",
         deliverable: "A weekly review brief plus a monthly trend report in your portal.",
-        priceNote: "From €129/month",
+        priceNote: "From €390/month",
       },
       {
         slug: "site-selection",
@@ -556,13 +573,19 @@ const en: Dict = {
         name: "Site Selection",
         tagline: "Open your next location where the data points.",
         desc: "A geospatial study for choosing where to open next: foot-traffic proxies, competitor density, demographics and accessibility, scored street by street. Built on the same methods we used to turn two million points of interest into a production network.",
+        roiBody: "A flagship lease is a ten-year, seven-figure commitment decided in weeks. The big firms charge €25,000+ for the study that de-risks it. We deliver the same defensible answer in weeks, at a fraction, with the reasoning shown.",
+        stats: [
+          { value: "€25k+", label: "what a big-firm location study costs" },
+          { value: "10 yrs", label: "of lease riding on one decision" },
+          { value: "weeks", label: "to a defensible answer, not months" },
+        ],
         features: [
           { name: "Candidate scoring", detail: "Every candidate location scored on demand, competition and access." },
           { name: "Competitor density maps", detail: "Where rivals cluster, where they are absent, and what that means." },
           { name: "Demand signals", detail: "Demographics and points of interest as proxies for real footfall." },
           { name: "A defensible recommendation", detail: "A ranked shortlist with the reasoning shown, not a black box." },
         ],
-        audience: "Chains, franchises and investors choosing between candidate locations in Greece.",
+        audience: "Retail chains, franchise networks, F&B groups and investors weighing their next opening in Greece.",
         deliverable: "A per-study report with maps, scores and a ranked recommendation.",
         priceNote: "Per study, on a call",
       },
@@ -571,14 +594,20 @@ const en: Dict = {
         status: "soon",
         name: "AI Receptionist",
         tagline: "Answers in Greek, books appointments, never sleeps.",
-        desc: "An assistant trained on your services, prices and calendar that answers customers on your website and socials, in Greek and English, and turns conversations into bookings, 24 hours a day.",
+        desc: "An assistant trained on your services, prices and calendars that answers customers on your website and socials, in Greek and English, and turns conversations into bookings, around the clock and across every location.",
+        roiBody: "Roughly a third of enquiries arrive outside opening hours, and at multi-location scale missed messages are a quiet, permanent revenue leak. Round-the-clock front-desk coverage costs salaries; this costs a fraction of one.",
+        stats: [
+          { value: "24/7", label: "every enquiry answered, in two languages" },
+          { value: "~1/3", label: "of enquiries arrive after hours" },
+          { value: "<1/10", label: "the cost of staffed coverage" },
+        ],
         features: [
           { name: "Speaks your business", detail: "Grounded in your real services, prices and policies. It does not invent." },
           { name: "Takes bookings", detail: "Checks availability and books appointments straight into your calendar." },
           { name: "Greek and English", detail: "Native-quality answers in both, switching automatically." },
           { name: "Knows when to hand over", detail: "Complex cases are passed to you with the full conversation attached." },
         ],
-        audience: "Clinics, salons, gyms and restaurants that lose bookings to unanswered messages.",
+        audience: "Clinic networks, gym and salon groups, and restaurant chains where bookings arrive faster than staff can answer.",
         deliverable: "A managed assistant on your site and channels, with a monthly conversation report.",
         priceNote: "Pricing on a call",
       },
@@ -929,6 +958,7 @@ const el: Dict = {
     deliverableLabel: "Τι λαμβάνετε",
     pricingLabel: "Τιμολόγηση",
     featuresLabel: "Τι κάνει",
+    roiLabel: "Τι αξίζει",
     backAll: "Όλα τα εργαλεία",
     videoSoon: "Σύντομο φιλμ επίδειξης έρχεται εδώ.",
     items: [
@@ -937,32 +967,44 @@ const el: Dict = {
         status: "early",
         name: "Competitor Watch",
         tagline: "Παρακολουθούμε τους ανταγωνιστές σας, για να μη χρειάζεται εσείς.",
-        desc: "Διαλέγετε έως πέντε ανταγωνιστές που ήδη ξέρετε με το όνομά τους. Κάθε εβδομάδα οι πράκτορές μας διαβάζουν τις ιστοσελίδες, τις τιμές, τις προσφορές, τις κριτικές και την ορατότητά τους στην αναζήτηση, και λαμβάνετε μια σύντομη ενημέρωση μόνο με ό,τι άλλαξε και γιατί μετράει.",
+        desc: "Ορίζετε το ανταγωνιστικό σύνολο για το οποίο ήδη ρωτά η διοίκηση. Κάθε εβδομάδα οι πράκτορές μας διαβάζουν τις ιστοσελίδες, τις τιμές, τις προσφορές, τις κριτικές και την ορατότητά τους στην αναζήτηση, και η ομάδα σας λαμβάνει μια ενημέρωση μόνο με ό,τι άλλαξε και γιατί μετράει.",
+        roiBody: "Οι ομάδες στρατηγικής πληρώνουν σε agencies €2.000+ για μια εφάπαξ ανάλυση ανταγωνισμού που παλιώνει μέσα σε έναν μήνα, ή καίνε μέρες αναλυτών ξαναχτίζοντας την ίδια εικόνα στο χέρι. Αυτή είναι η ίδια πληροφόρηση, συνεχής, σε κλάσμα του κόστους.",
+        stats: [
+          { value: "10+ ώρες", label: "χρόνου αναλυτή πίσω στην ομάδα, κάθε εβδομάδα" },
+          { value: "€2.000+", label: "η τρέχουσα τιμή για μία στατική αναφορά" },
+          { value: "52×", label: "ενημερώσεις τον χρόνο, όχι ένα μπαγιάτικο deck" },
+        ],
         features: [
           { name: "Εβδομαδιαία ενημέρωση", detail: "Ένα σύντομο brief κάθε Δευτέρα, γραμμένο για ιδιοκτήτη, όχι για αναλυτή." },
           { name: "Τιμές & προσφορές", detail: "Νέα πακέτα, εκπτώσεις και αλλαγές τιμών, την εβδομάδα που συμβαίνουν." },
           { name: "Παρακολούθηση κριτικών", detail: "Τι επαινούν και τι κατακρίνουν οι πελάτες στους αντιπάλους σας, συνοψισμένο." },
           { name: "Ορατότητα στην αναζήτηση", detail: "Ποιος εμφανίζεται πού για τις αναζητήσεις που σας φέρνουν πελάτες." },
         ],
-        audience: "Ξενοδοχεία, κλινικές, e-shops και τοπικές επιχειρήσεις που ανταγωνίζονται λίγα γνωστά ονόματα.",
+        audience: "Ομάδες στρατηγικής, εμπορικής διεύθυνσης και marketing σε ομίλους, αλυσίδες και scale-ups που λογοδοτούν για τη θέση τους στην αγορά.",
         deliverable: "Ένα email κάθε Δευτέρα, με πλήρες αρχείο στο DS2 portal σας.",
-        priceNote: "Από €149/μήνα",
+        priceNote: "Από €490/μήνα",
       },
       {
         slug: "review-intelligence",
         status: "early",
         name: "Review Intelligence",
         tagline: "Κάθε κριτική, κάθε πλατφόρμα, μία καθαρή εικόνα.",
-        desc: "Συγκεντρώνουμε τις κριτικές σας από Google, Booking και TripAdvisor σε ένα μέρος, τις διαβάζουμε στα ελληνικά και στα αγγλικά, και σας λέμε τι πραγματικά καθορίζει τη βαθμολογία σας, με έτοιμα προσχέδια απαντήσεων.",
+        desc: "Συγκεντρώνουμε τις κριτικές κάθε μονάδας από Google, Booking και TripAdvisor σε μία ροή, τις διαβάζουμε στα ελληνικά και στα αγγλικά, και σας λέμε τι πραγματικά καθορίζει τις βαθμολογίες σας, με προσχέδια απαντήσεων έτοιμα για έγκριση από την ομάδα σας.",
+        roiBody: "Εννέα στους δέκα επισκέπτες διαβάζουν κριτικές πριν κάνουν κράτηση, και σε κλίμακα χαρτοφυλακίου κανείς δεν τις διαβάζει πραγματικά όλες. Ένας ανακτημένος βαθμός κινεί τις απευθείας κρατήσεις περισσότερο από οποιαδήποτε καμπάνια ίδιου κόστους.",
+        stats: [
+          { value: "9 / 10", label: "επισκέπτες διαβάζουν κριτικές πριν την κράτηση" },
+          { value: "15+ ώρες", label: "εβδομαδιαίο διάβασμα και απαντήσεις, σε όλες τις μονάδες" },
+          { value: "1 ροή", label: "για κάθε μονάδα και κάθε πλατφόρμα" },
+        ],
         features: [
           { name: "Όλες οι πλατφόρμες μαζί", detail: "Google, Booking και TripAdvisor σε μία ροή, χωρίς διπλότυπα, μεταφρασμένα." },
           { name: "Πραγματική ανάλυση, και στα ελληνικά", detail: "Τι επαινούν οι επισκέπτες και τι σας κοστίζει αστέρια, και στις δύο γλώσσες." },
           { name: "Προσχέδια απαντήσεων", detail: "Προσεγμένες απαντήσεις για κάθε κριτική, στη δική σας φωνή, έτοιμες για έγκριση." },
           { name: "Μηνιαία αναφορά τάσεων", detail: "Η πορεία της βαθμολογίας και τα τρία επόμενα πράγματα που αξίζει να διορθώσετε." },
         ],
-        audience: "Ξενοδοχεία, εστιατόρια και κλινικές όπου η επόμενη κράτηση εξαρτάται από την τελευταία κριτική.",
+        audience: "Ξενοδοχειακοί όμιλοι, αλυσίδες εστίασης και δίκτυα κλινικών που διαχειρίζονται φήμη σε πολλές μονάδες.",
         deliverable: "Εβδομαδιαίο brief κριτικών και μηνιαία αναφορά τάσεων στο portal σας.",
-        priceNote: "Από €129/μήνα",
+        priceNote: "Από €390/μήνα",
       },
       {
         slug: "site-selection",
@@ -970,13 +1012,19 @@ const el: Dict = {
         name: "Site Selection",
         tagline: "Ανοίξτε το επόμενο κατάστημα εκεί που δείχνουν τα δεδομένα.",
         desc: "Γεωχωρική μελέτη για το πού να ανοίξετε το επόμενο σημείο: ενδείξεις κίνησης, πυκνότητα ανταγωνισμού, δημογραφικά και προσβασιμότητα, βαθμολογημένα δρόμο προς δρόμο. Πάνω στις ίδιες μεθόδους με τις οποίες μετατρέψαμε δύο εκατομμύρια σημεία ενδιαφέροντος σε δίκτυο παραγωγής.",
+        roiBody: "Μια ναυαρχίδα είναι δεκαετής δέσμευση επταψήφιου κόστους που κρίνεται σε λίγες εβδομάδες. Οι μεγάλες εταιρείες χρεώνουν €25.000+ για τη μελέτη που μειώνει το ρίσκο. Παραδίδουμε εξίσου τεκμηριωμένη απάντηση σε εβδομάδες, σε κλάσμα της τιμής, με το σκεπτικό ορατό.",
+        stats: [
+          { value: "€25k+", label: "το κόστος μελέτης από μεγάλη εταιρεία" },
+          { value: "10 έτη", label: "μίσθωσης κρέμονται από μία απόφαση" },
+          { value: "εβδομάδες", label: "ως την τεκμηριωμένη απάντηση, όχι μήνες" },
+        ],
         features: [
           { name: "Βαθμολόγηση τοποθεσιών", detail: "Κάθε υποψήφια τοποθεσία βαθμολογείται σε ζήτηση, ανταγωνισμό και πρόσβαση." },
           { name: "Χάρτες ανταγωνισμού", detail: "Πού συγκεντρώνονται οι αντίπαλοι, πού απουσιάζουν, και τι σημαίνει αυτό." },
           { name: "Ενδείξεις ζήτησης", detail: "Δημογραφικά και σημεία ενδιαφέροντος ως ενδείξεις πραγματικής κίνησης." },
           { name: "Τεκμηριωμένη πρόταση", detail: "Κατάταξη με ορατό σκεπτικό, όχι μαύρο κουτί." },
         ],
-        audience: "Αλυσίδες, franchise και επενδυτές που επιλέγουν ανάμεσα σε υποψήφιες τοποθεσίες στην Ελλάδα.",
+        audience: "Αλυσίδες λιανικής, δίκτυα franchise, όμιλοι εστίασης και επενδυτές που ζυγίζουν το επόμενο άνοιγμα στην Ελλάδα.",
         deliverable: "Αναφορά ανά μελέτη με χάρτες, βαθμολογίες και τεκμηριωμένη κατάταξη.",
         priceNote: "Ανά μελέτη, σε μια κλήση",
       },
@@ -985,14 +1033,20 @@ const el: Dict = {
         status: "soon",
         name: "AI Receptionist",
         tagline: "Απαντά στα ελληνικά, κλείνει ραντεβού, δεν κοιμάται ποτέ.",
-        desc: "Ένας βοηθός εκπαιδευμένος στις υπηρεσίες, τις τιμές και το ημερολόγιό σας, που απαντά στους πελάτες στην ιστοσελίδα και τα κανάλιά σας, στα ελληνικά και στα αγγλικά, και μετατρέπει τις συζητήσεις σε κρατήσεις, όλο το εικοσιτετράωρο.",
+        desc: "Ένας βοηθός εκπαιδευμένος στις υπηρεσίες, τις τιμές και τα ημερολόγιά σας, που απαντά στους πελάτες στην ιστοσελίδα και τα κανάλιά σας, στα ελληνικά και στα αγγλικά, και μετατρέπει τις συζητήσεις σε κρατήσεις, όλο το εικοσιτετράωρο και σε κάθε μονάδα.",
+        roiBody: "Περίπου το ένα τρίτο των μηνυμάτων έρχεται εκτός ωραρίου, και σε κλίμακα πολλών μονάδων τα αναπάντητα μηνύματα είναι μια αθόρυβη, μόνιμη διαρροή εσόδων. Η εικοσιτετράωρη κάλυψη υποδοχής κοστίζει μισθούς· αυτό κοστίζει κλάσμα ενός.",
+        stats: [
+          { value: "24/7", label: "κάθε μήνυμα απαντημένο, σε δύο γλώσσες" },
+          { value: "~1/3", label: "των μηνυμάτων έρχεται εκτός ωραρίου" },
+          { value: "<1/10", label: "του κόστους επανδρωμένης κάλυψης" },
+        ],
         features: [
           { name: "Μιλά τη γλώσσα της επιχείρησής σας", detail: "Βασισμένος στις πραγματικές υπηρεσίες, τιμές και πολιτικές σας. Δεν επινοεί." },
           { name: "Κλείνει ραντεβού", detail: "Ελέγχει διαθεσιμότητα και καταχωρεί ραντεβού απευθείας στο ημερολόγιό σας." },
           { name: "Ελληνικά και αγγλικά", detail: "Φυσικές απαντήσεις και στις δύο γλώσσες, με αυτόματη εναλλαγή." },
           { name: "Ξέρει πότε να παραδώσει", detail: "Οι σύνθετες περιπτώσεις έρχονται σε εσάς με όλη τη συζήτηση συνημμένη." },
         ],
-        audience: "Κλινικές, κομμωτήρια, γυμναστήρια και εστιατόρια που χάνουν κρατήσεις από αναπάντητα μηνύματα.",
+        audience: "Δίκτυα κλινικών, όμιλοι γυμναστηρίων και κομμωτηρίων, και αλυσίδες εστίασης όπου οι κρατήσεις έρχονται πιο γρήγορα απ' όσο προλαβαίνει το προσωπικό.",
         deliverable: "Διαχειριζόμενος βοηθός στην ιστοσελίδα και τα κανάλιά σας, με μηνιαία αναφορά συζητήσεων.",
         priceNote: "Τιμολόγηση σε μια κλήση",
       },

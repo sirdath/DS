@@ -3073,3 +3073,69 @@ body[data-logo="laser"] .laser-beam {
 }
 @keyframes toolsBeams { from { transform: translate3d(-1.5%, 0, 0); } to { transform: translate3d(1.5%, 0, 0); } }
 @media (prefers-reduced-motion: reduce) { .tools-beams { animation: none; } }
+
+/* ── Tools: business-value (ROI) section + futuristic card treatment ────────── */
+/* the lead stat chip on storefront cards */
+.tcard__stat {
+  display: inline-flex; align-items: baseline; gap: 7px; align-self: flex-start;
+  margin-top: 2px; padding: 7px 12px; border-radius: 9px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; letter-spacing: 0.02em;
+  color: var(--silver); background: color-mix(in srgb, var(--cta) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cta) 26%, transparent);
+}
+.tcard__stat strong { font-size: 14px; font-weight: 700; color: var(--cta); font-variant-numeric: tabular-nums; }
+
+/* rotating gradient border on hover (frontendmaxxing border-gradient-rotate,
+   ported to the DS2 blue family; only animates while hovered) */
+@property --tcard-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+.tcard { position: relative; }
+.tcard::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+  background: conic-gradient(from var(--tcard-angle, 0deg),
+    color-mix(in srgb, var(--cta) 70%, transparent), transparent 30%,
+    color-mix(in srgb, #22d3ee 55%, transparent) 50%, transparent 70%,
+    color-mix(in srgb, var(--cta) 70%, transparent));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0; transition: opacity 0.35s ease; pointer-events: none;
+}
+.tcard:hover::before { opacity: 1; animation: tcardRotate 2.6s linear infinite; }
+@keyframes tcardRotate { to { --tcard-angle: 360deg; } }
+/* early-access badge carries a quiet live pulse */
+.tcard--early .tcard__status--early { animation: tbadgePulse 2.4s ease-in-out infinite alternate; }
+@keyframes tbadgePulse {
+  from { box-shadow: 0 0 6px -2px color-mix(in srgb, var(--cta) 55%, transparent); }
+  to   { box-shadow: 0 0 14px -2px color-mix(in srgb, var(--cta) 75%, transparent); }
+}
+
+/* ROI section on the detail page */
+.troi { margin-top: clamp(40px, 6vh, 68px); }
+.troi__stats { margin-top: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(14px, 2vw, 22px); }
+@media (max-width: 720px) { .troi__stats { grid-template-columns: 1fr; } }
+.troi__stat {
+  position: relative; display: flex; flex-direction: column; gap: 8px;
+  padding: clamp(18px, 2.2vw, 26px); border-radius: 16px;
+  background: linear-gradient(165deg, color-mix(in srgb, var(--white) 4.5%, transparent), color-mix(in srgb, var(--white) 1.5%, transparent));
+  border: 1px solid var(--hairline); border-left: 3px solid var(--cta);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+.troi__stat:hover {
+  transform: translateY(-2px);
+  border-left-color: #22d3ee;
+  box-shadow: 0 22px 50px -34px color-mix(in srgb, var(--cta) 55%, rgba(0,0,0,0.9));
+}
+.troi__value {
+  font-size: clamp(30px, 3.4vw, 44px); font-weight: 700; line-height: 1; letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  background: linear-gradient(120deg, #7db4ff, var(--cta) 55%, #22d3ee);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+  filter: drop-shadow(0 0 16px color-mix(in srgb, var(--cta) 30%, transparent));
+}
+.troi__slabel { font-size: 13.5px; line-height: 1.45; color: var(--silver); }
+.troi__body { margin: 22px 0 0; font-size: clamp(15px, 1.35vw, 17.5px); line-height: 1.65; color: var(--silver); max-width: 64ch; text-wrap: pretty; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tcard:hover::before { animation: none; }
+  .tcard--early .tcard__status--early { animation: none; }
+}
