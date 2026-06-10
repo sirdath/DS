@@ -65,7 +65,7 @@ export const SfxTrack: React.FC = () => (
   <>
     {CUES.map((c, i) => (
       <Sequence key={`${c.sfx}-${c.at}-${i}`} from={c.at} layout="none" name={`sfx:${c.sfx}@${c.at}`}>
-        <Audio src={staticFile(`sfx/${SFX[c.sfx]}`)} volume={c.vol} />
+        <Audio src={staticFile(`sfx/${SFX[c.sfx]}`)} volume={() => c.vol} />
       </Sequence>
     ))}
   </>

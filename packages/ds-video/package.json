@@ -13,7 +13,9 @@
     "remotion": "4.0.451"
   },
   "devDependencies": {
+    "@ds/tsconfig": "workspace:*",
     "@remotion/eslint-config-flat": "4.0.451",
+    "@types/node": "^22.16.5",
     "@types/react": "^19.0.7",
     "@types/web": "0.0.166",
     "eslint": "^9.17.0",
@@ -29,7 +31,8 @@
     "render:brand": "remotion render DS2BrandReel out/ds2-brand-reel.mp4",
     "render:brief": "remotion render BriefToShipped out/brief-to-shipped.mp4",
     "upgrade": "remotion upgrade",
-    "lint": "eslint src && tsc"
+    "lint": "eslint src",
+    "check-types": "tsc"
   },
   "sideEffects": [
     "*.css"

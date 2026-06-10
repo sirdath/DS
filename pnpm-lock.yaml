@@ -364,9 +364,15 @@ importers:
         specifier: 4.0.451
         version: 4.0.451(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
     devDependencies:
+      '@ds/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
       '@remotion/eslint-config-flat':
         specifier: 4.0.451
         version: 4.0.451(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
+      '@types/node':
+        specifier: ^22.16.5
+        version: 22.19.17
       '@types/react':
         specifier: ^19.0.7
         version: 19.2.14
@@ -7216,7 +7222,7 @@ snapshots:
       react-refresh: 0.18.0
       remotion: 4.0.451(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       source-map: 0.7.3
-      style-loader: 4.0.0(webpack@5.105.0)
+      style-loader: 4.0.0(webpack@5.105.0(esbuild@0.25.0))
       webpack: 5.105.0(esbuild@0.25.0)
     transitivePeerDependencies:
       - '@swc/core'
@@ -11122,7 +11128,7 @@ snapshots:
     dependencies:
       js-tokens: 9.0.1
 
-  style-loader@4.0.0(webpack@5.105.0):
+  style-loader@4.0.0(webpack@5.105.0(esbuild@0.25.0)):
     dependencies:
       webpack: 5.105.0(esbuild@0.25.0)
 

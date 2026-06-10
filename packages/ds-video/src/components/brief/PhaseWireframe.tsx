@@ -1,6 +1,5 @@
 import React from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
-import { COLORS } from "../../theme";
 
 /**
  * S1 — Structure. A page skeleton (nav · hero · card row) snaps into place,

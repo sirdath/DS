@@ -247,8 +247,8 @@ export const Section07 = () => {
     const img = new Image();
     img.crossOrigin = "anonymous";
     img.src = logoWhite;
-    let particles: { x: number; y: number; tx: number; ty: number; vx: number; vy: number }[] = [];
-    let mouse = { x: -9999, y: -9999 };
+    const particles: { x: number; y: number; tx: number; ty: number; vx: number; vy: number }[] = [];
+    const mouse = { x: -9999, y: -9999 };
 
     const onMove = (e: MouseEvent) => { mouse.x = e.clientX; mouse.y = e.clientY; };
     window.addEventListener("mousemove", onMove);

@@ -28,7 +28,7 @@ export const AntiConsultancyReel: React.FC = () => {
 
   return (
     <AbsoluteFill style={{ backgroundColor: INK, color: "white", fontFamily: "Inter, system-ui, sans-serif" }}>
-      <Sequence from={0} durationInFrames={fps * 60}>
+      <Sequence  durationInFrames={fps * 60}>
         <AbsoluteFill
           style={{
             justifyContent: "center",

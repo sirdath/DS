@@ -389,7 +389,9 @@ export const Section24 = () => {
             const slice = ctx.getImageData(sx, y, sw, bh);
             const dxOff = (Math.random() - 0.5) * (hot ? 120 : 40);
             ctx.putImageData(slice, sx + dxOff, y);
-          } catch {}
+          } catch {
+            /* slice can fall outside the canvas at the edges — skip it */
+          }
         }
 
         // scanlines

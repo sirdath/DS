@@ -30,7 +30,6 @@ export class SectionErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, info: ErrorInfo) {
     // Log to console so devs can copy-paste the trace, with the section
     // name baked in so it's clear which one blew up.
-    // eslint-disable-next-line no-console
     console.error(
       `[gallery] Section ${this.props.index}` +
         (this.props.name ? ` (${this.props.name})` : "") +

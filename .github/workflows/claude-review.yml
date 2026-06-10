@@ -1,0 +1,69 @@
+# Automatic Claude review on every PR. Focuses on what DS2 cares about and what
+# the CI gate (lint/types/build) cannot see: logic, brand rules, i18n parity,
+# accessibility and token discipline. Needs the Claude GitHub app installed and
+# a CLAUDE_CODE_OAUTH_TOKEN secret (repo or org level).
+name: Claude Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+# One review per PR head; a new push cancels the in-flight one.
+concurrency:
+  group: claude-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    # Skip drafts and anything labelled "skip-review".
+    if: github.event.pull_request.draft == false && !contains(github.event.pull_request.labels.*.name, 'skip-review')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Claude review
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: '--model claude-sonnet-4-6 --allowed-tools "Bash(gh pr diff:*),Bash(gh pr view:*)"'
+          prompt: |
+            You are reviewing a pull request for the DS monorepo (DS2 — an
+            Athens/London digital-solutions consultancy). Read the diff with
+            `gh pr diff ${{ github.event.pull_request.number }}` and the PR
+            description with `gh pr view ${{ github.event.pull_request.number }}`.
+
+            The CI job already checks lint, types and build — do NOT comment on
+            formatting, import order or anything a linter catches. Review only
+            what needs judgement, in priority order:
+
+            1. Logic bugs, edge cases, race conditions, broken error handling.
+            2. i18n parity: this site ships EN + EL. Any new user-facing string
+               must exist in BOTH `en` and `el` in `apps/ds-site/src/app/i18n-dict.ts`,
+               type-enforced by the `Dict` interface. Flag English text added to
+               only one locale, hardcoded copy that bypasses the dict, or `Dict`
+               shape changes applied to one locale only.
+            3. Accessibility & web-interface rules: keyboard paths, visible focus,
+               `prefers-reduced-motion` variants for any new animation, hit
+               targets, real `<a>`/`<Link>` for navigation, color not the sole
+               status signal. (See .claude/rules/web-interface.md.)
+            4. Token discipline: no hardcoded colors, motion durations or spacing
+               outside the scale — import from `@ds/tokens` / use the mapped
+               classes and CSS vars (`--cta`, `--ds-duration-base`, etc.).
+            5. Security on anything touching `api/`, auth, middleware or env:
+               input validation at boundaries, no secrets in client code, no
+               leaked PII. (Defer the deep pass to the security workflow, but
+               flag the obvious.)
+            6. Brand voice on marketing copy: sentence-case headlines, you/we
+               candour, no "innovation/synergy/transformation" fluff.
+
+            Post your review as a single PR comment. Use severity tags
+            CRITICAL / HIGH / MEDIUM / LOW, cite `file:line`, and propose the
+            fix — never just "this is wrong". If the PR is clean, say so in one
+            line. Be concise; protective framing, not nitpicking.

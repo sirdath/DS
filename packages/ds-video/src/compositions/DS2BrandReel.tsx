@@ -117,7 +117,7 @@ export const DS2BrandReel: React.FC = () => {
       <Atmosphere />
 
       {/* S1 — Wordmark intro (0–4s) */}
-      <Sequence from={0} durationInFrames={s(4)}>
+      <Sequence  durationInFrames={s(4)}>
         <Scene durationInFrames={s(4)}>
           <FadeUp y={18}>
             <DS2Wordmark color={WHITE} style={{ width: 460, height: "auto" }} />

@@ -1,5 +1,6 @@
 ﻿"use client";
 /* eslint-disable react/no-unescaped-entities */
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import ContactPanel, { ContactCTA } from "./contact-panel";
 import { useT, useLang, LangToggle } from "./i18n";
@@ -714,9 +715,9 @@ export default function HomePage() {
           </a>
           <div className="nav-right">
             <ul className="nav-links">
-              <li><a className="nav-roll" href="/about"><span data-text={t.nav.about}>{t.nav.about}</span></a></li>
-              <li><a className="nav-roll" href="/tools"><span data-text={t.nav.tools}>{t.nav.tools}</span></a></li>
-              <li><a className="nav-roll" href="/portfolio"><span data-text={t.nav.portfolio}>{t.nav.portfolio}</span></a></li>
+              <li><Link className="nav-roll" href="/about"><span data-text={t.nav.about}>{t.nav.about}</span></Link></li>
+              <li><Link className="nav-roll" href="/tools"><span data-text={t.nav.tools}>{t.nav.tools}</span></Link></li>
+              <li><Link className="nav-roll" href="/portfolio"><span data-text={t.nav.portfolio}>{t.nav.portfolio}</span></Link></li>
             </ul>
             <LangToggle />
             <span className="nav-merge">
@@ -804,7 +805,7 @@ export default function HomePage() {
             ))}
           </div>
           <div className="feat-cta">
-            <a href="/tools" className="feat-viewall">{t.toolsTeaser.cta} &#8594;</a>
+            <Link href="/tools" className="feat-viewall">{t.toolsTeaser.cta} &#8594;</Link>
           </div>
         </div>
       </section>

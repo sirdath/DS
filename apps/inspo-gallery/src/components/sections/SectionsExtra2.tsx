@@ -414,8 +414,8 @@ export const Section19 = () => {
           className="absolute inset-0 rounded-3xl mix-blend-color-dodge"
           style={{
             background: useTransform(
-              [fgX, fgY] as any,
-              ([x, y]: any) =>
+              [fgX, fgY],
+              ([x, y]: string[]) =>
                 `radial-gradient(circle at ${x} ${y}, hsla(180,100%,70%,0.9), hsla(280,100%,70%,0.6) 30%, hsla(60,100%,70%,0.5) 50%, hsla(320,100%,70%,0.4) 70%, transparent 90%)`
             ),
           }}
@@ -456,8 +456,8 @@ export const Section19 = () => {
           className="pointer-events-none absolute inset-0 rounded-3xl"
           style={{
             background: useTransform(
-              [fgX, fgY] as any,
-              ([x, y]: any) => `radial-gradient(circle at ${x} ${y}, hsla(0,0%,100%,0.35), transparent 30%)`
+              [fgX, fgY],
+              ([x, y]: string[]) => `radial-gradient(circle at ${x} ${y}, hsla(0,0%,100%,0.35), transparent 30%)`
             ),
           }}
         />

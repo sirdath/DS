@@ -23,4 +23,15 @@ export default tseslint.config(
       "@typescript-eslint/no-unused-vars": "off",
     },
   },
+  {
+    // Generated shadcn/ui primitives and the Tailwind config follow upstream
+    // patterns (empty interface extends, chart `any`, require() in config) that
+    // aren't worth hand-diverging from. Relax only those rules, only here.
+    files: ["src/components/ui/**/*.{ts,tsx}", "tailwind.config.ts"],
+    rules: {
+      "@typescript-eslint/no-empty-object-type": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-require-imports": "off",
+    },
+  },
 );

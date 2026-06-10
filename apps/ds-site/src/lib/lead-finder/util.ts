@@ -34,7 +34,7 @@ export async function mapPool<T, R>(
       if (i >= total) return;
       try {
         results[i] = await worker(items[i] as T, i);
-      } catch (err) {
+      } catch {
         // Worker is expected to handle its own errors; this is a last resort.
         results[i] = undefined as unknown as R;
       }

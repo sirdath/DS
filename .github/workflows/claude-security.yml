@@ -1,0 +1,64 @@
+# Deep security review — runs only when a PR touches sensitive surfaces
+# (API routes, auth, middleware, Supabase, env, contact pipeline). Kept separate
+# from the everyday review so most PRs stay fast and this one can go deeper.
+name: Claude Security Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - 'apps/*/src/app/api/**'
+      - 'apps/*/src/middleware.ts'
+      - 'apps/*/supabase/**'
+      - 'packages/chatbot-core/**'
+      - '**/*auth*'
+      - '**/.env*.example'
+      - '.github/workflows/**'
+
+concurrency:
+  group: claude-security-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  security:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Claude security review
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Opus for the deep reasoning pass on security-sensitive code.
+          claude_args: '--model claude-opus-4-7 --allowed-tools "Bash(gh pr diff:*),Bash(gh pr view:*),Bash(grep:*)"'
+          prompt: |
+            Security review of a DS monorepo pull request that touches a
+            sensitive surface (API route, auth, middleware, Supabase, env or the
+            contact pipeline). Read the diff with
+            `gh pr diff ${{ github.event.pull_request.number }}`.
+
+            Hunt specifically for, against .claude/rules/security.md and OWASP:
+            - Secrets/keys/tokens committed or logged; PII written to logs.
+            - Injection: unparameterized SQL, unsanitized input rendered to the
+              DOM, command injection, SSRF in any outbound fetch.
+            - Missing input validation at trust boundaries (request bodies,
+              query params, webhook/Telegram payloads, file uploads).
+            - Auth/authorization gaps: Supabase RLS that does not actually scope
+              rows to the user, missing rate limits on public endpoints, CSRF on
+              state-changing requests, forgeable signatures.
+            - Unsafe crypto, weak comparison of secrets (use timing-safe).
+            - Directory traversal in any path handling.
+            - Workflow risks: untrusted input in `run:`, over-broad permissions,
+              secrets exposed to forks via pull_request_target.
+
+            For each finding: severity (CRITICAL/HIGH/MEDIUM/LOW), `file:line`,
+            why it is exploitable, and the concrete fix. If you find nothing,
+            say so explicitly — do not invent issues. Post one PR comment.
