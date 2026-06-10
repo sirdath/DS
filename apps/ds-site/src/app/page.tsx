@@ -714,6 +714,7 @@ export default function HomePage() {
           </a>
           <div className="nav-right">
             <ul className="nav-links">
+              <li><a className="nav-roll" href="/tools"><span data-text={t.nav.tools}>{t.nav.tools}</span></a></li>
               <li><a className="nav-roll" href="/about"><span data-text={t.nav.about}>{t.nav.about}</span></a></li>
               <li><a className="nav-roll" href="/portfolio"><span data-text={t.nav.portfolio}>{t.nav.portfolio}</span></a></li>
             </ul>

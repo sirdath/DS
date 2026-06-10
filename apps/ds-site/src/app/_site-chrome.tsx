@@ -7,8 +7,9 @@ import { DS2Mark } from "./ds2-mark";
 import SiteFooter from "./site-footer";
 import { MobileMenu } from "./mobile-menu";
 
-const ContactCtx = createContext<() => void>(() => {});
-/** Open the shared contact panel from anywhere inside a PageChrome. */
+const ContactCtx = createContext<(draft?: string) => void>(() => {});
+/** Open the shared contact panel from anywhere inside a PageChrome; pass a
+ *  string to prefill the message (e.g. "I'm interested in Competitor Watch"). */
 export const useOpenContact = () => useContext(ContactCtx);
 
 /** Shared nav + footer + contact panel for the sub-pages (About, Portfolio).
@@ -16,6 +17,11 @@ export const useOpenContact = () => useContext(ContactCtx);
  *  without touching it. Elements with class `reveal` fade up on scroll. */
 export default function PageChrome({ children }: { children: ReactNode }) {
   const [chatOpen, setChatOpen] = useState(false);
+  const [chatDraft, setChatDraft] = useState("");
+  const openContact = (draft?: string) => {
+    if (draft) setChatDraft(draft);
+    setChatOpen(true);
+  };
   const t = useT();
 
   useEffect(() => {
@@ -52,7 +58,7 @@ export default function PageChrome({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <ContactCtx.Provider value={() => setChatOpen(true)}>
+    <ContactCtx.Provider value={openContact}>
       <nav className="top nav--solid">
         <div className="nav-inner">
           <Link href="/" className="nav-mark" aria-label={t.a11y.home}>
@@ -60,21 +66,22 @@ export default function PageChrome({ children }: { children: ReactNode }) {
           </Link>
           <div className="nav-right">
             <ul className="nav-links">
+              <li><Link className="nav-roll" href="/tools"><span data-text={t.nav.tools}>{t.nav.tools}</span></Link></li>
               <li><Link className="nav-roll" href="/about"><span data-text={t.nav.about}>{t.nav.about}</span></Link></li>
               <li><Link className="nav-roll" href="/portfolio"><span data-text={t.nav.portfolio}>{t.nav.portfolio}</span></Link></li>
             </ul>
             <LangToggle />
-            <ContactCTA size="sm" label={t.cta.send} onOpen={() => setChatOpen(true)} />
-            <MobileMenu onContact={() => setChatOpen(true)} />
+            <ContactCTA size="sm" label={t.cta.send} onOpen={() => openContact()} />
+            <MobileMenu onContact={() => openContact()} />
           </div>
         </div>
       </nav>
 
       {children}
 
-      <SiteFooter onContact={() => setChatOpen(true)} />
+      <SiteFooter onContact={() => openContact()} />
 
-      <ContactPanel open={chatOpen} onClose={() => setChatOpen(false)} />
+      <ContactPanel open={chatOpen} onClose={() => setChatOpen(false)} initialDraft={chatDraft} />
     </ContactCtx.Provider>
   );
 }

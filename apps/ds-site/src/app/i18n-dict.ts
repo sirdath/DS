@@ -10,6 +10,18 @@ export type Lang = "en" | "el";
 
 type SvcOffering = { name: string; detail: string };
 type PanelChip = { label: string; draft: string };
+type ToolFeature = { name: string; detail: string };
+type ToolDef = {
+  slug: string;
+  status: "early" | "soon";
+  name: string;
+  tagline: string;
+  desc: string;
+  features: ToolFeature[];
+  audience: string;
+  deliverable: string;
+  priceNote: string;
+};
 type SvcCat = { key: "brand" | "internal" | "custom"; tag: string; name: string; tagline: string; desc: string; example: string; items: SvcOffering[] };
 type EngageMode = { num: string; title: string; best: string; bestLabel: string; desc: string };
 type AboutBlock = { k: string; p: string };
@@ -22,7 +34,7 @@ type Four<T> = [T, T, T, T];
 type Three<T> = [T, T, T];
 
 export interface Dict {
-  nav: { portfolio: string; about: string };
+  nav: { portfolio: string; about: string; tools: string };
   cta: { send: string };
   poweredBy: string;
   a11y: { home: string; openMenu: string; closeMenu: string; language: string; loading: string; logo: string; background: string };
@@ -110,6 +122,7 @@ export interface Dict {
     portfolio: string;
     about: string;
     home: string;
+    tools: string;
     headline: string;
     navLabel: string;
     reachLabel: string;
@@ -142,6 +155,24 @@ export interface Dict {
     sub: string;
     cases: Four<CaseItem>;
     coda: string;
+  };
+  tools: {
+    eyebrow: string;
+    title: string;
+    titleEm: string;
+    sub: string;
+    statusEarly: string;
+    statusSoon: string;
+    view: string;
+    interestCta: string;
+    interestDraft: string;
+    audienceLabel: string;
+    deliverableLabel: string;
+    pricingLabel: string;
+    featuresLabel: string;
+    backAll: string;
+    videoSoon: string;
+    items: Four<ToolDef>;
   };
   panel: {
     title: string;
@@ -178,7 +209,7 @@ export interface Dict {
 }
 
 const en: Dict = {
-  nav: { portfolio: "Portfolio", about: "About" },
+  nav: { portfolio: "Portfolio", about: "About", tools: "Tools" },
   cta: { send: "Send a message" },
   poweredBy: "Powered by",
   a11y: { home: "DS2, home", openMenu: "Open menu", closeMenu: "Close menu", language: "Language", loading: "DS2 loading", logo: "DS2 logo", background: "Background" },
@@ -353,6 +384,7 @@ const en: Dict = {
     portfolio: "Portfolio",
     about: "About",
     home: "Home",
+    tools: "Tools",
     headline: "Digital solutions, built and owned end to end.",
     navLabel: "Navigation",
     reachLabel: "Get in touch",
@@ -469,6 +501,89 @@ const en: Dict = {
     ],
     coda: "If you want a second senior opinion before you commit, that is exactly where we are useful.",
   },
+  tools: {
+    eyebrow: "DS2 tools",
+    title: "Tools we run ",
+    titleEm: "for you.",
+    sub: "Productized services: you subscribe, we run the machinery, and the results land in your inbox and your portal. No dashboards to learn, no software to manage.",
+    statusEarly: "Early access",
+    statusSoon: "Coming soon",
+    view: "See the tool",
+    interestCta: "I'm interested",
+    interestDraft: "Hi DS2, I'm interested in {tool}. ",
+    audienceLabel: "Who it's for",
+    deliverableLabel: "What you receive",
+    pricingLabel: "Pricing",
+    featuresLabel: "What it does",
+    backAll: "All tools",
+    videoSoon: "Short demo film coming here.",
+    items: [
+      {
+        slug: "competitor-watch",
+        status: "early",
+        name: "Competitor Watch",
+        tagline: "We watch your competitors so you don't have to.",
+        desc: "Pick up to five competitors you already know by name. Every week our agents read their websites, prices, offers, reviews and search visibility, and you get a short digest with only what changed and why it matters.",
+        features: [
+          { name: "Weekly digest", detail: "A short Monday brief, written for an owner, not an analyst. Only the changes that matter." },
+          { name: "Price & offer tracking", detail: "New packages, discounts and menu or price changes, caught the week they happen." },
+          { name: "Review monitoring", detail: "What customers praise and complain about across your rivals, summarised." },
+          { name: "Search visibility", detail: "Who ranks where for the searches that bring you customers, tracked over time." },
+        ],
+        audience: "Hotels, clinics, e-shops and local service businesses that compete against a few names they already know.",
+        deliverable: "A Monday email digest, with the full archive in your DS2 portal.",
+        priceNote: "From €149/month",
+      },
+      {
+        slug: "review-intelligence",
+        status: "early",
+        name: "Review Intelligence",
+        tagline: "Every review, every platform, one clear picture.",
+        desc: "We pull your reviews from Google, Booking and TripAdvisor into one place, read them in Greek and English, and tell you what is actually driving your rating, with reply drafts ready to post.",
+        features: [
+          { name: "All platforms together", detail: "Google, Booking and TripAdvisor in one feed, deduplicated and translated." },
+          { name: "Real sentiment, in Greek too", detail: "What guests praise and what costs you stars, across both languages." },
+          { name: "Reply drafts", detail: "Considered responses drafted for every review, in your voice, ready to approve." },
+          { name: "Monthly trend report", detail: "Rating trajectory and the three things to fix next, ranked by impact." },
+        ],
+        audience: "Hotels, restaurants and clinics whose next booking depends on their last review.",
+        deliverable: "A weekly review brief plus a monthly trend report in your portal.",
+        priceNote: "From €129/month",
+      },
+      {
+        slug: "site-selection",
+        status: "soon",
+        name: "Site Selection",
+        tagline: "Open your next location where the data points.",
+        desc: "A geospatial study for choosing where to open next: foot-traffic proxies, competitor density, demographics and accessibility, scored street by street. Built on the same methods we used to turn two million points of interest into a production network.",
+        features: [
+          { name: "Candidate scoring", detail: "Every candidate location scored on demand, competition and access." },
+          { name: "Competitor density maps", detail: "Where rivals cluster, where they are absent, and what that means." },
+          { name: "Demand signals", detail: "Demographics and points of interest as proxies for real footfall." },
+          { name: "A defensible recommendation", detail: "A ranked shortlist with the reasoning shown, not a black box." },
+        ],
+        audience: "Chains, franchises and investors choosing between candidate locations in Greece.",
+        deliverable: "A per-study report with maps, scores and a ranked recommendation.",
+        priceNote: "Per study, on a call",
+      },
+      {
+        slug: "ai-receptionist",
+        status: "soon",
+        name: "AI Receptionist",
+        tagline: "Answers in Greek, books appointments, never sleeps.",
+        desc: "An assistant trained on your services, prices and calendar that answers customers on your website and socials, in Greek and English, and turns conversations into bookings, 24 hours a day.",
+        features: [
+          { name: "Speaks your business", detail: "Grounded in your real services, prices and policies. It does not invent." },
+          { name: "Takes bookings", detail: "Checks availability and books appointments straight into your calendar." },
+          { name: "Greek and English", detail: "Native-quality answers in both, switching automatically." },
+          { name: "Knows when to hand over", detail: "Complex cases are passed to you with the full conversation attached." },
+        ],
+        audience: "Clinics, salons, gyms and restaurants that lose bookings to unanswered messages.",
+        deliverable: "A managed assistant on your site and channels, with a monthly conversation report.",
+        priceNote: "Pricing on a call",
+      },
+    ],
+  },
   panel: {
     title: "Message DS2",
     introUnlocked: "No forms, no login. Tell us what you’re trying to do and it lands straight with the two of us.",
@@ -508,7 +623,7 @@ const en: Dict = {
 };
 
 const el: Dict = {
-  nav: { portfolio: "Έργα", about: "Σχετικά" },
+  nav: { portfolio: "Έργα", about: "Σχετικά", tools: "Εργαλεία" },
   cta: { send: "Στείλτε μήνυμα" },
   poweredBy: "Χτισμένο με",
   a11y: { home: "DS2, αρχική", openMenu: "Άνοιγμα μενού", closeMenu: "Κλείσιμο μενού", language: "Γλώσσα", loading: "DS2, φόρτωση", logo: "Λογότυπο DS2", background: "Υπόβαθρο" },
@@ -683,6 +798,7 @@ const el: Dict = {
     portfolio: "Έργα",
     about: "Σχετικά",
     home: "Αρχική",
+    tools: "Εργαλεία",
     headline: "Ψηφιακές λύσεις, χτισμένες και υποστηριγμένες ως το τέλος.",
     navLabel: "Πλοήγηση",
     reachLabel: "Επικοινωνία",
@@ -798,6 +914,89 @@ const el: Dict = {
       },
     ],
     coda: "Αν θέλετε μια δεύτερη έμπειρη γνώμη πριν δεσμευτείτε, εκεί ακριβώς είμαστε χρήσιμοι.",
+  },
+  tools: {
+    eyebrow: "Εργαλεία DS2",
+    title: "Εργαλεία που τρέχουμε ",
+    titleEm: "για εσάς.",
+    sub: "Υπηρεσίες-προϊόντα: εγγράφεστε, εμείς λειτουργούμε τον μηχανισμό, και τα αποτελέσματα φτάνουν στο email και στο portal σας. Χωρίς dashboards για μάθημα, χωρίς λογισμικό για διαχείριση.",
+    statusEarly: "Πρώιμη πρόσβαση",
+    statusSoon: "Έρχεται σύντομα",
+    view: "Δείτε το εργαλείο",
+    interestCta: "Με ενδιαφέρει",
+    interestDraft: "Γεια σας DS2, με ενδιαφέρει το {tool}. ",
+    audienceLabel: "Για ποιους είναι",
+    deliverableLabel: "Τι λαμβάνετε",
+    pricingLabel: "Τιμολόγηση",
+    featuresLabel: "Τι κάνει",
+    backAll: "Όλα τα εργαλεία",
+    videoSoon: "Σύντομο φιλμ επίδειξης έρχεται εδώ.",
+    items: [
+      {
+        slug: "competitor-watch",
+        status: "early",
+        name: "Competitor Watch",
+        tagline: "Παρακολουθούμε τους ανταγωνιστές σας, για να μη χρειάζεται εσείς.",
+        desc: "Διαλέγετε έως πέντε ανταγωνιστές που ήδη ξέρετε με το όνομά τους. Κάθε εβδομάδα οι πράκτορές μας διαβάζουν τις ιστοσελίδες, τις τιμές, τις προσφορές, τις κριτικές και την ορατότητά τους στην αναζήτηση, και λαμβάνετε μια σύντομη ενημέρωση μόνο με ό,τι άλλαξε και γιατί μετράει.",
+        features: [
+          { name: "Εβδομαδιαία ενημέρωση", detail: "Ένα σύντομο brief κάθε Δευτέρα, γραμμένο για ιδιοκτήτη, όχι για αναλυτή." },
+          { name: "Τιμές & προσφορές", detail: "Νέα πακέτα, εκπτώσεις και αλλαγές τιμών, την εβδομάδα που συμβαίνουν." },
+          { name: "Παρακολούθηση κριτικών", detail: "Τι επαινούν και τι κατακρίνουν οι πελάτες στους αντιπάλους σας, συνοψισμένο." },
+          { name: "Ορατότητα στην αναζήτηση", detail: "Ποιος εμφανίζεται πού για τις αναζητήσεις που σας φέρνουν πελάτες." },
+        ],
+        audience: "Ξενοδοχεία, κλινικές, e-shops και τοπικές επιχειρήσεις που ανταγωνίζονται λίγα γνωστά ονόματα.",
+        deliverable: "Ένα email κάθε Δευτέρα, με πλήρες αρχείο στο DS2 portal σας.",
+        priceNote: "Από €149/μήνα",
+      },
+      {
+        slug: "review-intelligence",
+        status: "early",
+        name: "Review Intelligence",
+        tagline: "Κάθε κριτική, κάθε πλατφόρμα, μία καθαρή εικόνα.",
+        desc: "Συγκεντρώνουμε τις κριτικές σας από Google, Booking και TripAdvisor σε ένα μέρος, τις διαβάζουμε στα ελληνικά και στα αγγλικά, και σας λέμε τι πραγματικά καθορίζει τη βαθμολογία σας, με έτοιμα προσχέδια απαντήσεων.",
+        features: [
+          { name: "Όλες οι πλατφόρμες μαζί", detail: "Google, Booking και TripAdvisor σε μία ροή, χωρίς διπλότυπα, μεταφρασμένα." },
+          { name: "Πραγματική ανάλυση, και στα ελληνικά", detail: "Τι επαινούν οι επισκέπτες και τι σας κοστίζει αστέρια, και στις δύο γλώσσες." },
+          { name: "Προσχέδια απαντήσεων", detail: "Προσεγμένες απαντήσεις για κάθε κριτική, στη δική σας φωνή, έτοιμες για έγκριση." },
+          { name: "Μηνιαία αναφορά τάσεων", detail: "Η πορεία της βαθμολογίας και τα τρία επόμενα πράγματα που αξίζει να διορθώσετε." },
+        ],
+        audience: "Ξενοδοχεία, εστιατόρια και κλινικές όπου η επόμενη κράτηση εξαρτάται από την τελευταία κριτική.",
+        deliverable: "Εβδομαδιαίο brief κριτικών και μηνιαία αναφορά τάσεων στο portal σας.",
+        priceNote: "Από €129/μήνα",
+      },
+      {
+        slug: "site-selection",
+        status: "soon",
+        name: "Site Selection",
+        tagline: "Ανοίξτε το επόμενο κατάστημα εκεί που δείχνουν τα δεδομένα.",
+        desc: "Γεωχωρική μελέτη για το πού να ανοίξετε το επόμενο σημείο: ενδείξεις κίνησης, πυκνότητα ανταγωνισμού, δημογραφικά και προσβασιμότητα, βαθμολογημένα δρόμο προς δρόμο. Πάνω στις ίδιες μεθόδους με τις οποίες μετατρέψαμε δύο εκατομμύρια σημεία ενδιαφέροντος σε δίκτυο παραγωγής.",
+        features: [
+          { name: "Βαθμολόγηση τοποθεσιών", detail: "Κάθε υποψήφια τοποθεσία βαθμολογείται σε ζήτηση, ανταγωνισμό και πρόσβαση." },
+          { name: "Χάρτες ανταγωνισμού", detail: "Πού συγκεντρώνονται οι αντίπαλοι, πού απουσιάζουν, και τι σημαίνει αυτό." },
+          { name: "Ενδείξεις ζήτησης", detail: "Δημογραφικά και σημεία ενδιαφέροντος ως ενδείξεις πραγματικής κίνησης." },
+          { name: "Τεκμηριωμένη πρόταση", detail: "Κατάταξη με ορατό σκεπτικό, όχι μαύρο κουτί." },
+        ],
+        audience: "Αλυσίδες, franchise και επενδυτές που επιλέγουν ανάμεσα σε υποψήφιες τοποθεσίες στην Ελλάδα.",
+        deliverable: "Αναφορά ανά μελέτη με χάρτες, βαθμολογίες και τεκμηριωμένη κατάταξη.",
+        priceNote: "Ανά μελέτη, σε μια κλήση",
+      },
+      {
+        slug: "ai-receptionist",
+        status: "soon",
+        name: "AI Receptionist",
+        tagline: "Απαντά στα ελληνικά, κλείνει ραντεβού, δεν κοιμάται ποτέ.",
+        desc: "Ένας βοηθός εκπαιδευμένος στις υπηρεσίες, τις τιμές και το ημερολόγιό σας, που απαντά στους πελάτες στην ιστοσελίδα και τα κανάλιά σας, στα ελληνικά και στα αγγλικά, και μετατρέπει τις συζητήσεις σε κρατήσεις, όλο το εικοσιτετράωρο.",
+        features: [
+          { name: "Μιλά τη γλώσσα της επιχείρησής σας", detail: "Βασισμένος στις πραγματικές υπηρεσίες, τιμές και πολιτικές σας. Δεν επινοεί." },
+          { name: "Κλείνει ραντεβού", detail: "Ελέγχει διαθεσιμότητα και καταχωρεί ραντεβού απευθείας στο ημερολόγιό σας." },
+          { name: "Ελληνικά και αγγλικά", detail: "Φυσικές απαντήσεις και στις δύο γλώσσες, με αυτόματη εναλλαγή." },
+          { name: "Ξέρει πότε να παραδώσει", detail: "Οι σύνθετες περιπτώσεις έρχονται σε εσάς με όλη τη συζήτηση συνημμένη." },
+        ],
+        audience: "Κλινικές, κομμωτήρια, γυμναστήρια και εστιατόρια που χάνουν κρατήσεις από αναπάντητα μηνύματα.",
+        deliverable: "Διαχειριζόμενος βοηθός στην ιστοσελίδα και τα κανάλιά σας, με μηνιαία αναφορά συζητήσεων.",
+        priceNote: "Τιμολόγηση σε μια κλήση",
+      },
+    ],
   },
   panel: {
     title: "Μήνυμα στη DS2",

@@ -25,7 +25,7 @@ function PortfolioBody() {
   const t = useT();
   const p = t.portfolio;
   return (
-    <section className="section section--first">
+    <main className="section section--first">
       <div className="wrap">
         <div className="section-head reveal">
           <div className="eyebrow">{p.eyebrow}</div>
@@ -69,7 +69,7 @@ function PortfolioBody() {
           <ContactCTA label={t.cta.send} onOpen={open} />
         </div>
       </div>
-    </section>
+    </main>
   );
 }
 

@@ -63,8 +63,9 @@ body[data-scheme="mono"] {
   --smoke-a: #e9ecef; --smoke-b: #bfc5cb;
   --surface: #232a2c;
   --hero-base: #0b0d0e; --hero-tint: #ffffff; --hero-tint2: #c9ccd2; --hero-logo: #ffffff; --hero-logo-core: #888888; --hero-trace: #dddddd;
-  /* the single kept colour — Send-a-message CTA + contact-panel accents */
-  --cta: #3b82f6; --cta-hover: #2f6fe0; --cta-on: #ffffff;
+  /* the single kept colour — Send-a-message CTA + contact-panel accents.
+     #2563eb (not #3b82f6) so white-on-blue passes WCAG AA (5.2:1 vs 3.67:1). */
+  --cta: #2563eb; --cta-hover: #1d4ed8; --cta-on: #ffffff;
 }
 
 /* ════════════════════════════════════════════════════════════════════
