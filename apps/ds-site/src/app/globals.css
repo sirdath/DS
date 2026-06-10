@@ -3145,22 +3145,49 @@ body[data-logo="laser"] .laser-beam {
 .tdetail__role { margin-top: 20px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cta); font-weight: 600; }
 .tdetail__role + .tdetail__name { margin-top: 8px; }
 
-/* ── Homepage teaser: DS2 decision-intelligence tools (for larger orgs) ── */
-.ttease__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(14px, 1.6vw, 20px); }
-@media (max-width: 1020px) { .ttease__grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 560px) { .ttease__grid { grid-template-columns: 1fr; } }
+/* ── Homepage teaser: DS2 decision-intelligence tools (for larger orgs) ──
+   Poster-backed outcome cards: big benefit line first, metrics under it, the
+   product name reduced to a label. 2×2 on desktop. */
+.ttease__grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(16px, 2vw, 24px); }
+@media (max-width: 820px) { .ttease__grid { grid-template-columns: 1fr; } }
 .ttease__card {
-  display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: inherit;
-  border-radius: 16px; padding: clamp(18px, 2vw, 24px);
-  background: linear-gradient(165deg, color-mix(in srgb, var(--white) 4%, transparent), color-mix(in srgb, var(--white) 1.5%, transparent));
+  position: relative; isolation: isolate; overflow: hidden; display: flex;
+  min-height: clamp(250px, 30vw, 320px);
+  border-radius: 20px; text-decoration: none; color: inherit;
   border: 1px solid var(--hairline);
-  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 .ttease__card:hover {
-  transform: translateY(-3px); border-color: color-mix(in srgb, var(--cta) 42%, var(--hairline-strong));
-  box-shadow: 0 24px 56px -40px color-mix(in srgb, var(--cta) 50%, rgba(0,0,0,0.9));
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--cta) 48%, var(--hairline-strong));
+  box-shadow: 0 34px 80px -46px color-mix(in srgb, var(--cta) 55%, rgba(0,0,0,0.92));
 }
-.ttease__name { font-size: clamp(19px, 1.8vw, 23px); font-weight: 600; letter-spacing: -0.02em; color: var(--white); }
-.ttease__role { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ghost); }
-.ttease__stat { margin-top: 12px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; line-height: 1.45; color: var(--silver); }
-.ttease__stat strong { color: var(--cta); font-size: 14px; font-variant-numeric: tabular-nums; }
+.ttease__bg { position: absolute; inset: 0; z-index: 0; background: #090c0f; }
+.ttease__bg img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center;
+  opacity: 0.5; filter: saturate(1.05) brightness(0.8);
+  transform: scale(1.03); transition: opacity 0.45s ease, transform 0.6s cubic-bezier(0.22,0.61,0.36,1);
+}
+.ttease__card:hover .ttease__bg img { opacity: 0.68; transform: scale(1.08); }
+.ttease__bg::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(175deg, rgba(6,8,10,0.42) 0%, rgba(6,8,10,0.62) 52%, rgba(6,8,10,0.9) 100%);
+}
+.ttease__in { position: relative; z-index: 1; display: flex; flex-direction: column; width: 100%; padding: clamp(20px, 2.4vw, 30px); }
+.ttease__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.ttease__name { font-size: clamp(17px, 1.6vw, 20px); font-weight: 700; letter-spacing: 0.01em; color: var(--cta); }
+.ttease__role { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--silver); text-align: right; }
+.ttease__benefit {
+  margin-top: auto; padding-top: 34px;
+  font-size: clamp(21px, 2.2vw, 28px); font-weight: 600; line-height: 1.18; letter-spacing: -0.02em;
+  color: var(--white); text-wrap: balance; text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+.ttease__stats { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; }
+.ttease__stat {
+  display: inline-flex; align-items: baseline; gap: 6px; padding: 7px 12px; border-radius: 9px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; line-height: 1.3; color: var(--silver);
+  background: rgba(7,9,11,0.55); border: 1px solid color-mix(in srgb, var(--cta) 26%, transparent);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.ttease__stat strong { color: var(--cta); font-size: 13.5px; font-variant-numeric: tabular-nums; }

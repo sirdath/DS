@@ -782,9 +782,24 @@ export default function HomePage() {
           <div className="ttease__grid">
             {t.tools.items.map((tool) => (
               <a key={tool.slug} className="ttease__card" href={`/tools/${tool.slug}`}>
-                <span className="ttease__name">{tool.name}</span>
-                <span className="ttease__role">{tool.role}</span>
-                <span className="ttease__stat"><strong>{tool.stats[0]?.value}</strong> {tool.stats[0]?.label}</span>
+                <span className="ttease__bg" aria-hidden="true">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={`/tools/posters/${tool.slug}.webp`} alt="" loading="lazy" />
+                </span>
+                <span className="ttease__in">
+                  <span className="ttease__head">
+                    <span className="ttease__name">{tool.name}</span>
+                    <span className="ttease__role">{tool.role}</span>
+                  </span>
+                  <span className="ttease__benefit">{tool.benefit}</span>
+                  <span className="ttease__stats">
+                    {tool.stats.slice(0, 2).map((st) => (
+                      <span className="ttease__stat" key={st.label}>
+                        <strong>{st.value}</strong> {st.label}
+                      </span>
+                    ))}
+                  </span>
+                </span>
               </a>
             ))}
           </div>
