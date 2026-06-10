@@ -1,0 +1,26 @@
+# Panoptes study config — copy, edit, run: `uv run panoptes run study.yaml`
+name: "Athens café demo"
+area: # central Athens
+  min_lon: 23.715
+  min_lat: 37.960
+  max_lon: 23.755
+  max_lat: 37.990
+# What is being placed (Overture flat category ids — run a histogram to find yours)
+target_categories: ["cafe", "coffee_shop"]
+# What signals demand nearby (real ids observed in central Athens)
+complement_categories:
+  - "restaurant"
+  - "greek_restaurant"
+  - "bar"
+  - "hotel"
+  - "clothing_store"
+  - "jewelry_store"
+  - "shopping"
+  - "professional_services"
+candidates:
+  - { name: "Ermou st. corner", lat: 37.9757, lon: 23.7300 }
+  - { name: "Exarchia square", lat: 37.9861, lon: 23.7332 }
+  - { name: "Koukaki / Veikou", lat: 37.9633, lon: 23.7269 }
+weights: { demand: 1.0, competition: 0.8, access: 0.6 }
+h3_resolution: 9
+overture_release: "2026-05-20.0"

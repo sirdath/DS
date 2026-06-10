@@ -1,0 +1,37 @@
+[project]
+name = "panoptes"
+version = "0.1.0"
+description = "Panoptes — DS2 site-selection engine. Per-study geospatial pipeline: ingest open data for an area, score candidate locations, emit a DS2-branded report."
+requires-python = ">=3.12"
+dependencies = [
+    "duckdb>=1.1",
+    "h3>=4.0",
+    "shapely>=2.0",
+    "pydantic>=2.8",
+    "pyyaml>=6.0",
+    "jinja2>=3.1",
+    "folium>=0.17",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
+[project.scripts]
+panoptes = "panoptes.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/panoptes"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
