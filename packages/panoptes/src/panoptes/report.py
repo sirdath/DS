@@ -14,7 +14,7 @@ from panoptes.config import StudyConfig
 from panoptes.score import CandidateResult, CellScore
 
 _ATTRIBUTION = (
-    "Data: Overture Maps Foundation (CDLA-Permissive 2.0) · "
+    "Data: Overture Maps Foundation (CDLA-Permissive 2.0) · © European Union, Eurostat census grid 2021 · "
     "Analysis: DS2 Panoptes v0.1 — scores are model output, shown with inputs; "
     "read with the accompanying notes."
 )
@@ -59,7 +59,7 @@ def render(
             tooltip=(
                 f"score {s.total} · demand {s.demand} · "
                 f"competition {s.competition} · access {s.access} · "
-                f"rivals here: {s.target_count}"
+                f"rivals here: {s.target_count} · pop/km²: {s.population}"
             ),
         ).add_to(m)
 

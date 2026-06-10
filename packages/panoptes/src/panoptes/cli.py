@@ -8,7 +8,7 @@ import time
 
 from panoptes import grid, report, score
 from panoptes.config import StudyConfig
-from panoptes.ingest import overture
+from panoptes.ingest import overture, population
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -31,6 +31,8 @@ def main(argv: list[str] | None = None) -> int:
     cells = grid.area_cells(cfg.area, cfg.h3_resolution)
     grid.assign_places(cells, places, cfg.h3_resolution, cfg.target_categories, cfg.complement_categories)
     print(f"[panoptes] grid: {len(cells)} hexes at res {cfg.h3_resolution}")
+    covered = population.assign_population(cells)
+    print(f"[panoptes] census population joined: {covered}/{len(cells)} hexes in populated cells")
 
     cell_scores = score.score_cells(cells, cfg.weights)
     ranked = score.score_candidates(cfg.candidates, cell_scores, cfg.h3_resolution)

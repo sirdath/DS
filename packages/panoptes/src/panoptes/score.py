@@ -1,8 +1,9 @@
 """Scoring model v0 — three transparent pillars per hex, 0–100.
 
-- demand: complement/anchor density (smoothed over the hex's neighbourhood),
-  a proxy for "reasons people are here". Population & income layers join this
-  pillar when the ELSTAT/AADE ingests land.
+- demand: a blend of complement/anchor POI gravity ("reasons to be here") and
+  census population gravity ("people who live here"), both smoothed over the
+  hex's neighbourhood. The blend knob is Weights.demand_pop_share. The AADE
+  income layer joins this pillar next.
 - competition: target-category density with distance decay — close rivals
   count more. Inverted: fewer rivals = higher score. (Deliberate v0 stance;
   some categories *benefit* from clustering, which is what the weight knob and
@@ -34,6 +35,7 @@ class CellScore:
     total: float
     target_count: int
     complement_count: int
+    population: int
 
 
 @dataclass
@@ -70,11 +72,14 @@ def _normalise(values: list[float]) -> list[float]:
 
 def score_cells(cells: dict[str, Cell], weights: Weights) -> dict[str, CellScore]:
     ids = list(cells.keys())
-    raw_demand = [_neighbourhood_sum(cells, h, "complement_count") for h in ids]
+    raw_poi = [_neighbourhood_sum(cells, h, "complement_count") for h in ids]
+    raw_pop = [_neighbourhood_sum(cells, h, "population") for h in ids]
     raw_rivals = [_neighbourhood_sum(cells, h, "target_count") for h in ids]
     raw_access = [_diversity(cells[h]) for h in ids]
 
-    demand = _normalise(raw_demand)
+    poi_n, pop_n = _normalise(raw_poi), _normalise(raw_pop)
+    share = weights.demand_pop_share
+    demand = [(1 - share) * poi_n[i] + share * pop_n[i] for i in range(len(ids))]
     access = _normalise(raw_access)
     # competition: most rivals → 0, no rivals → 100.
     rivals_n = _normalise(raw_rivals)
@@ -99,6 +104,7 @@ def score_cells(cells: dict[str, Cell], weights: Weights) -> dict[str, CellScore
             total=round(total, 1),
             target_count=cell.target_count,
             complement_count=cell.complement_count,
+            population=int(cell.population),
         )
     return out
 

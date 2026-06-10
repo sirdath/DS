@@ -41,6 +41,9 @@ class Weights(BaseModel):
     demand: float = 1.0
     competition: float = 1.0
     access: float = 1.0
+    # Inside the demand pillar: how much weight census population carries
+    # versus complement-POI gravity (0 = POIs only, 1 = population only).
+    demand_pop_share: float = 0.4
 
 
 class StudyConfig(BaseModel):
