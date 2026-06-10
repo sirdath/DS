@@ -3191,3 +3191,26 @@ body[data-logo="laser"] .laser-beam {
   -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
 }
 .ttease__stat strong { color: var(--cta); font-size: 13.5px; font-variant-numeric: tabular-nums; }
+
+/* ── Portal journey scroll cue — a quiet "this scrubs with your scroll" hint.
+   Fades out via the scrub timeline as soon as the journey starts. ── */
+.portal__cue {
+  position: absolute; left: 50%; bottom: max(26px, env(safe-area-inset-bottom, 0px) + 18px);
+  transform: translateX(-50%); z-index: 3; pointer-events: none;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  color: rgba(255, 255, 255, 0.72);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55);
+}
+.portal__cue-label {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+}
+.portal__cue-chev { width: 20px; height: 20px; animation: portalCueBob 1.5s ease-in-out infinite; }
+@keyframes portalCueBob {
+  0%, 100% { transform: translateY(0); opacity: 0.55; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* without the scrub there is no pinned journey — no cue needed either */
+  .portal__cue { display: none; }
+}

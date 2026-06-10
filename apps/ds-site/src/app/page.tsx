@@ -13,6 +13,10 @@ import ServicesCircle from "./services-circle";
 import PortalJourney from "./portal-journey";
 import { MobileMenu } from "./mobile-menu";
 
+// Landing-page teaser for the DS2 tools — parked until the section earns its
+// place visually. Flip to true to bring it back.
+const SHOW_TOOLS_TEASER = false;
+
 export default function HomePage() {
   const [chatOpen, setChatOpen] = useState(false);
   const [chatDraft, setChatDraft] = useState("");
@@ -772,7 +776,10 @@ export default function HomePage() {
       {/* ─── Services — scroll-driven circle ─── */}
       <ServicesCircle onContact={() => openChat()} />
 
-      {/* ─── Decision intelligence tools (for larger organisations) ─── */}
+      {/* ─── Decision intelligence tools (for larger organisations) ───
+          Temporarily hidden (Jun 2026): Dimitris wants the section redesigned
+          before it ships on the landing page. /tools itself stays live. */}
+      {SHOW_TOOLS_TEASER && (
       <section className="section ttease" id="tools" data-surface="ink">
         <div className="wrap">
           <div className="section-head">
@@ -809,6 +816,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      )}
 
       {/* â”€â”€â”€ Powered by â€” the stack we build on (between Services & Featured) â”€â”€â”€â”€ */}
       <PoweredBy />

@@ -74,6 +74,7 @@ export interface Dict {
   };
   thesis: {
     eyebrow: string;
+    scrollCue: string;
     s1Title: string; s1Em: string; s1End: string; s1Body: string;
     s2Eyebrow: string; s2Title: string; s2Em: string; s2Body: string;
     by: string;
@@ -307,6 +308,7 @@ const en: Dict = {
   },
   thesis: {
     eyebrow: "A working principle",
+    scrollCue: "Scroll",
     s1Title: "The biggest cost is ",
     s1Em: "lack of knowledge",
     s1End: ".",
@@ -761,6 +763,7 @@ const el: Dict = {
   },
   thesis: {
     eyebrow: "Μια αρχή που μας καθοδηγεί",
+    scrollCue: "Κυλήστε",
     s1Title: "Το μεγαλύτερο κόστος είναι ",
     s1Em: "η έλλειψη γνώσης",
     s1End: ".",

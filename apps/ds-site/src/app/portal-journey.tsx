@@ -67,6 +67,10 @@ export default function PortalJourney() {
               invalidateOnRefresh: true,
             },
           });
+          // the scroll cue bows out as soon as the journey starts (and returns
+          // with the scrub if the visitor rewinds to the top)
+          const cue = section.querySelector<HTMLElement>(".portal__cue");
+          if (cue) tl.to(cue, { autoAlpha: 0, duration: 0.04 }, 0.03);
           // scrub the film frame-by-frame across the scroll
           tl.fromTo(video, { currentTime: 0 }, { currentTime: dur, duration: 1 }, 0)
             // the Athens quote hands off to the London message as we arrive
@@ -118,6 +122,13 @@ export default function PortalJourney() {
           preload="auto"
           poster="/portals/journey-poster.jpg?v=3"
         />
+      </div>
+
+      <div className="portal__cue" aria-hidden="true">
+        <span className="portal__cue-label">{t.thesis.scrollCue}</span>
+        <svg className="portal__cue-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
       </div>
 
       <div className="portal__copy portal__copy--1">
