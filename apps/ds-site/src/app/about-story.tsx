@@ -6,10 +6,24 @@ import { useOpenContact } from "./_site-chrome";
 type Page = { id: string; eyebrow: string; title: string; body: string };
 
 /** Founder visual config: portrait/place image + the logos that come with them.
- *  Logos render as text chips until the real logo files land in /founders/logos. */
-const FOUNDERS: Record<string, { img: string; logos: string[] }> = {
-  dimitris: { img: "/founders/london.png", logos: ["UCL", "Intelmatix"] },
-  stelios: { img: "/founders/athens.png", logos: ["PwC", "Netherlands"] },
+ *  A logo with `img` renders as the real mark on a chip matching its baked
+ *  background (`bg`); without `img` it stays a text chip. */
+type FounderLogo = { label: string; img?: string; bg?: "light" | "dark" };
+const FOUNDERS: Record<string, { img: string; logos: FounderLogo[] }> = {
+  dimitris: {
+    img: "/founders/london.png",
+    logos: [
+      { label: "UCL" },
+      { label: "Intelmatix", img: "/founders/logos/intelmatix.jpg", bg: "dark" },
+    ],
+  },
+  stelios: {
+    img: "/founders/athens.png",
+    logos: [
+      { label: "PwC", img: "/founders/logos/pwc.png", bg: "light" },
+      { label: "Netherlands" },
+    ],
+  },
 };
 
 function FounderRow({ p, flip }: { p: Page; flip: boolean }) {
@@ -17,7 +31,9 @@ function FounderRow({ p, flip }: { p: Page; flip: boolean }) {
   const meta = FOUNDERS[p.id];
   if (!meta) return null;
   // Logos are brand names (kept as-is) except the country, which translates.
-  const logos = meta.logos.map((l) => (l === "Netherlands" ? t.about.cityNetherlands : l));
+  const logos = meta.logos.map((l) =>
+    l.label === "Netherlands" ? { ...l, label: t.about.cityNetherlands } : l,
+  );
   return (
     <article className={`abs-founder reveal${flip ? " abs-founder--flip" : ""}`}>
       <div className="abs-founder__media">
@@ -29,9 +45,16 @@ function FounderRow({ p, flip }: { p: Page; flip: boolean }) {
         <h3 className="abs-founder__name">{p.title}</h3>
         <p className="abs-founder__bio">{p.body}</p>
         <div className="abs-founder__logos" aria-label={t.a11y.background}>
-          {logos.map((l) => (
-            <span className="abs-logo" key={l}>{l}</span>
-          ))}
+          {logos.map((l) =>
+            l.img ? (
+              <span className={`abs-logo abs-logo--img abs-logo--${l.bg ?? "dark"}`} key={l.label}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={l.img} alt={l.label} loading="lazy" />
+              </span>
+            ) : (
+              <span className="abs-logo" key={l.label}>{l.label}</span>
+            ),
+          )}
         </div>
       </div>
     </article>

@@ -2924,6 +2924,12 @@ body[data-logo="laser"] .laser-beam {
   font-size: 13px; font-weight: 600; letter-spacing: 0.01em; color: var(--silver);
   background: color-mix(in srgb, var(--white) 5%, transparent); border: 1px solid var(--hairline-strong);
 }
+/* real brand marks — chip background matches the logo's own (PwC ships on white,
+   Intelmatix on black) so neither mark gets recoloured */
+.abs-logo--img { padding: 0 14px; }
+.abs-logo--img img { height: 20px; width: auto; display: block; }
+.abs-logo--light { background: #fff; border-color: rgba(255,255,255,0.85); }
+.abs-logo--dark { background: #000; border-color: var(--hairline-strong); }
 
 /* What DS2 is */
 .abs-ds2 { padding-block: clamp(64px, 10vh, 128px) clamp(80px, 12vh, 150px); border-top: 1px solid var(--hairline); }
