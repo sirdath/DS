@@ -16,6 +16,7 @@ type ToolDef = {
   slug: string;
   status: "early" | "soon";
   name: string;
+  role: string;
   tagline: string;
   desc: string;
   roiBody: string;
@@ -158,6 +159,13 @@ export interface Dict {
     sub: string;
     cases: Four<CaseItem>;
     coda: string;
+  };
+  toolsTeaser: {
+    eyebrow: string;
+    title: string;
+    titleEm: string;
+    sub: string;
+    cta: string;
   };
   tools: {
     eyebrow: string;
@@ -505,6 +513,13 @@ const en: Dict = {
     ],
     coda: "If you want a second senior opinion before you commit, that is exactly where we are useful.",
   },
+  toolsTeaser: {
+    eyebrow: "For larger organisations",
+    title: "Decision intelligence, ",
+    titleEm: "as a service.",
+    sub: "Our services are shaped around small and medium businesses. For groups, chains and scale-ups we run the DS2 decision-intelligence tools: continuous market, reputation and location intelligence, delivered as decisions your team can act on.",
+    cta: "Explore the tools",
+  },
   tools: {
     eyebrow: "DS2 tools",
     title: "Tools we run ",
@@ -526,8 +541,9 @@ const en: Dict = {
       {
         slug: "competitor-watch",
         status: "early",
-        name: "Competitor Watch",
-        tagline: "We watch your competitors so you don't have to.",
+        name: "Argus",
+        role: "Competitor intelligence",
+        tagline: "The hundred-eyed watchman. We watch your competitors so you don't have to.",
         desc: "Define the competitive set your board already asks about. Every week our agents read their websites, prices, offers, reviews and search visibility, and your team gets a digest with only what changed and why it matters.",
         roiBody: "Strategy teams pay agencies €2,000+ for a one-off competitor report that is stale within a month, or burn analyst days rebuilding the same picture by hand. This is the same intelligence, continuous, at a fraction of either.",
         stats: [
@@ -548,8 +564,9 @@ const en: Dict = {
       {
         slug: "review-intelligence",
         status: "early",
-        name: "Review Intelligence",
-        tagline: "Every review, every platform, one clear picture.",
+        name: "Fama",
+        role: "Review intelligence",
+        tagline: "What the world says about you. Every review, every platform, one clear picture.",
         desc: "We pull every location's reviews from Google, Booking and TripAdvisor into one feed, read them in Greek and English, and tell you what is actually driving your ratings, with reply drafts ready for your team to approve.",
         roiBody: "Nine in ten guests read reviews before they book, and at portfolio scale nobody is actually reading them all. One recovered rating point moves direct bookings more than any campaign of the same cost.",
         stats: [
@@ -570,8 +587,9 @@ const en: Dict = {
       {
         slug: "site-selection",
         status: "soon",
-        name: "Site Selection",
-        tagline: "Open your next location where the data points.",
+        name: "Panoptes",
+        role: "Site selection",
+        tagline: "The all-seeing. Open your next location where the data points.",
         desc: "A geospatial study for choosing where to open next: foot-traffic proxies, competitor density, demographics and accessibility, scored street by street. Built on the same methods we used to turn two million points of interest into a production network.",
         roiBody: "A flagship lease is a ten-year, seven-figure commitment decided in weeks. The big firms charge €25,000+ for the study that de-risks it. We deliver the same defensible answer in weeks, at a fraction, with the reasoning shown.",
         stats: [
@@ -592,8 +610,9 @@ const en: Dict = {
       {
         slug: "ai-receptionist",
         status: "soon",
-        name: "AI Receptionist",
-        tagline: "Answers in Greek, books appointments, never sleeps.",
+        name: "Xenia",
+        role: "AI receptionist",
+        tagline: "Hospitality, the ancient kind. Answers in Greek, books appointments, never sleeps.",
         desc: "An assistant trained on your services, prices and calendars that answers customers on your website and socials, in Greek and English, and turns conversations into bookings, around the clock and across every location.",
         roiBody: "Roughly a third of enquiries arrive outside opening hours, and at multi-location scale missed messages are a quiet, permanent revenue leak. Round-the-clock front-desk coverage costs salaries; this costs a fraction of one.",
         stats: [
@@ -944,6 +963,13 @@ const el: Dict = {
     ],
     coda: "Αν θέλετε μια δεύτερη έμπειρη γνώμη πριν δεσμευτείτε, εκεί ακριβώς είμαστε χρήσιμοι.",
   },
+  toolsTeaser: {
+    eyebrow: "Για μεγαλύτερους οργανισμούς",
+    title: "Ευφυΐα αποφάσεων, ",
+    titleEm: "ως υπηρεσία.",
+    sub: "Οι υπηρεσίες μας είναι φτιαγμένες για μικρομεσαίες επιχειρήσεις. Για ομίλους, αλυσίδες και scale-ups τρέχουμε τα εργαλεία ευφυΐας αποφάσεων της DS2: συνεχής πληροφόρηση για αγορά, φήμη και τοποθεσίες, παραδομένη ως αποφάσεις που η ομάδα σας μπορεί να πράξει.",
+    cta: "Δείτε τα εργαλεία",
+  },
   tools: {
     eyebrow: "Εργαλεία DS2",
     title: "Εργαλεία που τρέχουμε ",
@@ -965,8 +991,9 @@ const el: Dict = {
       {
         slug: "competitor-watch",
         status: "early",
-        name: "Competitor Watch",
-        tagline: "Παρακολουθούμε τους ανταγωνιστές σας, για να μη χρειάζεται εσείς.",
+        name: "Argus",
+        role: "Παρακολούθηση ανταγωνισμού",
+        tagline: "Ο εκατόφθαλμος φύλακας. Παρακολουθούμε τους ανταγωνιστές σας, για να μη χρειάζεται εσείς.",
         desc: "Ορίζετε το ανταγωνιστικό σύνολο για το οποίο ήδη ρωτά η διοίκηση. Κάθε εβδομάδα οι πράκτορές μας διαβάζουν τις ιστοσελίδες, τις τιμές, τις προσφορές, τις κριτικές και την ορατότητά τους στην αναζήτηση, και η ομάδα σας λαμβάνει μια ενημέρωση μόνο με ό,τι άλλαξε και γιατί μετράει.",
         roiBody: "Οι ομάδες στρατηγικής πληρώνουν σε agencies €2.000+ για μια εφάπαξ ανάλυση ανταγωνισμού που παλιώνει μέσα σε έναν μήνα, ή καίνε μέρες αναλυτών ξαναχτίζοντας την ίδια εικόνα στο χέρι. Αυτή είναι η ίδια πληροφόρηση, συνεχής, σε κλάσμα του κόστους.",
         stats: [
@@ -987,8 +1014,9 @@ const el: Dict = {
       {
         slug: "review-intelligence",
         status: "early",
-        name: "Review Intelligence",
-        tagline: "Κάθε κριτική, κάθε πλατφόρμα, μία καθαρή εικόνα.",
+        name: "Fama",
+        role: "Ανάλυση κριτικών",
+        tagline: "Ό,τι λέει ο κόσμος για εσάς. Κάθε κριτική, κάθε πλατφόρμα, μία καθαρή εικόνα.",
         desc: "Συγκεντρώνουμε τις κριτικές κάθε μονάδας από Google, Booking και TripAdvisor σε μία ροή, τις διαβάζουμε στα ελληνικά και στα αγγλικά, και σας λέμε τι πραγματικά καθορίζει τις βαθμολογίες σας, με προσχέδια απαντήσεων έτοιμα για έγκριση από την ομάδα σας.",
         roiBody: "Εννέα στους δέκα επισκέπτες διαβάζουν κριτικές πριν κάνουν κράτηση, και σε κλίμακα χαρτοφυλακίου κανείς δεν τις διαβάζει πραγματικά όλες. Ένας ανακτημένος βαθμός κινεί τις απευθείας κρατήσεις περισσότερο από οποιαδήποτε καμπάνια ίδιου κόστους.",
         stats: [
@@ -1009,8 +1037,9 @@ const el: Dict = {
       {
         slug: "site-selection",
         status: "soon",
-        name: "Site Selection",
-        tagline: "Ανοίξτε το επόμενο κατάστημα εκεί που δείχνουν τα δεδομένα.",
+        name: "Panoptes",
+        role: "Επιλογή τοποθεσίας",
+        tagline: "Ο πανόπτης. Ανοίξτε το επόμενο σημείο εκεί που δείχνουν τα δεδομένα.",
         desc: "Γεωχωρική μελέτη για το πού να ανοίξετε το επόμενο σημείο: ενδείξεις κίνησης, πυκνότητα ανταγωνισμού, δημογραφικά και προσβασιμότητα, βαθμολογημένα δρόμο προς δρόμο. Πάνω στις ίδιες μεθόδους με τις οποίες μετατρέψαμε δύο εκατομμύρια σημεία ενδιαφέροντος σε δίκτυο παραγωγής.",
         roiBody: "Μια ναυαρχίδα είναι δεκαετής δέσμευση επταψήφιου κόστους που κρίνεται σε λίγες εβδομάδες. Οι μεγάλες εταιρείες χρεώνουν €25.000+ για τη μελέτη που μειώνει το ρίσκο. Παραδίδουμε εξίσου τεκμηριωμένη απάντηση σε εβδομάδες, σε κλάσμα της τιμής, με το σκεπτικό ορατό.",
         stats: [
@@ -1031,8 +1060,9 @@ const el: Dict = {
       {
         slug: "ai-receptionist",
         status: "soon",
-        name: "AI Receptionist",
-        tagline: "Απαντά στα ελληνικά, κλείνει ραντεβού, δεν κοιμάται ποτέ.",
+        name: "Xenia",
+        role: "Ψηφιακή υποδοχή",
+        tagline: "Φιλοξενία, με την αρχαία έννοια. Απαντά στα ελληνικά, κλείνει ραντεβού, δεν κοιμάται ποτέ.",
         desc: "Ένας βοηθός εκπαιδευμένος στις υπηρεσίες, τις τιμές και τα ημερολόγιά σας, που απαντά στους πελάτες στην ιστοσελίδα και τα κανάλιά σας, στα ελληνικά και στα αγγλικά, και μετατρέπει τις συζητήσεις σε κρατήσεις, όλο το εικοσιτετράωρο και σε κάθε μονάδα.",
         roiBody: "Περίπου το ένα τρίτο των μηνυμάτων έρχεται εκτός ωραρίου, και σε κλίμακα πολλών μονάδων τα αναπάντητα μηνύματα είναι μια αθόρυβη, μόνιμη διαρροή εσόδων. Η εικοσιτετράωρη κάλυψη υποδοχής κοστίζει μισθούς· αυτό κοστίζει κλάσμα ενός.",
         stats: [

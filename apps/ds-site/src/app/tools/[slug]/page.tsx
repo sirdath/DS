@@ -26,7 +26,7 @@ function ToolBody() {
     );
   }
 
-  const interested = () => open(T.interestDraft.replace("{tool}", tool.name));
+  const interested = () => open(T.interestDraft.replace("{tool}", `${tool.name} (${tool.role})`));
 
   return (
     <main className="section section--first tools tdetail">
@@ -41,6 +41,7 @@ function ToolBody() {
                 {tool.status === "early" ? T.statusEarly : T.statusSoon}
               </span>
             </div>
+            <div className="tdetail__role">{tool.role}</div>
             <h1 className="tdetail__name">{tool.name}</h1>
             <p className="tdetail__tagline">{tool.tagline}</p>
             <p className="tdetail__desc">{tool.desc}</p>

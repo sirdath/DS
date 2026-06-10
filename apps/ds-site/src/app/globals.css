@@ -3139,3 +3139,28 @@ body[data-logo="laser"] .laser-beam {
   .tcard:hover::before { animation: none; }
   .tcard--early .tcard__status--early { animation: none; }
 }
+
+/* mythic product names carry a small descriptive role line */
+.tcard__role { display: block; margin-top: 3px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ghost); font-weight: 500; }
+.tdetail__role { margin-top: 20px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cta); font-weight: 600; }
+.tdetail__role + .tdetail__name { margin-top: 8px; }
+
+/* ── Homepage teaser: DS2 decision-intelligence tools (for larger orgs) ── */
+.ttease__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(14px, 1.6vw, 20px); }
+@media (max-width: 1020px) { .ttease__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .ttease__grid { grid-template-columns: 1fr; } }
+.ttease__card {
+  display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: inherit;
+  border-radius: 16px; padding: clamp(18px, 2vw, 24px);
+  background: linear-gradient(165deg, color-mix(in srgb, var(--white) 4%, transparent), color-mix(in srgb, var(--white) 1.5%, transparent));
+  border: 1px solid var(--hairline);
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.ttease__card:hover {
+  transform: translateY(-3px); border-color: color-mix(in srgb, var(--cta) 42%, var(--hairline-strong));
+  box-shadow: 0 24px 56px -40px color-mix(in srgb, var(--cta) 50%, rgba(0,0,0,0.9));
+}
+.ttease__name { font-size: clamp(19px, 1.8vw, 23px); font-weight: 600; letter-spacing: -0.02em; color: var(--white); }
+.ttease__role { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ghost); }
+.ttease__stat { margin-top: 12px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; line-height: 1.45; color: var(--silver); }
+.ttease__stat strong { color: var(--cta); font-size: 14px; font-variant-numeric: tabular-nums; }

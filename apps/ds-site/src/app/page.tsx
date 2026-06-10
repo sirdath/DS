@@ -771,6 +771,29 @@ export default function HomePage() {
       {/* ─── Services — scroll-driven circle ─── */}
       <ServicesCircle onContact={() => openChat()} />
 
+      {/* ─── Decision intelligence tools (for larger organisations) ─── */}
+      <section className="section ttease" id="tools" data-surface="ink">
+        <div className="wrap">
+          <div className="section-head">
+            <div className="eyebrow">{t.toolsTeaser.eyebrow}</div>
+            <h2 key={`tt-${lang}`} className="section-title">{t.toolsTeaser.title}<em>{t.toolsTeaser.titleEm}</em></h2>
+            <p className="section-sub">{t.toolsTeaser.sub}</p>
+          </div>
+          <div className="ttease__grid">
+            {t.tools.items.map((tool) => (
+              <a key={tool.slug} className="ttease__card" href={`/tools/${tool.slug}`}>
+                <span className="ttease__name">{tool.name}</span>
+                <span className="ttease__role">{tool.role}</span>
+                <span className="ttease__stat"><strong>{tool.stats[0]?.value}</strong> {tool.stats[0]?.label}</span>
+              </a>
+            ))}
+          </div>
+          <div className="feat-cta">
+            <a href="/tools" className="feat-viewall">{t.toolsTeaser.cta} &#8594;</a>
+          </div>
+        </div>
+      </section>
+
       {/* â”€â”€â”€ Powered by â€” the stack we build on (between Services & Featured) â”€â”€â”€â”€ */}
       <PoweredBy />
 

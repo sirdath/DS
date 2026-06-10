@@ -26,7 +26,7 @@ function ToolsBody() {
             <Link key={tool.slug} className={`tcard reveal tcard--${tool.status}`} href={`/tools/${tool.slug}`}>
               <ToolMedia slug={tool.slug} name={tool.name} />
               <span className="tcard__row">
-                <span className="tcard__name">{tool.name}</span>
+                <span className="tcard__name">{tool.name}<span className="tcard__role">{tool.role}</span></span>
                 <span className={`tcard__status tcard__status--${tool.status}`}>
                   {tool.status === "early" ? T.statusEarly : T.statusSoon}
                 </span>
