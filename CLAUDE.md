@@ -53,7 +53,7 @@ DATHSTEL/                                 # this repo — DS monorepo
 ├── assets/
 │   └── motion-inspiration/               # user-supplied reference images for motion work
 ├── .claude/
-│   ├── skills/                           # 23 skills (5 DS-specific + 18 adopted from CLAUDE-STUFF)
+│   ├── skills/                           # 24 skills (6 DS-specific incl. Stelios's model-supermaxxing + 18 adopted from CLAUDE-STUFF)
 │   ├── agents/                           # 17 subagents (all adopted from CLAUDE-STUFF)
 │   ├── commands/                         # /plan, /tdd, /code-review, /debug, /build-fix
 │   ├── rules/                            # coding-style, security
