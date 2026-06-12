@@ -861,6 +861,8 @@
 
 /* demo loader in the empty state */
 .pv-dropzone__demo {
+  /* must stack above the invisible full-area file input, or clicks never land */
+  position: relative; z-index: 2;
   appearance: none; cursor: pointer; font-family: inherit; margin-top: 4px;
   padding: 9px 16px; border-radius: 10px; font-size: 13px; font-weight: 600;
   color: #fff; background: var(--cta, #2563eb); border: 0;
