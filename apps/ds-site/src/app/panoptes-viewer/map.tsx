@@ -6,6 +6,7 @@ import type {
   PanoptesCandidate,
   MetricKey,
 } from './types'
+import { METRIC_OPTIONS } from './types'
 
 // MapLibre + h3-js are loaded only client-side
 // Types imported for IDE support; actual modules loaded dynamically
@@ -120,6 +121,42 @@ function hexToGeoJsonPolygon(
   }
 }
 
+// ── Map legend chip ────────────────────────────────────────────────────────
+
+interface MapLegendProps {
+  metricLabel: string
+  min: number
+  max: number
+  showWhiteSpaceHint: boolean
+}
+
+function MapLegend({ metricLabel, min, max, showWhiteSpaceHint }: MapLegendProps) {
+  const fmt = (v: number) => {
+    const abs = Math.abs(v)
+    if (abs >= 1000) return v.toLocaleString('en-US', { maximumFractionDigits: 0 })
+    return v.toFixed(1)
+  }
+
+  return (
+    <div className="pv-legend" role="img" aria-label={`Legend: ${metricLabel}`}>
+      <div className="pv-legend__metric">{metricLabel}</div>
+      <div className="pv-legend__bar-wrap">
+        <div className="pv-legend__bar" />
+        <div className="pv-legend__range">
+          <span className="pv-legend__range-val">{fmt(min)}</span>
+          <span className="pv-legend__range-val">{fmt(max)}</span>
+        </div>
+      </div>
+      {showWhiteSpaceHint && (
+        <div className="pv-legend__hint">
+          <span className="pv-legend__hint-swatch" aria-hidden="true" />
+          white-space hex
+        </div>
+      )}
+    </div>
+  )
+}
+
 interface HexTooltipData {
   h3Id: string
   demand: number
@@ -226,6 +263,9 @@ export function MapView({
       const centerLat = (minLat + maxLat) / 2
       const centerLon = (minLon + maxLon) / 2
 
+      const CARTO_ATTRIBUTION =
+        '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>'
+
       const map = new maplibre.Map({
         container: containerRef.current,
         style: {
@@ -234,11 +274,19 @@ export function MapView({
             'carto-dark': {
               type: 'raster',
               tiles: [
-                'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
+                'https://basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}@2x.png',
               ],
               tileSize: 256,
-              attribution:
-                '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+              attribution: CARTO_ATTRIBUTION,
+              maxzoom: 19,
+            },
+            'carto-labels': {
+              type: 'raster',
+              tiles: [
+                'https://basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}@2x.png',
+              ],
+              tileSize: 256,
+              attribution: CARTO_ATTRIBUTION,
               maxzoom: 19,
             },
           },
@@ -282,7 +330,7 @@ export function MapView({
               initialRange.min,
               initialRange.max,
             ),
-            'fill-opacity': 0.38,
+            'fill-opacity': 0.45,
           },
         })
 
@@ -310,6 +358,16 @@ export function MapView({
           layout: {
             visibility: showWhiteSpace ? 'visible' : 'none',
           },
+        })
+
+        // Labels layer — rendered ON TOP of all hex layers so neighbourhood /
+        // street names are never buried under the hex fill.
+        map.addLayer({
+          id: 'carto-labels-layer',
+          type: 'raster',
+          source: 'carto-labels',
+          minzoom: 0,
+          maxzoom: 22,
         })
 
         // Fit to hex bounds
@@ -450,5 +508,20 @@ export function MapView({
     }
   }, [flyToTrigger])
 
-  return <div ref={containerRef} className="pv-map" aria-label="Panoptes map" />
+  const legendRange = computeMetricRange(study, activeMetric)
+  const metricLabel =
+    METRIC_OPTIONS.find((o) => o.key === activeMetric)?.label.toUpperCase() ??
+    activeMetric.toUpperCase()
+
+  return (
+    <div style={{ position: 'absolute', inset: 0 }}>
+      <div ref={containerRef} className="pv-map" aria-label="Panoptes map" />
+      <MapLegend
+        metricLabel={metricLabel}
+        min={legendRange.min}
+        max={legendRange.max}
+        showWhiteSpaceHint={activeMetric === 'opportunity' || showWhiteSpace}
+      />
+    </div>
+  )
 }
