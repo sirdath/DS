@@ -200,3 +200,55 @@ def analog_scores(
         cos = sum(a * b for a, b in zip(sig, v)) / (sig_norm * v_norm)
         out[h] = round(100.0 * max(cos, 0.0), 1)
     return out
+
+
+def morans_i(
+    cells: dict,
+    attr: str = "target_count",
+    permutations: int = 199,
+) -> tuple[float, float]:
+    """Global Moran's I over the hex grid (ring-1 adjacency) + permutation
+    pseudo p-value — the "does location even matter?" gate (cf. the spatial
+    autocorrelation step in classic retail-geography pipelines: I near 0 means
+    the category scatters randomly and a site-selection study adds little;
+    significantly positive I means location genuinely structures it).
+    """
+    import random
+
+    ids = [h for h in cells]
+    x = [float(getattr(cells[h], attr)) for h in ids]
+    n = len(ids)
+    if n < 3:
+        return 0.0, 1.0
+    mean = sum(x) / n
+    dev = [v - mean for v in x]
+    denom = sum(d * d for d in dev)
+    if denom == 0:
+        return 0.0, 1.0
+
+    idx = {h: i for i, h in enumerate(ids)}
+    pairs: list[tuple[int, int]] = []
+    for h in ids:
+        i = idx[h]
+        for nb in h3.grid_ring(h, 1):
+            j = idx.get(nb)
+            if j is not None:
+                pairs.append((i, j))
+    w_sum = len(pairs)
+    if w_sum == 0:
+        return 0.0, 1.0
+
+    def stat(d: list[float]) -> float:
+        num = sum(d[i] * d[j] for i, j in pairs)
+        return (n / w_sum) * (num / denom)
+
+    observed = stat(dev)
+    rng = random.Random(42)  # deterministic reports
+    ge = 1
+    shuffled = dev[:]
+    for _ in range(permutations):
+        rng.shuffle(shuffled)
+        if stat(shuffled) >= observed:
+            ge += 1
+    p = ge / (permutations + 1)
+    return round(observed, 3), round(p, 4)

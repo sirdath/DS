@@ -44,6 +44,10 @@ def main(argv: list[str] | None = None) -> int:
     idx = sorted({round(c.income_index, 4) for c in cells.values()})
     print(f"[panoptes] income index joined: {matched}/{len(cells)} direct · range {idx[0]}–{idx[-1]}")
 
+    mi, mp = analysis.morans_i(cells)
+    verdict = "location structures this category" if (mi > 0.1 and mp < 0.05) else "WEAK clustering — site choice may matter less for this category"
+    print(f"[panoptes] spatial clustering gate: Moran's I {mi} (p={mp}) — {verdict}")
+
     cell_scores = score.score_cells(cells, cfg.weights)
     if args.mode == "advanced" and cfg.local_factors:
         score.apply_local_factors(cell_scores, cfg.local_factors)

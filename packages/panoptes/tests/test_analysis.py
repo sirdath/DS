@@ -57,3 +57,29 @@ def test_analog_scores_rank_lookalikes_higher():
     near_cafes = analogs[h3.latlng_to_cell(37.98, 23.735, 9)]      # a thriving café spot
     pharmacy_corner = analogs[h3.latlng_to_cell(37.9975, 23.7585, 9)]  # the pharmacy cluster
     assert near_cafes > pharmacy_corner
+
+
+def test_morans_i_separates_clustered_from_scattered():
+    # NOTE: first attempt reused _study_data, whose cafés sit ~500m apart —
+    # at 175m hexes no two café hexes are adjacent, so Moran's I was rightly
+    # ~0. Clustering must be tight at the hex scale to register.
+    from panoptes.analysis import morans_i
+    cells = area_cells(BBox(min_lon=23.72, min_lat=37.97, max_lon=23.76, max_lat=38.00), 9)
+    import h3
+    # a tight 3x3 block of café hexes (~100m spacing → adjacent hexes)
+    places = [
+        Place(f"c{i}", "cafe", "cafe", 23.732 + (i % 3) * 0.0012, 37.982 + (i // 3) * 0.001, 0.9)
+        for i in range(9)
+    ]
+    assign_places(cells, places, 9, ["cafe"], [])
+    i_clustered, p_clustered = morans_i(cells)
+    assert i_clustered > 0.1 and p_clustered < 0.05
+    # same 9 cafés scattered to far corners → weak autocorrelation
+    for c in cells.values():
+        c.target_count = 0
+    import random
+    rng = random.Random(7)
+    for h in rng.sample(list(cells), 9):
+        cells[h].target_count = 1
+    i_rand, _ = morans_i(cells)
+    assert i_rand < i_clustered
