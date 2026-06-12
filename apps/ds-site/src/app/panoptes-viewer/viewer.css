@@ -858,3 +858,13 @@
     animation: none !important;
   }
 }
+
+/* demo loader in the empty state */
+.pv-dropzone__demo {
+  appearance: none; cursor: pointer; font-family: inherit; margin-top: 4px;
+  padding: 9px 16px; border-radius: 10px; font-size: 13px; font-weight: 600;
+  color: #fff; background: var(--cta, #2563eb); border: 0;
+  box-shadow: 0 10px 24px -10px rgba(37, 99, 235, 0.7);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.pv-dropzone__demo:hover { transform: translateY(-1px); box-shadow: 0 14px 30px -10px rgba(37, 99, 235, 0.85); }

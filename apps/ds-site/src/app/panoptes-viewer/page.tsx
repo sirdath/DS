@@ -173,6 +173,18 @@ function EmptyState({ onFileLoad, error }: EmptyStateProps) {
     [onFileLoad]
   )
 
+  const handleDemo = useCallback(() => {
+    fetch('/panoptes-demo.json')
+      .then((r) => r.json())
+      .then((data: unknown) => {
+        const study = parseStudyFile(JSON.stringify(data))
+        if (study) onFileLoad(study)
+      })
+      .catch(() => {
+        /* demo file missing — drop zone still works */
+      })
+  }, [onFileLoad])
+
   const handleDrop = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault()
@@ -236,6 +248,16 @@ function EmptyState({ onFileLoad, error }: EmptyStateProps) {
           <p className="pv-dropzone__label">
             <strong>Drop a study .json</strong> here, or click to browse
           </p>
+          <button
+            type="button"
+            className="pv-dropzone__demo"
+            onClick={(e) => {
+              e.stopPropagation()
+              handleDemo()
+            }}
+          >
+            Load the Athens demo study →
+          </button>
 
           {error && (
             <p
