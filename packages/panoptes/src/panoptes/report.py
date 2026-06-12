@@ -40,6 +40,7 @@ def render(
     candidates: list[CandidateResult],
     out_path: str | Path,
     opportunities: dict[str, Opportunity] | None = None,
+    mode: str = "data",
 ) -> Path:
     centre_lat = (config.area.min_lat + config.area.max_lat) / 2
     centre_lon = (config.area.min_lon + config.area.max_lon) / 2
@@ -81,7 +82,10 @@ def render(
         f'<div style="position:fixed;top:12px;left:60px;z-index:1000;'
         f"background:rgba(10,13,15,0.85);color:#e5e7eb;padding:10px 16px;"
         f'border-radius:10px;font-family:system-ui;max-width:520px">'
-        f"<b>Panoptes · {config.name}</b><br>"
+        f"<b>Panoptes · {config.name}</b> · "
+        f'<span style="color:#67e8f9">'
+        f'{"DATA MODE — model output only" if mode == "data" else "ADVANCED — includes analyst judgement"}'
+        f"</span><br>"
         f'<span style="font-size:12px;color:#9ca3af">{_ATTRIBUTION}</span></div>'
     )
     m.get_root().html.add_child(folium.Element(title))

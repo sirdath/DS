@@ -52,3 +52,9 @@ pull (see `fetch_places` + `Counter` — 5 lines).
 - Access is a diversity proxy, not real travel time.
 
 Every report states these. Disclosure is the product.
+
+## Modes & roadmap
+
+- `--mode data` (default): purely what the data says — local factors ignored; report banner says "DATA MODE — model output only".
+- `--mode advanced`: analyst local factors applied (labelled per-hex). Roadmap: per-area web intelligence — Claude + web search gathering recent articles (safety, works, openings) per candidate, returned with citations as *suggested* local factors the analyst approves.
+- Every run emits `<report>.json` — the stable contract for the upcoming business interface (portal module: map UI over hexes/candidates/companions/opportunities).

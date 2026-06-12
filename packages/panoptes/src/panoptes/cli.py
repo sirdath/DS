@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import argparse
+import dataclasses
+import json
 import sys
 import time
+from pathlib import Path
 
 from panoptes import analysis, grid, report, score
 from panoptes.config import StudyConfig
@@ -17,6 +20,10 @@ def main(argv: list[str] | None = None) -> int:
     run = sub.add_parser("run", help="run a study from a YAML config")
     run.add_argument("config", help="path to study YAML")
     run.add_argument("-o", "--out", default=None, help="output HTML path")
+    run.add_argument(
+        "--mode", choices=["data", "advanced"], default="data",
+        help="data = purely what the data says; advanced = analyst local factors applied (web intel: roadmap)",
+    )
     args = parser.parse_args(argv)
 
     cfg = StudyConfig.from_yaml(args.config)
@@ -38,7 +45,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"[panoptes] income index joined: {matched}/{len(cells)} direct · range {idx[0]}–{idx[-1]}")
 
     cell_scores = score.score_cells(cells, cfg.weights)
-    if cfg.local_factors:
+    if args.mode == "advanced" and cfg.local_factors:
         score.apply_local_factors(cell_scores, cfg.local_factors)
         for f in cfg.local_factors:
             n_hit = sum(1 for s in cell_scores.values() if any(a[0] == f.name for a in s.adjustments))
@@ -70,8 +77,25 @@ def main(argv: list[str] | None = None) -> int:
             twin = analogs.get(_h3.latlng_to_cell(r.lat, r.lon, cfg.h3_resolution), 0.0)
             print(f"  #{i} {r.name}: {r.score.total} · resembles thriving areas {twin}/100")
 
-    out = report.render(cfg, cell_scores, ranked, out_path, opportunities=opps)
-    print(f"[panoptes] report → {out} · total {time.time() - t0:.1f}s")
+    out = report.render(cfg, cell_scores, ranked, out_path, opportunities=opps, mode=args.mode)
+
+    # machine-readable artifact — the contract the business interface consumes
+    payload = {
+        "study": cfg.name,
+        "mode": args.mode,
+        "generated_by": "panoptes v0.2",
+        "hexes": [dataclasses.asdict(s) for s in cell_scores.values()],
+        "candidates": [
+            {"name": r.name, "lat": r.lat, "lon": r.lon, "score": dataclasses.asdict(r.score)}
+            for r in ranked
+        ],
+        "companions": [dataclasses.asdict(c) for c in companions],
+        "opportunities": [dataclasses.asdict(o) for o in opps.values()],
+        "local_factors_applied": args.mode == "advanced" and bool(cfg.local_factors),
+    }
+    json_path = Path(str(out)).with_suffix(".json")
+    json_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    print(f"[panoptes] report → {out} + {json_path.name} · mode={args.mode} · total {time.time() - t0:.1f}s")
     return 0
 
 
