@@ -35,6 +35,20 @@ class Candidate(BaseModel):
     lon: float
 
 
+class LocalFactor(BaseModel):
+    """Analyst-entered local knowledge the open data cannot see (crime levels,
+    planned works, a metro opening). Applied as a transparent score adjustment
+    within radius_m of the point; always labelled as judgement in the report,
+    never blended invisibly into the data-driven pillars."""
+
+    name: str
+    lat: float
+    lon: float
+    radius_m: float = 500.0
+    adjustment: float  # score points, e.g. -12 or +8 (clamped to ±25)
+    note: str = ""
+
+
 class Weights(BaseModel):
     """Relative importance of each scoring pillar (normalised at runtime)."""
 
@@ -57,6 +71,7 @@ class StudyConfig(BaseModel):
     # Categories whose presence signals demand (anchors / complements).
     complement_categories: list[str] = Field(default_factory=list)
     candidates: list[Candidate] = Field(default_factory=list)
+    local_factors: list[LocalFactor] = Field(default_factory=list)
     weights: Weights = Field(default_factory=Weights)
     # H3 resolution: 9 ≈ 175m hexes (street-level), 8 ≈ 460m (district-level).
     h3_resolution: int = 9

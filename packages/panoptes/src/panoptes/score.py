@@ -20,12 +20,17 @@ from dataclasses import dataclass
 
 import h3
 
-from panoptes.config import Candidate, Weights
+import math
+
+from panoptes.config import Candidate, LocalFactor, Weights
 from panoptes.grid import Cell
 
 
 @dataclass
 class CellScore:
+    """Per-hex result. `adjustments` lists analyst local factors applied here
+    (name, points) — kept separate from the data pillars so the report can
+    show exactly what is data and what is judgement."""
     h3_id: str
     lat: float
     lon: float
@@ -36,6 +41,7 @@ class CellScore:
     target_count: int
     complement_count: int
     population: int
+    adjustments: list[tuple[str, float]] = None  # type: ignore[assignment]
 
 
 @dataclass
@@ -117,8 +123,29 @@ def score_cells(cells: dict[str, Cell], weights: Weights) -> dict[str, CellScore
             target_count=cell.target_count,
             complement_count=cell.complement_count,
             population=int(cell.population),
+            adjustments=[],
         )
     return out
+
+
+def _haversine_m(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    r = 6_371_000.0
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    dp, dl = math.radians(lat2 - lat1), math.radians(lon2 - lon1)
+    a = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
+    return 2 * r * math.asin(math.sqrt(a))
+
+
+def apply_local_factors(cell_scores: dict[str, CellScore], factors: list[LocalFactor]) -> None:
+    """Adjust totals by analyst-entered local factors (clamped ±25 points per
+    factor, totals clamped to 0–100). Each application is recorded on the cell
+    so reports can attribute every point to either data or judgement."""
+    for f in factors:
+        adj = max(-25.0, min(25.0, f.adjustment))
+        for s in cell_scores.values():
+            if _haversine_m(f.lat, f.lon, s.lat, s.lon) <= f.radius_m:
+                s.total = round(max(0.0, min(100.0, s.total + adj)), 1)
+                s.adjustments.append((f.name, adj))
 
 
 def score_candidates(

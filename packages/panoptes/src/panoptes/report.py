@@ -66,6 +66,7 @@ def render(
                 f"rivals here: {s.target_count} · pop/km²: {s.population}"
                 + (f" · opportunity {opp.opportunity:+.0f}" if opp else "")
                 + (" · WHITE SPACE" if is_ws else "")
+                + "".join(f" · analyst: {n} {a:+.0f}" for n, a in (s.adjustments or []))
             ),
         ).add_to(m)
 

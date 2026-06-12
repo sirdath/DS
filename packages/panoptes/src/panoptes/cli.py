@@ -38,6 +38,11 @@ def main(argv: list[str] | None = None) -> int:
     print(f"[panoptes] income index joined: {matched}/{len(cells)} direct · range {idx[0]}–{idx[-1]}")
 
     cell_scores = score.score_cells(cells, cfg.weights)
+    if cfg.local_factors:
+        score.apply_local_factors(cell_scores, cfg.local_factors)
+        for f in cfg.local_factors:
+            n_hit = sum(1 for s in cell_scores.values() if any(a[0] == f.name for a in s.adjustments))
+            print(f"[panoptes] local factor (analyst judgement): {f.name} {f.adjustment:+.0f} pts over {n_hit} hexes — {f.note}")
     ranked = score.score_candidates(cfg.candidates, cell_scores, cfg.h3_resolution)
     companions = analysis.colocation_profile(places, cfg.target_categories, cfg.h3_resolution)
     analogs = analysis.analog_scores(places, cfg.target_categories, cfg.h3_resolution)

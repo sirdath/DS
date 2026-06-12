@@ -21,6 +21,14 @@ candidates:
   - { name: "Ermou st. corner", lat: 37.9757, lon: 23.7300 }
   - { name: "Exarchia square", lat: 37.9861, lon: 23.7332 }
   - { name: "Koukaki / Veikou", lat: 37.9633, lon: 23.7269 }
+# analyst judgement the open data cannot see — labelled as such in the report
+local_factors:
+  - name: "Exarchia safety perception"
+    lat: 37.9861
+    lon: 23.7332
+    radius_m: 450
+    adjustment: -10
+    note: "highest crime rate in Athens; clientele- and hours-dependent — judgement, not data"
 weights: { demand: 1.0, competition: 0.8, access: 0.6 }
 h3_resolution: 9
 overture_release: "2026-05-20.0"
