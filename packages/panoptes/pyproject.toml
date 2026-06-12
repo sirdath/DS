@@ -12,6 +12,7 @@ dependencies = [
     "jinja2>=3.1",
     "folium>=0.17",
     "pyproj>=3.7.2",
+    "numpy>=2.4.6",
 ]
 
 [dependency-groups]

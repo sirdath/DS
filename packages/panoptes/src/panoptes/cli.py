@@ -9,7 +9,7 @@ import sys
 import time
 from pathlib import Path
 
-from panoptes import analysis, grid, report, score
+from panoptes import analysis, grid, report, score, zones
 from panoptes.config import StudyConfig
 from panoptes.ingest import income, overture, population
 
@@ -58,6 +58,11 @@ def main(argv: list[str] | None = None) -> int:
     companions = analysis.colocation_profile(places, cfg.target_categories, cfg.h3_resolution)
     analogs = analysis.analog_scores(places, cfg.target_categories, cfg.h3_resolution)
     opps = analysis.opportunity_map(cell_scores)
+    zr = zones.zone_map(places, cfg.h3_resolution)
+    if zr.labels:
+        print("[panoptes] functional zones (PPMI+SVD type embeddings, k-means):")
+        for z, label in sorted(zr.labels.items(), key=lambda t: -zr.sizes.get(t[0], 0)):
+            print(f"  zone {z} ({zr.sizes.get(z, 0)} hexes): {label}")
     ws = [h for h, o in opps.items() if o.white_space]
     if companions:
         print("[panoptes] the target's best company (lift vs chance):")
@@ -96,6 +101,10 @@ def main(argv: list[str] | None = None) -> int:
         "companions": [dataclasses.asdict(c) for c in companions],
         "opportunities": [dataclasses.asdict(o) for o in opps.values()],
         "local_factors_applied": args.mode == "advanced" and bool(cfg.local_factors),
+        "zones": {
+            "labels": {str(z): lbl for z, lbl in zr.labels.items()},
+            "assignments": [{"h3_id": h, "zone": z} for h, z in zr.assignments.items()],
+        },
     }
     json_path = Path(str(out)).with_suffix(".json")
     json_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
