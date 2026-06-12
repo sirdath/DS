@@ -6,7 +6,7 @@ import argparse
 import sys
 import time
 
-from panoptes import grid, report, score
+from panoptes import analysis, grid, report, score
 from panoptes.config import StudyConfig
 from panoptes.ingest import income, overture, population
 
@@ -39,6 +39,14 @@ def main(argv: list[str] | None = None) -> int:
 
     cell_scores = score.score_cells(cells, cfg.weights)
     ranked = score.score_candidates(cfg.candidates, cell_scores, cfg.h3_resolution)
+    companions = analysis.colocation_profile(places, cfg.target_categories, cfg.h3_resolution)
+    opps = analysis.opportunity_map(cell_scores)
+    ws = [h for h, o in opps.items() if o.white_space]
+    if companions:
+        print("[panoptes] the target's best company (lift vs chance):")
+        for c in companions[:6]:
+            print(f"  {c.lift:5.2f}x  {c.category}  (in {c.support} neighbourhoods)")
+    print(f"[panoptes] white-space hexes (demand>70th pct, gap top decile): {len(ws)}")
 
     missing = {c.name for c in cfg.candidates} - {r.name for r in ranked}
     for name in sorted(missing):
@@ -54,7 +62,7 @@ def main(argv: list[str] | None = None) -> int:
         for i, r in enumerate(ranked, 1):
             print(f"  #{i} {r.name}: {r.score.total}")
 
-    out = report.render(cfg, cell_scores, ranked, out_path)
+    out = report.render(cfg, cell_scores, ranked, out_path, opportunities=opps)
     print(f"[panoptes] report → {out} · total {time.time() - t0:.1f}s")
     return 0
 

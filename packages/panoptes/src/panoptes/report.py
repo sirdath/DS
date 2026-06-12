@@ -10,6 +10,7 @@ from pathlib import Path
 
 import folium
 
+from panoptes.analysis import Opportunity
 from panoptes.config import StudyConfig
 from panoptes.score import CandidateResult, CellScore
 
@@ -38,6 +39,7 @@ def render(
     cell_scores: dict[str, CellScore],
     candidates: list[CandidateResult],
     out_path: str | Path,
+    opportunities: dict[str, Opportunity] | None = None,
 ) -> Path:
     centre_lat = (config.area.min_lat + config.area.max_lat) / 2
     centre_lon = (config.area.min_lon + config.area.max_lon) / 2
@@ -48,11 +50,13 @@ def render(
     for s in cell_scores.values():
         if s.total <= 0:
             continue
+        opp = opportunities.get(s.h3_id) if opportunities else None
+        is_ws = bool(opp and opp.white_space)
         boundary = [(lat, lon) for lat, lon in h3.cell_to_boundary(s.h3_id)]
         folium.Polygon(
             locations=boundary,
-            color=_colour(s.total),
-            weight=0.5,
+            color="#67e8f9" if is_ws else _colour(s.total),
+            weight=2.2 if is_ws else 0.5,
             fill=True,
             fill_color=_colour(s.total),
             fill_opacity=0.35,
@@ -60,6 +64,8 @@ def render(
                 f"score {s.total} · demand {s.demand} · "
                 f"competition {s.competition} · access {s.access} · "
                 f"rivals here: {s.target_count} · pop/km²: {s.population}"
+                + (f" · opportunity {opp.opportunity:+.0f}" if opp else "")
+                + (" · WHITE SPACE" if is_ws else "")
             ),
         ).add_to(m)
 
