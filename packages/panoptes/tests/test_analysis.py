@@ -47,3 +47,13 @@ def test_opportunity_flags_underserved_demand():
     assert len(ws) >= 1
     # the white-space hexes must have zero rivals
     assert all(scores[h].target_count == 0 for h in ws)
+
+
+def test_analog_scores_rank_lookalikes_higher():
+    from panoptes.analysis import analog_scores
+    cells, places = _study_data()
+    analogs = analog_scores(places, ["cafe"], 9, thriving_quantile=0.0)
+    import h3
+    near_cafes = analogs[h3.latlng_to_cell(37.98, 23.735, 9)]      # a thriving café spot
+    pharmacy_corner = analogs[h3.latlng_to_cell(37.9975, 23.7585, 9)]  # the pharmacy cluster
+    assert near_cafes > pharmacy_corner

@@ -130,3 +130,73 @@ def opportunity_map(cell_scores: dict[str, CellScore]) -> dict[str, Opportunity]
             white_space=demand_pct[i] > 70.0 and gap_pct[i] > 90.0,
         )
     return out
+
+
+def analog_scores(
+    places: list,
+    target_categories: list[str],
+    resolution: int,
+    top_categories: int = 24,
+    thriving_quantile: float = 0.75,
+) -> dict[str, float]:
+    """Applebaum's analog method (1966): how much does each hex resemble the
+    places where the target already thrives?
+
+    "Thriving" = hexes in the top quartile of target counts (incumbent density
+    as the revealed-success proxy — no revenue data exists; reports disclose
+    this). Each hex is described by the composition of its neighbourhood (hex
+    + first ring) over the area's most common categories, target excluded.
+    Score = cosine similarity to the mean thriving signature, scaled 0–100.
+    """
+    targets = set(target_categories)
+    hex_cats: dict[str, Counter] = {}
+    target_count: Counter = Counter()
+    for p in places:
+        if p.category == "unknown":
+            continue
+        h = h3.latlng_to_cell(p.lat, p.lon, resolution)
+        hex_cats.setdefault(h, Counter())[p.category] += 1
+        if p.category in targets:
+            target_count[h] += 1
+
+    vocab_counts: Counter = Counter()
+    for c in hex_cats.values():
+        vocab_counts.update(c)
+    for t in targets:
+        vocab_counts.pop(t, None)
+    vocab = [cat for cat, _ in vocab_counts.most_common(top_categories)]
+    if not vocab or not target_count:
+        return {}
+
+    def vector(h: str) -> list[float]:
+        agg: Counter = Counter()
+        for n in h3.grid_disk(h, 1):
+            c = hex_cats.get(n)
+            if c:
+                agg.update(c)
+        total = sum(agg[cat] for cat in vocab) or 1
+        return [agg[cat] / total for cat in vocab]
+
+    counts = sorted(target_count.values())
+    cut = counts[int(len(counts) * thriving_quantile)] if len(counts) > 1 else counts[0]
+    thriving = [h for h, n in target_count.items() if n >= cut]
+    if not thriving:
+        return {}
+
+    sig = [0.0] * len(vocab)
+    for h in thriving:
+        v = vector(h)
+        sig = [a + b for a, b in zip(sig, v)]
+    sig = [a / len(thriving) for a in sig]
+    sig_norm = sum(a * a for a in sig) ** 0.5 or 1.0
+
+    out: dict[str, float] = {}
+    for h in hex_cats:
+        v = vector(h)
+        v_norm = sum(a * a for a in v) ** 0.5
+        if v_norm == 0:
+            out[h] = 0.0
+            continue
+        cos = sum(a * b for a, b in zip(sig, v)) / (sig_norm * v_norm)
+        out[h] = round(100.0 * max(cos, 0.0), 1)
+    return out

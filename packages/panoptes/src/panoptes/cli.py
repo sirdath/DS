@@ -40,6 +40,7 @@ def main(argv: list[str] | None = None) -> int:
     cell_scores = score.score_cells(cells, cfg.weights)
     ranked = score.score_candidates(cfg.candidates, cell_scores, cfg.h3_resolution)
     companions = analysis.colocation_profile(places, cfg.target_categories, cfg.h3_resolution)
+    analogs = analysis.analog_scores(places, cfg.target_categories, cfg.h3_resolution)
     opps = analysis.opportunity_map(cell_scores)
     ws = [h for h, o in opps.items() if o.white_space]
     if companions:
@@ -60,7 +61,9 @@ def main(argv: list[str] | None = None) -> int:
     if ranked:
         print("[panoptes] candidates, best first:")
         for i, r in enumerate(ranked, 1):
-            print(f"  #{i} {r.name}: {r.score.total}")
+            import h3 as _h3
+            twin = analogs.get(_h3.latlng_to_cell(r.lat, r.lon, cfg.h3_resolution), 0.0)
+            print(f"  #{i} {r.name}: {r.score.total} · resembles thriving areas {twin}/100")
 
     out = report.render(cfg, cell_scores, ranked, out_path, opportunities=opps)
     print(f"[panoptes] report → {out} · total {time.time() - t0:.1f}s")
