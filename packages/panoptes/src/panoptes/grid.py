@@ -26,6 +26,7 @@ class Cell:
     complement_count: int = 0
     total_pois: int = 0
     population: float = 0.0
+    income_index: float = 1.0
     categories: Counter = field(default_factory=Counter)
 
 

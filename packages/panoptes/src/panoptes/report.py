@@ -14,7 +14,7 @@ from panoptes.config import StudyConfig
 from panoptes.score import CandidateResult, CellScore
 
 _ATTRIBUTION = (
-    "Data: Overture Maps Foundation (CDLA-Permissive 2.0) · © European Union, Eurostat census grid 2021 · "
+    "Data: Overture Maps Foundation (CDLA-Permissive 2.0) · © European Union, Eurostat census grid 2021 · AADE income statistics 2022 (prefecture level) · NUTS3 © EuroGeographics · "
     "Analysis: DS2 Panoptes v0.1 — scores are model output, shown with inputs; "
     "read with the accompanying notes."
 )

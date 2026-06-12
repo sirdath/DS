@@ -1,9 +1,9 @@
 """Scoring model v0 — three transparent pillars per hex, 0–100.
 
 - demand: a blend of complement/anchor POI gravity ("reasons to be here") and
-  census population gravity ("people who live here"), both smoothed over the
-  hex's neighbourhood. The blend knob is Weights.demand_pop_share. The AADE
-  income layer joins this pillar next.
+  purchasing-power gravity — census population × the prefecture's AADE income
+  index ("people who live here × what they earn") — both smoothed over the
+  hex's neighbourhood. The blend knob is Weights.demand_pop_share.
 - competition: target-category density with distance decay — close rivals
   count more. Inverted: fewer rivals = higher score. (Deliberate v0 stance;
   some categories *benefit* from clustering, which is what the weight knob and
@@ -58,6 +58,18 @@ def _neighbourhood_sum(cells: dict[str, Cell], h: str, attr: str, rings: int = 2
     return total
 
 
+def _purchasing_power(cells: dict[str, Cell], h: str, rings: int = 2) -> float:
+    """Population × income index, distance-decayed — heads weighted by wallets."""
+    total = 0.0
+    for k in range(rings + 1):
+        weight = 1.0 / (1 + k)
+        for n in h3.grid_ring(h, k):
+            cell = cells.get(n)
+            if cell is not None:
+                total += weight * cell.population * cell.income_index
+    return total
+
+
 def _diversity(cell: Cell) -> float:
     """Distinct category families present — crude but honest liveliness proxy."""
     return float(len({c.split(".")[0] for c in cell.categories}))
@@ -73,7 +85,7 @@ def _normalise(values: list[float]) -> list[float]:
 def score_cells(cells: dict[str, Cell], weights: Weights) -> dict[str, CellScore]:
     ids = list(cells.keys())
     raw_poi = [_neighbourhood_sum(cells, h, "complement_count") for h in ids]
-    raw_pop = [_neighbourhood_sum(cells, h, "population") for h in ids]
+    raw_pop = [_purchasing_power(cells, h) for h in ids]
     raw_rivals = [_neighbourhood_sum(cells, h, "target_count") for h in ids]
     raw_access = [_diversity(cells[h]) for h in ids]
 
