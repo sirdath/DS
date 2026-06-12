@@ -88,12 +88,21 @@ def _normalise(values: list[float]) -> list[float]:
     return [100.0 * v / hi for v in values]
 
 
-def score_cells(cells: dict[str, Cell], weights: Weights) -> dict[str, CellScore]:
+def score_cells(
+    cells: dict[str, Cell],
+    weights: Weights,
+    access_override: dict[str, float] | None = None,
+) -> dict[str, CellScore]:
+    """access_override: street-network centrality per hex (cityseer) when the
+    network fetch succeeded; otherwise the POI-diversity proxy is used."""
     ids = list(cells.keys())
     raw_poi = [_neighbourhood_sum(cells, h, "complement_count") for h in ids]
     raw_pop = [_purchasing_power(cells, h) for h in ids]
     raw_rivals = [_neighbourhood_sum(cells, h, "target_count") for h in ids]
-    raw_access = [_diversity(cells[h]) for h in ids]
+    if access_override:
+        raw_access = [access_override.get(h, 0.0) for h in ids]
+    else:
+        raw_access = [_diversity(cells[h]) for h in ids]
 
     poi_n, pop_n = _normalise(raw_poi), _normalise(raw_pop)
     share = weights.demand_pop_share

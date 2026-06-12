@@ -11,7 +11,7 @@ from pathlib import Path
 
 from panoptes import analysis, grid, report, score, zones
 from panoptes.config import StudyConfig
-from panoptes.ingest import income, overture, population
+from panoptes.ingest import income, overture, population, streets
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -44,11 +44,18 @@ def main(argv: list[str] | None = None) -> int:
     idx = sorted({round(c.income_index, 4) for c in cells.values()})
     print(f"[panoptes] income index joined: {matched}/{len(cells)} direct · range {idx[0]}–{idx[-1]}")
 
+    t1 = time.time()
+    access = streets.hex_centrality(cfg.area, cfg.h3_resolution)
+    if access:
+        print(f"[panoptes] street network: closeness centrality on {len(access)} hexes (cityseer, 800m) · {time.time() - t1:.1f}s")
+    else:
+        print("[panoptes] street network unavailable — access falls back to the POI-diversity proxy")
+
     mi, mp = analysis.morans_i(cells)
     verdict = "location structures this category" if (mi > 0.1 and mp < 0.05) else "WEAK clustering — site choice may matter less for this category"
     print(f"[panoptes] spatial clustering gate: Moran's I {mi} (p={mp}) — {verdict}")
 
-    cell_scores = score.score_cells(cells, cfg.weights)
+    cell_scores = score.score_cells(cells, cfg.weights, access_override=access or None)
     if args.mode == "advanced" and cfg.local_factors:
         score.apply_local_factors(cell_scores, cfg.local_factors)
         for f in cfg.local_factors:
@@ -101,6 +108,7 @@ def main(argv: list[str] | None = None) -> int:
         "companions": [dataclasses.asdict(c) for c in companions],
         "opportunities": [dataclasses.asdict(o) for o in opps.values()],
         "local_factors_applied": args.mode == "advanced" and bool(cfg.local_factors),
+        "access_source": "street_network" if access else "poi_diversity_proxy",
         "zones": {
             "labels": {str(z): lbl for z, lbl in zr.labels.items()},
             "assignments": [{"h3_id": h, "zone": z} for h, z in zr.assignments.items()],

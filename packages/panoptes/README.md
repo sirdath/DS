@@ -39,7 +39,7 @@ pull (see `fetch_places` + `Counter` — 5 lines).
 | POI cross-check | Foursquare OS Places (Apache-2.0) | planned |
 | Population | ELSTAT 2021 census + GHSL 100 m grid | planned (joins the demand pillar) |
 | Income | AADE annual xlsx (per-postcode tables, ~2-3 yr lag — disclose) | planned |
-| Accessibility | self-hosted OSRM/Valhalla isochrones | planned (replaces diversity proxy) |
+| Accessibility | cityseer street-network centrality (OSM/Overpass) | **wired** (proxy fallback) |
 | Tourism pressure | InsideAirbnb (Athens), INSETE | planned |
 | Footfall | review-velocity proxy now; BestTime / telecom mobility = client-funded premium | later |
 | Transit | OASA GTFS is **CC BY-NC — not usable commercially**; use OSM stops instead | caution |
@@ -49,7 +49,9 @@ pull (see `fetch_places` + `Counter` — 5 lines).
 - Demand has no population/income yet — it's pure POI gravity.
 - Competition treats clustering as bad; some categories benefit from it
   (the weight knob + analyst judgement cover this, the report shows raw counts).
-- Access is a diversity proxy, not real travel time.
+- Access = street-network closeness centrality (cityseer, 800m walk) when the
+  OSM fetch succeeds; falls back to the POI-diversity proxy (disclosed in the
+  JSON as access_source) when offline.
 
 Every report states these. Disclosure is the product.
 

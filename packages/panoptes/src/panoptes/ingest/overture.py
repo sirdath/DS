@@ -35,8 +35,11 @@ def _connect() -> duckdb.DuckDBPyConnection:
     con = duckdb.connect()
     con.execute("INSTALL httpfs; LOAD httpfs;")
     con.execute("INSTALL spatial; LOAD spatial;")
-    # Anonymous access to the public bucket.
+    # Anonymous access to the public bucket; patient settings because S3 over
+    # residential connections occasionally stalls (seen in the field).
     con.execute("SET s3_region='us-west-2';")
+    con.execute("SET http_timeout=120000;")
+    con.execute("SET http_retries=4;")
     return con
 
 

@@ -13,6 +13,7 @@ dependencies = [
     "folium>=0.17",
     "pyproj>=3.7.2",
     "numpy>=2.4.6",
+    "cityseer>=4.24.1",
 ]
 
 [dependency-groups]
