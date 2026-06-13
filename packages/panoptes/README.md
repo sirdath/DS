@@ -9,7 +9,8 @@ cd packages/panoptes
 uv sync
 
 # Recommend where to open a sector in an area (no candidates needed):
-uv run panoptes recommend --sector gym --area athens-center
+uv run panoptes recommend --sector gym --area athens          # whole metro (~30s)
+uv run panoptes recommend --sector gym --area athens-center   # just the core
 uv run panoptes sectors                  # list sectors + named areas
 
 # Score client-supplied candidate sites from a study YAML:
@@ -31,6 +32,14 @@ given candidates. The original flow.
 
 Both share one pipeline (`engine.run_study`) and emit the same HTML map +
 JSON contract.
+
+**Scale & CPU.** Resolution is auto-picked from the area: street-level (res 9,
+~175 m hexes) for a neighbourhood, district-level (res 8, ~460 m) for anything
+metro-scale, so `--area athens` (the whole basin, ~534 km², ~630 hexes) stays
+fast. The cityseer street-network pass is the one CPU-heavy step (minutes on a
+metro graph), so it is **skipped above ~450 hexes** by default in favour of the
+instant POI-diversity proxy — force it with `--streets on`, disable with
+`--streets off` (the JSON's `access_source` records which ran).
 
 ## How a study works
 

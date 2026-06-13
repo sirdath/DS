@@ -39,9 +39,16 @@ class StudyArtifacts:
     seconds: float
 
 
-def run_study(cfg: StudyConfig, mode: str = "data", log=print) -> StudyArtifacts:
+# Above this hex count, the cityseer street-network pass (which can cost
+# minutes of CPU on a metro-scale graph) is skipped by default in favour of the
+# instant POI-diversity proxy. Override with streets="on".
+_STREETS_AUTO_MAX = 450
+
+
+def run_study(cfg: StudyConfig, mode: str = "data", streets_mode: str = "auto", log=print) -> StudyArtifacts:
     """Run the full pipeline. `log` is called with progress strings (pass a
-    no-op to silence)."""
+    no-op to silence). `streets_mode`: "auto" (street network only for small
+    studies), "on" (always), "off" (never — use the proxy)."""
     t0 = time.time()
     log(f"[panoptes] study: {cfg.name}")
     log(f"[panoptes] pulling Overture places ({cfg.overture_release}) …")
@@ -58,13 +65,19 @@ def run_study(cfg: StudyConfig, mode: str = "data", log=print) -> StudyArtifacts
     idx = sorted({round(c.income_index, 4) for c in cells.values()})
     log(f"[panoptes] income index joined: {matched}/{len(cells)} direct · range {idx[0]}–{idx[-1]}")
 
-    t1 = time.time()
-    access = streets.hex_centrality(cfg.area, cfg.h3_resolution)
-    if access:
-        log(f"[panoptes] street network: closeness centrality on {len(access)} hexes "
-            f"(cityseer, 800m) · {time.time() - t1:.1f}s")
+    do_streets = streets_mode == "on" or (streets_mode == "auto" and len(cells) <= _STREETS_AUTO_MAX)
+    access: dict = {}
+    if do_streets:
+        t1 = time.time()
+        access = streets.hex_centrality(cfg.area, cfg.h3_resolution)
+        if access:
+            log(f"[panoptes] street network: closeness centrality on {len(access)} hexes "
+                f"(cityseer, 800m) · {time.time() - t1:.1f}s")
+        else:
+            log("[panoptes] street network unavailable — access falls back to the POI-diversity proxy")
     else:
-        log("[panoptes] street network unavailable — access falls back to the POI-diversity proxy")
+        log(f"[panoptes] street network skipped ({len(cells)} hexes > {_STREETS_AUTO_MAX}; "
+            f"use --streets on to force) — access uses the POI-diversity proxy")
     access_source = "street_network" if access else "poi_diversity_proxy"
 
     mi, mp = analysis.morans_i(cells)

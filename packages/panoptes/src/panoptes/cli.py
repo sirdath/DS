@@ -55,7 +55,7 @@ def _print_recommendations(recs) -> None:
 
 def cmd_run(args) -> int:
     cfg = sectors.apply_sector(StudyConfig.from_yaml(args.config))
-    art = engine.run_study(cfg, mode=args.mode)
+    art = engine.run_study(cfg, mode=args.mode, streets_mode=args.streets)
     _print_candidates(art)
     out_path = args.out or f"out/{_slug(cfg.name)}.html"
     _write_outputs(art, out_path)
@@ -80,10 +80,11 @@ def cmd_recommend(args) -> int:
             return 2
         area_name = args.area
 
+    res = args.res if args.res is not None else gazetteer.suggest_resolution(area)
     cfg = sectors.study_from_sector(
-        profile, area, name=f"{profile.label} — {area_name}", h3_resolution=args.res,
+        profile, area, name=f"{profile.label} — {area_name}", h3_resolution=res,
     )
-    art = engine.run_study(cfg, mode=args.mode)
+    art = engine.run_study(cfg, mode=args.mode, streets_mode=args.streets)
     recs = recommend.recommend_areas(art, sector=profile, top_n=args.top, geocode=not args.no_geocode)
     _print_recommendations(recs)
     out_path = args.out or f"out/{_slug(cfg.name)}.html"
@@ -110,6 +111,7 @@ def main(argv: list[str] | None = None) -> int:
     run.add_argument("config")
     run.add_argument("-o", "--out", default=None)
     run.add_argument("--mode", choices=["data", "advanced"], default="data")
+    run.add_argument("--streets", choices=["auto", "on", "off"], default="auto")
     run.set_defaults(func=cmd_run)
 
     rec = sub.add_parser("recommend", help="recommend where to open a sector in an area")
@@ -119,7 +121,10 @@ def main(argv: list[str] | None = None) -> int:
     rec.add_argument("-o", "--out", default=None)
     rec.add_argument("--mode", choices=["data", "advanced"], default="data")
     rec.add_argument("--top", type=int, default=5)
-    rec.add_argument("--res", type=int, default=9)
+    rec.add_argument("--res", type=int, default=None,
+                     help="H3 resolution (auto: 9 for a neighbourhood, 8 for a metro)")
+    rec.add_argument("--streets", choices=["auto", "on", "off"], default="auto",
+                     help="street-network access pass; auto skips it for metro-scale areas to save CPU")
     rec.add_argument("--no-geocode", action="store_true", help="skip Nominatim area naming")
     rec.set_defaults(func=cmd_recommend)
 

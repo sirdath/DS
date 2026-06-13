@@ -24,3 +24,12 @@ def test_parse_bbox_rejects_malformed():
 
 def test_list_areas_nonempty():
     assert "glyfada" in list_areas()
+
+
+def test_suggest_resolution_metro_vs_neighbourhood():
+    from panoptes.gazetteer import AREAS, area_km2, suggest_resolution
+    # whole metro → district level (res 8); small areas → street level (res 9)
+    assert suggest_resolution(AREAS["athens"]) == 8
+    assert suggest_resolution(AREAS["athens-center"]) == 9
+    assert suggest_resolution(AREAS["glyfada"]) == 9
+    assert area_km2(AREAS["athens"]) > 400
