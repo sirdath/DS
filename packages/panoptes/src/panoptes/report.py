@@ -41,6 +41,7 @@ def render(
     out_path: str | Path,
     opportunities: dict[str, Opportunity] | None = None,
     mode: str = "data",
+    recommendations: list | None = None,
 ) -> Path:
     centre_lat = (config.area.min_lat + config.area.max_lat) / 2
     centre_lon = (config.area.min_lon + config.area.max_lon) / 2
@@ -76,6 +77,20 @@ def render(
             location=[c.lat, c.lon],
             tooltip=f"#{rank} {c.name} — score {c.score.total}",
             icon=folium.Icon(color="lightblue" if rank == 1 else "gray", icon="star"),
+        ).add_to(m)
+
+    for r in recommendations or []:
+        reasons = "".join(f"<li>{x}</li>" for x in r.reasons[:4])
+        popup = folium.Popup(
+            f"<b>#{r.rank} {r.area_name}</b><br>suitability {r.score}/100"
+            f"<ul style='margin:6px 0 0;padding-left:16px'>{reasons}</ul>",
+            max_width=280,
+        )
+        folium.Marker(
+            location=[r.lat, r.lon],
+            tooltip=f"#{r.rank} {r.area_name} — {r.score}/100",
+            popup=popup,
+            icon=folium.Icon(color="lightblue", icon="ok-sign"),
         ).add_to(m)
 
     title = (

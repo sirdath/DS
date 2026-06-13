@@ -1,5 +1,3 @@
-from panoptes.config import BBox
-from panoptes.grid import area_cells
 from panoptes.ingest.overture import Place
 from panoptes.zones import zone_map
 
@@ -11,11 +9,13 @@ def _two_district_city():
     for r in range(4):
         for c in range(4):
             for cat in ("cafe", "restaurant", "bar"):
-                places.append(Place(f"f{i}", cat, cat, 23.722 + c * 0.0012, 37.972 + r * 0.001, 0.9)); i += 1
+                places.append(Place(f"f{i}", cat, cat, 23.722 + c * 0.0012, 37.972 + r * 0.001, 0.9))
+                i += 1
     for r in range(4):
         for c in range(4):
             for cat in ("clothing_store", "shoe_store", "jewelry_store"):
-                places.append(Place(f"s{i}", cat, cat, 23.752 + c * 0.0012, 37.995 + r * 0.001, 0.9)); i += 1
+                places.append(Place(f"s{i}", cat, cat, 23.752 + c * 0.0012, 37.995 + r * 0.001, 0.9))
+                i += 1
     return places
 
 

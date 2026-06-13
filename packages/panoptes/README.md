@@ -7,9 +7,30 @@ self-contained interactive HTML report (the portal deliverable).
 ```bash
 cd packages/panoptes
 uv sync
-uv run panoptes run study.example.yaml   # live demo: central Athens cafés, ~25s
+
+# Recommend where to open a sector in an area (no candidates needed):
+uv run panoptes recommend --sector gym --area athens-center
+uv run panoptes sectors                  # list sectors + named areas
+
+# Score client-supplied candidate sites from a study YAML:
+uv run panoptes run study.example.yaml   # live demo: central Athens cafés
 uv run pytest -q
 ```
+
+## Two ways to use it
+
+**`recommend`** — the client names a sector ("gym", "restaurant", "pharmacy")
+and an area; Panoptes maps the sector to its real Overture categories and
+sector-tuned weights, runs the full pipeline, and returns ranked **areas to
+open** with a plain reason for each (named via reverse geocoding). No candidate
+sites required — the engine discovers them.
+
+**`run`** — the analyst writes a study YAML (area + candidate sites, optionally
+just `sector: gym` to auto-fill categories/weights) and Panoptes scores the
+given candidates. The original flow.
+
+Both share one pipeline (`engine.run_study`) and emit the same HTML map +
+JSON contract.
 
 ## How a study works
 

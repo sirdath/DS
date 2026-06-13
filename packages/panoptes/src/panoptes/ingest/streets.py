@@ -26,6 +26,9 @@ _WALK_DISTANCE = 800  # metres — comfortable walk
 def hex_centrality(area: BBox, resolution: int) -> dict[str, float]:
     """Mean node closeness centrality per hex; {} on any failure."""
     try:
+        import os
+
+        os.environ.setdefault("TQDM_DISABLE", "1")  # silence cityseer progress bars
         from shapely.geometry import box as shapely_box
 
         from cityseer.metrics import networks

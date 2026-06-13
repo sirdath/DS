@@ -65,7 +65,6 @@ def test_morans_i_separates_clustered_from_scattered():
     # ~0. Clustering must be tight at the hex scale to register.
     from panoptes.analysis import morans_i
     cells = area_cells(BBox(min_lon=23.72, min_lat=37.97, max_lon=23.76, max_lat=38.00), 9)
-    import h3
     # a tight 3x3 block of café hexes (~100m spacing → adjacent hexes)
     places = [
         Place(f"c{i}", "cafe", "cafe", 23.732 + (i % 3) * 0.0012, 37.982 + (i // 3) * 0.001, 0.9)

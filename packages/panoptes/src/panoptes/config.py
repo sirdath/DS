@@ -65,9 +65,13 @@ class StudyConfig(BaseModel):
 
     name: str
     area: BBox
+    # Optional sector key (e.g. "gym", "restaurant"); when set, the engine
+    # fills target/complement categories and weights from the sector profile
+    # unless they are given explicitly here.
+    sector: str | None = None
     # Overture category ids for the business being placed (flat leaf ids,
     # e.g. ["cafe", "coffee_shop"] — check a category histogram for your area).
-    target_categories: list[str]
+    target_categories: list[str] = Field(default_factory=list)
     # Categories whose presence signals demand (anchors / complements).
     complement_categories: list[str] = Field(default_factory=list)
     candidates: list[Candidate] = Field(default_factory=list)
