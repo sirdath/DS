@@ -22,14 +22,14 @@ def _two_district_city():
 def test_zone_map_separates_districts_and_labels_them():
     zr = zone_map(_two_district_city(), 9, k=2, min_count=3)
     assert zr.assignments and len(zr.labels) == 2
-    # the two planted districts must not share a zone
+    # the two planted districts must not share a zone (labels humanise underscores)
     food_zone = {z for h, z in zr.assignments.items()
                  if any(lbl in zr.labels[z] for lbl in ("cafe", "restaurant", "bar"))}
     cloth_zone = {z for h, z in zr.assignments.items()
-                  if any(lbl in zr.labels[z] for lbl in ("clothing_store", "shoe_store", "jewelry_store"))}
+                  if any(lbl in zr.labels[z] for lbl in ("clothing", "shoe", "jewelry"))}
     assert food_zone and cloth_zone and food_zone != cloth_zone
     labels = " ".join(zr.labels.values())
-    assert ("cafe" in labels or "restaurant" in labels) and ("clothing_store" in labels or "shoe_store" in labels)
+    assert ("cafe" in labels or "restaurant" in labels) and ("clothing" in labels or "shoe" in labels)
 
 
 def test_zone_map_deterministic():

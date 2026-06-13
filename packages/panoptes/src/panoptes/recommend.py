@@ -66,14 +66,16 @@ def _reverse_geocode(lat: float, lon: float) -> str | None:
 
         r = requests.get(
             "https://nominatim.openstreetmap.org/reverse",
-            params={"lat": lat, "lon": lon, "format": "json", "zoom": 14, "addressdetails": 1},
+            params={"lat": lat, "lon": lon, "format": "json", "zoom": 16, "addressdetails": 1},
             headers={"User-Agent": "panoptes-ds2/0.3 (+https://github.com/sirdath/DS)"},
             timeout=15,
         )
         if r.status_code != 200:
             return None
         addr = r.json().get("address", {})
-        for key in ("suburb", "neighbourhood", "city_district", "quarter", "town", "village", "city"):
+        # prefer the real neighbourhood name (quarter holds "Εξάρχεια", "Κολωνάκι")
+        # over the vague administrative "Nη Κοινότητα Αθηνών" (city_district).
+        for key in ("quarter", "neighbourhood", "suburb", "city_district", "town", "village", "city"):
             if addr.get(key):
                 name = addr[key]
                 city = addr.get("city") or addr.get("town")

@@ -102,16 +102,53 @@ def _kmeans(X: np.ndarray, k: int, seed: int = 42, iters: int = 60) -> np.ndarra
     return labels
 
 
+# Umbrella / non-place-defining categories that make weak, generic zone labels.
+_DENY = {
+    "unknown", "professional_services", "community_services_non_profits", "event_planning",
+    "topic_publisher", "business", "retail", "shopping", "eat_and_drink", "accommodation",
+    "active_life", "arts_and_entertainment", "health_and_medical", "education",
+    "public_and_government_association", "public_service_and_government",
+    "social_service_organizations", "non_governmental_association", "transportation",
+    "travel_services", "mountain", "bridge", "fountain",
+}
+
+
+def _label_zone(zone_hexes, hex_cats, global_tot, g_sum) -> str:
+    """Label = categories that are BOTH a real share of the zone AND
+    over-represented vs the whole area (share × lift), umbrella terms excluded.
+    This stops 3 niche outliers (high lift, tiny count) from labelling a big
+    mixed zone — the bug where a café-heavy core read as 'motorcycle repair'."""
+    zc: Counter = Counter()
+    for h in zone_hexes:
+        zc.update(hex_cats[h])
+    z_sum = sum(zc.values()) or 1
+    scored = []
+    for cat, n in zc.items():
+        if cat in _DENY or n < 4:
+            continue
+        lift = (n / z_sum) / (global_tot[cat] / g_sum)
+        if lift < 1.15:  # must be genuinely over-represented here
+            continue
+        scored.append((cat, (n / z_sum) * lift))
+    scored.sort(key=lambda t: t[1], reverse=True)
+    return " · ".join(c.replace("_", " ") for c, _ in scored[:3]) or "mixed"
+
+
 def zone_map(
     places: list,
     resolution: int,
-    k: int = 5,
+    k: int | None = None,
     dims: int = 24,
     min_count: int = 5,
 ) -> ZoneResult:
     hex_cats = _hex_categories(places, resolution)
+    # adaptive k (~14 hexes per zone, clamped) so a small dense bbox does not
+    # collapse into one giant, mislabelled catch-all zone.
+    n_hexes = len(hex_cats)
+    if k is None:
+        k = max(5, min(10, round(n_hexes / 14)))
     index, emb = _type_embeddings(hex_cats, dims, min_count)
-    if not index or emb.shape[0] < k or len(hex_cats) <= k:
+    if not index or emb.shape[0] < k or n_hexes <= k:
         return ZoneResult({}, {}, {})
 
     hexes = list(hex_cats.keys())
@@ -146,16 +183,8 @@ def zone_map(
     sizes: dict[int, int] = {}
     for z in range(k):
         zone_hexes = [h for h in hexes if assignments[h] == z]
+        if not zone_hexes:
+            continue
         sizes[z] = len(zone_hexes)
-        zc: Counter = Counter()
-        for h in zone_hexes:
-            zc.update(hex_cats[h])
-        z_sum = sum(zc.values()) or 1
-        lifts = [
-            (cat, (n / z_sum) / (global_tot[cat] / g_sum))
-            for cat, n in zc.items()
-            if n >= 3 and global_tot[cat] >= min_count
-        ]
-        lifts.sort(key=lambda t: t[1], reverse=True)
-        labels[z] = " · ".join(cat for cat, _ in lifts[:3]) or "mixed"
+        labels[z] = _label_zone(zone_hexes, hex_cats, global_tot, g_sum)
     return ZoneResult(assignments, labels, sizes)
