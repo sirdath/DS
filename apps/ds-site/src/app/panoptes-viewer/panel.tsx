@@ -1,7 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import type { PanoptesStudy, PanoptesCandidate, MetricKey } from './types'
+import type {
+  PanoptesStudy,
+  PanoptesCandidate,
+  PanoptesRecommendation,
+  MetricKey,
+} from './types'
 import { METRIC_OPTIONS } from './types'
 
 interface PanelProps {
@@ -11,7 +16,10 @@ interface PanelProps {
   showWhiteSpace: boolean
   onWhiteSpaceToggle: () => void
   onCandidateFly: (c: PanoptesCandidate) => void
+  onRecommendationFly: (r: PanoptesRecommendation) => void
 }
+
+// ── Shared pillar bar ───────────────────────────────────────────────────────
 
 function PillarBar({ label, value }: { label: string; value: number }) {
   const pct = Math.min(100, Math.max(0, value))
@@ -25,6 +33,8 @@ function PillarBar({ label, value }: { label: string; value: number }) {
     </div>
   )
 }
+
+// ── Candidate card ──────────────────────────────────────────────────────────
 
 function CandidateCard({
   candidate,
@@ -57,6 +67,72 @@ function CandidateCard({
   )
 }
 
+// ── Recommendation card ─────────────────────────────────────────────────────
+
+function RecommendationCard({
+  rec,
+  onClick,
+}: {
+  rec: PanoptesRecommendation
+  onClick: () => void
+}) {
+  const topReasons = rec.reasons.slice(0, 3)
+  return (
+    <button
+      type="button"
+      className="pv-rec-card"
+      onClick={onClick}
+      aria-label={`Fly to recommendation ${rec.rank}: ${rec.area_name}`}
+    >
+      <div className="pv-rec-card__header">
+        <span className="pv-rec-card__rank">#{rec.rank}</span>
+        <span className="pv-rec-card__name">{rec.area_name}</span>
+        <span className="pv-rec-card__score">{Math.round(rec.score)}</span>
+      </div>
+
+      <div className="pv-rec-card__meta">
+        {rec.white_space && (
+          <span className="pv-rec-card__ws-chip">white-space</span>
+        )}
+        <span className="pv-rec-card__zone">{rec.zone_label}</span>
+      </div>
+
+      <div className="pv-pillar-bars">
+        <PillarBar label="Demand" value={rec.demand} />
+        <PillarBar label="Comp" value={rec.competition} />
+        <PillarBar label="Access" value={rec.access} />
+      </div>
+
+      {topReasons.length > 0 && (
+        <ul className="pv-rec-card__reasons">
+          {topReasons.map((r, i) => (
+            <li key={i}>{r}</li>
+          ))}
+        </ul>
+      )}
+    </button>
+  )
+}
+
+// ── Moran's I readout ───────────────────────────────────────────────────────
+
+function MoransReadout({ i, p }: { i: number; p: number }) {
+  const significant = i > 0.1 && p < 0.05
+  return (
+    <div className="pv-morans">
+      <span className="pv-morans__label">Spatial clustering</span>
+      <span className="pv-morans__value">
+        I&thinsp;=&thinsp;{i.toFixed(3)}
+      </span>
+      <span className={`pv-morans__verdict${significant ? '' : ' pv-morans__verdict--weak'}`}>
+        {significant ? 'location matters' : 'weak — site choice matters less'}
+      </span>
+    </div>
+  )
+}
+
+// ── Panel ───────────────────────────────────────────────────────────────────
+
 export function Panel({
   study,
   activeMetric,
@@ -64,21 +140,21 @@ export function Panel({
   showWhiteSpace,
   onWhiteSpaceToggle,
   onCandidateFly,
+  onRecommendationFly,
 }: PanelProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
 
-  // Sort candidates by total score descending
   const sortedCandidates = [...study.candidates].sort(
     (a, b) => b.score.total - a.score.total
   )
 
-  // Top 8 companions by lift
   const topCompanions = [...study.companions]
     .sort((a, b) => b.lift - a.lift)
     .slice(0, 8)
 
-  const formatCategory = (cat: string) =>
-    cat.replace(/_/g, ' ')
+  const recommendations = study.recommendations ?? []
+
+  const formatCategory = (cat: string) => cat.replace(/_/g, ' ')
 
   return (
     <aside
@@ -103,16 +179,46 @@ export function Panel({
       <div className="pv-panel__head">
         <div className="pv-panel__eyebrow">Panoptes</div>
         <div className="pv-panel__title">{study.study}</div>
-        <span
-          className={`pv-mode-badge pv-mode-badge--${study.mode}`}
-          aria-label={`Mode: ${study.mode}`}
-        >
-          {study.mode === 'data' ? 'Data mode' : 'Advanced'}
-        </span>
+
+        <div className="pv-panel__badges">
+          <span
+            className={`pv-mode-badge pv-mode-badge--${study.mode}`}
+            aria-label={`Mode: ${study.mode}`}
+          >
+            {study.mode === 'data' ? 'Data mode' : 'Advanced'}
+          </span>
+          {study.sector !== undefined && (
+            <span className="pv-sector-chip" aria-label={`Sector: ${study.sector}`}>
+              SECTOR · {study.sector.toUpperCase()}
+            </span>
+          )}
+        </div>
+
+        {study.morans_i !== undefined && study.morans_p !== undefined && (
+          <MoransReadout i={study.morans_i} p={study.morans_p} />
+        )}
       </div>
 
       {/* Scrollable body */}
       <div className="pv-panel__body">
+        {/* Recommended areas — shown ABOVE metric toggle */}
+        {recommendations.length > 0 && (
+          <div className="pv-panel__section">
+            <div className="pv-section-label">
+              Recommended areas ({recommendations.length})
+            </div>
+            <div className="pv-rec-list">
+              {recommendations.map((rec) => (
+                <RecommendationCard
+                  key={rec.rank}
+                  rec={rec}
+                  onClick={() => onRecommendationFly(rec)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Metric toggle */}
         <div className="pv-panel__section">
           <div className="pv-section-label">Metric</div>
@@ -134,7 +240,6 @@ export function Panel({
             ))}
           </div>
 
-          {/* White-space toggle — always shown, not just in opportunity mode */}
           <div
             role="checkbox"
             aria-checked={showWhiteSpace}

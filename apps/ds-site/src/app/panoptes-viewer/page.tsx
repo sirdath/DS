@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import './viewer.css'
-import type { PanoptesStudy, PanoptesCandidate, MetricKey } from './types'
+import type { PanoptesStudy, PanoptesCandidate, PanoptesRecommendation, MetricKey } from './types'
 import { Panel } from './panel'
 import { MapView } from './map'
 
@@ -303,12 +303,14 @@ export default function PanoptesViewerPage() {
   const [flyToTrigger, setFlyToTrigger] = useState<PanoptesCandidate | null>(
     null
   )
+  const [flyToRec, setFlyToRec] = useState<PanoptesRecommendation | null>(null)
 
   const handleFileLoad = useCallback((loaded: PanoptesStudy) => {
     setLoadError(null)
     setStudy(loaded)
     setActiveMetric('total')
     setShowWhiteSpace(false)
+    setFlyToRec(null)
   }, [])
 
   const handleMetricChange = useCallback((m: MetricKey) => {
@@ -324,6 +326,10 @@ export default function PanoptesViewerPage() {
   const handleCandidateFly = useCallback((c: PanoptesCandidate) => {
     // Use object identity change to re-trigger even for the same candidate
     setFlyToTrigger({ ...c })
+  }, [])
+
+  const handleRecommendationFly = useCallback((r: PanoptesRecommendation) => {
+    setFlyToRec({ ...r })
   }, [])
 
   // Global drag-over on the viewer (after study loaded) — ignore
@@ -349,6 +355,7 @@ export default function PanoptesViewerPage() {
             showWhiteSpace={showWhiteSpace}
             onTooltipChange={setTooltip}
             flyToTrigger={flyToTrigger}
+            flyToRec={flyToRec}
           />
           <Panel
             study={study}
@@ -357,6 +364,7 @@ export default function PanoptesViewerPage() {
             showWhiteSpace={showWhiteSpace}
             onWhiteSpaceToggle={handleWhiteSpaceToggle}
             onCandidateFly={handleCandidateFly}
+            onRecommendationFly={handleRecommendationFly}
           />
           <HexTooltip state={tooltip} />
         </>
