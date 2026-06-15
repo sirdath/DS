@@ -45,32 +45,34 @@ function detectReviews(prev: CompetitorMetrics, curr: CompetitorMetrics, comp: C
   const velocity = curr.reviewCount - prev.reviewCount;
   const ratingDelta = (curr.rating ?? 0) - (prev.rating ?? 0);
   const hasRating = prev.rating != null && curr.rating != null;
-  if (velocity < 5 && !(hasRating && Math.abs(ratingDelta) >= 0.2)) return null;
-  const velMag = velocity / 20;
+  const ratingMoved = hasRating && Math.abs(ratingDelta) >= 0.2;
+  if (velocity < 5 && !ratingMoved) return null;
+
+  const velMag = velocity > 0 ? velocity / 20 : 0;
   const ratingMag = hasRating ? Math.abs(ratingDelta) / 0.5 : 0;
   const ratingNote = hasRating && Math.abs(ratingDelta) >= 0.1 ? ` Rating ${ratingDelta >= 0 ? "up" : "down"} to ${curr.rating?.toFixed(1)}★.` : "";
-  return make(
-    comp,
-    weekOf,
-    "reviews",
-    Math.max(velMag, ratingMag),
-    `${velocity} new review${velocity === 1 ? "" : "s"} this week`,
-    `Total ${curr.reviewCount}.${ratingNote}`,
-  );
+
+  // Frame off review velocity only when reviews actually grew; otherwise it's a
+  // rating story (a velocity of 0 or fewer reviews must never read as "N new").
+  if (velocity > 0) {
+    return make(comp, weekOf, "reviews", Math.max(velMag, ratingMag), `${velocity} new review${velocity === 1 ? "" : "s"} this week`, `Total ${curr.reviewCount}.${ratingNote}`);
+  }
+  return make(comp, weekOf, "reviews", ratingMag, `Rating ${ratingDelta >= 0 ? "up" : "down"} to ${curr.rating?.toFixed(1)}★`, `Now ${curr.reviewCount} reviews.`);
 }
 
 function detectSocial(prev: CompetitorMetrics, curr: CompetitorMetrics, comp: CompetitorRef, weekOf: string): Movement | null {
   if (prev.instagramFollowers == null || curr.instagramFollowers == null) return null;
   const frac = pctChange(prev.instagramFollowers, curr.instagramFollowers);
-  if (frac < 0.05) return null;
-  const gained = curr.instagramFollowers - prev.instagramFollowers;
+  if (Math.abs(frac) < 0.05) return null; // surface notable losses too, not just gains
+  const delta = curr.instagramFollowers - prev.instagramFollowers;
+  const dir = delta >= 0 ? "up" : "down";
   return make(
     comp,
     weekOf,
     "social",
-    frac / 0.2,
-    `Instagram up ~${gained.toLocaleString("en")} followers`,
-    `+${asPct(frac)}% week-over-week, to ${curr.instagramFollowers.toLocaleString("en")}.`,
+    Math.abs(frac) / 0.2,
+    `Instagram ${dir} ~${Math.abs(delta).toLocaleString("en")} followers`,
+    `${asPct(frac) >= 0 ? "+" : ""}${asPct(frac)}% week-over-week, to ${curr.instagramFollowers.toLocaleString("en")}.`,
   );
 }
 
@@ -79,9 +81,9 @@ function detectSeo(prev: CompetitorMetrics, curr: CompetitorMetrics, comp: Compe
   let best: { kw: string; from: number; to: number; mag: number } | null = null;
   for (const [kw, to] of Object.entries(curr.seoRanks)) {
     const from = prev.seoRanks[kw];
-    if (from == null) continue;
+    if (from == null || from === to) continue; // only an actual rank change is a movement
     const moved = Math.abs(from - to);
-    const crossesTop = (from > 3 && to <= 3) || (from <= 3 && to > 3) || from === 1 || to === 1;
+    const crossesTop = (from > 3 && to <= 3) || (from <= 3 && to > 3) || to === 1 || from === 1;
     if (moved < 2 && !crossesTop) continue;
     const mag = Math.max(moved / 5, crossesTop ? 0.7 : 0);
     if (!best || mag > best.mag) best = { kw, from, to, mag };

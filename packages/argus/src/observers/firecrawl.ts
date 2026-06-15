@@ -88,6 +88,8 @@ export class FirecrawlObserver implements Observer {
       if (!res.ok) return {};
 
       const body = (await res.json()) as ScrapeResponse;
+      // Firecrawl can return HTTP 200 with success:false for a failed scrape.
+      if (body?.success === false) return {};
       const extracted = body?.data?.json ?? {};
       const metrics: CompetitorMetrics = { offers: asStringArray(extracted.offers), hiring: asStringArray(extracted.hiring) };
 

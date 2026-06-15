@@ -81,6 +81,25 @@ describe("detect — per-signal movements", () => {
     const m = detectMovements([snap({ reviewCount: 100 }, prevWeek)], [snap({ reviewCount: 100, avgRate: 9999 })], COMP, week);
     expect(m).toHaveLength(0);
   });
+
+  it("should NOT emit an SEO movement when the rank is unchanged (incl. pinned #1)", () => {
+    const pinned = detectMovements([snap({ seoRanks: { kw: 1 } }, prevWeek)], [snap({ seoRanks: { kw: 1 } })], COMP, week);
+    expect(pinned).toHaveLength(0);
+    const same = detectMovements([snap({ seoRanks: { kw: 5 } }, prevWeek)], [snap({ seoRanks: { kw: 5 } })], COMP, week);
+    expect(same).toHaveLength(0);
+  });
+
+  it("should frame a review drop as a rating story, never as negative 'new reviews'", () => {
+    const m = detectMovements(
+      [snap({ reviewCount: 120, rating: 4.6 }, prevWeek)],
+      [snap({ reviewCount: 118, rating: 4.3 })],
+      COMP,
+      week,
+    );
+    expect(m[0]?.type).toBe("reviews");
+    expect(m[0]?.headline).not.toContain("-");
+    expect(m[0]?.headline.toLowerCase()).toContain("rating");
+  });
 });
 
 describe("board — week-over-week deltas", () => {
@@ -119,6 +138,18 @@ describe("factCheck — briefing guard", () => {
   it("should fail an empty summary or malformed recommendation", () => {
     expect(factCheck("", [], facts).passed).toBe(false);
     expect(factCheck("Rival Co moved.", [{ action: "", rationale: "y" }], facts).passed).toBe(false);
+  });
+
+  it("should fail when the summary cites a figure not in the facts", () => {
+    const r = factCheck("Rival Co slashed rates to €99 — a 35% cut.", [{ action: "Hold", rationale: "Defend ADR." }], facts);
+    expect(r.passed).toBe(false);
+    expect(r.issues.join(" ")).toContain("figures not in the facts");
+  });
+
+  it("should allow figures that do appear in the facts", () => {
+    // "12%" is grounded in the movement headline "Cut rates -12%"; "#1" is a bare digit (not checked).
+    const r = factCheck("Rival Co cut rates 12% and reached #1.", [{ action: "Hold", rationale: "Defend ADR." }], facts);
+    expect(r.passed).toBe(true);
   });
 });
 
