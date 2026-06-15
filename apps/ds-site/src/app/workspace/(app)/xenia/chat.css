@@ -1,0 +1,217 @@
+/* Xenia chat surface — scoped .wx-*, inherits the --ws-* tokens from .ws-root. */
+
+.wx {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 720px;
+}
+
+.wx__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.wx__pick {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.wx__pick-label {
+  font-size: 0.78rem;
+  color: var(--ws-muted);
+}
+.wx__select {
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--ws-text);
+  background: var(--ws-surface);
+  border: 1px solid var(--ws-border);
+  border-radius: 9px;
+  padding: 7px 10px;
+  min-height: 36px;
+}
+.wx__select:focus-visible {
+  outline: 2px solid var(--ws-cta);
+  outline-offset: 1px;
+}
+
+.wx__status {
+  font-family: var(--ws-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--ws-border);
+  color: var(--ws-muted);
+}
+.wx__status.is-confirmed {
+  color: #7dd3a8;
+  border-color: rgba(125, 211, 168, 0.4);
+}
+.wx__status.is-handoff {
+  color: #ffb27d;
+  border-color: rgba(255, 178, 125, 0.4);
+}
+
+.wx__transcript {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 52vh;
+  min-height: 320px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 18px;
+  border: 1px solid var(--ws-border);
+  border-radius: var(--ws-radius);
+  background: var(--ws-surface);
+}
+
+.wx__hint {
+  margin: auto;
+  max-width: 42ch;
+  text-align: center;
+  color: var(--ws-ghost);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.wx__hint--sm {
+  margin: 8px auto 0;
+  font-size: 0.8rem;
+}
+
+/* Example conversation (placeholder) */
+.wx__example {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.wx__example-tag {
+  align-self: center;
+  font-family: var(--ws-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(245, 196, 81, 0.14);
+  border: 1px solid rgba(245, 196, 81, 0.3);
+  color: #f5c451;
+  margin-bottom: 4px;
+}
+.wx__bubble.is-example {
+  opacity: 0.82;
+}
+
+.wx__bubble {
+  max-width: 80%;
+  padding: 10px 13px;
+  border-radius: 14px;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.wx__bubble.is-user {
+  align-self: flex-end;
+  background: var(--ws-cta);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.wx__bubble.is-assistant {
+  align-self: flex-start;
+  background: var(--ws-surface-2);
+  border: 1px solid var(--ws-border);
+  color: var(--ws-text);
+  border-bottom-left-radius: 4px;
+}
+
+.wx__typing {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+}
+.wx__typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--ws-muted);
+  animation: wx-blink 1.2s var(--ws-ease) infinite;
+}
+.wx__typing span:nth-child(2) {
+  animation-delay: 0.18s;
+}
+.wx__typing span:nth-child(3) {
+  animation-delay: 0.36s;
+}
+@keyframes wx-blink {
+  0%, 60%, 100% {
+    opacity: 0.25;
+  }
+  30% {
+    opacity: 1;
+  }
+}
+
+.wx__error {
+  font-size: 0.85rem;
+  color: #ff8d8d;
+}
+
+.wx__composer {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+.wx__input {
+  flex: 1;
+  font: inherit;
+  font-size: 0.92rem;
+  color: var(--ws-text);
+  background: var(--ws-surface);
+  border: 1px solid var(--ws-border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  min-height: 46px;
+  max-height: 160px;
+  resize: vertical;
+  touch-action: manipulation;
+}
+.wx__input:focus-visible {
+  outline: 2px solid var(--ws-cta);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+.wx__send {
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: var(--ws-cta);
+  border: none;
+  border-radius: 12px;
+  padding: 0 18px;
+  min-height: 46px;
+  cursor: pointer;
+  transition: filter var(--ws-dur) var(--ws-ease), opacity var(--ws-dur) var(--ws-ease);
+}
+.wx__send:hover {
+  filter: brightness(1.08);
+}
+.wx__send:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.wx__send:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wx__typing span {
+    animation: none;
+  }
+}

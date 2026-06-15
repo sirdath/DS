@@ -13,8 +13,11 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@ds/aegis": "workspace:*",
+    "@ds/fama": "workspace:*",
     "@ds/tokens": "workspace:*",
     "@ds/ui": "workspace:*",
+    "@ds/xenia": "workspace:*",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.105.3",
     "cheerio": "^1.2.0",

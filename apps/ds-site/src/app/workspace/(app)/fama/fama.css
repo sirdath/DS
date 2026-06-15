@@ -1,0 +1,280 @@
+/* Fama report view — scoped .wf-*, inherits the --ws-* tokens from .ws-root. */
+
+.wf {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 820px;
+}
+
+.wf__stats {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.wf__rating {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.wf__rating-num {
+  font-size: 2.4rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.wf__rating-star {
+  font-size: 1.4rem;
+  color: #f5c451;
+}
+.wf__trend {
+  margin-left: 8px;
+  font-family: var(--ws-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ws-muted);
+}
+.wf__trend.is-down {
+  color: #ffb27d;
+}
+.wf__trend.is-up {
+  color: #7dd3a8;
+}
+.wf__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  align-items: center;
+  color: var(--ws-muted);
+  font-size: 0.85rem;
+}
+.wf__dot {
+  color: var(--ws-ghost);
+}
+
+.wf__summary {
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: var(--ws-text);
+  max-width: 70ch;
+}
+
+.wf__cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.wf__card,
+.wf__block {
+  padding: 20px;
+  border-radius: var(--ws-radius);
+  border: 1px solid var(--ws-border);
+  background: var(--ws-surface);
+}
+
+.wf__h3 {
+  font-size: 0.72rem;
+  font-family: var(--ws-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ws-muted);
+  margin-bottom: 14px;
+}
+
+/* Distribution bars */
+.wf__bar-row {
+  display: grid;
+  grid-template-columns: 28px 1fr 28px;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.wf__bar-label {
+  font-size: 0.8rem;
+  color: var(--ws-muted);
+  font-variant-numeric: tabular-nums;
+}
+.wf__bar-track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--ws-surface-2);
+  overflow: hidden;
+}
+.wf__bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--ws-cta), #6aa7ff);
+}
+.wf__bar-count {
+  font-size: 0.8rem;
+  color: var(--ws-muted);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.wf__sentiment {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+.wf__chip {
+  font-size: 0.72rem;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--ws-border);
+  color: var(--ws-muted);
+  font-variant-numeric: tabular-nums;
+}
+.wf__chip.is-pos {
+  color: #7dd3a8;
+  border-color: rgba(125, 211, 168, 0.35);
+}
+.wf__chip.is-neg {
+  color: #ff8d8d;
+  border-color: rgba(255, 141, 141, 0.35);
+}
+
+/* Themes table */
+.wf__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.wf__table th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--ws-ghost);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--ws-border);
+}
+.wf__table td {
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(154, 166, 174, 0.07);
+}
+.wf__num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.wf__num.is-up {
+  color: #7dd3a8;
+}
+.wf__num.is-down {
+  color: #ffb27d;
+}
+
+/* Strengths / issues lists */
+.wf__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.wf__list > li {
+  padding-left: 12px;
+  border-left: 2px solid var(--ws-border);
+}
+.wf__theme {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.wf__mentions {
+  margin-left: 8px;
+  font-size: 0.75rem;
+  color: var(--ws-ghost);
+  font-variant-numeric: tabular-nums;
+}
+.wf__quote {
+  margin-top: 5px;
+  color: var(--ws-muted);
+  font-size: 0.9rem;
+  font-style: italic;
+}
+.wf__impact {
+  margin-top: 5px;
+  color: var(--ws-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.wf__fix {
+  margin-top: 6px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.wf__fix-label {
+  font-family: var(--ws-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7dd3a8;
+  margin-right: 6px;
+}
+
+/* Priorities */
+.wf__priorities {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.wf__priorities > li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.wf__rank {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--ws-cta);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.wf__action {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.wf__rationale {
+  margin-top: 3px;
+  color: var(--ws-muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+/* Reply queue */
+.wf__replies {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.wf__reply-sum {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.wf__reply-draft {
+  margin-top: 5px;
+  padding: 10px 13px;
+  border-left: 2px solid var(--ws-cta);
+  background: var(--ws-surface-2);
+  border-radius: 0 10px 10px 0;
+  color: var(--ws-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.wf__foot {
+  font-family: var(--ws-mono);
+  font-size: 0.7rem;
+  color: var(--ws-ghost);
+}

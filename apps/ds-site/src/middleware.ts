@@ -235,6 +235,62 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
+  // ── Branch 3: Workspace gate (logged-in tools dashboard) ──────────────────
+  // Any authenticated Supabase user may enter /workspace; the page resolves
+  // their role (internal founder vs client). /workspace/login is exempt. Same
+  // fail-closed-in-production / pass-through-in-keyless-dev behaviour as admin.
+  const isWorkspacePath = pathname === '/workspace' || pathname.startsWith('/workspace/')
+
+  if (isWorkspacePath) {
+    const normalizedPath =
+      pathname.length > 1 && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname
+
+    if (normalizedPath === '/workspace/login') {
+      return NextResponse.next()
+    }
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      if (process.env.NODE_ENV === 'production') {
+        const loginUrl = new URL('/workspace/login/', request.url)
+        loginUrl.searchParams.set('redirect', pathname)
+        return NextResponse.redirect(loginUrl)
+      }
+      return NextResponse.next()
+    }
+
+    let response = NextResponse.next({ request })
+
+    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+          response = NextResponse.next({ request })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options),
+          )
+        },
+      },
+    })
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      const loginUrl = new URL('/workspace/login/', request.url)
+      loginUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
+
+    return response
+  }
+
   // ── All other paths: pass through ─────────────────────────────────────────
   return NextResponse.next()
 }
@@ -249,5 +305,7 @@ export const config = {
     '/admin/:path*',
     '/$ecretAnalytics',
     '/$ecretAnalytics/:path*',
+    '/workspace',
+    '/workspace/:path*',
   ],
 }
