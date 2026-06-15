@@ -54,6 +54,33 @@
   color: var(--pv-muted) !important;
 }
 
+/* ── WebGL / map-load failure overlay ─────────────────────────────────────── */
+.pv-map-error {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 32px;
+  text-align: center;
+  background: rgba(8, 9, 11, 0.86);
+  backdrop-filter: blur(2px);
+}
+.pv-map-error__title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--pv-text, #e8eaed);
+}
+.pv-map-error__body {
+  max-width: 46ch;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--pv-muted, #9aa6ae);
+}
+
 /* ── Empty-state card ─────────────────────────────────────────────────────── */
 .pv-empty {
   position: absolute;

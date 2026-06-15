@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@ds/aegis": "workspace:*",
+    "@ds/argus": "workspace:*",
     "@ds/fama": "workspace:*",
     "@ds/plutus": "workspace:*",
     "@ds/tokens": "workspace:*",

@@ -48,7 +48,8 @@ export function Chat({ samples }: { samples: SampleOption[] }) {
   const bubbles: Bubble[] = pendingUser ? [...history, { role: 'user', text: pendingUser }] : history
 
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
+    const reduce = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: reduce ? 'auto' : 'smooth' })
   }, [bubbles.length, busy])
 
   function reset(nextSample: string) {
@@ -151,16 +152,19 @@ export function Chat({ samples }: { samples: SampleOption[] }) {
       ) : null}
 
       <div className="wx__composer">
+        <label className="ws-sr-only" htmlFor="wx-input">
+          Message Xenia
+        </label>
         <textarea
+          id="wx-input"
           className="wx__input"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={onKeyDown}
           rows={1}
           placeholder="Message Xenia…"
-          aria-label="Message Xenia"
         />
-        <button className="wx__send" onClick={() => void send()} disabled={busy || input.trim() === ''}>
+        <button className="wx__send" onClick={() => void send()} disabled={busy} aria-busy={busy}>
           Send
         </button>
       </div>

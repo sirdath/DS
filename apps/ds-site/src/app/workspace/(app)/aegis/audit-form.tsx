@@ -43,12 +43,22 @@ function ScoreCard({ s }: { s: CategoryScore }) {
   )
 }
 
+const RATING_LABEL: Record<string, string> = {
+  good: 'good',
+  'needs-improvement': 'needs improvement',
+  poor: 'poor',
+}
+
 function Vital({ v }: { v: WebVital }) {
   return (
     <div className="wg-vital">
       <span className="wg-vital__dot" style={{ background: RATING_COLOR[v.rating] }} aria-hidden />
       <span className="wg-vital__label">{v.label}</span>
       <span className="wg-vital__value">{v.displayValue || 'n/a'}</span>
+      {/* Visible text label so status is never conveyed by the dot colour alone. */}
+      <span className="wg-vital__rating" data-rating={v.rating}>
+        {RATING_LABEL[v.rating] ?? v.rating}
+      </span>
     </div>
   )
 }
@@ -155,8 +165,12 @@ export function AuditForm() {
   const [report, setReport] = useState<AegisReport | null>(null)
 
   async function run() {
+    if (busy) return
     const target = url.trim()
-    if (!target || busy) return
+    if (!target) {
+      setError('Enter a website address to audit.')
+      return
+    }
     setBusy(true)
     setError(null)
     try {
@@ -185,7 +199,11 @@ export function AuditForm() {
   return (
     <div className="wg-shell">
       <div className="wg-form">
+        <label className="ws-sr-only" htmlFor="wg-url">
+          Website address to audit
+        </label>
         <input
+          id="wg-url"
           className="wg-input"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
@@ -194,20 +212,23 @@ export function AuditForm() {
           inputMode="url"
           autoComplete="off"
           spellCheck={false}
-          placeholder="example.com"
-          aria-label="Website address to audit"
+          placeholder="e.g. example.com"
         />
+        <label className="ws-sr-only" htmlFor="wg-device">
+          Device
+        </label>
         <select
+          id="wg-device"
           className="wg-strategy"
           value={strategy}
           onChange={(e) => setStrategy(e.target.value === 'desktop' ? 'desktop' : 'mobile')}
-          aria-label="Device"
         >
           <option value="mobile">Mobile</option>
           <option value="desktop">Desktop</option>
         </select>
-        <button className="wg-run" onClick={() => void run()} disabled={busy || url.trim() === ''}>
-          {busy ? 'Auditing…' : 'Run audit'}
+        <button className="wg-run" onClick={() => void run()} disabled={busy} aria-busy={busy}>
+          Run audit
+          {busy ? <span className="wg-run__spin" aria-hidden /> : null}
         </button>
       </div>
 

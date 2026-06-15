@@ -1,32 +1,35 @@
-import { formatMoney, getSample, InMemorySource, runDailyCycle, SAMPLE_TODAY, type AgeingBucket } from '@ds/plutus'
+import { formatMoney, runDailyCycle, type AgeingBucket } from '@ds/plutus'
 import Link from 'next/link'
 import { ApprovalQueue, type QueueVM } from './approval-queue'
 import { DEMO_DRAFTS } from './demo-drafts'
+import { ImportPanel } from './import-panel'
+import { loadPlutusContext } from './lib/plutus-context'
 import './plutus.css'
 
 const BUCKETS: AgeingBucket[] = ['current', '1-30', '31-60', '61-90', '90+']
 const BAND_CLASS: Record<string, string> = { low: 'is-low', medium: 'is-medium', high: 'is-high', severe: 'is-severe' }
 
 export default async function PlutusWorkspacePage() {
-  const t = getSample()
-  const source = new InMemorySource({ customers: t.customers, invoices: t.invoices, payments: t.payments })
-  // Computed live from the engine, scan-only — no key needed.
+  const ctx = await loadPlutusContext()
+  // Computed live from the engine, scan-only — no key needed for the read.
   const result = await runDailyCycle({
-    tenantId: t.tenantId,
-    business: t.business,
-    source,
-    sequences: t.sequences,
-    today: SAMPLE_TODAY,
+    tenantId: ctx.tenantId,
+    business: ctx.business,
+    source: ctx.source,
+    sequences: ctx.sequences,
+    today: ctx.today,
+    priorEvents: ctx.priorEvents,
     scanOnly: true,
   })
   const { snapshot, priority, queue } = result
   const cur = snapshot.currency
   const k = snapshot.kpis
-  const nameById = new Map(t.customers.map((c) => [c.id, c.name]))
+  const nameById = new Map(ctx.customers.map((c) => [c.id, c.name]))
 
   const queueVM: QueueVM[] = queue.map((q) => {
     const f = q.step.facts
-    const draft = DEMO_DRAFTS[q.step.invoiceId]
+    // Real drafts come from the cycle route + outbox; the demo uses the bundled examples.
+    const draft = ctx.isReal ? undefined : DEMO_DRAFTS[q.step.invoiceId]
     return {
       invoiceId: q.step.invoiceId,
       customerName: f.customerName,
@@ -54,13 +57,24 @@ export default async function PlutusWorkspacePage() {
         </p>
       </div>
 
-      <div className="ws-demo-banner">
-        <span className="ws-demo-banner__tag">Example</span>
-        <span className="ws-demo-banner__text">
-          A demo business&rsquo;s receivables — computed live by the engine. Connect a client&rsquo;s invoices to make
-          it real.
-        </span>
-      </div>
+      {ctx.isReal ? (
+        <div className="ws-demo-banner" data-live="true">
+          <span className="ws-demo-banner__tag">Live</span>
+          <span className="ws-demo-banner__text">
+            Your receivables — computed live by the engine. Import an updated CSV any time to refresh.
+          </span>
+        </div>
+      ) : (
+        <div className="ws-demo-banner">
+          <span className="ws-demo-banner__tag">Example</span>
+          <span className="ws-demo-banner__text">
+            A demo business&rsquo;s receivables — computed live by the engine. Import your own invoices below to make it
+            real.
+          </span>
+        </div>
+      )}
+
+      <ImportPanel />
 
       {/* KPIs */}
       <div className="wp-kpis">
@@ -123,7 +137,7 @@ export default async function PlutusWorkspacePage() {
                 return (
                   <tr key={p.customerId}>
                     <td>{p.rank}</td>
-                    <td translate="no">{nameById.get(p.customerId) ?? p.customerId}</td>
+                    <td translate="no">{nameById.get(p.customerId) ?? 'Unknown customer'}</td>
                     <td>
                       <span className={`wp-band ${BAND_CLASS[p.risk.band] ?? ''}`}>
                         {p.risk.band} {p.risk.score}

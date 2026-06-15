@@ -1,8 +1,17 @@
+import {
+  ExampleObserver,
+  formatMoney,
+  getSample,
+  runWeeklyBriefing,
+  type BoardRow,
+  type Movement,
+  type MovementType,
+} from '@ds/argus'
 import Link from 'next/link'
-import { DEMO_ARGUS, type ArgusCompetitor, type ArgusMovement } from './demo-data'
+import { DEMO_BRIEFING_PROSE } from './demo-data'
 import './argus.css'
 
-const TYPE_LABEL: Record<ArgusMovement['type'], string> = {
+const TYPE_LABEL: Record<MovementType, string> = {
   pricing: 'Pricing',
   offer: 'Offer',
   content: 'Content',
@@ -12,15 +21,19 @@ const TYPE_LABEL: Record<ArgusMovement['type'], string> = {
   hiring: 'Hiring',
 }
 
-function MovementRow({ m }: { m: ArgusMovement }) {
+function MovementRow({ m }: { m: Movement }) {
   return (
     <li className={`wr-move is-${m.impact}`}>
       <span className="wr-move__rail" aria-hidden />
       <div className="wr-move__body">
         <div className="wr-move__top">
           <span className="wr-move__type">{TYPE_LABEL[m.type]}</span>
-          <span className="wr-move__comp">{m.competitor}</span>
-          <span className="wr-move__date">{m.date}</span>
+          <span className="wr-move__comp" translate="no">
+            {m.competitorName}
+          </span>
+          <span className="wr-move__impact" data-impact={m.impact}>
+            {m.impact}
+          </span>
         </div>
         <p className="wr-move__headline">{m.headline}</p>
         <p className="wr-move__detail">{m.detail}</p>
@@ -34,29 +47,52 @@ function delta(n: number, suffix = '%'): string {
   return `${n > 0 ? '+' : ''}${n}${suffix}`
 }
 
-function CompetitorRow({ c }: { c: ArgusCompetitor }) {
+function CompetitorRow({ c }: { c: BoardRow }) {
   return (
     <tr>
       <td>
-        <span className="wr-comp-name">{c.name}</span>
+        <span className="wr-comp-name" translate="no">
+          {c.name}
+        </span>
         {c.note ? <span className="wr-comp-note">{c.note}</span> : null}
       </td>
       <td className="wr-num">
-        {c.avgRate} <span className={`wr-delta ${c.rateDelta < 0 ? 'is-down' : c.rateDelta > 0 ? 'is-up' : ''}`}>{delta(c.rateDelta)}</span>
+        {c.avgRate != null ? formatMoney(c.avgRate, c.currency) : '—'}{' '}
+        <span className={`wr-delta ${c.rateDeltaPct < 0 ? 'is-down' : c.rateDeltaPct > 0 ? 'is-up' : ''}`}>{delta(c.rateDeltaPct)}</span>
       </td>
-      <td className="wr-num">{c.rating.toFixed(1)}★</td>
-      <td className="wr-num">{c.reviews}</td>
-      <td className="wr-num">+{c.velocity}</td>
+      <td className="wr-num">{c.rating != null ? `${c.rating.toFixed(1)}★` : '—'}</td>
+      <td className="wr-num">{c.reviewCount ?? '—'}</td>
+      <td className="wr-num">+{c.reviewVelocity}</td>
       <td className="wr-num">
-        {c.instagram} <span className={`wr-delta ${c.followerDelta > 0 ? 'is-up' : ''}`}>{delta(c.followerDelta, 'k')}</span>
+        {c.instagramFollowers != null ? c.instagramFollowers.toLocaleString('en') : '—'}{' '}
+        <span className={`wr-delta ${c.followerDeltaPct > 0 ? 'is-up' : ''}`}>{delta(c.followerDeltaPct)}</span>
       </td>
     </tr>
   )
 }
 
-export default function ArgusWorkspacePage() {
-  const a = DEMO_ARGUS
-  const highCount = a.movements.filter((m) => m.impact === 'high').length
+export default async function ArgusWorkspacePage() {
+  const s = getSample()
+  // Movements + board are computed live by the engine (scan-only — no key needed).
+  const { briefing } = await runWeeklyBriefing({
+    business: s.business,
+    competitors: s.competitors,
+    observer: new ExampleObserver(s.currMetrics),
+    prevSnapshots: s.prevSnapshots,
+    weekOf: s.weekOf,
+    scanOnly: true,
+  })
+
+  // Prose is the bundled example until a per-client observer + key are wired.
+  const summary = briefing.summary || DEMO_BRIEFING_PROSE.summary
+  const recommendations = briefing.recommendations.length ? briefing.recommendations : DEMO_BRIEFING_PROSE.recommendations
+  const highCount = briefing.movements.filter((m) => m.impact === 'high').length
+  const weekLabel = new Date(`${briefing.weekOf}T00:00:00Z`).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
 
   return (
     <>
@@ -68,41 +104,42 @@ export default function ArgusWorkspacePage() {
         <span className="ws-head__eyebrow">Argus · Competitor watch</span>
         <h1 className="ws-head__title">This week&rsquo;s movements</h1>
         <p className="ws-head__sub">
-          Argus watches your competitors — rates, offers, content, search, social and reviews — and surfaces what
-          changed and what to do about it. One briefing a week.
+          Argus watches your competitors — rates, offers, content, search, social and reviews — detects what changed
+          week-over-week, and tells you what to do about it. One briefing a week.
         </p>
       </div>
 
       <div className="ws-demo-banner">
         <span className="ws-demo-banner__tag">Preview</span>
         <span className="ws-demo-banner__text">
-          Example briefing for a demo hotel — the scraper isn&rsquo;t wired yet; this is how Argus will look.
+          Movements &amp; the board are computed live by the engine from a demo hotel&rsquo;s metrics; the briefing prose
+          is an example. Connect a client&rsquo;s competitors to make it real.
         </span>
       </div>
 
       <div className="wr">
         <div className="wr-bar">
           <span>
-            <strong translate="no">{a.business}</strong> · {a.location}
+            <strong translate="no">{briefing.business}</strong> · {briefing.location}
           </span>
           <span className="wr-dot">·</span>
-          <span>{a.competitor_count} competitors</span>
+          <span>{briefing.competitorCount} competitors</span>
           <span className="wr-dot">·</span>
-          <span>{a.week_of}</span>
+          <span>week of {weekLabel}</span>
           {highCount > 0 ? <span className="wr-flag">{highCount} to act on</span> : null}
         </div>
 
         <section className="wr-card wr-brief">
           <h3 className="wr-h3">The briefing</h3>
-          <p>{a.summary}</p>
+          <p>{summary}</p>
         </section>
 
         <div className="wr-cols">
           <section className="wr-card wr-feed">
             <h3 className="wr-h3">Movements</h3>
             <ul className="wr-moves">
-              {a.movements.map((m, i) => (
-                <MovementRow key={i} m={m} />
+              {briefing.movements.map((m, i) => (
+                <MovementRow key={`${m.competitorId}-${m.type}-${i}`} m={m} />
               ))}
             </ul>
           </section>
@@ -110,7 +147,7 @@ export default function ArgusWorkspacePage() {
           <section className="wr-card wr-side">
             <h3 className="wr-h3">Do this next</h3>
             <ol className="wr-recs">
-              {a.recommendations.map((r, i) => (
+              {recommendations.map((r, i) => (
                 <li key={i}>
                   <span className="wr-rank">{i + 1}</span>
                   <div>
@@ -138,8 +175,8 @@ export default function ArgusWorkspacePage() {
                 </tr>
               </thead>
               <tbody>
-                {a.competitors.map((c) => (
-                  <CompetitorRow key={c.url} c={c} />
+                {briefing.board.map((c) => (
+                  <CompetitorRow key={c.competitorId} c={c} />
                 ))}
               </tbody>
             </table>
