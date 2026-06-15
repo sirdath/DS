@@ -37,6 +37,9 @@
   min-height: 46px;
 }
 .wg-run {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font: inherit;
   font-weight: 600;
   color: #1a1400;
@@ -47,6 +50,24 @@
   min-height: 46px;
   cursor: pointer;
   transition: filter var(--ws-dur) var(--ws-ease), opacity var(--ws-dur) var(--ws-ease);
+}
+.wg-run__spin {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(26, 20, 0, 0.3);
+  border-top-color: #1a1400;
+  animation: wg-spin 0.6s linear infinite;
+}
+@keyframes wg-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wg-run__spin {
+    animation-duration: 1.4s;
+  }
 }
 .wg-run:hover {
   filter: brightness(1.06);

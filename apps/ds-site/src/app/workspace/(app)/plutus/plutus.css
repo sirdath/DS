@@ -2,14 +2,9 @@
 
 .wp-kpis {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 14px;
   margin-bottom: 16px;
-}
-@media (max-width: 680px) {
-  .wp-kpis {
-    grid-template-columns: 1fr;
-  }
 }
 .wp-kpi {
   padding: 18px;
@@ -255,6 +250,11 @@
 }
 .wp-btn:hover {
   border-color: var(--ws-border-hover);
+}
+@media (pointer: coarse) {
+  .wp-btn {
+    min-height: 44px;
+  }
 }
 .wp-btn:focus-visible {
   outline: 2px solid var(--ws-cta);

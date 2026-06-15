@@ -35,7 +35,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 16px 24px;
+  padding: 16px max(24px, env(safe-area-inset-right)) 16px max(24px, env(safe-area-inset-left));
   border-bottom: 1px solid var(--ws-border);
   background: rgba(10, 13, 15, 0.7);
   backdrop-filter: blur(12px) saturate(120%);
@@ -114,7 +114,27 @@
 .ws-main {
   max-width: 1040px;
   margin: 0 auto;
-  padding: 40px 24px 64px;
+  padding: 40px max(24px, env(safe-area-inset-right)) 64px max(24px, env(safe-area-inset-left));
+}
+
+/* Screen-reader-only utility — text present for AT, removed from the visual flow. */
+.ws-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Touch ergonomics: secondary controls reach the 44px mobile floor (WAI hit target). */
+@media (pointer: coarse) {
+  .ws-signout {
+    min-height: 44px;
+  }
 }
 
 .ws-head {

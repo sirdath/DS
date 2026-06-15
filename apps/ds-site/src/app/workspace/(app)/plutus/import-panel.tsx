@@ -65,8 +65,8 @@ export function ImportPanel() {
       </p>
 
       <div className="wp-import__row">
-        <label className="wp-btn is-approve wp-import__btn">
-          {busy ? 'Working…' : 'Choose CSV file'}
+        <label className="wp-btn is-approve wp-import__btn" aria-busy={busy}>
+          Choose CSV file
           <input
             ref={inputRef}
             type="file"
