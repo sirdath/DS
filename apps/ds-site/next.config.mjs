@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ["@ds/ui", "@ds/tokens", "@ds/xenia", "@ds/aegis"],
+  transpilePackages: ["@ds/ui", "@ds/tokens", "@ds/xenia", "@ds/aegis", "@ds/plutus"],
   trailingSlash: true,
   // Serve the Samioglou client site (a separate static Vercel deployment) under
   // ds2-consulting.com/samioglou via a transparent proxy rewrite. trailingSlash:true

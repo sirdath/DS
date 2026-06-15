@@ -5,7 +5,13 @@
  */
 
 export interface ToolCard {
-  slug: 'review-intelligence' | 'site-selection' | 'ai-receptionist' | 'competitor-watch' | 'site-audit'
+  slug:
+    | 'review-intelligence'
+    | 'site-selection'
+    | 'ai-receptionist'
+    | 'competitor-watch'
+    | 'site-audit'
+    | 'collections'
   name: string
   tagline: string
   href: string | null // null → not yet openable
@@ -21,6 +27,14 @@ export const TOOLS: ToolCard[] = [
     href: '/workspace/xenia',
     status: 'ready',
     accent: '#60C4A8',
+  },
+  {
+    slug: 'collections',
+    name: 'Plutus',
+    tagline: 'Collections — predicts which invoices pay late, ranks who to chase, drafts the reminder (you approve).',
+    href: '/workspace/plutus',
+    status: 'ready',
+    accent: '#2ec5a8',
   },
   {
     slug: 'review-intelligence',

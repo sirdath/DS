@@ -15,6 +15,7 @@
   "dependencies": {
     "@ds/aegis": "workspace:*",
     "@ds/fama": "workspace:*",
+    "@ds/plutus": "workspace:*",
     "@ds/tokens": "workspace:*",
     "@ds/ui": "workspace:*",
     "@ds/xenia": "workspace:*",
