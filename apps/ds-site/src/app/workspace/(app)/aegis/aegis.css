@@ -185,6 +185,28 @@
   font-variant-numeric: tabular-nums;
   color: var(--ws-text);
 }
+.wg-vital__rating {
+  font-family: var(--ws-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--ws-border);
+  white-space: nowrap;
+}
+.wg-vital__rating[data-rating='good'] {
+  color: #7dd3a8;
+  border-color: rgba(125, 211, 168, 0.4);
+}
+.wg-vital__rating[data-rating='needs-improvement'] {
+  color: #f5c451;
+  border-color: rgba(245, 196, 81, 0.4);
+}
+.wg-vital__rating[data-rating='poor'] {
+  color: #ff8d8d;
+  border-color: rgba(255, 141, 141, 0.45);
+}
 
 .wg__verdict {
   font-size: 1.02rem;

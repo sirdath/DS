@@ -55,8 +55,10 @@ function Vital({ v }: { v: WebVital }) {
       <span className="wg-vital__dot" style={{ background: RATING_COLOR[v.rating] }} aria-hidden />
       <span className="wg-vital__label">{v.label}</span>
       <span className="wg-vital__value">{v.displayValue || 'n/a'}</span>
-      {/* Status is conveyed by the dot's colour; name it in text too (never colour alone). */}
-      <span className="ws-sr-only">{RATING_LABEL[v.rating] ?? v.rating}</span>
+      {/* Visible text label so status is never conveyed by the dot colour alone. */}
+      <span className="wg-vital__rating" data-rating={v.rating}>
+        {RATING_LABEL[v.rating] ?? v.rating}
+      </span>
     </div>
   )
 }
