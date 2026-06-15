@@ -110,6 +110,32 @@
   background: var(--ws-surface-2);
 }
 
+.ws-admin-link {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.82rem;
+  color: var(--ws-muted);
+  text-decoration: none;
+  border: 1px solid var(--ws-border);
+  border-radius: 9px;
+  padding: 7px 12px;
+  min-height: 36px;
+  transition: color var(--ws-dur) var(--ws-ease), border-color var(--ws-dur) var(--ws-ease);
+}
+.ws-admin-link:hover {
+  color: var(--ws-text);
+  border-color: var(--ws-border-hover);
+}
+.ws-admin-link:focus-visible {
+  outline: 2px solid var(--ws-cta);
+  outline-offset: 1px;
+}
+@media (pointer: coarse) {
+  .ws-admin-link {
+    min-height: 44px;
+  }
+}
+
 /* ── Main + launcher ────────────────────────────────────────────────────── */
 .ws-main {
   max-width: 1040px;

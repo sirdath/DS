@@ -16,6 +16,11 @@ export default async function WorkspaceAppLayout({ children }: { children: React
         </Link>
 
         <div className="ws-topbar__right">
+          {session.role === 'internal' ? (
+            <Link href="/admin" className="ws-admin-link">
+              ← Admin
+            </Link>
+          ) : null}
           <span className="ws-role" data-role={session.role}>
             {session.role === 'internal' ? 'Internal' : 'Client'}
           </span>

@@ -13,6 +13,27 @@ import { zoneColor } from './zones-palette'
 // MapLibre + h3-js are loaded only client-side
 import type maplibregl from 'maplibre-gl'
 
+/**
+ * MapLibre needs a WebGL context. Some browsers ship with hardware acceleration
+ * off, a blocklisted GPU, or a privacy extension that disables WebGL — there the
+ * map constructor throws and the canvas stays blank. Detect it up front so we can
+ * show a real message + recovery path instead of an empty box (and so "works for
+ * one person, blank for another" stops being a silent mystery).
+ */
+function detectWebGL(): boolean {
+  if (typeof document === 'undefined') return true
+  try {
+    const canvas = document.createElement('canvas')
+    const gl =
+      canvas.getContext('webgl2') ||
+      canvas.getContext('webgl') ||
+      canvas.getContext('experimental-webgl')
+    return Boolean(gl)
+  } catch {
+    return false
+  }
+}
+
 // ── Color ramp stops (ordered low → high) ─────────────────────────────────
 const COLOR_STOPS = [
   '#1f2937',
@@ -276,6 +297,7 @@ export function MapView({
   const markersRef = useRef<maplibregl.Marker[]>([])
   const recMarkersRef = useRef<maplibregl.Marker[]>([])
   const isInitializedRef = useRef(false)
+  const [mapError, setMapError] = useState<string | null>(null)
   const [recPopup, setRecPopup] = useState<RecPopupState>({
     visible: false,
     x: 0,
@@ -332,13 +354,23 @@ export function MapView({
     let disposed = false
     let resizeObserver: ResizeObserver | null = null
 
-    void (async () => {
-      const [maplibre, h3] = await Promise.all([
-        import('maplibre-gl'),
-        import('h3-js'),
-      ])
+    if (!detectWebGL()) {
+      isInitializedRef.current = false
+      setMapError(
+        'This browser couldn’t start the map — WebGL appears to be unavailable. Turn on hardware acceleration (or disable a privacy/anti-fingerprint extension for this site), then reload. Chrome or Safari usually work out of the box.',
+      )
+      return
+    }
+    setMapError(null)
 
-      if (disposed || !containerRef.current) return
+    void (async () => {
+      try {
+        const [maplibre, h3] = await Promise.all([
+          import('maplibre-gl'),
+          import('h3-js'),
+        ])
+
+        if (disposed || !containerRef.current) return
 
       let minLat = Infinity, maxLat = -Infinity
       let minLon = Infinity, maxLon = -Infinity
@@ -391,6 +423,12 @@ export function MapView({
       })
 
       mapRef.current = map
+
+      // Surface runtime failures (tile/style/network) for diagnosis without
+      // tearing down a map that's otherwise usable — these are often transient.
+      map.on('error', (e: { error?: { message?: string } }) => {
+        if (typeof console !== 'undefined') console.warn('[panoptes] map error:', e?.error?.message ?? e)
+      })
 
       // Keep the GL canvas matched to its container. MapLibre reads the size on
       // construction; if the container settles a frame later (route transition,
@@ -551,6 +589,16 @@ export function MapView({
           setRecPopup({ visible: false, x: 0, y: 0, rec: null })
         })
       })
+      } catch (err) {
+        // Most often a WebGL/context failure that slipped past detectWebGL().
+        isInitializedRef.current = false
+        if (!disposed) {
+          setMapError(
+            'The map failed to load in this browser. Try enabling hardware acceleration, disabling extensions that block WebGL, or opening the page in Chrome or Safari.',
+          )
+        }
+        if (typeof console !== 'undefined') console.error('[panoptes] map init failed:', err)
+      }
     })()
 
     return () => {
@@ -654,6 +702,13 @@ export function MapView({
   return (
     <div style={{ position: 'absolute', inset: 0 }}>
       <div ref={containerRef} className="pv-map" aria-label="Panoptes map" />
+
+      {mapError ? (
+        <div className="pv-map-error" role="alert">
+          <p className="pv-map-error__title">Map couldn’t load</p>
+          <p className="pv-map-error__body">{mapError}</p>
+        </div>
+      ) : null}
 
       {activeMetric === 'zones' ? (
         <ZoneLegend entries={zoneLegendEntries} />
