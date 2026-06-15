@@ -37,6 +37,9 @@ export type { RawUsage } from "./client";
 
 export { renderReport } from "./report";
 
+export { parseInvoicesCsv, parseMoney, parseDate } from "./csv";
+export type { CsvImportResult, CsvImportOptions } from "./csv";
+
 export {
   SAMPLE_TENANT,
   SAMPLE_TODAY,
