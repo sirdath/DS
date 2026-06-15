@@ -29,8 +29,15 @@ export function clientIp(req: Request): string {
 }
 
 export function sameOrigin(req: Request): boolean {
+  // Prefer the Fetch-Metadata signal when present (modern browsers send it on
+  // every request); same-origin/none pass, same-site/cross-site fail.
+  const secFetchSite = req.headers.get('sec-fetch-site')
+  if (secFetchSite) return secFetchSite === 'same-origin' || secFetchSite === 'none'
+
+  // Fallback for older clients: require a matching Origin. These are
+  // state-changing POSTs, so an entirely absent Origin is rejected (not allowed).
   const origin = req.headers.get('origin')
-  if (!origin) return true
+  if (!origin) return false
   try {
     return new URL(origin).host === req.headers.get('host')
   } catch {

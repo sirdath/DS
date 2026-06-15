@@ -137,7 +137,7 @@ export default async function PlutusWorkspacePage() {
                 return (
                   <tr key={p.customerId}>
                     <td>{p.rank}</td>
-                    <td translate="no">{nameById.get(p.customerId) ?? p.customerId}</td>
+                    <td translate="no">{nameById.get(p.customerId) ?? 'Unknown customer'}</td>
                     <td>
                       <span className={`wp-band ${BAND_CLASS[p.risk.band] ?? ''}`}>
                         {p.risk.band} {p.risk.score}

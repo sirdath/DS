@@ -34,7 +34,12 @@ export async function upsertReceivables(
 
 export async function insertAuditEvents(db: SupabaseClient, userId: string, events: AuditEvent[]): Promise<void> {
   if (!events.length) return
-  const { error } = await db.from('plutus_audit').insert(events.map((e) => auditEventToRow(userId, e)))
+  // Append-only, but idempotent on (user_id, idempotency_key, type): a cycle re-run
+  // won't duplicate a keyed marker. Un-keyed events have distinct NULL keys, so they
+  // always insert. ignoreDuplicates keeps this a pure INSERT (allowed by RLS).
+  const { error } = await db
+    .from('plutus_audit')
+    .upsert(events.map((e) => auditEventToRow(userId, e)), { onConflict: 'user_id,idempotency_key,type', ignoreDuplicates: true })
   if (error) throw new Error(`audit insert failed: ${error.message}`)
 }
 
@@ -66,11 +71,12 @@ export async function syncOutbox(db: SupabaseClient, userId: string, queue: Queu
 
   for (const q of queue) {
     if (!q.draft) continue
-    await db
+    const { error: refreshError } = await db
       .from('plutus_outbox')
       .update({ subject: q.draft.subject, body: q.draft.body, body_hash: q.draft.bodyHash })
       .eq('user_id', userId)
       .eq('idempotency_key', q.step.idempotencyKey)
       .eq('status', 'pending')
+    if (refreshError) throw new Error(`outbox draft refresh failed: ${refreshError.message}`)
   }
 }

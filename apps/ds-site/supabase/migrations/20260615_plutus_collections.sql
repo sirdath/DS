@@ -54,7 +54,11 @@ create table public.plutus_invoices (
   amount_written_off  bigint,
   created_at          timestamptz not null default now(),
   updated_at          timestamptz not null default now(),
-  primary key (user_id, invoice_id)
+  primary key (user_id, invoice_id),
+  -- Intra-tenant integrity: an invoice's customer must exist (same tenant).
+  -- on delete cascade keeps the existing user-level cascade clean (RESTRICT would
+  -- fail mid-cascade when an auth.users row is deleted).
+  foreign key (user_id, customer_id) references public.plutus_customers (user_id, customer_id) on delete cascade
 );
 
 create index plutus_invoices_customer_idx on public.plutus_invoices (user_id, customer_id);
@@ -70,7 +74,9 @@ create table public.plutus_payments (
   method       text check (method in ('transfer', 'card', 'cash', 'cheque', 'other')),
   reference    text,
   created_at   timestamptz not null default now(),
-  primary key (user_id, payment_id)
+  primary key (user_id, payment_id),
+  foreign key (user_id, invoice_id) references public.plutus_invoices (user_id, invoice_id) on delete cascade,
+  foreign key (user_id, customer_id) references public.plutus_customers (user_id, customer_id) on delete cascade
 );
 
 create index plutus_payments_invoice_idx on public.plutus_payments (user_id, invoice_id);
@@ -108,7 +114,9 @@ create table public.plutus_outbox (
   decided_by       uuid references auth.users (id),
   sent_at          timestamptz,
   created_at       timestamptz not null default now(),
-  updated_at       timestamptz not null default now()
+  updated_at       timestamptz not null default now(),
+  foreign key (user_id, invoice_id) references public.plutus_invoices (user_id, invoice_id) on delete cascade,
+  foreign key (user_id, customer_id) references public.plutus_customers (user_id, customer_id) on delete cascade
 );
 
 create index plutus_outbox_user_status_idx on public.plutus_outbox (user_id, status, scheduled_for);
@@ -131,6 +139,10 @@ create table public.plutus_audit (
 );
 
 create index plutus_audit_user_idx on public.plutus_audit (user_id, occurred_at desc);
+-- Idempotent keyed events: a given (key, type) is recorded once even if the cycle
+-- re-runs. NULL idempotency_key rows stay distinct (Postgres NULLS DISTINCT), so
+-- un-keyed events (e.g. payment_applied) are never collapsed.
+create unique index plutus_audit_dedup_idx on public.plutus_audit (user_id, idempotency_key, type);
 
 -- ── updated_at triggers (reuse set_updated_at from admin init) ───────
 create trigger plutus_business_set_updated_at

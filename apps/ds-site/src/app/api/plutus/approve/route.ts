@@ -12,6 +12,7 @@ import { NextResponse } from 'next/server'
 import {
   auditFor,
   chaseableDueFor,
+  claimPending,
   loadPendingOutbox,
   markOutbox,
   recipientEmailFor,
@@ -56,7 +57,8 @@ export async function POST(request: Request): Promise<Response> {
 
   try {
     if (decision === 'reject') {
-      await markOutbox(db, userId, key, { status: 'rejected', decided_by: userId })
+      const claimed = await claimPending(db, userId, key, { status: 'rejected', decided_by: userId })
+      if (!claimed) return NextResponse.json({ error: 'Already decided.' }, { status: 409 })
       await insertAuditEvents(db, userId, [auditFor(userId, 'rejected', row)])
       return NextResponse.json({ status: 'rejected' })
     }
@@ -71,14 +73,32 @@ export async function POST(request: Request): Promise<Response> {
       body: typeof body.finalBody === 'string' ? body.finalBody.slice(0, FIELD_MAX) : row.body,
     }
 
-    const outcome = await dispatch(getChannel(), message, key, () => chaseableDueFor(db, userId, row.invoice_id))
+    // Atomically claim the row to 'sent' BEFORE dispatching, so two concurrent
+    // approvals can't both send. The loser gets 0 rows and bails with 409.
+    const claimed = await claimPending(db, userId, key, {
+      status: 'sent',
+      decided_by: userId,
+      sent_at: new Date().toISOString(),
+    })
+    if (!claimed) return NextResponse.json({ error: 'Already decided.' }, { status: 409 })
+
+    let outcome
+    try {
+      outcome = await dispatch(getChannel(), message, key, () => chaseableDueFor(db, userId, row.invoice_id))
+    } catch (sendErr) {
+      // The send threw — revert the claim so it can be retried; Resend's own
+      // idempotency key dedupes if the provider actually received it.
+      await markOutbox(db, userId, key, { status: 'pending', decided_by: null, sent_at: null })
+      throw sendErr
+    }
+
     if (!outcome.sent) {
+      // Balance settled between approval and send → compensate the claim.
       await markOutbox(db, userId, key, { status: 'cancelled' })
       await insertAuditEvents(db, userId, [auditFor(userId, 'cancelled', row, { reason: outcome.reason })])
       return NextResponse.json({ status: 'cancelled', reason: outcome.reason })
     }
 
-    await markOutbox(db, userId, key, { status: 'sent', decided_by: userId, sent_at: new Date().toISOString() })
     await insertAuditEvents(db, userId, [
       auditFor(userId, 'approved', row),
       auditFor(userId, 'sent', row, { data: { providerMessageId: outcome.result?.providerMessageId } }),

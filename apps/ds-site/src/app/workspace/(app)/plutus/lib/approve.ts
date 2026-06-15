@@ -74,6 +74,30 @@ export async function chaseableDueFor(db: SupabaseClient, userId: string, invoic
   return Math.max(0, Number(inv.amount) - paid - writtenOff - disputed)
 }
 
+/**
+ * Atomically claim a still-pending outbox row, applying `patch` only if the row is
+ * currently 'pending'. Returns true iff exactly one row was claimed — the compare-
+ * and-swap that makes approve/reject exactly-once: of two concurrent requests for
+ * the same key, only one claim succeeds, so only one send/decision happens.
+ */
+export async function claimPending(
+  db: SupabaseClient,
+  userId: string,
+  key: string,
+  patch: Record<string, unknown>,
+): Promise<boolean> {
+  const { data, error } = await db
+    .from('plutus_outbox')
+    .update(patch)
+    .eq('user_id', userId)
+    .eq('idempotency_key', key)
+    .eq('status', 'pending')
+    .select('idempotency_key')
+  if (error) throw new Error(`outbox claim failed: ${error.message}`)
+  return Array.isArray(data) && data.length === 1
+}
+
+/** Unconditional status write — used only to compensate after a claim we own. */
 export async function markOutbox(
   db: SupabaseClient,
   userId: string,

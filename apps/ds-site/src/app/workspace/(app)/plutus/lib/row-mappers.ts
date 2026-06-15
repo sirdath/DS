@@ -38,8 +38,20 @@ export function rowToCustomer(r: Row): Customer {
   }
 }
 
+/** Validate the persisted terms discriminant before trusting it (avoid NaN dates). */
+function toTerms(raw: unknown): PaymentTerms {
+  if (raw && typeof raw === 'object') {
+    const t = raw as { kind?: unknown; days?: unknown }
+    if (t.kind === 'due_on_receipt') return { kind: 'due_on_receipt' }
+    if ((t.kind === 'net' || t.kind === 'eom') && typeof t.days === 'number' && Number.isFinite(t.days)) {
+      return { kind: t.kind, days: t.days }
+    }
+  }
+  return { kind: 'net', days: 30 }
+}
+
 export function rowToInvoice(r: Row): Invoice {
-  const terms = (r.terms ?? { kind: 'net', days: 30 }) as PaymentTerms
+  const terms = toTerms(r.terms)
   const status = str(r.status, 'open') as Invoice['status']
   return {
     id: str(r.invoice_id),

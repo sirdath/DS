@@ -67,11 +67,18 @@ export async function loadRealContext(
   const [customers, invoices] = await Promise.all([source.listCustomers(), source.listInvoices()])
   if (invoices.length === 0) return null
 
-  const [{ data: bizRow }, { data: seqRows }, { data: auditRows }] = await Promise.all([
+  const [bizRes, seqRes, auditRes] = await Promise.all([
     db.from('plutus_business').select('*').eq('user_id', userId).maybeSingle(),
     db.from('plutus_sequences').select('*').eq('user_id', userId),
     db.from('plutus_audit').select('*').eq('user_id', userId),
   ])
+  // The audit log + sequences are correctness-critical: running the cycle on a
+  // silently-empty audit would defeat exactly-once dedupe + cooldown. Fail loudly.
+  if (seqRes.error) throw new Error(`plutus_sequences read failed: ${seqRes.error.message}`)
+  if (auditRes.error) throw new Error(`plutus_audit read failed: ${auditRes.error.message}`)
+  const bizRow = bizRes.data
+  const seqRows = seqRes.data
+  const auditRows = auditRes.data
 
   const sample = getSample()
   const business: BusinessProfile = bizRow
