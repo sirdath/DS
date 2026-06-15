@@ -1,0 +1,171 @@
+{
+  "business": {
+    "name": "Nero Coffee Roasters",
+    "type": "Specialty coffee shop",
+    "location": "Thessaloniki, Greece"
+  },
+  "reviews": [
+    {
+      "id": "r1",
+      "platform": "google",
+      "author": "Giorgos Pap.",
+      "rating": 5,
+      "text": "Ο καλύτερος espresso στη Θεσσαλονίκη, χωρίς υπερβολή. Δοκίμασα το αιθιοπικό single origin σε V60 και ήταν γεμάτο αρώματα — βερίκοκο και μέλι. Ο Θανάσης πίσω από τη μηχανή ξέρει πραγματικά τι κάνει και θα σου εξηγήσει τα πάντα αν τον ρωτήσεις. Λίγο πιο πάνω από τη ροτόντα, αξίζει το περπάτημα.",
+      "date": "2026-05-28",
+      "language": "el"
+    },
+    {
+      "id": "r2",
+      "platform": "google",
+      "author": "Emily R.",
+      "rating": 5,
+      "text": "Found this place by accident while wandering near the Rotunda and it became my morning ritual for the whole week. The flat white is genuinely excellent — properly textured milk, no burnt taste. Staff spoke perfect English and were patient when I asked a hundred questions about the beans. The cinnamon bun is dangerous. Highly recommend if you're in town.",
+      "date": "2026-04-15",
+      "language": "en"
+    },
+    {
+      "id": "r3",
+      "platform": "google",
+      "author": "Maria K.",
+      "rating": 5,
+      "text": "Έρχομαι σχεδόν κάθε μέρα να διαβάσω. Γρήγορο wifi, πρίζες παντού, και κανείς δεν σε κοιτάει στραβά αν κάτσεις δύο ώρες με ένα φίλτρο. Η Ελένη με ξέρει πια με το όνομά μου. Φοιτητικός παράδεισος.",
+      "date": "2026-06-02",
+      "language": "el"
+    },
+    {
+      "id": "r4",
+      "platform": "tripadvisor",
+      "author": "David M.",
+      "rating": 4,
+      "text": "Excellent coffee and a lovely roastery smell the moment you walk in. We had two cappuccinos and a slice of orange cake — all very good, around 9 euros total which felt fair. Only reason it's not five stars is that at 11am it was packed and we waited nearly 15 minutes for a table. Worth it though.",
+      "date": "2026-03-22",
+      "language": "en"
+    },
+    {
+      "id": "r5",
+      "platform": "google",
+      "author": "Kostas Tz.",
+      "rating": 2,
+      "text": "Καφές όντως καλός, δεν το συζητάω. Αλλά τις ώρες αιχμής το επίπεδο θορύβου είναι αφόρητο — μηχανή espresso, μύλος, κόσμος που μιλάει δυνατά, αδύνατον να συγκεντρωθείς. Πήγα για δουλειά με τον laptop και έφυγα μετά από είκοσι λεπτά. Κρίμα γιατί ο χώρος έχει δυνατότητες.",
+      "date": "2026-02-10",
+      "language": "el"
+    },
+    {
+      "id": "r6",
+      "platform": "google",
+      "author": "Anna S.",
+      "rating": 5,
+      "text": "Αγαπημένο μου στέκι στο κέντρο. Ο cold brew τους είναι κατηγορία μόνος του, καθόλου πικρός. Παίρνω και κόκκους για το σπίτι, η συσκευασία των 250γρ είναι 8.50€ και κρατάει αρώματα για βδομάδες. Το προσωπικό πάντα χαμογελαστό, ειδικά ο Θανάσης.",
+      "date": "2026-05-09",
+      "language": "el"
+    },
+    {
+      "id": "r7",
+      "platform": "booking",
+      "author": "Lukas H.",
+      "rating": 4,
+      "text": "Stayed at a hotel nearby and came here every morning. Great espresso, friendly baristas, fast service. The croissants sell out early though — by 10am most of the pastry case was empty, which was a small disappointment two days in a row. Coffee itself is some of the best I had in Greece.",
+      "date": "2026-01-18",
+      "language": "en"
+    },
+    {
+      "id": "r8",
+      "platform": "google",
+      "author": "Dimitris V.",
+      "rating": 5,
+      "text": "Επιτέλους ένα μέρος που παίρνει στα σοβαρά τον καφέ. Η Ελένη μου πρότεινε ένα washed κολομβιανό σε Chemex και με κέρδισε. Τιμές λογικές για specialty, ο espresso 2.20€. Καθαρός χώρος, ωραία μουσική σε χαμηλή ένταση το πρωί.",
+      "date": "2026-04-30",
+      "language": "el"
+    },
+    {
+      "id": "r9",
+      "platform": "google",
+      "author": "Sophie L.",
+      "rating": 3,
+      "text": "Mixed feelings. The coffee is honestly fantastic — best pour-over I've had on this trip — but the wifi kept dropping every few minutes and I couldn't get any work done. If you're just there to drink and leave, five stars. As a workspace, frustrating. Also only two power outlets near the window and they were both taken.",
+      "date": "2026-03-05",
+      "language": "en"
+    },
+    {
+      "id": "r10",
+      "platform": "google",
+      "author": "Nikoletta M.",
+      "rating": 5,
+      "text": "Υπέροχο! Τα παιδιά είναι ευγενέστατα και ο χώρος μυρίζει φρεσκοκαβουρδισμένο καφέ. Δοκιμάστε οπωσδήποτε το σπιτικό τσιζκέικ λεμόνι. Ανοίγουν 7:30 το πρωί που είναι σωτήριο πριν τη δουλειά.",
+      "date": "2026-06-08",
+      "language": "el"
+    },
+    {
+      "id": "r11",
+      "platform": "tripadvisor",
+      "author": "Mark T.",
+      "rating": 1,
+      "text": "Really let down. Waited over 20 minutes for two coffees that were lukewarm when they arrived, and nobody apologised. The place was understaffed — one poor barista doing everything while a queue built up. The beans might be great but the service that morning was a mess. Won't rush back.",
+      "date": "2026-02-27",
+      "language": "en"
+    },
+    {
+      "id": "r12",
+      "platform": "google",
+      "author": "Vasilis A.",
+      "rating": 4,
+      "text": "Πολύ καλός καφές και ωραία ατμόσφαιρα. Το μόνο παράπονο είναι ότι τα τραπέζια είναι λίγο κολλητά μεταξύ τους, ακούς όλη την κουβέντα του διπλανού. Κατά τα άλλα ο Θανάσης φτιάχνει φοβερό cappuccino και τα γλυκά είναι σπιτικά. Πάρκινγκ δύσκολο στην περιοχή, πήγα με τα πόδια.",
+      "date": "2026-05-19",
+      "language": "el"
+    },
+    {
+      "id": "r13",
+      "platform": "google",
+      "author": "Eleni Chatz.",
+      "rating": 5,
+      "text": "Το αγαπημένο μου για διάβασμα στις εξετάσεις. Καθαρές τουαλέτες, σταθερό wifi τις πρωινές ώρες, και η Ελένη πάντα φροντίζει να έχω νερό. Ο φίλτρου καφές 3€ και μπορείς να κάτσεις όσο θες. Δέκα στα δέκα.",
+      "date": "2026-04-02",
+      "language": "el"
+    },
+    {
+      "id": "r14",
+      "platform": "booking",
+      "author": "Hannah W.",
+      "rating": 5,
+      "text": "What a gem. Came in cold and tired and left happy. The barista — I think Thanasis — made me a beautiful cortado and recommended a local pastry I'd never have tried otherwise. Cosy, clean, smells incredible. Exactly the kind of independent spot you hope to find when travelling.",
+      "date": "2026-01-29",
+      "language": "en"
+    },
+    {
+      "id": "r15",
+      "platform": "google",
+      "author": "Panagiotis L.",
+      "rating": 2,
+      "text": "Ο καφές αξίζει αλλά οι τιμές έχουν ανέβει αισθητά τον τελευταίο καιρό. 4.50€ για έναν cappuccino freddo μου φαίνεται τσιμπημένο, ακόμα και για specialty. Επίσης το μεσημέρι δεν βρίσκεις θέση με τίποτα. Καλό προϊόν, αλλά αρχίζει να γίνεται ακριβό για καθημερινό.",
+      "date": "2026-03-14",
+      "language": "el"
+    },
+    {
+      "id": "r16",
+      "platform": "google",
+      "author": "Christina N.",
+      "rating": 5,
+      "text": "Λατρεύω αυτό το μέρος. Ήρθα για έναν καφέ και έμεινα τρεις ώρες με τον φορητό. Το wifi κρατάει, οι πρίζες αρκετές αν έρθεις νωρίς, και κανείς δεν σε βιάζει. Το banana bread τους είναι το καλύτερο της πόλης. Ο Θανάσης και η Ελένη κάνουν τη διαφορά.",
+      "date": "2026-05-31",
+      "language": "el"
+    },
+    {
+      "id": "r17",
+      "platform": "tripadvisor",
+      "author": "James P.",
+      "rating": 4,
+      "text": "Solid specialty coffee with knowledgeable staff. I did a small tasting of their house blend versus the Ethiopian and they walked me through both with real enthusiasm. Marked it down one star only because seating is tight and it gets noisy fast around midday. The espresso quality is top tier though, no complaints there.",
+      "date": "2026-02-03",
+      "language": "en"
+    },
+    {
+      "id": "r18",
+      "platform": "google",
+      "author": "Stergios K.",
+      "rating": 3,
+      "text": "Καλός καφές, σαφώς πάνω από τον μέσο όρο της γειτονιάς. Όμως η εξυπηρέτηση είναι hit or miss — άλλες φορές πετάγονται αμέσως, άλλες περιμένεις πέντε λεπτά να σε δουν παρόλο που είναι άδειο. Τα γλυκά καλά αλλά λίγη ποικιλία. Θα ξαναπάω, με επιφύλαξη.",
+      "date": "2026-04-21",
+      "language": "el"
+    }
+  ]
+}

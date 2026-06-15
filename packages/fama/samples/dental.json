@@ -1,0 +1,171 @@
+{
+  "business": {
+    "name": "Glyfada Dental Care",
+    "type": "Dental clinic",
+    "location": "Glyfada, Athens, Greece"
+  },
+  "reviews": [
+    {
+      "id": "r1",
+      "platform": "google",
+      "author": "Eleni Markopoulou",
+      "rating": 5,
+      "text": "Πήγα για καθαρισμό και σφράγισμα και έμεινα πραγματικά εντυπωσιασμένη. Ο Δρ. Παύλου εξήγησε με υπομονή τι θα κάνει σε κάθε βήμα, δεν πόνεσα καθόλου. Το ιατρείο πεντακάθαρο, και η κοπέλα στη ρεσεψιόν, η Μαρία, με εξυπηρέτησε αμέσως. Σε 5 λεπτά ήμουν ήδη στην καρέκλα. Το συνιστώ ανεπιφύλακτα.",
+      "date": "2025-09-14",
+      "language": "el"
+    },
+    {
+      "id": "r2",
+      "platform": "google",
+      "author": "James Whitfield",
+      "rating": 5,
+      "text": "Had a dental emergency while on holiday in Glyfada — cracked a molar on the second day. They fit me in the same morning even though I had no appointment. Dr. Pavlou was calm, professional, and the whole thing was painless. English was perfect, which made a stressful situation so much easier. Around 120 euros for the temporary crown, which felt fair. Lifesaver.",
+      "date": "2025-07-22",
+      "language": "en"
+    },
+    {
+      "id": "r3",
+      "platform": "google",
+      "author": "Nikos Stamatiou",
+      "rating": 2,
+      "text": "Καλός ο γιατρός, δεν λέω, αλλά η αναμονή είναι απαράδεκτη. Είχα ραντεβού στις 17:00 και με δέχτηκαν στις 17:50. Δεύτερη φορά που μου συμβαίνει το ίδιο. Αν δεν σέβεσαι την ώρα του ασθενή, βάλε λιγότερα ραντεβού.",
+      "date": "2025-11-03",
+      "language": "el"
+    },
+    {
+      "id": "r4",
+      "platform": "tripadvisor",
+      "author": "Sophie Laurent",
+      "rating": 4,
+      "text": "Very clean clinic and a thorough cleaning by the hygienist. Dr. Pavlou was lovely and explained everything. Only reason it is not five stars is that parking around the clinic is a nightmare — I drove around for fifteen minutes and ended up paying for a private spot. If you can, take a taxi.",
+      "date": "2025-05-09",
+      "language": "en"
+    },
+    {
+      "id": "r5",
+      "platform": "google",
+      "author": "Georgia Vlachou",
+      "rating": 5,
+      "text": "Φοβόμουν πάντα τον οδοντίατρο, από παιδί. Ο Δρ. Παύλου με έκανε να χαλαρώσω εντελώς. Μου έβαλε δύο σφραγίσματα και ούτε που το κατάλαβα. Η Μαρία στη ρεσεψιόν είναι γλυκύτατη και βοήθησε με το χαρτί για το ταμείο. Επιτέλους βρήκα οδοντίατρο που εμπιστεύομαι.",
+      "date": "2025-08-30",
+      "language": "el"
+    },
+    {
+      "id": "r6",
+      "platform": "booking",
+      "author": "Andreas K.",
+      "rating": 3,
+      "text": "Η δουλειά στα δόντια μου ήταν σωστή και ο γιατρός ξέρει τι κάνει. Το θέμα μου είναι οι τιμές — 80 ευρώ για έναν απλό καθαρισμό μου φάνηκε ακριβό σε σχέση με άλλα ιατρεία στη Γλυφάδα. Και δεν δέχονται όλα τα ασφαλιστικά. Καλό αλλά όχι value for money.",
+      "date": "2026-01-18",
+      "language": "el"
+    },
+    {
+      "id": "r7",
+      "platform": "google",
+      "author": "Maria Antonopoulou",
+      "rating": 5,
+      "text": "Άψογη εμπειρία. Έκανα λεύκανση και το αποτέλεσμα ξεπέρασε τις προσδοκίες μου. Καθαρό περιβάλλον, μοντέρνος εξοπλισμός, και προσωπικό που χαμογελάει. Η τοποθεσία πάνω στη Λαζαράκη είναι βολική και πήγα με τα πόδια από το μετρό.",
+      "date": "2025-10-12",
+      "language": "el"
+    },
+    {
+      "id": "r8",
+      "platform": "tripadvisor",
+      "author": "Daniel Brooks",
+      "rating": 5,
+      "text": "As an expat living in Athens, finding a dentist you trust is hard. Dr. Pavlou is excellent — did a root canal that I had been dreading for months and I genuinely felt nothing. The reception staff handled my private insurance paperwork without any fuss. Spotlessly clean rooms. Cannot recommend highly enough.",
+      "date": "2025-12-05",
+      "language": "en"
+    },
+    {
+      "id": "r9",
+      "platform": "google",
+      "author": "Kostas Dimitriou",
+      "rating": 1,
+      "text": "Απαράδεκτη συμπεριφορά από τη ρεσεψιόν. Ακύρωσαν το ραντεβού μου την τελευταία στιγμή με ένα ξερό τηλεφώνημα, χωρίς να μου προτείνουν εναλλακτική. Όταν πήγα από κοντά να διαμαρτυρηθώ, μου μίλησαν απότομα. Ο γιατρός μπορεί να είναι καλός αλλά η οργάνωση είναι χάλια. Δεν ξαναπατάω.",
+      "date": "2025-11-27",
+      "language": "el"
+    },
+    {
+      "id": "r10",
+      "platform": "google",
+      "author": "Christina P.",
+      "rating": 4,
+      "text": "Πολύ καλός οδοντίατρος και πεντακάθαρος χώρος. Μου έβγαλε φρονιμίτη χωρίς κανένα πρόβλημα και ο μετεγχειρητικός πόνος ήταν ελάχιστος. Το μόνο μείον είναι ότι περίμενα σχεδόν μισή ώρα παρόλο που είχα ραντεβού. Αν λύσουν το θέμα της αναμονής, είναι 5 αστέρια.",
+      "date": "2025-06-17",
+      "language": "el"
+    },
+    {
+      "id": "r11",
+      "platform": "booking",
+      "author": "Thomas Müller",
+      "rating": 4,
+      "text": "Good experience overall. Booked online and got an appointment within two days. Dr. Pavlou speaks great English and is gentle. The clinic is modern and clean. One small thing: the waiting room wifi did not work and I had a long form to fill in. Still, solid care and fair pricing for a deep cleaning.",
+      "date": "2025-04-21",
+      "language": "en"
+    },
+    {
+      "id": "r12",
+      "platform": "google",
+      "author": "Vasiliki Georgiou",
+      "rating": 5,
+      "text": "Πήγα με τον γιο μου, 7 χρονών, που τρόμαζε. Ο Δρ. Παύλου είχε τόση υπομονή μαζί του, του εξήγησε τα πάντα σαν παιχνίδι και έφυγε χαρούμενο. Η Μαρία στη ρεσεψιόν του έδωσε κι ένα αυτοκόλλητο. Σπάνια βρίσκεις τέτοια ζεστασιά. Ευχαριστούμε!",
+      "date": "2026-02-08",
+      "language": "el"
+    },
+    {
+      "id": "r13",
+      "platform": "google",
+      "author": "Rachel Goldstein",
+      "rating": 5,
+      "text": "Came in for a check-up and cleaning. The hygienist was meticulous and Dr. Pavlou spotted an early cavity that two previous dentists had missed. Honest, no upselling — he told me which treatments could wait and which couldn't. The clinic on Lazaraki street is easy to find and immaculately clean.",
+      "date": "2026-03-19",
+      "language": "en"
+    },
+    {
+      "id": "r14",
+      "platform": "google",
+      "author": "Panagiotis Roussos",
+      "rating": 2,
+      "text": "Ο γιατρός είναι όντως ικανός και το αποτέλεσμα στο δόντι μου ήταν καλό. Όμως μου χρέωσαν 60 ευρώ παραπάνω από αυτό που μου είχαν πει στο τηλέφωνο, χωρίς να με ενημερώσουν εκ των προτέρων. Δεν μου αρέσει αυτή η ασάφεια στις τιμές. Να είστε ξεκάθαροι από την αρχή.",
+      "date": "2026-04-02",
+      "language": "el"
+    },
+    {
+      "id": "r15",
+      "platform": "tripadvisor",
+      "author": "Olivia Bennett",
+      "rating": 5,
+      "text": "Chipped a front tooth right before a wedding I was attending in Athens. They squeezed me in the next morning and Dr. Pavlou repaired it so well you genuinely cannot tell. Friendly reception, immaculate clinic, and the price was very reasonable compared to London. Wish I could bring him home with me.",
+      "date": "2026-04-27",
+      "language": "en"
+    },
+    {
+      "id": "r16",
+      "platform": "google",
+      "author": "Dimitra Karali",
+      "rating": 5,
+      "text": "Εξαιρετικό ιατρείο. Έκανα αποκατάσταση με δύο όψεις και το αισθητικό αποτέλεσμα είναι τέλειο. Ο χώρος μυρίζει καθαριότητα, ο εξοπλισμός είναι σύγχρονος και ο Δρ. Παύλου μου εξήγησε αναλυτικά το πλάνο θεραπείας πριν ξεκινήσουμε. Με σεβασμό στον ασθενή.",
+      "date": "2025-05-28",
+      "language": "el"
+    },
+    {
+      "id": "r17",
+      "platform": "google",
+      "author": "Liam O'Connor",
+      "rating": 4,
+      "text": "Solid clinic. Dr. Pavlou is clearly skilled and the place is very clean and modern. Reception was friendly and helped me sort out a receipt for my travel insurance. Only gripe is that my appointment ran about 25 minutes late, which was annoying when I had a flight to catch. Otherwise great.",
+      "date": "2025-09-02",
+      "language": "en"
+    },
+    {
+      "id": "r18",
+      "platform": "google",
+      "author": "Anna Spanou",
+      "rating": 3,
+      "text": "Καλός οδοντίατρος, ευγενικό προσωπικό, καθαρός χώρος — μέχρι εκεί όλα καλά. Αυτό που με ενόχλησε είναι ότι ήταν αρκετά δύσκολο να κλείσω ραντεβού, μου έδωσαν διαθεσιμότητα τρεις εβδομάδες μετά. Για κάτι επείγον δεν είναι ιδανικό. Η ποιότητα όμως της δουλειάς δεν αμφισβητείται.",
+      "date": "2026-05-15",
+      "language": "el"
+    }
+  ]
+}

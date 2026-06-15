@@ -1,0 +1,171 @@
+{
+  "business": {
+    "name": "Aetheria Suites",
+    "type": "Boutique hotel",
+    "location": "Plaka, Athens, Greece"
+  },
+  "reviews": [
+    {
+      "id": "r1",
+      "platform": "google",
+      "author": "Eleni Papadaki",
+      "rating": 5,
+      "text": "Μείναμε τρεις νύχτες και ήταν υπέροχα. Η τοποθεσία στην Πλάκα είναι ό,τι πρέπει — βγαίνεις από την πόρτα και είσαι σε δύο λεπτά στον πεζόδρομο, με την Ακρόπολη να φαίνεται από το ρετιρέ. Ο Γιώργος στη ρεσεψιόν μας έδωσε φοβερές συμβουλές για ταβέρνες μακριά από τα τουριστικά. Το πρωινό με τα σπιτικά γλυκά και το φρέσκο τσουρέκι ήταν η αγαπημένη μας στιγμή της ημέρας. Θα ξανάρθουμε σίγουρα.",
+      "date": "2026-05-18",
+      "language": "el"
+    },
+    {
+      "id": "r2",
+      "platform": "booking",
+      "author": "Marcus Lindqvist",
+      "rating": 5,
+      "text": "Perfect little base for exploring Athens on foot. We walked to the Acropolis in 8 minutes, the Agora, Monastiraki, everything. Maria at the front desk arranged a taxi to the airport at 5am without any fuss and even left us pastries from breakfast since we were leaving before it opened. Rooms are on the smaller side but immaculately clean and the bed was genuinely comfortable. Great value for the location.",
+      "date": "2026-04-03",
+      "language": "en"
+    },
+    {
+      "id": "r3",
+      "platform": "google",
+      "author": "Δημήτρης Κ.",
+      "rating": 4,
+      "text": "Πολύ ωραίο ξενοδοχείο σε εξαιρετικό σημείο. Ήρθαμε για ένα Σαββατοκύριακο με τη γυναίκα μου. Το προσωπικό άψογο, ιδιαίτερα η Μαρία που μας έκανε early check-in χωρίς πρόβλημα. Το μόνο μείον ήταν ο θόρυβος το βράδυ — το δωμάτιό μας έβλεπε στον δρόμο και μέχρι τις 2 ακούγονταν τα μπαρ. Ζητήστε δωμάτιο στο εσωτερικό αν θέλετε ησυχία.",
+      "date": "2026-03-22",
+      "language": "el"
+    },
+    {
+      "id": "r4",
+      "platform": "tripadvisor",
+      "author": "Sophie Brennan",
+      "rating": 5,
+      "text": "We stayed for our anniversary and the team made it special — there was a small plate of loukoumia and a handwritten note waiting in the room. The breakfast is a real highlight, not a generic buffet: Greek yogurt with thyme honey, spanakopita made that morning, proper coffee. Giorgos remembered our names from day one. The only tiny thing is the rooms are compact, but for Plaka that's completely expected and it never bothered us.",
+      "date": "2026-05-29",
+      "language": "en"
+    },
+    {
+      "id": "r5",
+      "platform": "google",
+      "author": "Κατερίνα Βασιλείου",
+      "rating": 5,
+      "text": "Καθαριότητα 10/10. Το δωμάτιο αστραφτερό κάθε μέρα, σεντόνια και πετσέτες πεντακάθαρες. Το air-condition δούλευε άψογα ακόμα και με 35 βαθμούς έξω. Μοναδικό αρνητικό ότι δεν υπάρχει πάρκινγκ, αλλά ποιος πάει με αυτοκίνητο στην Πλάκα έτσι κι αλλιώς. Το αφήσαμε σε garage στο Θησείο. Πολύ ευχαριστημένη.",
+      "date": "2026-02-14",
+      "language": "el"
+    },
+    {
+      "id": "r6",
+      "platform": "booking",
+      "author": "Thomas Müller",
+      "rating": 4,
+      "text": "Lovely boutique feel and an unbeatable spot — two minutes from the metro at Monastiraki and surrounded by tavernas. Breakfast was excellent. My only real gripe: the wifi kept dropping in our room on the third floor, which was annoying as I had a couple of work calls. The front desk reset the router twice and it helped a bit but never fully fixed. Otherwise I'd give it five.",
+      "date": "2026-01-19",
+      "language": "en"
+    },
+    {
+      "id": "r7",
+      "platform": "google",
+      "author": "Νίκος Αντωνόπουλος",
+      "rating": 2,
+      "text": "Απογοητεύτηκα για τα χρήματα. Πληρώσαμε 180 ευρώ τη βραδιά και το δωμάτιο ήταν πραγματικά μικροσκοπικό — μετά βίας χωρούσε η βαλίτσα ανοιχτή. Επιπλέον το κλιματιστικό έκανε έναν ενοχλητικό θόρυβο όλη νύχτα και δεν κρύωνε αρκετά. Η τοποθεσία και το προσωπικό καλά, αλλά η σχέση ποιότητας-τιμής δεν δικαιολογείται.",
+      "date": "2026-04-27",
+      "language": "el"
+    },
+    {
+      "id": "r8",
+      "platform": "google",
+      "author": "Anna Kowalska",
+      "rating": 5,
+      "text": "One of the best stays we've had in Greece. The location speaks for itself but it's the staff that made it — Maria upgraded us to a room with an Acropolis view when she saw it was my mother's 70th birthday. Spotlessly clean, quiet at the back of the building, and the breakfast terrace is gorgeous in the morning sun. We were never waiting at reception, someone was always there. Highly recommend.",
+      "date": "2026-05-09",
+      "language": "en"
+    },
+    {
+      "id": "r9",
+      "platform": "tripadvisor",
+      "author": "Γιάννης Μαυρίδης",
+      "rating": 3,
+      "text": "Μέτρια εμπειρία, ούτε καλή ούτε κακή. Η τοποθεσία είναι το δυνατό σημείο, χωρίς αμφιβολία. Όμως το check-in καθυστέρησε σχεδόν 40 λεπτά γιατί ήταν μόνο ένα άτομο στη ρεσεψιόν και είχε ουρά. Το πρωινό καλό αλλά τελείωσαν τα αυγά στις 9:30 και δεν τα αναπλήρωσαν. Για την τιμή περίμενα λίγο παραπάνω οργάνωση.",
+      "date": "2025-11-30",
+      "language": "el"
+    },
+    {
+      "id": "r10",
+      "platform": "google",
+      "author": "Maria Christodoulou",
+      "rating": 5,
+      "text": "Ήρθα για δουλειά τρεις μέρες και έμεινα κατενθουσιασμένη. Ήσυχο δωμάτιο στον τελευταίο όροφο, γρήγορο wifi, και το προσωπικό βοήθησε με τα πάντα. Ο Γιώργος μου κράτησε το πρωινό όταν είχα πρωινή συνάντηση και δεν προλάβαινα. Η Πλάκα το βράδυ είναι μαγική και είσαι μέσα σε όλα. Καθαρό, ζεστό, ανθρώπινο ξενοδοχείο.",
+      "date": "2026-03-08",
+      "language": "el"
+    },
+    {
+      "id": "r11",
+      "platform": "booking",
+      "author": "James Whitfield",
+      "rating": 1,
+      "text": "Really disappointing. We booked a 'deluxe' room and got something barely bigger than the bed, with a bathroom you could touch both walls of at once. Worse, the air conditioning was broken on arrival and despite three calls to reception it wasn't fixed during our entire two-night stay — in late June, in Athens, that's unacceptable. Staff were apologetic but apologies don't cool a room. The location is the only reason this isn't zero.",
+      "date": "2025-09-21",
+      "language": "en"
+    },
+    {
+      "id": "r12",
+      "platform": "google",
+      "author": "Στέλιος Ρούσσος",
+      "rating": 5,
+      "text": "Εξαιρετικό μπουτίκ ξενοδοχείο. Ήρθαμε με την παρέα για ένα τριήμερο και το προσωπικό μάς αντιμετώπισε σαν φίλους. Η Μαρία μάς οργάνωσε τραπέζι σε ταβέρνα που δεν θα βρίσκαμε ποτέ μόνοι μας. Το πρωινό με την ομελέτα της ώρας και τη σπιτική μαρμελάδα ήταν φανταστικό. Πεντακάθαρα δωμάτια, σωστός κλιματισμός. Αξίζει κάθε ευρώ.",
+      "date": "2025-10-12",
+      "language": "el"
+    },
+    {
+      "id": "r13",
+      "platform": "google",
+      "author": "Isabella Romano",
+      "rating": 4,
+      "text": "Charming hotel in the heart of the old town. Walkable to absolutely everything and the rooftop view of the Acropolis lit up at night is unforgettable. Breakfast was wonderful — fresh figs, local cheeses, great coffee. I'm only knocking off one star because our room (facing the street) was quite noisy on the Friday night, with people coming back from bars until late. If you're a light sleeper ask for a courtyard room.",
+      "date": "2026-04-15",
+      "language": "en"
+    },
+    {
+      "id": "r14",
+      "platform": "tripadvisor",
+      "author": "Παναγιώτα Δ.",
+      "rating": 2,
+      "text": "Λυπάμαι αλλά δεν θα ξαναπήγαινα. Το δωμάτιο ήταν καθαρό μεν, αλλά υπερβολικά μικρό για την τιμή των 165 ευρώ και έβλεπε σε έναν φωταγωγό χωρίς καθόλου φως. Ο θόρυβος από τις σωληνώσεις το βράδυ ήταν ενοχλητικός. Το προσωπικό ευγενικό, αυτό να λέγεται, αλλά η ευγένεια δεν αρκεί όταν δεν κοιμάσαι. Η τοποθεσία πάντως άριστη.",
+      "date": "2025-12-07",
+      "language": "el"
+    },
+    {
+      "id": "r15",
+      "platform": "google",
+      "author": "Liam O'Connor",
+      "rating": 5,
+      "text": "Fantastic. The walkability is the whole point — we never took a taxi once, walked to the Acropolis, Plaka tavernas, the Sunday flea market at Monastiraki, all within minutes. Giorgos at reception is a legend, gave us a hand-drawn map of where to eat and not one recommendation missed. Room was small but spotless and the AC was a lifesaver in the heat. Breakfast yogurt and honey alone is worth the booking.",
+      "date": "2026-06-02",
+      "language": "en"
+    },
+    {
+      "id": "r16",
+      "platform": "google",
+      "author": "Χριστίνα Λεβέντη",
+      "rating": 5,
+      "text": "Υπέροχη διαμονή για το Σαββατοκύριακο. Μέναμε Θεσσαλονίκη και ήρθαμε για μια απόδραση. Άψογη καθαριότητα, ζεστή υποδοχή από τη Μαρία, και πρωινό που σε χορταίνει μέχρι το μεσημέρι — δοκιμάστε οπωσδήποτε τις τηγανίτες με πετιμέζι. Το δωμάτιο μικρό αλλά γούστο, και ησυχία γιατί ζητήσαμε εσωτερικό. Θα το προτείνω σε όλους.",
+      "date": "2026-01-31",
+      "language": "el"
+    },
+    {
+      "id": "r17",
+      "platform": "booking",
+      "author": "David Chen",
+      "rating": 4,
+      "text": "Solid choice in an amazing location. Check-in was smooth, Maria was warm and helpful, and the breakfast genuinely exceeded expectations for a hotel this size. Two small things kept it from five stars: the room was tight (fine for two nights, would feel cramped for a week) and there's no parking, so factor in a paid garage if you're driving. For a walking holiday in Athens though, it's hard to beat.",
+      "date": "2025-08-26",
+      "language": "en"
+    },
+    {
+      "id": "r18",
+      "platform": "google",
+      "author": "Αλέξανδρος Φωτίου",
+      "rating": 5,
+      "text": "Από τα καλύτερα ξενοδοχεία που έχω μείνει στην Αθήνα. Καθαρό, ήσυχο στο πίσω μέρος, και το προσωπικό κάνει τη διαφορά — ο Γιώργος και η Μαρία θυμόντουσαν το όνομά μου από την πρώτη μέρα. Το πρωινό σπιτικό και άφθονο, το air-condition δροσερό, το wifi γρήγορο. Η Ακρόπολη στα πόδια σου. Δέκα στα δέκα, θα ξαναέρθω το καλοκαίρι.",
+      "date": "2025-09-04",
+      "language": "el"
+    }
+  ]
+}

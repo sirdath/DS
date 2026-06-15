@@ -1,0 +1,171 @@
+{
+  "business": {
+    "name": "To Steki tou Ilia",
+    "type": "Family taverna / restaurant",
+    "location": "Koukaki, Athens, Greece"
+  },
+  "reviews": [
+    {
+      "id": "r1",
+      "platform": "google",
+      "author": "Giorgos Papadakis",
+      "rating": 5,
+      "text": "Πήγαμε Παρασκευή βράδυ και φάγαμε υπέροχα. Τα παϊδάκια είναι ό,τι καλύτερο έχω φάει στο Κουκάκι, ψημένα ακριβώς όπως πρέπει, ζουμερά και τραγανά. Ο κύριος Ηλίας πέρασε από όλα τα τραπέζια να μας ρωτήσει αν είμαστε καλά. Λογαριασμός 22 ευρώ το άτομο με κρασί χύμα. Θα ξαναπάμε σίγουρα.",
+      "date": "2025-11-08",
+      "language": "el"
+    },
+    {
+      "id": "r2",
+      "platform": "google",
+      "author": "Emily Thornton",
+      "rating": 5,
+      "text": "Found this little taverna a few streets behind the Acropolis Museum and so glad we did. The grilled lamb chops were incredible and the portions were huge — we couldn't finish. Ilias, the owner, treated us like family and brought us free dessert and a shot of something at the end. Honestly the best meal of our Athens trip and only about 25 euros each.",
+      "date": "2025-09-21",
+      "language": "en"
+    },
+    {
+      "id": "r3",
+      "platform": "tripadvisor",
+      "author": "Maria K.",
+      "rating": 4,
+      "text": "Πεντανόστιμο φαγητό, ειδικά το κοκκινιστό και οι κεφτέδες. Το μόνο αρνητικό ότι περιμέναμε σχεδόν 25 λεπτά για τραπέζι αν και είχαμε κλείσει. Όταν καθίσαμε όμως η Δήμητρα στο σέρβις ήταν πολύ γρήγορη και ευγενική. Οι μερίδες γενναιόδωρες, αξίζει την αναμονή.",
+      "date": "2026-01-17",
+      "language": "el"
+    },
+    {
+      "id": "r4",
+      "platform": "google",
+      "author": "Thomas Berg",
+      "rating": 5,
+      "text": "Authentic Greek taverna, exactly what you hope to find. We sat outside on the quiet pedestrian street, lovely atmosphere, not touristy at all. The bifteki and the grilled feta were excellent. Service by a young guy called Nikos was fast and friendly. Cash only though, so bring some — there is an ATM around the corner.",
+      "date": "2025-10-30",
+      "language": "en"
+    },
+    {
+      "id": "r5",
+      "platform": "google",
+      "author": "Eleni Vasileiou",
+      "rating": 5,
+      "text": "Οικογενειακή ταβέρνα με ψυχή. Πάμε τακτικά με τα παιδιά και πάντα νιώθουμε σαν στο σπίτι μας. Το μπριζολάκι χοιρινό και οι τηγανητές πατάτες χειροποίητες είναι αγαπημένα των μικρών. Τιμές λογικές, ποιότητα σταθερή εδώ και χρόνια. Ο Ηλίας θυμάται πάντα τι μας αρέσει.",
+      "date": "2025-12-03",
+      "language": "el"
+    },
+    {
+      "id": "r6",
+      "platform": "booking",
+      "author": "Sophie Laurent",
+      "rating": 4,
+      "text": "Stayed nearby and ate here twice. The food is genuinely good — the moussaka and the grilled vegetables were the highlights. Great value, around 18 euros a head. My only small complaint is that it gets very loud and crowded after 9pm, so if you want a quieter dinner go early. Staff were lovely both times.",
+      "date": "2025-08-14",
+      "language": "en"
+    },
+    {
+      "id": "r7",
+      "platform": "google",
+      "author": "Kostas Antoniou",
+      "rating": 2,
+      "text": "Το φαγητό ήταν εντάξει αλλά περιμέναμε πάνω από 40 λεπτά να έρθουν τα κυρίως, ένα βράδυ Σάββατο που ήταν γεμάτο. Ζητήσαμε δύο φορές τον σερβιτόρο. Κρίμα γιατί τα παϊδάκια όταν ήρθαν ήταν ωραία, αλλά η αναμονή χάλασε τη βραδιά. Χρειάζονται περισσότερο προσωπικό τα γεμάτα βράδια.",
+      "date": "2025-11-29",
+      "language": "el"
+    },
+    {
+      "id": "r8",
+      "platform": "google",
+      "author": "Andrea Rossi",
+      "rating": 5,
+      "text": "Una vera taverna greca! No menu in five languages, no waiters dragging you in from the street — just real food. The souvlaki and the tzatziki were perfect and the house wine was cheap and good. Ilias even gave the kids some ice cream on the house. Ten minute walk from the Acropolis. Cannot recommend enough.",
+      "date": "2026-02-09",
+      "language": "en"
+    },
+    {
+      "id": "r9",
+      "platform": "tripadvisor",
+      "author": "Despoina M.",
+      "rating": 3,
+      "text": "Καλό φαγητό, ειδικά το αρνί στον φούρνο, αλλά οι τιμές έχουν ανέβει αρκετά τον τελευταίο χρόνο. Ο λογαριασμός για τέσσερα άτομα βγήκε 95 ευρώ ενώ παλιά πληρώναμε σαφώς λιγότερα για τα ίδια. Το σέρβις καλό, η Δήμητρα πάντα χαμογελαστή. Απλά δεν είναι πια τόσο φθηνό όσο ήταν.",
+      "date": "2026-03-22",
+      "language": "el"
+    },
+    {
+      "id": "r10",
+      "platform": "google",
+      "author": "James O'Connor",
+      "rating": 5,
+      "text": "Came here on our last night in Athens and it was the perfect ending. The grilled octopus and the lamb kleftiko were both outstanding. Cosy place, family run, and you can tell everything is fresh. Note there's no real parking on the street so we walked from Koukaki metro, about 8 minutes. Worth every step.",
+      "date": "2025-07-19",
+      "language": "en"
+    },
+    {
+      "id": "r11",
+      "platform": "google",
+      "author": "Vivi Karagianni",
+      "rating": 5,
+      "text": "Από τα καλύτερα στιφάδο και κοκκινιστό της περιοχής. Πάντα φρέσκα υλικά, γενναιόδωρες μερίδες, και ο Ηλίας με την οικογένειά του σε κάνουν να νιώθεις ευπρόσδεκτος. Καθαρές τουαλέτες, κάτι που εκτιμώ. Τιμές τίμιες για την ποιότητα. Η ταβέρνα της γειτονιάς όπως πρέπει να είναι.",
+      "date": "2025-10-05",
+      "language": "el"
+    },
+    {
+      "id": "r12",
+      "platform": "booking",
+      "author": "Lena Hoffmann",
+      "rating": 4,
+      "text": "Really nice traditional spot, recommended by our hotel. The mixed grill for two was more than enough and very tasty. Service was warm but a bit slow to bring the bill at the end, we waited a while. No wifi which is fine, but worth knowing. Lovely neighbourhood feel away from the tourist crowds.",
+      "date": "2025-12-28",
+      "language": "en"
+    },
+    {
+      "id": "r13",
+      "platform": "google",
+      "author": "Panagiotis Roussos",
+      "rating": 1,
+      "text": "Απογοητευτική εμπειρία το περασμένο Σάββατο. Είχαμε κλείσει τραπέζι για 8 άτομα και όταν φτάσαμε μας είπαν ότι δεν υπήρχε κράτηση και έπρεπε να περιμένουμε. Μας έβαλαν τελικά σε ένα στριμωγμένο τραπέζι δίπλα στην κουζίνα με φασαρία και ζέστη. Το φαγητό μέτριο, η σαλάτα όχι φρέσκια. Δεν το περίμενα από εδώ.",
+      "date": "2026-01-31",
+      "language": "el"
+    },
+    {
+      "id": "r14",
+      "platform": "google",
+      "author": "Rachel Green",
+      "rating": 5,
+      "text": "Absolutely charming family taverna in Koukaki. We were greeted by Dimitra who was so welcoming and patient explaining the menu. The slow cooked goat and the dolmades were delicious, and the bread and dips kept coming. Two of us ate and drank well for about 40 euros total. The owner came over to thank us personally. A gem.",
+      "date": "2026-04-11",
+      "language": "en"
+    },
+    {
+      "id": "r15",
+      "platform": "tripadvisor",
+      "author": "Stavros Lambrou",
+      "rating": 2,
+      "text": "Παλιά ήταν από τα σταθερά μου στέκια αλλά η τελευταία φορά με απογοήτευσε. Οι μερίδες μου φάνηκαν μικρότερες από ό,τι θυμόμουν και η τιμή στα παϊδάκια ανέβηκε στα 14 ευρώ η μερίδα. Το σέρβις βιαστικό, σαν να ήθελαν να μας διώξουν για να κάτσει το επόμενο τραπέζι. Το φαγητό παραμένει καλό, αλλά κάτι έχει αλλάξει.",
+      "date": "2026-05-06",
+      "language": "el"
+    },
+    {
+      "id": "r16",
+      "platform": "google",
+      "author": "Markus Wagner",
+      "rating": 5,
+      "text": "One of the best meals we had in Greece. The lamb chops and the saganaki were perfect, and the house red was excellent for the price. Atmosphere is lively and authentic, full of locals which is always a good sign. It does get busy so we recommend booking ahead. Ilias runs a tight, friendly ship.",
+      "date": "2025-09-02",
+      "language": "en"
+    },
+    {
+      "id": "r17",
+      "platform": "google",
+      "author": "Aikaterini Nikolaou",
+      "rating": 4,
+      "text": "Πολύ νόστιμο φαγητό και ζεστή ατμόσφαιρα, ιδανικό για οικογένειες. Τα γεμιστά και το μπιφτέκι γεμιστό ήταν εξαιρετικά. Ο Νίκος στο σέρβις πολύ ευγενικός και γρήγορος. Το μόνο μείον είναι ότι τα τραπέζια έξω είναι λίγο κοντά μεταξύ τους και ακούς τις διπλανές κουβέντες. Κατά τα άλλα άριστα, καλή σχέση ποιότητας τιμής.",
+      "date": "2025-11-15",
+      "language": "el"
+    },
+    {
+      "id": "r18",
+      "platform": "google",
+      "author": "Yiannis Doukas",
+      "rating": 5,
+      "text": "Γνήσια ελληνική ταβέρνα, από τις λίγες που έχουν μείνει στο Κουκάκι. Πάω χρόνια και η ποιότητα δεν πέφτει ποτέ. Το κοντοσούβλι και οι χειροποίητες πατάτες είναι must. Ο Ηλίας γνήσιος άνθρωπος, σε υποδέχεται σαν φίλο. Καθαρός χώρος, λογικές τιμές, μερίδες που σε χορταίνουν. Ανυπόκριτα από τα αγαπημένα μου.",
+      "date": "2025-08-27",
+      "language": "el"
+    }
+  ]
+}

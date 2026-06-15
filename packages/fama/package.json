@@ -1,0 +1,28 @@
+{
+  "name": "@ds/fama",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Fama — DS2 review intelligence. Pulls a business's reviews, runs Claude over them (Greek + English sentiment, theme extraction, reply drafts, trend + priorities), and emits a JSON report. Source-agnostic engine; Google Business Profile wired later.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": ["src"],
+  "scripts": {
+    "demo": "tsx scripts/demo.ts",
+    "check-types": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.104.1"
+  },
+  "devDependencies": {
+    "@ds/tsconfig": "workspace:*",
+    "@types/node": "^22.16.5",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.0"
+  }
+}
