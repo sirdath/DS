@@ -343,6 +343,28 @@ export default function PanoptesViewerPage() {
     }
   }, [])
 
+  // Auto-load the bundled Athens demo when opened with ?demo (e.g. from the
+  // workspace launcher), so Panoptes shows a populated map straight away instead
+  // of the empty upload state. A real study dropped in still replaces it.
+  useEffect(() => {
+    if (study !== null) return
+    if (!new URLSearchParams(window.location.search).has('demo')) return
+    let cancelled = false
+    fetch('/panoptes-demo.json')
+      .then((r) => r.json())
+      .then((data) => {
+        if (cancelled) return
+        const loaded = parseStudyFile(JSON.stringify(data))
+        if (loaded) handleFileLoad(loaded)
+      })
+      .catch(() => {
+        /* demo missing — empty state still works */
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [study, handleFileLoad])
+
   return (
     <div className="pv-shell">
       {study === null ? (

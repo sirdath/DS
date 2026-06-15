@@ -330,6 +330,7 @@ export function MapView({
     isInitializedRef.current = true
 
     let disposed = false
+    let resizeObserver: ResizeObserver | null = null
 
     void (async () => {
       const [maplibre, h3] = await Promise.all([
@@ -391,6 +392,14 @@ export function MapView({
 
       mapRef.current = map
 
+      // Keep the GL canvas matched to its container. MapLibre reads the size on
+      // construction; if the container settles a frame later (route transition,
+      // late layout) the canvas can stay 0-sized and render blank until a resize.
+      if (containerRef.current) {
+        resizeObserver = new ResizeObserver(() => map.resize())
+        resizeObserver.observe(containerRef.current)
+      }
+
       map.on('load', async () => {
         if (disposed) return
 
@@ -449,6 +458,10 @@ export function MapView({
           [[minLon, minLat], [maxLon, maxLat]],
           { padding: { top: 60, bottom: 60, left: 360, right: 60 }, animate: !reduced, duration: reduced ? 0 : 800 }
         )
+
+        // Belt-and-braces: ensure the canvas matches the container now that the
+        // style + first layers are in (covers the 0-size-at-init edge case).
+        map.resize()
 
         // ── Candidate markers ──────────────────────────────────────────────
         markersRef.current.forEach((m) => m.remove())
@@ -542,6 +555,10 @@ export function MapView({
 
     return () => {
       disposed = true
+      if (resizeObserver) {
+        resizeObserver.disconnect()
+        resizeObserver = null
+      }
       if (mapRef.current) {
         mapRef.current.remove()
         mapRef.current = null
