@@ -41,11 +41,14 @@ jobs:
             exit 0
           fi
 
-          # A minimal RLS-scoped query — executes against Postgres (resetting the
-          # inactivity timer) without reading anything sensitive. -f fails on HTTP
-          # >= 400 so a paused/broken project surfaces as a failed run.
+          # Call the is_admin() Postgres function via PostgREST RPC. This executes a
+          # real query against Postgres (resetting the inactivity timer); it's anon-
+          # callable and returns only a boolean (false for anon — nothing sensitive).
+          # -f fails on HTTP >= 400 so a paused/broken project surfaces as a failed run.
           code=$(curl -fsS -o /dev/null -w '%{http_code}' \
-            "$SUPABASE_URL/rest/v1/admin_users?select=username&limit=1" \
+            -X POST "$SUPABASE_URL/rest/v1/rpc/is_admin" \
             -H "apikey: $SUPABASE_ANON_KEY" \
-            -H "Authorization: Bearer $SUPABASE_ANON_KEY")
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{}')
           echo "Keep-alive query OK (HTTP $code) at $(date -u +%FT%TZ)"
