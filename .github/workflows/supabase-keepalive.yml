@@ -1,0 +1,51 @@
+# Supabase keep-alive.
+# Free-tier Supabase projects auto-pause after ~7 days with no database activity —
+# and a paused project takes the whole site's auth (admin login, the workspace,
+# client portals) down with it. This runs a tiny authenticated query every couple
+# of days so the project never crosses the inactivity threshold. It also doubles as
+# an uptime probe: if the project is paused or unreachable, the job fails and GitHub
+# emails you — early warning instead of a surprised "I can't log in".
+#
+# Uses the PUBLIC project URL + anon key (repo variables, not secrets — the anon key
+# already ships in the browser bundle). The query runs under RLS, so it reads nothing
+# sensitive; it only needs to touch Postgres to reset the timer.
+#
+# The durable fix is upgrading the project to Pro (no pausing); this keeps the free
+# tier alive until then.
+name: Supabase keep-alive
+
+on:
+  schedule:
+    # Every 2 days at 07:23 UTC (off the top of the hour — GitHub delays :00 crons).
+    # 2-day cadence leaves margin: even a skipped run stays well under the 7-day pause.
+    - cron: "23 7 */2 * *"
+  workflow_dispatch: {} # allow a manual run from the Actions tab
+
+concurrency:
+  group: supabase-keepalive
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Touch the database
+        env:
+          SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ] || \
+             printf '%s' "$SUPABASE_URL" | grep -qi 'placeholder'; then
+            echo "::notice::Supabase URL/anon key not configured as repo variables — skipping keep-alive."
+            exit 0
+          fi
+
+          # A minimal RLS-scoped query — executes against Postgres (resetting the
+          # inactivity timer) without reading anything sensitive. -f fails on HTTP
+          # >= 400 so a paused/broken project surfaces as a failed run.
+          code=$(curl -fsS -o /dev/null -w '%{http_code}' \
+            "$SUPABASE_URL/rest/v1/admin_users?select=username&limit=1" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY")
+          echo "Keep-alive query OK (HTTP $code) at $(date -u +%FT%TZ)"
