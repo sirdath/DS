@@ -1,0 +1,461 @@
+'use client'
+
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import {
+  createFolder,
+  createNote,
+  deleteFolder,
+  deleteNote,
+  renameFolder,
+  setNoteProjects,
+  togglePin,
+  updateNote,
+} from '../../notes-actions'
+import { noteSnippet, renderMarkdown } from './markdown'
+import type { Note, NoteFolder, NotesData } from './types'
+import './notes.css'
+
+type FolderSel = 'all' | 'pinned' | string
+type Mode = 'edit' | 'preview'
+interface TreeNode extends NoteFolder {
+  children: TreeNode[]
+}
+
+function buildTree(folders: NoteFolder[]): TreeNode[] {
+  const byId = new Map<string, TreeNode>(folders.map((f) => [f.id, { ...f, children: [] }]))
+  const roots: TreeNode[] = []
+  for (const f of byId.values()) {
+    const parent = f.parentId ? byId.get(f.parentId) : null
+    if (parent) parent.children.push(f)
+    else roots.push(f)
+  }
+  const sort = (ns: TreeNode[]) => {
+    ns.sort((a, b) => a.position - b.position || a.name.localeCompare(b.name))
+    ns.forEach((n) => sort(n.children))
+  }
+  sort(roots)
+  return roots
+}
+
+function relativeTime(iso: string): string {
+  const t = Date.parse(iso)
+  if (!Number.isFinite(t)) return ''
+  const diff = Date.now() - t
+  const m = Math.round(diff / 60000)
+  if (m < 1) return 'just now'
+  if (m < 60) return `${m}m`
+  const h = Math.round(m / 60)
+  if (h < 24) return `${h}h`
+  const d = Math.round(h / 24)
+  if (d === 1) return 'yesterday'
+  if (d < 7) return `${d}d`
+  return new Date(t).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+}
+
+/** Toggle the idx-th `- [ ]` / `- [x]` checklist line in a markdown body. */
+function toggleChecklist(body: string, idx: number): string {
+  const re = /^(\s*[-*]\s+\[)([ xX])(\]\s+)/
+  let seen = -1
+  return body
+    .split('\n')
+    .map((line) => {
+      if (!re.test(line)) return line
+      seen += 1
+      if (seen !== idx) return line
+      return line.replace(re, (_m, a, mark, c) => `${a}${mark === ' ' ? 'x' : ' '}${c}`)
+    })
+    .join('\n')
+}
+
+const ICON = {
+  search: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>,
+  all: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M4 19.5V6a2 2 0 0 1 2-2h6l2 3h6" /></svg>,
+  pin: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 12V4l7 3 7-3v8" /><path d="M12 7v14" /></svg>,
+  pinFill: <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M5 12V4l7 3 7-3v8z" /></svg>,
+  folder: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></svg>,
+  caret: <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M9 6l6 6-6 6z" /></svg>,
+  trash: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M3 6h18M8 6V4h8v2m-9 0 1 14h8l1-14" /></svg>,
+  dots: <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6" /><circle cx="12" cy="12" r="1.6" /><circle cx="19" cy="12" r="1.6" /></svg>,
+}
+
+export function NotesApp({ data }: { data: NotesData }) {
+  const router = useRouter()
+  const { isDemo } = data
+  const tree = useMemo(() => buildTree(data.folders), [data.folders])
+  const folderById = useMemo(() => new Map(data.folders.map((f) => [f.id, f])), [data.folders])
+  const projectById = useMemo(() => new Map(data.projects.map((p) => [p.id, p])), [data.projects])
+
+  const [folderSel, setFolderSel] = useState<FolderSel>('all')
+  const [noteId, setNoteId] = useState<string | null>(null)
+  const [query, setQuery] = useState('')
+  const [mode, setMode] = useState<Mode>('preview')
+  const [expanded, setExpanded] = useState<Set<string>>(() => new Set(data.folders.filter((f) => !f.parentId).map((f) => f.id)))
+  const [draft, setDraft] = useState({ title: '', body: '' })
+  const [status, setStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
+  const [tagOpen, setTagOpen] = useState(false)
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const previewRef = useRef<HTMLDivElement | null>(null)
+  const pendingRef = useRef<{ id: string; title: string; body: string } | null>(null)
+  const mountedRef = useRef(true)
+
+  const selected: Note | null = useMemo(() => data.notes.find((n) => n.id === noteId) ?? null, [data.notes, noteId])
+  const previewHtml = useMemo(() => renderMarkdown(draft.body) || '<p style="color:var(--dim)">Nothing written yet.</p>', [draft.body])
+
+  // On switching notes: flush any pending save for the PREVIOUS note (no lost edits),
+  // reset the save indicator, then load the newly-selected note into the draft.
+  useEffect(() => {
+    if (saveTimer.current) clearTimeout(saveTimer.current)
+    const p = pendingRef.current
+    if (p && p.id !== noteId && !isDemo) void flushSave(p.id, { title: p.title, body: p.body })
+    setStatus('idle')
+    const sel = data.notes.find((nn) => nn.id === noteId)
+    if (sel) setDraft({ title: sel.title, body: sel.body })
+  }, [noteId]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Flush on unmount / tab-hide so edits inside the debounce window are never lost.
+  useEffect(() => {
+    mountedRef.current = true
+    const onLeave = () => {
+      const p = pendingRef.current
+      if (p && !isDemo) void updateNote(p.id, { title: p.title, body: p.body })
+    }
+    window.addEventListener('pagehide', onLeave)
+    return () => {
+      mountedRef.current = false
+      window.removeEventListener('pagehide', onLeave)
+      if (saveTimer.current) clearTimeout(saveTimer.current)
+      onLeave()
+    }
+  }, [isDemo])
+
+  const notes = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    let list = data.notes
+    if (folderSel === 'pinned') list = list.filter((n) => n.pinned)
+    else if (folderSel !== 'all') list = list.filter((n) => n.folderId === folderSel)
+    if (q) list = list.filter((n) => n.title.toLowerCase().includes(q) || n.body.toLowerCase().includes(q))
+    return [...list].sort((a, b) => Number(b.pinned) - Number(a.pinned) || b.updatedAt.localeCompare(a.updatedAt))
+  }, [data.notes, folderSel, query])
+
+  // Always show something in the editor: if nothing is open, open the first note.
+  useEffect(() => {
+    if (!noteId && notes.length) setNoteId(notes[0]?.id ?? null)
+  }, [notes, noteId])
+
+  const flushSave = useCallback(
+    async (id: string, patch: { title: string; body: string }) => {
+      if (isDemo) return
+      pendingRef.current = null
+      setStatus('saving')
+      try {
+        await updateNote(id, patch)
+        if (mountedRef.current) setStatus('saved')
+        router.refresh()
+      } catch {
+        if (mountedRef.current) setStatus('idle')
+      }
+    },
+    [isDemo, router],
+  )
+
+  const onEdit = useCallback(
+    (patch: Partial<{ title: string; body: string }>) => {
+      if (!noteId || isDemo) return
+      const next = { ...draft, ...patch }
+      setDraft(next)
+      pendingRef.current = { id: noteId, ...next }
+      setStatus('saving')
+      if (saveTimer.current) clearTimeout(saveTimer.current)
+      saveTimer.current = setTimeout(() => {
+        const p = pendingRef.current
+        if (p) void flushSave(p.id, { title: p.title, body: p.body })
+      }, 650)
+    },
+    [draft, noteId, isDemo, flushSave],
+  )
+
+  const folderTitle =
+    folderSel === 'all' ? 'All notes' : folderSel === 'pinned' ? 'Pinned' : (folderById.get(folderSel)?.name ?? 'Notes')
+
+  function folderPathParts(id: string | null): string[] {
+    const out: string[] = []
+    let cur = id ? folderById.get(id) : undefined
+    let guard = 0
+    while (cur && guard++ < 20) {
+      out.unshift(cur.name)
+      cur = cur.parentId ? folderById.get(cur.parentId) : undefined
+    }
+    return out
+  }
+
+  async function onNewNote() {
+    if (isDemo) return
+    const target = folderSel === 'all' || folderSel === 'pinned' ? null : folderSel
+    const id = await createNote(target).catch(() => '')
+    if (!id) return
+    setDraft({ title: '', body: '' })
+    setNoteId(id)
+    setMode('edit')
+    router.refresh()
+  }
+
+  async function onNewFolder() {
+    if (isDemo) return
+    const name = window.prompt('Folder name')?.trim()
+    if (!name) return
+    const parent = folderSel === 'all' || folderSel === 'pinned' ? null : folderSel
+    await createFolder(name, parent).catch(() => undefined)
+    router.refresh()
+  }
+
+  function toggleExpand(id: string) {
+    setExpanded((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  function renderTree(nodes: TreeNode[], depth: number) {
+    return nodes.map((f) => {
+      const direct = data.notes.filter((n) => n.folderId === f.id).length
+      const isOpen = expanded.has(f.id)
+      return (
+        <div key={f.id}>
+          {/* treeitem div (not a button) so the caret + delete can be real buttons inside */}
+          <div
+            role="treeitem"
+            aria-selected={folderSel === f.id}
+            aria-expanded={f.children.length ? isOpen : undefined}
+            tabIndex={0}
+            className={`wn-row ${depth > 0 ? 'wn-row--child' : ''} ${folderSel === f.id ? 'is-active' : ''}`}
+            onClick={() => setFolderSel(f.id)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                setFolderSel(f.id)
+              } else if (e.key === 'ArrowRight' && f.children.length && !isOpen) {
+                e.preventDefault()
+                toggleExpand(f.id)
+              } else if (e.key === 'ArrowLeft' && f.children.length && isOpen) {
+                e.preventDefault()
+                toggleExpand(f.id)
+              }
+            }}
+            onDoubleClick={() => {
+              if (isDemo) return
+              const name = window.prompt('Rename folder', f.name)?.trim()
+              if (name) void renameFolder(f.id, name).then(() => router.refresh())
+            }}
+          >
+            {f.children.length ? (
+              <button
+                type="button"
+                className={`wn-caret-btn ${isOpen ? 'is-open' : ''}`}
+                aria-label={isOpen ? 'Collapse folder' : 'Expand folder'}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  toggleExpand(f.id)
+                }}
+              >
+                {ICON.caret}
+              </button>
+            ) : (
+              <span className="wn-spacer" />
+            )}
+            <span className="wn-row__ic">{ICON.folder}</span>
+            <span className="wn-row__name">{f.name}</span>
+            <span className="wn-row__count">{direct || ''}</span>
+            {!isDemo ? (
+              <button
+                type="button"
+                className="wn-folder-del"
+                aria-label={`Delete folder ${f.name}`}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  if (window.confirm(`Delete folder "${f.name}"? Notes inside are kept (moved to All notes).`)) {
+                    void deleteFolder(f.id).then(() => {
+                      if (folderSel === f.id) setFolderSel('all')
+                      router.refresh()
+                    })
+                  }
+                }}
+              >
+                {ICON.trash}
+              </button>
+            ) : null}
+          </div>
+          {isOpen && f.children.length ? renderTree(f.children, depth + 1) : null}
+        </div>
+      )
+    })
+  }
+
+  return (
+    <div className="wn-root">
+      {isDemo ? (
+        <div className="wn-demo" role="status">
+          <b>Demo</b> Supabase is paused — restore it + apply the migration to edit for real.
+        </div>
+      ) : null}
+
+      <div className="wn-app">
+        {/* Sidebar */}
+        <aside className="wn-side">
+          <div className="wn-brand"><span className="wn-brand__dot" /><span className="wn-brand__name">DS2 · Notes</span></div>
+          <label className="wn-search">
+            {ICON.search}
+            <input type="search" placeholder="Search notes…" aria-label="Search notes" value={query} onChange={(e) => setQuery(e.target.value)} />
+          </label>
+          <div className="wn-actions">
+            <button type="button" className="wn-btn wn-btn--primary" onClick={onNewNote} disabled={isDemo}>＋ Note</button>
+            <button type="button" className="wn-btn" onClick={onNewFolder} disabled={isDemo}>＋ Folder</button>
+          </div>
+          <nav className="wn-tree" aria-label="Notes navigation">
+            <button type="button" className={`wn-row ${folderSel === 'all' ? 'is-active' : ''}`} onClick={() => setFolderSel('all')}>
+              <span className="wn-spacer" /><span className="wn-row__ic">{ICON.all}</span>All notes<span className="wn-row__count">{data.notes.length}</span>
+            </button>
+            <button type="button" className={`wn-row ${folderSel === 'pinned' ? 'is-active' : ''}`} onClick={() => setFolderSel('pinned')}>
+              <span className="wn-spacer" /><span className="wn-row__ic">{ICON.pin}</span>Pinned<span className="wn-row__count">{data.notes.filter((n) => n.pinned).length || ''}</span>
+            </button>
+            {tree.length ? <div className="wn-tree__label">Folders</div> : null}
+            {tree.length ? (
+              <div role="tree" aria-label="Folders">
+                {renderTree(tree, 0)}
+              </div>
+            ) : null}
+          </nav>
+        </aside>
+
+        {/* Note list */}
+        <section className="wn-list">
+          <div className="wn-list__head"><span className="wn-list__title">{folderTitle}</span><span className="wn-list__sub">{notes.length} NOTE{notes.length === 1 ? '' : 'S'}</span></div>
+          <div className="wn-cards">
+            {notes.length === 0 ? (
+              <p className="wn-list-empty">No notes here yet.{!isDemo ? ' Press ＋ Note to start.' : ''}</p>
+            ) : (
+              notes.map((n) => (
+                <button type="button" key={n.id} className={`wn-card ${n.id === noteId ? 'is-active' : ''}`} onClick={() => { setNoteId(n.id); setMode('preview') }}>
+                  <div className="wn-card__top">
+                    {n.pinned ? <span className="wn-card__pin">{ICON.pinFill}</span> : null}
+                    <span className="wn-card__title">{n.title || 'Untitled'}</span>
+                  </div>
+                  {noteSnippet(n.body) ? <p className="wn-card__snip">{noteSnippet(n.body)}</p> : null}
+                  <div className="wn-card__meta">
+                    {n.projectIds.map((pid) => {
+                      const p = projectById.get(pid)
+                      if (!p) return null
+                      return <span key={pid} className={`wn-chip ${p.status === 'lead' ? 'wn-chip--lead' : ''}`} aria-label={p.status === 'lead' ? `${p.name}, lead` : undefined}>{p.name}</span>
+                    })}
+                    <span className="wn-card__time">{relativeTime(n.updatedAt)}{n.updatedByName ? ` · ${n.updatedByName}` : ''}</span>
+                  </div>
+                </button>
+              ))
+            )}
+          </div>
+        </section>
+
+        {/* Editor */}
+        <section className="wn-editor">
+          {!selected ? (
+            <div className="wn-empty">
+              <p className="wn-empty__title">Nothing open</p>
+              <p className="wn-empty__sub">Pick a note from the list{!isDemo ? ', or press ＋ Note to write a new one' : ''}.</p>
+            </div>
+          ) : (
+            <>
+              <div className="wn-bar">
+                <span className="wn-crumb">
+                  {(() => {
+                    const parts = folderPathParts(selected.folderId)
+                    if (!parts.length) return <b>All notes</b>
+                    return parts.map((seg, i) =>
+                      i === parts.length - 1 ? <b key={i}>{seg}</b> : <span key={i}>{seg}&nbsp;/&nbsp;</span>,
+                    )
+                  })()}
+                </span>
+                <span className={`wn-saved ${status === 'saving' ? 'is-saving' : ''}`} role="status" aria-live="polite">
+                  {status === 'saving' ? 'Saving…' : status === 'saved' ? 'Saved' : ''}
+                </span>
+                <div className="wn-seg" role="tablist" aria-label="View mode">
+                  <button type="button" role="tab" id="wn-tab-edit" aria-selected={mode === 'edit'} aria-controls="wn-panel" className={mode === 'edit' ? 'is-on' : ''} onClick={() => setMode('edit')}>Edit</button>
+                  <button type="button" role="tab" id="wn-tab-preview" aria-selected={mode === 'preview'} aria-controls="wn-panel" className={mode === 'preview' ? 'is-on' : ''} onClick={() => setMode('preview')}>Preview</button>
+                </div>
+                <button type="button" className={`wn-iconbtn ${selected.pinned ? 'is-on' : ''}`} aria-label={selected.pinned ? 'Unpin note' : 'Pin note'} disabled={isDemo} onClick={() => void togglePin(selected.id, !selected.pinned).then(() => router.refresh())}>{ICON.pin}</button>
+                <button type="button" className="wn-iconbtn wn-iconbtn--danger" aria-label="Delete note" disabled={isDemo} onClick={() => { if (window.confirm('Delete this note?')) void deleteNote(selected.id).then(() => { setNoteId(null); router.refresh() }) }}>{ICON.trash}</button>
+              </div>
+
+              <header className="wn-hero"><div className="wn-hero__in">
+                {selected.projectIds.length ? (
+                  <div className="wn-hero__id">
+                    {selected.projectIds.map((pid) => {
+                      const p = projectById.get(pid)
+                      if (!p) return null
+                      return <span key={pid} className={`wn-chip ${p.status === 'lead' ? 'wn-chip--lead' : ''}`} aria-label={p.status === 'lead' ? `${p.name}, lead` : undefined}>{p.name}</span>
+                    })}
+                  </div>
+                ) : null}
+                <input className="wn-title-input" value={draft.title} placeholder="Untitled" aria-label="Note title" readOnly={isDemo} onChange={(e) => onEdit({ title: e.target.value })} />
+                <p className="wn-byline">Edited <b>{relativeTime(selected.updatedAt)}</b>{selected.updatedByName ? <> by <b>{selected.updatedByName}</b></> : null}</p>
+              </div></header>
+
+              <div className="wn-body" role="tabpanel" id="wn-panel" aria-labelledby={mode === 'edit' ? 'wn-tab-edit' : 'wn-tab-preview'}>
+                {mode === 'edit' ? (
+                  <textarea className="wn-textarea" value={draft.body} placeholder="Write in markdown — # heading, - bullet, - [ ] task, **bold**, `code`…" aria-label="Note body" readOnly={isDemo} onChange={(e) => onEdit({ body: e.target.value })} />
+                ) : (
+                  <div
+                    className="wn-md"
+                    ref={previewRef}
+                    onClick={(e) => {
+                      const li = (e.target as HTMLElement).closest('.wn-check li')
+                      if (!li || !previewRef.current || isDemo || !noteId) return
+                      const items = Array.from(previewRef.current.querySelectorAll('.wn-check li'))
+                      const idx = items.indexOf(li)
+                      if (idx >= 0) onEdit({ body: toggleChecklist(draft.body, idx) })
+                    }}
+                    dangerouslySetInnerHTML={{ __html: previewHtml }}
+                  />
+                )}
+
+                <div className="wn-tags">
+                  <span className="wn-tags__label">Projects</span>
+                  {selected.projectIds.map((pid) => {
+                    const p = projectById.get(pid)
+                    if (!p) return null
+                    return <span key={pid} className={`wn-chip ${p.status === 'lead' ? 'wn-chip--lead' : ''}`}>{p.name}</span>
+                  })}
+                  {!isDemo ? <button type="button" className="wn-tag-add" onClick={() => setTagOpen((v) => !v)}>＋ tag</button> : null}
+                </div>
+                {tagOpen && !isDemo ? (
+                  <div className="wn-tag-pop">
+                    {data.projects.length === 0 ? <span className="wn-tag-opt">No projects yet.</span> : null}
+                    {data.projects.map((p) => {
+                      const on = selected.projectIds.includes(p.id)
+                      return (
+                        <button
+                          type="button"
+                          key={p.id}
+                          className={`wn-tag-opt ${on ? 'is-on' : ''}`}
+                          onClick={() => {
+                            const next = on ? selected.projectIds.filter((x) => x !== p.id) : [...selected.projectIds, p.id]
+                            void setNoteProjects(selected.id, next).then(() => router.refresh())
+                          }}
+                        >
+                          <span className="wn-tag-opt__mark">{on ? '✓' : ''}</span>
+                          {p.name}
+                          {p.status === 'lead' ? <span className="wn-chip wn-chip--lead" style={{ marginLeft: 'auto' }}>lead</span> : null}
+                        </button>
+                      )
+                    })}
+                  </div>
+                ) : null}
+              </div>
+            </>
+          )}
+        </section>
+      </div>
+    </div>
+  )
+}
