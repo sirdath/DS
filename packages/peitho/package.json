@@ -1,0 +1,27 @@
+{
+  "name": "@ds/peitho",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Peitho — DS2 outreach research engine. Runs a web-grounded Claude research pass over a marketing lead and synthesizes a structured, cited company brief (overview, ICP, ranked pain points, market, competitors, recent signals, outreach angle, talking points) with confidence + cost accounting. Pure deterministic core + two quarantined Claude calls (research with web tools → toolless structured synthesis); fact-checked.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": ["src"],
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.104.1"
+  },
+  "devDependencies": {
+    "@ds/tsconfig": "workspace:*",
+    "@types/node": "^22.16.5",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.0"
+  }
+}
