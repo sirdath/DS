@@ -1,12 +1,8 @@
-import Link from 'next/link'
 import { AuditForm } from './audit-form'
 
 export default function AegisWorkspacePage() {
   return (
     <>
-      <Link href="/products" className="ws-back">
-        ← All tools
-      </Link>
 
       <div className="ws-head">
         <span className="ws-head__eyebrow">Aegis · Site audit</span>

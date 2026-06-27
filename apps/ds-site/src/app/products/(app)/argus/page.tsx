@@ -7,7 +7,6 @@ import {
   type Movement,
   type MovementType,
 } from '@ds/argus'
-import Link from 'next/link'
 import { DEMO_BRIEFING_PROSE } from './demo-data'
 import './argus.css'
 
@@ -96,9 +95,6 @@ export default async function ArgusWorkspacePage() {
 
   return (
     <>
-      <Link href="/products" className="ws-back">
-        ← All tools
-      </Link>
 
       <div className="ws-head">
         <span className="ws-head__eyebrow">Argus · Competitor watch</span>
