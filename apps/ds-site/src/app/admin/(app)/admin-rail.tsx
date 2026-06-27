@@ -17,6 +17,9 @@ const ICONS: Record<string, ReactNode> = {
   notes: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5" /><path d="M9 13h6M9 17h6" /></svg>
   ),
+  calendar: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
+  ),
   products: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="6" cy="6" r="2.4" /><circle cx="18" cy="6" r="2.4" /><circle cx="6" cy="18" r="2.4" /><circle cx="18" cy="18" r="2.4" /></svg>
   ),
@@ -36,6 +39,7 @@ const ITEMS: Item[] = [
   { href: '/admin', label: 'Dashboard', icon: ICONS.dashboard, match: (p) => p === '/admin' || p === '/admin/' },
   { href: '/admin/funnel/leads', label: 'Funnel', icon: ICONS.funnel, match: (p) => p.startsWith('/admin/funnel') },
   { href: '/admin/projects', label: 'Projects', icon: ICONS.projects, match: (p) => p.startsWith('/admin/projects') },
+  { href: '/admin/calendar', label: 'Calendar', icon: ICONS.calendar, match: (p) => p.startsWith('/admin/calendar') },
   { href: '/admin/notes', label: 'Notes', icon: ICONS.notes, match: (p) => p.startsWith('/admin/notes') },
   { href: '/products', label: 'Products', icon: ICONS.products, match: (p) => p.startsWith('/products') },
 ]
@@ -44,7 +48,10 @@ export function AdminRail() {
   const path = usePathname() ?? ''
   return (
     <nav className="admin-rail" aria-label="Admin navigation">
-      <Link href="/admin" className="admin-rail__brand" aria-label="DS2 Admin home">DS</Link>
+      <Link href="/admin" className="admin-rail__brand" aria-label="DS2 Admin home">
+        <img src="/brand/ds2-mark.png" alt="DS2" width={26} height={26} />
+        <span className="admin-rail__brandname">Admin</span>
+      </Link>
       <div className="admin-rail__nav">
         {ITEMS.map((it) => {
           const on = it.match(path)
@@ -64,7 +71,10 @@ export function AdminRail() {
       </div>
       <div className="admin-rail__spacer" />
       <form method="post" action="/admin/logout">
-        <button type="submit" className="admin-rail__signout" aria-label="Sign out">{ICONS.signout}</button>
+        <button type="submit" className="admin-rail__signout" aria-label="Sign out">
+          {ICONS.signout}
+          <span>Sign out</span>
+        </button>
       </form>
     </nav>
   )

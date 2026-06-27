@@ -48,7 +48,7 @@ export default async function HuntPage({ searchParams }: PageProps) {
 
       const [res, indRes, pendRes, ...tierRes] = await Promise.all([
         q,
-        supabase.from('redesign_targets').select('industry').limit(20000),
+        supabase.from('redesign_targets').select('industry').limit(2000),
         supabase.from('redesign_targets').select('id', { count: 'exact', head: true }).eq('vision_status', 'pending'),
         ...VISION_TIERS.map((t) =>
           supabase.from('redesign_targets').select('id', { count: 'exact', head: true }).eq('vision_tier', t),

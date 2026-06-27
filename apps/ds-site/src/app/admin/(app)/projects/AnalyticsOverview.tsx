@@ -73,8 +73,8 @@ export default async function AnalyticsOverview() {
       {fetchError && (
         <div style={{
           marginBottom: '20px', padding: '16px 20px',
-          border: '1px solid rgba(255,170,80,0.32)', background: 'rgba(255,170,80,0.06)',
-          borderRadius: '10px', color: '#e8b46a', fontSize: '13px', lineHeight: 1.55,
+          border: '1px solid rgba(141,203,255,0.32)', background: 'rgba(141,203,255,0.06)',
+          borderRadius: '10px', color: '#8dcbff', fontSize: '13px', lineHeight: 1.55,
           fontFamily: 'ui-monospace, monospace',
         }}>
           <strong style={{ color: '#f5c98a' }}>Analytics data unavailable.</strong>{' '}

@@ -11,7 +11,7 @@ export default async function WorkspaceAppLayout({ children }: { children: React
     <>
       <header className="ws-topbar">
         <Link href="/products" className="ws-topbar__brand">
-          <span className="ws-topbar__eyebrow">DS2</span>
+          <img src="/brand/ds2-mark.png" alt="DS2" width={26} height={26} className="ws-topbar__mark" />
           <span className="ws-topbar__title">Products</span>
         </Link>
 

@@ -73,7 +73,7 @@ export default async function LeadsPage({ searchParams }: PageProps) {
         query,
         supabase.from('lead_areas').select('area_label, status, lead_count, run_at').order('run_at', { ascending: false }),
         supabase.from('marketing_leads').select('id', { count: 'exact', head: true }).eq('analysis_status', 'pending').not('website', 'is', null),
-        supabase.from('marketing_leads').select('category').not('category', 'is', null).limit(10000),
+        supabase.from('marketing_leads').select('category').not('category', 'is', null).limit(2000),
       ])
       if (leadsRes.error) throw new Error(leadsRes.error.message)
       leads = (leadsRes.data ?? []).map((r) => rowToLead(r as Record<string, unknown>))

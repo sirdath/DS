@@ -15,32 +15,32 @@
 
 /* ── Custom Properties ─────────────────────────── */
 :root {
-  /* Backgrounds */
-  --admin-bg:            #0a0a0a;
-  --admin-surface:       #141414;
-  --admin-surface-raise: #1c1c1c;
-  --admin-border:        rgba(255, 255, 255, 0.07);
-  --admin-border-hover:  rgba(255, 255, 255, 0.13);
+  /* Backgrounds — DS2 v2 ramp (Space / Graphite) */
+  --admin-bg:            #050607;
+  --admin-surface:       #111419;
+  --admin-surface-raise: #161a20;
+  --admin-border:        rgba(255, 255, 255, 0.08);
+  --admin-border-hover:  rgba(255, 255, 255, 0.14);
 
-  /* Text */
-  --admin-text:          #f5f5f5;
-  --admin-text-muted:    #888888;
-  --admin-text-dim:      #444444;
-  --admin-mono:          ui-monospace, 'SF Mono', 'Fira Code', monospace;
+  /* Text — Mineral / Silver / Titanium */
+  --admin-text:          #f7f9fb;
+  --admin-text-muted:    #aeb4bd;
+  --admin-text-dim:      #626872;
+  --admin-mono:          'IBM Plex Mono', ui-monospace, 'SF Mono', 'Fira Code', monospace;
 
-  /* Accent — warm amber only */
-  --admin-amber:         #e8b46a;
-  --admin-amber-dim:     rgba(232, 180, 106, 0.15);
-  --admin-amber-border:  rgba(232, 180, 106, 0.30);
+  /* Accent — DS2 Ice (focus & action only). Var name kept "amber" to avoid churn. */
+  --admin-amber:         #8dcbff;
+  --admin-amber-dim:     rgba(141, 203, 255, 0.15);
+  --admin-amber-border:  rgba(141, 203, 255, 0.30);
 
   /* Status pills */
   --pill-lead-bg:        rgba(255, 255, 255, 0.06);
   --pill-lead-text:      #888888;
   --pill-lead-border:    rgba(255, 255, 255, 0.10);
 
-  --pill-progress-bg:    rgba(232, 180, 106, 0.12);
-  --pill-progress-text:  #e8b46a;
-  --pill-progress-border:rgba(232, 180, 106, 0.28);
+  --pill-progress-bg:    rgba(141, 203, 255, 0.12);
+  --pill-progress-text:  #8dcbff;
+  --pill-progress-border:rgba(141, 203, 255, 0.28);
 
   --pill-delivered-bg:   rgba(160, 180, 155, 0.10);
   --pill-delivered-text: #a0b49b;
@@ -56,12 +56,12 @@
   /* lead: barely any progress — keep low-key neutral */
   --progress-lead:         linear-gradient(90deg, #5c5c5c, #7a7a7a);
   --progress-lead-glow:    transparent;
-  /* in progress: active warm amber */
-  --progress-inprogress:   linear-gradient(90deg, #d98f3c, #f2bd6b);
-  --progress-inprogress-glow: rgba(232, 180, 106, 0.45);
-  /* delivered: clear, confident green */
-  --progress-delivered:    linear-gradient(90deg, #2f9e6e, #57c98f);
-  --progress-delivered-glow: rgba(70, 190, 135, 0.40);
+  /* in progress: active — DS2 Action → Ice */
+  --progress-inprogress:   linear-gradient(90deg, #347fd1, #8dcbff);
+  --progress-inprogress-glow: rgba(141, 203, 255, 0.45);
+  /* delivered: clear, confident green (DS2 success — semantic, kept) */
+  --progress-delivered:    linear-gradient(90deg, #2f8a63, #43a47a);
+  --progress-delivered-glow: rgba(67, 164, 122, 0.40);
   /* retainer: the win — richest gold with a glow */
   --progress-retainer:     linear-gradient(90deg, #e0a23f, #f7d98a);
   --progress-retainer-glow: rgba(244, 205, 130, 0.55);
@@ -359,7 +359,7 @@
 .admin-card.is-retainer::before {
   background: radial-gradient(
     circle 260px at var(--card-mx, 50%) var(--card-my, 50%),
-    rgba(232, 180, 106, 0.10),
+    rgba(141, 203, 255, 0.10),
     transparent 60%
   );
 }
@@ -747,14 +747,14 @@
 }
 .admin-dash-bar__fill {
   height: 100%; border-radius: 999px;
-  background: linear-gradient(90deg, #4ade80, #86efac);
+  background: linear-gradient(90deg, #43a47a, #5cc795);
 }
 .admin-dash-bar__legend {
   display: flex; gap: 22px; margin-top: 12px;
   font-size: 12px; color: var(--admin-text-muted);
 }
 .admin-dash-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
-.admin-dash-dot--collected { background: #4ade80; }
+.admin-dash-dot--collected { background: #43a47a; }
 .admin-dash-dot--outstanding { background: rgba(255, 255, 255, 0.18); }
 .admin-dash-cta { margin-top: 8px; }
 
@@ -948,16 +948,16 @@
 
 /* pitched: bright amber + subtle pulse ring — "awaiting reply" */
 .admin-outreach-pill.is-pitched {
-  background: rgba(232, 180, 106, 0.22);
+  background: rgba(141, 203, 255, 0.22);
   color: #f2cc88;
-  border-color: rgba(232, 180, 106, 0.55);
-  box-shadow: 0 0 0 0 rgba(232, 180, 106, 0.40);
+  border-color: rgba(141, 203, 255, 0.55);
+  box-shadow: 0 0 0 0 rgba(141, 203, 255, 0.40);
   animation: outreach-pulse 2.4s ease-in-out infinite;
 }
 
 @keyframes outreach-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(232, 180, 106, 0.40); }
-  50%       { box-shadow: 0 0 0 5px rgba(232, 180, 106, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(141, 203, 255, 0.40); }
+  50%       { box-shadow: 0 0 0 5px rgba(141, 203, 255, 0); }
 }
 
 /* ── Project-type tag ──────────────────────────── */
@@ -994,7 +994,7 @@
   transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
 }
 .admin-new-btn:hover {
-  background: rgba(232, 180, 106, 0.22);
+  background: rgba(141, 203, 255, 0.22);
   border-color: var(--admin-amber);
   color: #f2cc88;
 }
@@ -1095,7 +1095,7 @@
 .admin-form__select:focus,
 .admin-form__textarea:focus {
   border-color: var(--admin-amber-border);
-  box-shadow: 0 0 0 2px rgba(232, 180, 106, 0.12);
+  box-shadow: 0 0 0 2px rgba(141, 203, 255, 0.12);
 }
 
 .admin-form__input::placeholder,
@@ -1173,7 +1173,7 @@
   transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
 }
 .admin-form__submit:hover {
-  background: rgba(232, 180, 106, 0.22);
+  background: rgba(141, 203, 255, 0.22);
   border-color: var(--admin-amber);
   color: #f2cc88;
 }
@@ -1488,13 +1488,13 @@
 
 .admin-edit-details--prominent[open] summary,
 .admin-edit-details--prominent[open] .admin-edit-details__summary--prominent {
-  background: rgba(232, 180, 106, 0.12);
+  background: rgba(141, 203, 255, 0.12);
   border-bottom: 1px solid var(--admin-border);
 }
 
 .admin-edit-details--prominent summary:hover,
 .admin-edit-details--prominent .admin-edit-details__summary--prominent:hover {
-  background: rgba(232, 180, 106, 0.22);
+  background: rgba(141, 203, 255, 0.22);
   color: #f2cc88;
 }
 
@@ -1727,7 +1727,7 @@
   display: inline-block;
   width: 14px;
   height: 14px;
-  border: 1.5px solid rgba(232, 180, 106, 0.25);
+  border: 1.5px solid rgba(141, 203, 255, 0.25);
   border-top-color: var(--admin-amber);
   border-radius: 50%;
   animation: admin-spin 0.7s linear infinite;
@@ -1921,7 +1921,7 @@
 .admin-hunt-tile__l { font-size: 12px; color: var(--admin-text-muted); }
 .admin-hunt-tile.is-disaster .admin-hunt-tile__n { color: #e96a6a; }
 .admin-hunt-tile.is-rough .admin-hunt-tile__n { color: #e8a86a; }
-.admin-hunt-tile.is-dated .admin-hunt-tile__n { color: var(--admin-amber); }
+.admin-hunt-tile.is-dated .admin-hunt-tile__n { color: #e8c86a; }
 .admin-hunt-tile.is-ok .admin-hunt-tile__n { color: #7dbe82; }
 
 .admin-hunt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-top: 12px; }
@@ -1936,7 +1936,7 @@
   padding: 4px 8px; border-radius: 999px; background: rgba(0,0,0,0.7); color: #fff; backdrop-filter: blur(4px); }
 .admin-hunt-badge.is-disaster { background: rgba(233,106,106,0.92); }
 .admin-hunt-badge.is-rough { background: rgba(232,168,106,0.92); color: #1a1a1a; }
-.admin-hunt-badge.is-dated { background: rgba(232,180,106,0.92); color: #1a1a1a; }
+.admin-hunt-badge.is-dated { background: rgba(232,200,106,0.92); color: #1a1a1a; }
 .admin-hunt-badge.is-ok { background: rgba(125,190,130,0.92); color: #102a13; }
 .admin-hunt-badge.is-unscored { background: rgba(255,255,255,0.12); color: var(--admin-text-muted); }
 .admin-hunt-card__body { padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
@@ -2048,51 +2048,49 @@
 /* ── Left icon rail ── */
 .admin-rail {
   position: sticky; top: 0; align-self: flex-start;
-  height: 100vh; width: 72px; flex: none;
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  padding: 18px 0; background: var(--ds2-bg);
+  height: 100vh; width: 212px; flex: none;
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 18px 14px; background: var(--ds2-bg);
   border-right: 1px solid var(--ds2-border); z-index: 100;
 }
 .admin-rail__brand {
-  width: 38px; height: 38px; border-radius: 11px; margin-bottom: 12px;
-  display: grid; place-items: center; text-decoration: none;
-  background: var(--ds2-ice); color: #050607; font-weight: 700; font-size: 15px;
+  display: flex; align-items: center; gap: 10px; padding: 4px 8px; margin-bottom: 16px;
+  text-decoration: none; color: var(--ds2-text);
 }
-.admin-rail__nav { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+.admin-rail__brand img { display: block; border-radius: 7px; }
+.admin-rail__brandname { font-family: var(--admin-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ds2-text-3); }
+.admin-rail__nav { display: flex; flex-direction: column; gap: 4px; }
 .admin-rail__item {
-  position: relative; width: 44px; height: 44px; border-radius: 12px;
-  display: grid; place-items: center; color: var(--ds2-text-3); text-decoration: none;
+  display: flex; align-items: center; gap: 12px; height: 42px; padding: 0 12px; border-radius: 11px;
+  color: var(--ds2-text-2); text-decoration: none; font-size: 14px; font-weight: 500;
   transition: color 0.2s var(--ds2-ease), background 0.2s var(--ds2-ease);
 }
 .admin-rail__item:hover { color: var(--ds2-text); background: var(--ds2-glass); }
 .admin-rail__item.is-active { color: #050607; background: var(--ds2-ice); }
-.admin-rail__item svg { width: 20px; height: 20px; }
+.admin-rail__item svg { width: 20px; height: 20px; flex: none; }
 .admin-rail__item:focus-visible { outline: 2px solid var(--ds2-ice); outline-offset: 2px; }
-.admin-rail__label {
-  position: absolute; left: calc(100% + 10px); white-space: nowrap;
-  padding: 5px 10px; border-radius: 8px; font-size: 12px;
-  background: var(--ds2-surface-3); color: var(--ds2-text); border: 1px solid var(--ds2-border-2);
-  opacity: 0; transform: translateX(-4px); pointer-events: none;
-  transition: opacity 0.16s var(--ds2-ease), transform 0.16s var(--ds2-ease); z-index: 5;
-}
-.admin-rail__item:hover .admin-rail__label, .admin-rail__item:focus-visible .admin-rail__label { opacity: 1; transform: translateX(0); }
+.admin-rail__label { white-space: nowrap; }
 .admin-rail__spacer { flex: 1; }
 .admin-rail__signout {
-  width: 44px; height: 44px; border-radius: 12px; border: 0; background: none;
-  color: var(--ds2-text-3); cursor: pointer; display: grid; place-items: center;
+  display: flex; align-items: center; gap: 12px; height: 42px; padding: 0 12px; border-radius: 11px;
+  border: 0; background: none; width: 100%; text-align: left; cursor: pointer;
+  color: var(--ds2-text-3); font: inherit; font-size: 14px; font-weight: 500;
   transition: color 0.2s var(--ds2-ease), background 0.2s var(--ds2-ease);
 }
 .admin-rail__signout:hover { color: var(--ds2-text); background: var(--ds2-glass); }
-.admin-rail__signout svg { width: 20px; height: 20px; }
+.admin-rail__signout svg { width: 20px; height: 20px; flex: none; }
 
-@media (max-width: 720px) {
+@media (max-width: 860px) {
   .admin-shell { flex-direction: column; }
   .admin-rail {
-    flex-direction: row; width: 100%; height: auto; top: 0;
+    flex-direction: row; flex-wrap: wrap; width: 100%; height: auto; top: 0; align-items: center;
     border-right: 0; border-bottom: 1px solid var(--ds2-border); padding: 8px 12px; gap: 4px;
   }
-  .admin-rail__brand { margin-bottom: 0; }
-  .admin-rail__label { display: none; }
+  .admin-rail__brand { margin-bottom: 0; margin-right: auto; }
+  .admin-rail__nav { flex-direction: row; flex-wrap: wrap; }
+  .admin-rail__item { height: 38px; padding: 0 10px; }
+  .admin-rail__spacer { display: none; }
+  .admin-rail__signout { width: auto; }
 }
 
 /* ── Dashboard (DS2) ── */
@@ -2162,3 +2160,31 @@
 @keyframes ds2-page-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 .animate-page-in { animation: ds2-page-in 320ms var(--ds2-ease) both; }
 @media (prefers-reduced-motion: reduce) { .animate-page-in { animation: none; } }
+
+/* ── Loading skeletons (instant feedback on tab switch) ── */
+.admin-skel { max-width: var(--admin-max-w); margin: 0 auto; padding: 32px 32px 72px; }
+.admin-skel__row { display: flex; gap: 14px; align-items: center; margin-bottom: 14px; }
+.admin-skel__bar { background: var(--ds2-surface, #111419); border: 1px solid var(--ds2-border, rgba(255,255,255,0.08)); border-radius: 10px; position: relative; overflow: hidden; }
+.admin-skel__bar::after { content: ''; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); animation: admin-shimmer 1.3s var(--ds2-ease, ease) infinite; }
+.admin-skel__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-top: 24px; }
+@keyframes admin-shimmer { 100% { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) { .admin-skel__bar::after { animation: none; } }
+
+/* ── Dashboard calendar card (links to /admin/calendar) ── */
+.ds2-calcard { display: flex; flex-direction: column; gap: 14px; text-decoration: none; color: inherit; transition: border-color 0.2s var(--ds2-ease), transform 0.2s var(--ds2-ease); }
+.ds2-calcard:hover { border-color: var(--ds2-border-2); transform: translateY(-1px); }
+.ds2-calcard__head { display: flex; align-items: baseline; justify-content: space-between; }
+.ds2-calcard__month { font-size: 13px; color: var(--ds2-text-2); }
+.ds2-calmini__wd { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 4px; }
+.ds2-calmini__wd span { text-align: center; font-size: 9px; color: var(--ds2-text-3); font-family: var(--admin-mono); }
+.ds2-calmini__grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.ds2-calmini__d { position: relative; aspect-ratio: 1; display: grid; place-items: center; font-size: 11px; color: var(--ds2-text-2); border-radius: 6px; font-variant-numeric: tabular-nums; }
+.ds2-calmini__d.is-out { color: var(--ds2-text-3); opacity: 0.5; }
+.ds2-calmini__d.is-today { background: var(--ds2-ice); color: #050607; font-weight: 600; }
+.ds2-calmini__d.has-ev::after { content: ''; position: absolute; bottom: 2px; width: 4px; height: 4px; border-radius: 999px; background: var(--ds2-ice); }
+.ds2-calmini__d.is-today.has-ev::after { background: #050607; }
+.ds2-calcard__up { display: grid; gap: 6px; border-top: 1px solid var(--ds2-border); padding-top: 12px; }
+.ds2-calcard__ev { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ds2-text); }
+.ds2-calcard__ev i { width: 7px; height: 7px; border-radius: 999px; flex: none; }
+.ds2-calcard__ev span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ds2-calcard__empty { font-size: 12px; color: var(--ds2-text-3); }

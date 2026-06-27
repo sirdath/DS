@@ -6,17 +6,18 @@
  */
 
 .ws-root {
-  --ws-bg: #08090b;
-  --ws-surface: #0e1012;
-  --ws-surface-2: #131518;
-  --ws-border: rgba(154, 166, 174, 0.13);
-  --ws-border-hover: rgba(154, 166, 174, 0.26);
-  --ws-text: #f0f2f4;
-  --ws-muted: #7a8492;
-  --ws-ghost: #4a5260;
-  --ws-cta: #2563eb;
-  --ws-cta-glow: rgba(37, 99, 235, 0.26);
-  --ws-mono: ui-monospace, "SF Mono", "Fira Code", Menlo, monospace;
+  /* DS2 v2 ramp — Space / Graphite / Ice (matches the admin + presentation deck) */
+  --ws-bg: #050607;
+  --ws-surface: #111419;
+  --ws-surface-2: #161a20;
+  --ws-border: rgba(255, 255, 255, 0.08);
+  --ws-border-hover: rgba(255, 255, 255, 0.14);
+  --ws-text: #f7f9fb;
+  --ws-muted: #aeb4bd;
+  --ws-ghost: #626872;
+  --ws-cta: #8dcbff;
+  --ws-cta-glow: rgba(141, 203, 255, 0.26);
+  --ws-mono: "IBM Plex Mono", ui-monospace, "SF Mono", "Fira Code", Menlo, monospace;
   --ws-radius: 16px;
   --ws-ease: cubic-bezier(0.4, 0, 0.2, 1);
   --ws-dur: 0.2s;
@@ -399,7 +400,7 @@ a.ws-card:focus-visible .ws-card__open {
   width: 100%;
   font: inherit;
   font-weight: 600;
-  color: #fff;
+  color: #050607;
   background: var(--ws-cta);
   border: none;
   border-radius: 10px;
@@ -469,3 +470,7 @@ a.ws-card:focus-visible .ws-card__open {
 .ws-present-cta:hover { border-color: rgba(141, 203, 255, 0.5); transform: translateY(-1px); }
 .ws-present-cta__eyebrow { font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8dcbff; }
 .ws-present-cta__title { font-size: 15px; font-weight: 500; color: #f7f9fb; }
+
+/* Real DS2 mark in the products topbar (replaces the text eyebrow). */
+.ws-topbar__brand { align-items: center; }
+.ws-topbar__mark { display: block; border-radius: 6px; }
