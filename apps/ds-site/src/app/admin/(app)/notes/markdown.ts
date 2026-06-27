@@ -57,7 +57,10 @@ export function renderMarkdown(text: string): string {
     if (line.trimStart().startsWith('```')) {
       i++
       const buf: string[] = []
-      while (i < n && !(lines[i] ?? '').trimStart().startsWith('```')) buf.push(lines[i] ?? ''), i++
+      while (i < n && !(lines[i] ?? '').trimStart().startsWith('```')) {
+        buf.push(lines[i] ?? '')
+        i++
+      }
       i++
       out.push(`<pre class="wn-pre">${escapeHtml(buf.join('\n'))}</pre>`)
       continue
@@ -79,7 +82,10 @@ export function renderMarkdown(text: string): string {
 
     if (line.startsWith('>')) {
       const buf: string[] = []
-      while (i < n && (lines[i] ?? '').startsWith('>')) buf.push((lines[i] ?? '').slice(1).trimStart()), i++
+      while (i < n && (lines[i] ?? '').startsWith('>')) {
+        buf.push((lines[i] ?? '').slice(1).trimStart())
+        i++
+      }
       out.push(`<blockquote>${inline(buf.join(' '))}</blockquote>`)
       continue
     }
