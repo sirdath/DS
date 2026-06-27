@@ -1,0 +1,54 @@
+/* Presentation builder — internal. Matches the products dark shell. */
+.pb { display: grid; gap: 18px; max-width: 980px; }
+.pb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.pb-panel { background: #111419; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 20px; }
+.pb-panel__title { font-size: 15px; font-weight: 600; margin: 0; color: #f7f9fb; }
+.pb-panel__hint { font-size: 12px; color: #626872; margin: 4px 0 14px; }
+.pb-avail { display: grid; gap: 8px; }
+.pb-card { text-align: left; display: grid; gap: 4px; background: #161a20; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px 14px; cursor: pointer; transition: border-color 0.18s, background 0.18s; }
+.pb-card:hover { border-color: rgba(141, 203, 255, 0.4); background: #1a1f27; }
+.pb-card__name { font-size: 14px; font-weight: 500; color: #f7f9fb; }
+.pb-card__tag { font-size: 12px; color: #aeb4bd; line-height: 1.45; }
+.pb-empty { font-size: 13px; color: #626872; }
+.pb-empty--big { padding: 28px 0; }
+
+.pb-order { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.pb-row { display: flex; align-items: center; gap: 12px; background: #161a20; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 10px 12px; }
+.pb-row__n { font-family: var(--admin-mono, monospace); font-size: 12px; color: #8dcbff; }
+.pb-row__name { flex: 1; font-size: 14px; font-weight: 500; color: #f7f9fb; }
+.pb-row__moves { display: flex; gap: 4px; }
+.pb-row__moves button { width: 28px; height: 28px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); background: none; color: #aeb4bd; cursor: pointer; }
+.pb-row__moves button:disabled { opacity: 0.35; cursor: default; }
+.pb-row__moves button:hover:not(:disabled) { color: #f7f9fb; border-color: rgba(255, 255, 255, 0.22); }
+.pb-row__rm:hover:not(:disabled) { color: #e88 !important; }
+
+.pb-meta { display: grid; grid-template-columns: 1fr 1fr auto; gap: 14px; align-items: end; background: #111419; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 18px 20px; }
+.pb-field { display: grid; gap: 6px; font-size: 12px; color: #aeb4bd; }
+.pb-field input { background: #050607; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 9px 12px; color: #f7f9fb; font: inherit; font-size: 14px; }
+.pb-field input:focus-visible { outline: 2px solid #8dcbff; outline-offset: 1px; }
+.pb-generate, .pb-newbtn { background: #8dcbff; color: #050607; font-weight: 500; font-size: 13px; border: 0; border-radius: 999px; padding: 11px 20px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; white-space: nowrap; }
+.pb-generate:disabled { opacity: 0.4; cursor: default; }
+.pb-generate:hover:not(:disabled), .pb-newbtn:hover { filter: brightness(1.08); }
+
+.pb-err { color: #e88; font-size: 13px; }
+.pb-link { display: flex; gap: 8px; align-items: center; background: #111419; border: 1px solid rgba(141, 203, 255, 0.3); border-radius: 12px; padding: 10px 12px; }
+.pb-link input { flex: 1; background: #050607; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 8px 10px; color: #8dcbff; font: inherit; font-size: 13px; }
+.pb-link button, .pb-link a { background: none; border: 1px solid rgba(255, 255, 255, 0.14); color: #f7f9fb; border-radius: 8px; padding: 8px 12px; font-size: 13px; cursor: pointer; text-decoration: none; }
+
+.pb-toolbar { margin-bottom: 16px; }
+.pb-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; max-width: 760px; }
+.pb-listrow { display: flex; align-items: center; gap: 16px; background: #111419; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 14px 18px; }
+.pb-listrow.is-off { opacity: 0.55; }
+.pb-listrow__main { flex: 1; display: grid; gap: 3px; min-width: 0; }
+.pb-listrow__title { font-size: 14px; font-weight: 500; color: #f7f9fb; }
+.pb-listrow__meta { font-size: 12px; color: #626872; }
+.pb-listrow__actions { display: flex; gap: 8px; align-items: center; }
+.pb-listrow__actions button, .pb-listrow__actions a { background: none; border: 1px solid rgba(255, 255, 255, 0.14); color: #aeb4bd; border-radius: 8px; padding: 7px 11px; font-size: 12px; cursor: pointer; text-decoration: none; }
+.pb-listrow__actions button:hover:not(:disabled), .pb-listrow__actions a:hover { color: #f7f9fb; border-color: rgba(255, 255, 255, 0.26); }
+.pb-listrow__actions button:disabled { opacity: 0.4; cursor: default; }
+.pb-listrow__revoke:hover:not(:disabled) { color: #e88 !important; border-color: rgba(238, 136, 136, 0.4) !important; }
+
+@media (max-width: 720px) {
+  .pb-grid { grid-template-columns: 1fr; }
+  .pb-meta { grid-template-columns: 1fr; }
+}

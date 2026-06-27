@@ -1,0 +1,110 @@
+/* DS2 presentation deck — public, client-facing. Space-grey + optical-glass + Ice.
+   Tokens local to .pv2-root (this route is outside the admin/products shells). */
+.pv2-root {
+  --pv2-bg: #050607;
+  --pv2-surface: #111419;
+  --pv2-surface-2: #161a20;
+  --pv2-text: #f7f9fb;
+  --pv2-text-2: #aeb4bd;
+  --pv2-text-3: #626872;
+  --pv2-border: rgba(255, 255, 255, 0.1);
+  --pv2-ice: #8dcbff;
+  --pv2-glass: rgba(255, 255, 255, 0.05);
+  --pv2-accent: #8dcbff;
+  --pv2-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  background: var(--pv2-bg);
+  color: var(--pv2-text);
+  font-family: var(--font-inter), "Segoe UI", Arial, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+.pv2-root * { box-sizing: border-box; }
+
+/* Hero */
+.pv2-hero {
+  min-height: 92vh; display: flex; flex-direction: column; justify-content: center;
+  max-width: 1080px; margin: 0 auto; padding: 64px 32px;
+}
+.pv2-hero__eyebrow { font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--pv2-text-3); }
+.pv2-hero__title { font-size: clamp(40px, 8vw, 84px); font-weight: 300; letter-spacing: -0.04em; line-height: 1.02; margin: 18px 0 0; }
+.pv2-hero__client { font-size: 18px; color: var(--pv2-ice); margin: 18px 0 0; }
+.pv2-hero__sub { font-size: 16px; color: var(--pv2-text-2); margin: 12px 0 0; }
+.pv2-hero__cue { display: inline-block; margin-top: 48px; font-size: 22px; color: var(--pv2-text-3); animation: pv2-bob 1.8s var(--pv2-ease) infinite; }
+@keyframes pv2-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+
+/* Section */
+.pv2-section {
+  min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+  max-width: 1100px; margin: 0 auto; padding: 80px 32px; gap: 36px;
+}
+.pv2-section__intro { max-width: 720px; }
+.pv2-section__n { font-family: "IBM Plex Mono", monospace; font-size: 13px; color: var(--pv2-accent); letter-spacing: 0.1em; }
+.pv2-section__eyebrow { display: block; font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--pv2-text-3); margin-top: 10px; }
+.pv2-section__headline { font-size: clamp(28px, 4.4vw, 46px); font-weight: 300; letter-spacing: -0.03em; line-height: 1.1; margin: 14px 0 0; }
+.pv2-section__sub { font-size: 17px; line-height: 1.55; color: var(--pv2-text-2); margin: 14px 0 0; max-width: 60ch; }
+.pv2-section__stage { width: 100%; }
+
+/* Generic embed frame (Fama report, map) */
+.pv2-embed {
+  background: var(--pv2-surface); border: 1px solid var(--pv2-border); border-radius: 20px;
+  padding: 22px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 24px 60px -30px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+}
+.pv2-embed--map { padding: 0; }
+.pv2-embed--map iframe { width: 100%; height: 560px; border: 0; display: block; }
+
+/* Aegis showcase */
+.pv2-aegis { display: grid; gap: 22px; }
+.pv2-aegis__scores { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.pv2-score {
+  background: var(--pv2-surface); border: 1px solid var(--pv2-border); border-radius: 16px;
+  padding: 22px 18px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start;
+}
+.pv2-score__num { font-size: 40px; font-weight: 300; font-variant-numeric: tabular-nums; }
+.pv2-score__label { font-size: 12px; color: var(--pv2-text-3); text-transform: uppercase; letter-spacing: 0.08em; }
+.pv2-score.is-good .pv2-score__num { color: #57c98f; }
+.pv2-score.is-mid .pv2-score__num { color: #f2bd6b; }
+.pv2-score.is-poor .pv2-score__num { color: #e88; }
+.pv2-aegis__verdict { font-size: 17px; line-height: 1.6; color: var(--pv2-text-2); max-width: 70ch; }
+
+/* Argus / generic capability */
+.pv2-cap { display: grid; gap: 22px; }
+.pv2-cap__lead { font-size: 19px; line-height: 1.55; color: var(--pv2-text); max-width: 62ch; }
+.pv2-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.pv2-chip {
+  font-size: 13px; color: var(--pv2-text-2); padding: 8px 14px; border-radius: 999px;
+  background: var(--pv2-glass); border: 1px solid var(--pv2-border);
+}
+
+/* Plutus steps */
+.pv2-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.pv2-step {
+  background: var(--pv2-surface); border: 1px solid var(--pv2-border); border-radius: 16px; padding: 24px;
+  display: grid; gap: 8px; align-content: start;
+}
+.pv2-step__n { font-family: "IBM Plex Mono", monospace; font-size: 13px; color: var(--pv2-accent); }
+.pv2-step__t { font-size: 19px; font-weight: 500; }
+.pv2-step__d { font-size: 14px; line-height: 1.5; color: var(--pv2-text-2); }
+
+/* Xenia chat */
+.pv2-chat { display: grid; gap: 10px; max-width: 560px; }
+.pv2-bubble { padding: 12px 16px; border-radius: 16px; font-size: 15px; line-height: 1.5; max-width: 84%; }
+.pv2-bubble--them { background: var(--pv2-surface-2); border: 1px solid var(--pv2-border); justify-self: start; border-bottom-left-radius: 5px; }
+.pv2-bubble--xenia { background: color-mix(in srgb, var(--pv2-ice) 18%, transparent); border: 1px solid color-mix(in srgb, var(--pv2-ice) 32%, transparent); color: var(--pv2-text); justify-self: end; border-bottom-right-radius: 5px; }
+
+/* Expired / footer */
+.pv2-gone { min-height: 100vh; display: grid; place-items: center; padding: 32px; }
+.pv2-gone__card { max-width: 460px; text-align: center; background: var(--pv2-surface); border: 1px solid var(--pv2-border); border-radius: 22px; padding: 44px 36px; }
+.pv2-gone__eyebrow { font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.2em; color: var(--pv2-text-3); }
+.pv2-gone__card h1 { font-size: 26px; font-weight: 400; margin: 16px 0 10px; }
+.pv2-gone__card p { color: var(--pv2-text-2); font-size: 15px; line-height: 1.55; }
+.pv2-gone__cta, .pv2-foot a { color: var(--pv2-ice); text-decoration: none; }
+.pv2-gone__cta { display: inline-block; margin-top: 22px; font-size: 14px; }
+.pv2-foot { max-width: 1100px; margin: 0 auto; padding: 40px 32px 64px; display: flex; justify-content: space-between; font-size: 13px; color: var(--pv2-text-3); border-top: 1px solid var(--pv2-border); }
+
+@media (max-width: 720px) {
+  .pv2-aegis__scores { grid-template-columns: repeat(2, 1fr); }
+  .pv2-steps { grid-template-columns: 1fr; }
+  .pv2-embed--map iframe { height: 420px; }
+}
+@media (prefers-reduced-motion: reduce) { .pv2-hero__cue { animation: none; } }

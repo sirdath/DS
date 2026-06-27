@@ -8,11 +8,12 @@ This is the one-stop lookup for *"what do we have, where did it come from, and w
 
 Skills are prompt packages with YAML frontmatter that Claude Code auto-invokes based on their `description`. Total: **23** (18 adopted from [CLAUDE-STUFF](https://github.com/…/) + 5 DS-specific).
 
-### DS-specific (5)
+### DS-specific (9)
 
 | Skill | Trigger | Purpose |
 |---|---|---|
 | [`frontend-design`](../.claude/skills/frontend-design/SKILL.md) | "build a component / page / site" | **The brand guardrail.** Upstream Anthropic skill enriched with DS overlay (POSITIONING.md rules, default stack, sentence-case headlines, honesty rhythm, token discipline). |
+| [`ds2-design`](../.claude/skills/ds2-design/SKILL.md) | `/ds2-design`, "apply DS2 branding", "make this look like DS2" | **By Stelios** ([Stel777/DS2-design-skill](https://github.com/Stel777/DS2-design-skill)). Portable DS2 **v2** brand system ("Clarity, given depth" — Space-grey + optical-glass + Ice-blue, monochrome-authority UI). Full token / type / motion / glass / copy spec in [DS2-design.md](../.claude/skills/ds2-design/DS2-design.md). **Pair with the `designbook` MCP for frontend work** — compose the page with design book, then apply DS2 tokens via this skill so the output lands in our brand. |
 | [`competitor-research`](../.claude/skills/competitor-research/SKILL.md) | "research competitors for {client}" | Firecrawl-powered competitive-intelligence pass. Writes `apps/{slug}/public/research/{slug}/competitors.md`. |
 | [`website-research`](../.claude/skills/website-research/SKILL.md) | "analyze {URL}" | Site IA + component decomposition. Writes `site-map.md`, `components-inventory.md`, `component-shopping-list.md`. |
 | [`client-project-scaffold`](../.claude/skills/client-project-scaffold/SKILL.md) | "new client project for {name}" | One-shot client-engagement bootstrap. Creates `apps/{slug}/`, seeds research folder, opens delivery checklist. |

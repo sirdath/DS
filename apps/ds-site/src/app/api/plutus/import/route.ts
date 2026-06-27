@@ -13,8 +13,8 @@ import {
   rateLimited,
   resolveApiSession,
   sameOrigin,
-} from '../../../workspace/(app)/plutus/lib/route-helpers'
-import { upsertReceivables } from '../../../workspace/(app)/plutus/lib/persist'
+} from '../../../products/(app)/plutus/lib/route-helpers'
+import { upsertReceivables } from '../../../products/(app)/plutus/lib/persist'
 
 export const runtime = 'nodejs'
 

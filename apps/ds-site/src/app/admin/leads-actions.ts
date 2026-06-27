@@ -5,7 +5,7 @@ import { assertAdmin } from './lib/assert-admin'
 import { getSupabaseServerClient } from './lib/supabase-server'
 import { LEAD_STATUSES, type LeadStatus, type ParsedLead } from './lib/leads-types'
 
-const PATH = '/admin/leads'
+const PATH = '/admin/funnel/leads'
 
 async function db() {
   await assertAdmin()

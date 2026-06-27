@@ -10,7 +10,7 @@ import { revalidatePath } from 'next/cache'
 import { assertAdmin } from './lib/assert-admin'
 import { getSupabaseServerClient } from './lib/supabase-server'
 
-const PATH = '/admin/outreach'
+const PATH = '/admin/funnel/outreach'
 
 async function db() {
   await assertAdmin()
