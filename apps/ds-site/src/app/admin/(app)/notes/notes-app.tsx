@@ -73,8 +73,15 @@ export function NotesApp({ data }: { data: NotesData }) {
   const [query, setQuery] = useState('')
   const [mode, setMode] = useState<Mode>('preview')
   const [draft, setDraft] = useState({ title: '', body: '' })
-  const [status, setStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
+  const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
   const [tagOpen, setTagOpen] = useState(false)
+  const [toast, setToast] = useState<string | null>(null)
+  const [confirmDel, setConfirmDel] = useState(false)
+
+  function showError(msg: string) {
+    setToast(msg)
+    window.setTimeout(() => setToast(null), 4500)
+  }
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const previewRef = useRef<HTMLDivElement | null>(null)
   const pendingRef = useRef<{ id: string; title: string; body: string } | null>(null)
@@ -91,6 +98,7 @@ export function NotesApp({ data }: { data: NotesData }) {
   // the fix for the title-bleed bug (edits appearing to vanish / cross between notes).
   useEffect(() => {
     setStatus('idle')
+    setConfirmDel(false)
     setDraft(selected ? { title: selected.title, body: selected.body } : { title: '', body: '' })
   }, [selected?.id])
 
@@ -134,7 +142,9 @@ export function NotesApp({ data }: { data: NotesData }) {
         if (mountedRef.current) setStatus('saved')
         router.refresh()
       } catch {
-        if (mountedRef.current) setStatus('idle')
+        // Keep the pending change so the next edit / tab-close retries it, and SHOW it.
+        pendingRef.current = { id, ...patch }
+        if (mountedRef.current) setStatus('error')
       }
     },
     [isDemo, router],
@@ -186,11 +196,15 @@ export function NotesApp({ data }: { data: NotesData }) {
   async function onNewNote() {
     if (isDemo) return
     const target = folderSel === 'all' || folderSel === 'pinned' ? null : folderSel
-    const id = await createNote(target).catch(() => '')
-    if (!id) return
-    selectNote(id)
-    setMode('edit')
-    router.refresh()
+    try {
+      const id = await createNote(target)
+      if (!id) return
+      selectNote(id)
+      setMode('edit')
+      router.refresh()
+    } catch {
+      showError("Couldn't create the note — try again.")
+    }
   }
 
   async function onNewFolder() {
@@ -198,12 +212,17 @@ export function NotesApp({ data }: { data: NotesData }) {
     const name = window.prompt('Folder name')?.trim()
     if (!name) return
     const parent = folderSel === 'all' || folderSel === 'pinned' ? null : folderSel
-    await createFolder(name, parent).catch(() => undefined)
-    router.refresh()
+    try {
+      await createFolder(name, parent)
+      router.refresh()
+    } catch {
+      showError("Couldn't create the folder — try again.")
+    }
   }
 
   return (
     <div className="wn-root">
+      {toast ? <div className="wn-toast" role="alert">{toast}</div> : null}
       <div className="wn-app">
         {/* Sidebar */}
         <aside className="wn-side">
@@ -281,9 +300,20 @@ export function NotesApp({ data }: { data: NotesData }) {
                     )
                   })()}
                 </span>
-                <span className={`wn-saved ${status === 'saving' ? 'is-saving' : ''}`} role="status" aria-live="polite">
-                  {status === 'saving' ? 'Saving…' : status === 'saved' ? 'Saved' : ''}
-                </span>
+                {status === 'error' ? (
+                  <button
+                    type="button"
+                    className="wn-saved wn-saved--err"
+                    aria-live="assertive"
+                    onClick={() => { const p = pendingRef.current; if (p) void flushSave(p.id, { title: p.title, body: p.body }) }}
+                  >
+                    Save failed — retry
+                  </button>
+                ) : (
+                  <span className={`wn-saved ${status === 'saving' ? 'is-saving' : ''}`} role="status" aria-live="polite">
+                    {status === 'saving' ? 'Saving…' : status === 'saved' ? 'Saved' : ''}
+                  </span>
+                )}
                 <div className="wn-seg" role="tablist" aria-label="View mode">
                   <button type="button" role="tab" id="wn-tab-edit" aria-selected={mode === 'edit'} aria-controls="wn-panel" className={mode === 'edit' ? 'is-on' : ''} onClick={() => setMode('edit')}>Edit</button>
                   <button type="button" role="tab" id="wn-tab-preview" aria-selected={mode === 'preview'} aria-controls="wn-panel" className={mode === 'preview' ? 'is-on' : ''} onClick={() => setMode('preview')}>Preview</button>
@@ -305,7 +335,25 @@ export function NotesApp({ data }: { data: NotesData }) {
                   </label>
                 ) : null}
                 <button type="button" className={`wn-iconbtn ${selected.pinned ? 'is-on' : ''}`} aria-label={selected.pinned ? 'Unpin note' : 'Pin note'} disabled={isDemo} onClick={() => void togglePin(selected.id, !selected.pinned).then(() => router.refresh())}>{ICON.pin}</button>
-                <button type="button" className="wn-iconbtn wn-iconbtn--danger" aria-label="Delete note" disabled={isDemo} onClick={() => { if (window.confirm('Delete this note?')) void deleteNote(selected.id).then(() => { setNoteId(null); router.refresh() }) }}>{ICON.trash}</button>
+                {confirmDel ? (
+                  <span className="wn-delconfirm" role="group" aria-label="Confirm delete note">
+                    <span className="wn-delconfirm__q">Delete?</span>
+                    <button
+                      type="button"
+                      className="wn-delconfirm__yes"
+                      onClick={() => {
+                        void deleteNote(selected.id)
+                          .then(() => { setConfirmDel(false); setNoteId(null); router.refresh() })
+                          .catch(() => showError("Couldn't delete the note — try again."))
+                      }}
+                    >
+                      Delete
+                    </button>
+                    <button type="button" className="wn-delconfirm__no" onClick={() => setConfirmDel(false)} autoFocus>Cancel</button>
+                  </span>
+                ) : (
+                  <button type="button" className="wn-iconbtn wn-iconbtn--danger" aria-label="Delete note" disabled={isDemo} onClick={() => setConfirmDel(true)}>{ICON.trash}</button>
+                )}
               </div>
 
               <header className="wn-hero"><div className="wn-hero__in">
