@@ -2162,3 +2162,12 @@
 @keyframes ds2-page-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 .animate-page-in { animation: ds2-page-in 320ms var(--ds2-ease) both; }
 @media (prefers-reduced-motion: reduce) { .animate-page-in { animation: none; } }
+
+/* ── Loading skeletons (instant feedback on tab switch) ── */
+.admin-skel { max-width: var(--admin-max-w); margin: 0 auto; padding: 32px 32px 72px; }
+.admin-skel__row { display: flex; gap: 14px; align-items: center; margin-bottom: 14px; }
+.admin-skel__bar { background: var(--ds2-surface, #111419); border: 1px solid var(--ds2-border, rgba(255,255,255,0.08)); border-radius: 10px; position: relative; overflow: hidden; }
+.admin-skel__bar::after { content: ''; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); animation: admin-shimmer 1.3s var(--ds2-ease, ease) infinite; }
+.admin-skel__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-top: 24px; }
+@keyframes admin-shimmer { 100% { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) { .admin-skel__bar::after { animation: none; } }

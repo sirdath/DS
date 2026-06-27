@@ -1,6 +1,5 @@
 'use client'
 import { useEffect, useRef } from 'react'
-import gsap from 'gsap'
 
 interface CountUpProps {
   value: number
@@ -25,21 +24,28 @@ export function CountUp({ value, prefix = '', suffix = '' }: CountUpProps) {
       return
     }
 
-    const counter = { n: 0 }
-    const tween = gsap.to(counter, {
-      n: value,
-      duration: 1.1,
-      ease: 'power2.out',
-      onUpdate() {
-        el.textContent = prefix + formatWithSeparators(counter.n) + suffix
-      },
-      onComplete() {
-        el.textContent = prefix + formatWithSeparators(value) + suffix
-      },
+    // Lazy-load GSAP so it never sits in the dashboard route bundle.
+    let cancelled = false
+    let tween: { kill: () => void } | null = null
+    void import('gsap').then(({ default: gsap }) => {
+      if (cancelled || !spanRef.current) return
+      const counter = { n: 0 }
+      tween = gsap.to(counter, {
+        n: value,
+        duration: 1.1,
+        ease: 'power2.out',
+        onUpdate() {
+          if (spanRef.current) spanRef.current.textContent = prefix + formatWithSeparators(counter.n) + suffix
+        },
+        onComplete() {
+          if (spanRef.current) spanRef.current.textContent = prefix + formatWithSeparators(value) + suffix
+        },
+      })
     })
 
     return () => {
-      tween.kill()
+      cancelled = true
+      tween?.kill()
     }
   }, [value, prefix, suffix])
 
