@@ -3,23 +3,24 @@
    reduced transparency. Tokens are v2 (deliberately distinct from admin amber). */
 
 .wn-root {
-  --bg: #050607;
-  --surface: #111419;
-  --surface-2: #161a20;
-  --glass: rgba(255, 255, 255, 0.055);
-  --glass-2: rgba(255, 255, 255, 0.03);
-  --bd: rgba(255, 255, 255, 0.1);
-  --bd-2: rgba(255, 255, 255, 0.18);
-  --bd-3: rgba(255, 255, 255, 0.26);
-  --tx: #f7f9fb;
-  --mut: #aeb4bd;
-  --dim: #626872;
-  --ice: #8dcbff;
-  --ice-dim: rgba(141, 203, 255, 0.14);
-  --ice-bd: rgba(141, 203, 255, 0.42);
-  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Match the rest of /admin: neutral space-grey + warm amber accent. */
+  --bg: var(--admin-bg, #0a0a0a);
+  --surface: var(--admin-surface, #141414);
+  --surface-2: var(--admin-surface-raise, #1c1c1c);
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-2: rgba(255, 255, 255, 0.02);
+  --bd: var(--admin-border, rgba(255, 255, 255, 0.07));
+  --bd-2: var(--admin-border-hover, rgba(255, 255, 255, 0.13));
+  --bd-3: rgba(255, 255, 255, 0.22);
+  --tx: var(--admin-text, #f5f5f5);
+  --mut: var(--admin-text-muted, #888888);
+  --dim: #5a5a5a;
+  --ice: var(--admin-amber, #e8b46a);
+  --ice-dim: var(--admin-amber-dim, rgba(232, 180, 106, 0.15));
+  --ice-bd: var(--admin-amber-border, rgba(232, 180, 106, 0.3));
+  --mono: var(--admin-mono, 'SF Mono', 'Fira Code', ui-monospace, monospace);
   --r-lg: 14px;
-  --r-md: 10px;
+  --r-md: var(--admin-radius, 10px);
   --r-sm: 8px;
   --dur: 0.18s;
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
@@ -36,7 +37,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(820px 520px at 12% -8%, rgba(141, 203, 255, 0.07), transparent 60%);
+  background: radial-gradient(820px 520px at 12% -8%, rgba(232, 180, 106, 0.07), transparent 60%);
 }
 .wn-app {
   position: relative;
@@ -56,7 +57,7 @@
   align-items: center;
   font-size: 0.78rem;
   color: var(--mut);
-  background: rgba(141, 203, 255, 0.08);
+  background: rgba(232, 180, 106, 0.08);
   border: 1px solid var(--ice-bd);
   border-radius: 999px;
   padding: 7px 14px;
@@ -165,12 +166,12 @@
 .wn-btn--primary {
   background: var(--ice);
   border-color: var(--ice);
-  color: #04223b;
+  color: #1a1400;
   font-weight: 600;
 }
 .wn-btn--primary:hover {
-  background: #a6d8ff;
-  border-color: #a6d8ff;
+  background: #efc98a;
+  border-color: #efc98a;
 }
 .wn-tree {
   margin-top: 2px;
@@ -534,7 +535,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(540px 200px at 6% -40%, rgba(141, 203, 255, 0.1), transparent 70%);
+  background: radial-gradient(540px 200px at 6% -40%, rgba(232, 180, 106, 0.1), transparent 70%);
 }
 .wn-hero::after {
   content: '';
@@ -602,7 +603,7 @@
   font-family: var(--mono);
   font-size: 0.9rem;
   line-height: 1.65;
-  color: #d7dde2;
+  color: #d4d4d4;
   background: none;
   border: 0;
   width: 100%;
@@ -657,7 +658,7 @@
   background: var(--bd);
 }
 .wn-md p {
-  color: #d7dde2;
+  color: #d4d4d4;
   margin: 0.6em 0;
   font-size: 0.97rem;
   line-height: 1.6;
@@ -666,7 +667,7 @@
 .wn-md ol {
   margin: 0.6em 0;
   padding-left: 1.25em;
-  color: #d7dde2;
+  color: #d4d4d4;
 }
 .wn-md li {
   margin: 0.32em 0;
@@ -679,8 +680,8 @@
 .wn-md code {
   font-family: var(--mono);
   font-size: 0.85em;
-  color: #cfe6ff;
-  background: rgba(141, 203, 255, 0.08);
+  color: #ead6b0;
+  background: rgba(232, 180, 106, 0.08);
   border: 1px solid var(--ice-bd);
   border-radius: 5px;
   padding: 0.08em 0.42em;
@@ -720,7 +721,7 @@
   display: flex;
   align-items: flex-start;
   gap: 11px;
-  color: #d7dde2;
+  color: #d4d4d4;
   padding: 6px 9px;
   margin: 0 -9px;
   border-radius: var(--r-sm);
@@ -750,7 +751,7 @@
 .wn-box.is-done {
   background: var(--ice);
   border-color: var(--ice);
-  color: #04223b;
+  color: #1a1400;
 }
 .wn-check li.is-done span:last-child {
   color: var(--dim);
