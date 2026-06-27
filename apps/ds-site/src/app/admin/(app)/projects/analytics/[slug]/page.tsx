@@ -150,8 +150,8 @@ export default async function ProjectAnalytics({
   return (
     <main style={{
       minHeight: '100vh',
-      background: '#0a0a0a',
-      color: '#f5f5f5',
+      background: '#050607',
+      color: '#f7f9fb',
       padding: '52px 36px',
       fontFamily: 'var(--font-inter), ui-sans-serif, sans-serif',
     }}>
@@ -159,18 +159,18 @@ export default async function ProjectAnalytics({
 
         {/* Back + header */}
         <div style={{ marginBottom: '44px' }}>
-          <Link href="/admin/projects?view=analytics" style={{ fontSize: '12px', color: '#555', textDecoration: 'none', fontFamily: 'ui-monospace, monospace', letterSpacing: '0.04em', display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '20px' }}>
+          <Link href="/admin/projects?view=analytics" style={{ fontSize: '12px', color: '#626872', textDecoration: 'none', fontFamily: 'ui-monospace, monospace', letterSpacing: '0.04em', display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '20px' }}>
             ← All analytics
           </Link>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '24px', flexWrap: 'wrap' }}>
             <div>
-              <p style={{ fontSize: '11px', color: '#444', letterSpacing: '0.22em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace', marginBottom: '8px' }}>
+              <p style={{ fontSize: '11px', color: '#626872', letterSpacing: '0.22em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace', marginBottom: '8px' }}>
                 DS2 · Analytics
               </p>
               <h1 style={{ fontSize: '32px', fontWeight: 300, letterSpacing: '-0.025em', margin: 0 }}>
                 {project.name}
               </h1>
-              <p style={{ marginTop: '6px', fontSize: '12px', color: '#555', fontFamily: 'ui-monospace, monospace' }}>
+              <p style={{ marginTop: '6px', fontSize: '12px', color: '#626872', fontFamily: 'ui-monospace, monospace' }}>
                 {project.url}
               </p>
             </div>
@@ -213,7 +213,7 @@ export default async function ProjectAnalytics({
           padding: '28px 28px 20px',
           marginBottom: '16px',
         }}>
-          <p style={{ fontSize: '11px', color: '#555', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace', marginBottom: '24px' }}>
+          <p style={{ fontSize: '11px', color: '#626872', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace', marginBottom: '24px' }}>
             Visits — last 30 days ({tz === 'Europe/Athens' ? 'Athens time' : 'London time'})
           </p>
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: '3px', height: '80px' }}>
@@ -233,8 +233,8 @@ export default async function ProjectAnalytics({
             ))}
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
-            <span style={{ fontSize: '11px', color: '#444', fontFamily: 'ui-monospace, monospace' }}>{days[0]}</span>
-            <span style={{ fontSize: '11px', color: '#444', fontFamily: 'ui-monospace, monospace' }}>{days[days.length - 1]}</span>
+            <span style={{ fontSize: '11px', color: '#626872', fontFamily: 'ui-monospace, monospace' }}>{days[0]}</span>
+            <span style={{ fontSize: '11px', color: '#626872', fontFamily: 'ui-monospace, monospace' }}>{days[days.length - 1]}</span>
           </div>
         </div>
 
@@ -253,7 +253,7 @@ export default async function ProjectAnalytics({
           overflow: 'hidden',
         }}>
           <div style={{ padding: '20px 24px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-            <p style={{ fontSize: '11px', color: '#555', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace', margin: 0 }}>
+            <p style={{ fontSize: '11px', color: '#626872', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace', margin: 0 }}>
               Recent visits
             </p>
           </div>
@@ -262,7 +262,7 @@ export default async function ProjectAnalytics({
               <thead>
                 <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                   {['Time', 'Page', 'Country', 'Via', 'Referrer'].map(h => (
-                    <th key={h} style={{ padding: '11px 20px', textAlign: 'left', color: '#444', fontWeight: 400, fontFamily: 'ui-monospace, monospace', fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+                    <th key={h} style={{ padding: '11px 20px', textAlign: 'left', color: '#626872', fontWeight: 400, fontFamily: 'ui-monospace, monospace', fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
                       {h}
                     </th>
                   ))}
@@ -271,7 +271,7 @@ export default async function ProjectAnalytics({
               <tbody>
                 {all.slice(0, 50).map(v => (
                   <tr key={v.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
-                    <td style={{ padding: '12px 20px', color: '#555', whiteSpace: 'nowrap', fontFamily: 'ui-monospace, monospace', fontSize: '12px' }}>
+                    <td style={{ padding: '12px 20px', color: '#626872', whiteSpace: 'nowrap', fontFamily: 'ui-monospace, monospace', fontSize: '12px' }}>
                       {formatDate(v.created_at, tz)}
                     </td>
                     <td style={{ padding: '12px 20px', color: '#ccc', fontFamily: 'ui-monospace, monospace', fontSize: '12px' }}>
@@ -280,17 +280,17 @@ export default async function ProjectAnalytics({
                     <td style={{ padding: '12px 20px', color: '#777' }}>
                       {v.country ?? '—'}
                     </td>
-                    <td style={{ padding: '12px 20px', color: v.client_id ? (v.client_id.includes('[blocked]') ? '#c96868' : v.client_id.endsWith('-admin') ? '#43a47a' : '#a78bfa') : '#444', fontFamily: 'ui-monospace, monospace', fontSize: '12px', whiteSpace: 'nowrap' }}>
+                    <td style={{ padding: '12px 20px', color: v.client_id ? (v.client_id.includes('[blocked]') ? '#c96868' : v.client_id.endsWith('-admin') ? '#43a47a' : '#a78bfa') : '#626872', fontFamily: 'ui-monospace, monospace', fontSize: '12px', whiteSpace: 'nowrap' }}>
                       {v.client_id ?? '—'}
                     </td>
-                    <td style={{ padding: '12px 20px', color: '#555', maxWidth: '260px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <td style={{ padding: '12px 20px', color: '#626872', maxWidth: '260px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {truncate(v.referrer, 48)}
                     </td>
                   </tr>
                 ))}
                 {total === 0 && (
                   <tr>
-                    <td colSpan={5} style={{ padding: '36px 20px', textAlign: 'center', color: '#444', fontFamily: 'ui-monospace, monospace', fontSize: '12px' }}>
+                    <td colSpan={5} style={{ padding: '36px 20px', textAlign: 'center', color: '#626872', fontFamily: 'ui-monospace, monospace', fontSize: '12px' }}>
                       No visits recorded yet.
                     </td>
                   </tr>
@@ -313,7 +313,7 @@ function StatCard({ label, value }: { label: string; value: string | number }) {
       borderRadius: '10px',
       padding: '22px 24px',
     }}>
-      <p style={{ fontSize: '10px', color: '#444', letterSpacing: '0.14em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace', margin: '0 0 8px' }}>
+      <p style={{ fontSize: '10px', color: '#626872', letterSpacing: '0.14em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace', margin: '0 0 8px' }}>
         {label}
       </p>
       <p style={{ fontSize: '34px', fontWeight: 300, letterSpacing: '-0.03em', margin: 0, lineHeight: 1 }}>
@@ -339,13 +339,13 @@ function BreakdownTable({
       overflow: 'hidden',
     }}>
       <div style={{ padding: '16px 18px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-        <p style={{ fontSize: '10px', color: '#444', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace', margin: 0 }}>
+        <p style={{ fontSize: '10px', color: '#626872', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace', margin: 0 }}>
           {title}
         </p>
       </div>
       <div style={{ padding: '6px 0' }}>
         {rows.length === 0 && (
-          <p style={{ padding: '16px 18px', color: '#444', fontSize: '12px', fontFamily: 'ui-monospace, monospace' }}>No data yet.</p>
+          <p style={{ padding: '16px 18px', color: '#626872', fontSize: '12px', fontFamily: 'ui-monospace, monospace' }}>No data yet.</p>
         )}
         {rows.map(([label, count]) => {
           const pct = total > 0 ? (count / total) * 100 : 0
@@ -361,7 +361,7 @@ function BreakdownTable({
                 <div style={{ width: '56px', height: '2px', background: 'rgba(255,255,255,0.07)', borderRadius: '99px', overflow: 'hidden' }}>
                   <div style={{ height: '100%', width: `${pct}%`, background: 'rgba(255,255,255,0.38)', borderRadius: '99px' }} />
                 </div>
-                <span style={{ fontSize: '11px', color: '#555', fontFamily: 'ui-monospace, monospace', minWidth: '20px', textAlign: 'right' }}>{count}</span>
+                <span style={{ fontSize: '11px', color: '#626872', fontFamily: 'ui-monospace, monospace', minWidth: '20px', textAlign: 'right' }}>{count}</span>
               </div>
             </div>
           )

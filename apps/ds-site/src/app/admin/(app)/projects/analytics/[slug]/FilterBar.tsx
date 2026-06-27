@@ -92,7 +92,7 @@ export default function FilterBar({ initialTz, activeGroup }: { initialTz: strin
               padding: '7px 14px',
               background: tz === opt.value ? 'rgba(255,255,255,0.1)' : 'transparent',
               border: 'none',
-              color: tz === opt.value ? '#f5f5f5' : '#555',
+              color: tz === opt.value ? '#f7f9fb' : '#626872',
               fontSize: '11px',
               fontFamily: 'ui-monospace, monospace',
               letterSpacing: '0.06em',
@@ -114,7 +114,7 @@ export default function FilterBar({ initialTz, activeGroup }: { initialTz: strin
             background: calOpen ? 'rgba(255,255,255,0.1)' : '#111',
             border: `1px solid ${range?.from ? 'rgba(99,102,241,0.5)' : 'rgba(255,255,255,0.07)'}`,
             borderRadius: '6px',
-            color: range?.from ? '#a5b4fc' : '#555',
+            color: range?.from ? '#a5b4fc' : '#626872',
             fontSize: '11px',
             fontFamily: 'ui-monospace, monospace',
             cursor: 'pointer',
@@ -131,7 +131,7 @@ export default function FilterBar({ initialTz, activeGroup }: { initialTz: strin
             top: 'calc(100% + 8px)',
             right: 0,
             zIndex: 100,
-            background: '#141414',
+            background: '#111419',
             border: '1px solid rgba(255,255,255,0.1)',
             borderRadius: '12px',
             padding: '12px',
@@ -155,7 +155,7 @@ export default function FilterBar({ initialTz, activeGroup }: { initialTz: strin
               .rdp-range_middle .rdp-day_button { background: rgba(99,102,241,0.15) !important; border-radius: 0; }
               .rdp-range_start .rdp-day_button, .rdp-range_end .rdp-day_button { background: #6366f1 !important; color: #fff; border-radius: 6px; }
               .rdp-chevron { fill: #555; }
-              .rdp-month_caption { color: #f5f5f5; font-size: 13px; }
+              .rdp-month_caption { color: #f7f9fb; font-size: 13px; }
               .rdp-weekday { color: #444; }
               .rdp-today:not(.rdp-selected) .rdp-day_button { color: #a5b4fc; }
             `}</style>
@@ -168,7 +168,7 @@ export default function FilterBar({ initialTz, activeGroup }: { initialTz: strin
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '8px', paddingTop: '8px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
               <button
                 onClick={() => { setRange(undefined); }}
-                style={{ padding: '6px 12px', background: 'transparent', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '6px', color: '#555', fontSize: '11px', fontFamily: 'ui-monospace, monospace', cursor: 'pointer' }}
+                style={{ padding: '6px 12px', background: 'transparent', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '6px', color: '#626872', fontSize: '11px', fontFamily: 'ui-monospace, monospace', cursor: 'pointer' }}
               >
                 Clear
               </button>
@@ -186,7 +186,7 @@ export default function FilterBar({ initialTz, activeGroup }: { initialTz: strin
       {/* Group filter */}
       <div style={{ display: 'flex', background: '#111', borderRadius: '6px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.07)' }}>
         {[
-          { label: 'All', value: null, activeColor: '#f5f5f5', activeBg: 'rgba(255,255,255,0.1)' },
+          { label: 'All', value: null, activeColor: '#f7f9fb', activeBg: 'rgba(255,255,255,0.1)' },
           { label: 'Leads', value: 'leads', activeColor: '#a78bfa', activeBg: 'rgba(99,102,241,0.2)' },
           { label: 'Admins', value: 'admins', activeColor: '#43a47a', activeBg: 'rgba(67,164,122,0.12)' },
         ].map((opt, i) => (
@@ -198,7 +198,7 @@ export default function FilterBar({ initialTz, activeGroup }: { initialTz: strin
               background: group === opt.value ? opt.activeBg : 'transparent',
               border: 'none',
               borderLeft: i > 0 ? '1px solid rgba(255,255,255,0.07)' : 'none',
-              color: group === opt.value ? opt.activeColor : '#555',
+              color: group === opt.value ? opt.activeColor : '#626872',
               fontSize: '11px',
               fontFamily: 'ui-monospace, monospace',
               letterSpacing: '0.06em',
@@ -219,7 +219,7 @@ export default function FilterBar({ initialTz, activeGroup }: { initialTz: strin
           background: btnState === 'applied' ? 'rgba(99,102,241,0.2)' : 'rgba(255,255,255,0.08)',
           border: `1px solid ${btnState === 'applied' ? 'rgba(99,102,241,0.5)' : 'rgba(255,255,255,0.12)'}`,
           borderRadius: '6px',
-          color: btnState === 'applied' ? '#a5b4fc' : '#f5f5f5',
+          color: btnState === 'applied' ? '#a5b4fc' : '#f7f9fb',
           fontSize: '11px',
           fontFamily: 'ui-monospace, monospace',
           letterSpacing: '0.06em',
@@ -239,7 +239,7 @@ export default function FilterBar({ initialTz, activeGroup }: { initialTz: strin
             background: 'transparent',
             border: '1px solid rgba(255,255,255,0.07)',
             borderRadius: '6px',
-            color: '#555',
+            color: '#626872',
             fontSize: '11px',
             fontFamily: 'ui-monospace, monospace',
             letterSpacing: '0.06em',
