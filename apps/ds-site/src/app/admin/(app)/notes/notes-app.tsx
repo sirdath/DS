@@ -5,38 +5,19 @@ import { useRouter } from 'next/navigation'
 import {
   createFolder,
   createNote,
-  deleteFolder,
   deleteNote,
-  renameFolder,
+  moveNote,
   setNoteProjects,
   togglePin,
   updateNote,
 } from '../../notes-actions'
 import { noteSnippet, renderMarkdown } from './markdown'
-import type { Note, NoteFolder, NotesData } from './types'
+import { NotesTree, buildTree, flatFolderOptions } from './notes-tree'
+import type { Note, NotesData } from './types'
 import './notes.css'
 
 type FolderSel = 'all' | 'pinned' | string
 type Mode = 'edit' | 'preview'
-interface TreeNode extends NoteFolder {
-  children: TreeNode[]
-}
-
-function buildTree(folders: NoteFolder[]): TreeNode[] {
-  const byId = new Map<string, TreeNode>(folders.map((f) => [f.id, { ...f, children: [] }]))
-  const roots: TreeNode[] = []
-  for (const f of byId.values()) {
-    const parent = f.parentId ? byId.get(f.parentId) : null
-    if (parent) parent.children.push(f)
-    else roots.push(f)
-  }
-  const sort = (ns: TreeNode[]) => {
-    ns.sort((a, b) => a.position - b.position || a.name.localeCompare(b.name))
-    ns.forEach((n) => sort(n.children))
-  }
-  sort(roots)
-  return roots
-}
 
 function relativeTime(iso: string): string {
   const t = Date.parse(iso)
@@ -83,6 +64,7 @@ export function NotesApp({ data }: { data: NotesData }) {
   const router = useRouter()
   const { isDemo } = data
   const tree = useMemo(() => buildTree(data.folders), [data.folders])
+  const folderOptions = useMemo(() => flatFolderOptions(tree), [tree])
   const folderById = useMemo(() => new Map(data.folders.map((f) => [f.id, f])), [data.folders])
   const projectById = useMemo(() => new Map(data.projects.map((p) => [p.id, p])), [data.projects])
 
@@ -90,7 +72,6 @@ export function NotesApp({ data }: { data: NotesData }) {
   const [noteId, setNoteId] = useState<string | null>(null)
   const [query, setQuery] = useState('')
   const [mode, setMode] = useState<Mode>('preview')
-  const [expanded, setExpanded] = useState<Set<string>>(() => new Set(data.folders.filter((f) => !f.parentId).map((f) => f.id)))
   const [draft, setDraft] = useState({ title: '', body: '' })
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
   const [tagOpen, setTagOpen] = useState(false)
@@ -222,90 +203,6 @@ export function NotesApp({ data }: { data: NotesData }) {
     router.refresh()
   }
 
-  function toggleExpand(id: string) {
-    setExpanded((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
-  }
-
-  function renderTree(nodes: TreeNode[], depth: number) {
-    return nodes.map((f) => {
-      const direct = data.notes.filter((n) => n.folderId === f.id).length
-      const isOpen = expanded.has(f.id)
-      return (
-        <div key={f.id}>
-          {/* treeitem div (not a button) so the caret + delete can be real buttons inside */}
-          <div
-            role="treeitem"
-            aria-selected={folderSel === f.id}
-            aria-expanded={f.children.length ? isOpen : undefined}
-            tabIndex={0}
-            className={`wn-row ${depth > 0 ? 'wn-row--child' : ''} ${folderSel === f.id ? 'is-active' : ''}`}
-            onClick={() => setFolderSel(f.id)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                setFolderSel(f.id)
-              } else if (e.key === 'ArrowRight' && f.children.length && !isOpen) {
-                e.preventDefault()
-                toggleExpand(f.id)
-              } else if (e.key === 'ArrowLeft' && f.children.length && isOpen) {
-                e.preventDefault()
-                toggleExpand(f.id)
-              }
-            }}
-            onDoubleClick={() => {
-              if (isDemo) return
-              const name = window.prompt('Rename folder', f.name)?.trim()
-              if (name) void renameFolder(f.id, name).then(() => router.refresh())
-            }}
-          >
-            {f.children.length ? (
-              <button
-                type="button"
-                className={`wn-caret-btn ${isOpen ? 'is-open' : ''}`}
-                aria-label={isOpen ? 'Collapse folder' : 'Expand folder'}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  toggleExpand(f.id)
-                }}
-              >
-                {ICON.caret}
-              </button>
-            ) : (
-              <span className="wn-spacer" />
-            )}
-            <span className="wn-row__ic">{ICON.folder}</span>
-            <span className="wn-row__name">{f.name}</span>
-            <span className="wn-row__count">{direct || ''}</span>
-            {!isDemo ? (
-              <button
-                type="button"
-                className="wn-folder-del"
-                aria-label={`Delete folder ${f.name}`}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  if (window.confirm(`Delete folder "${f.name}"? Notes inside are kept (moved to All notes).`)) {
-                    void deleteFolder(f.id).then(() => {
-                      if (folderSel === f.id) setFolderSel('all')
-                      router.refresh()
-                    })
-                  }
-                }}
-              >
-                {ICON.trash}
-              </button>
-            ) : null}
-          </div>
-          {isOpen && f.children.length ? renderTree(f.children, depth + 1) : null}
-        </div>
-      )
-    })
-  }
-
   return (
     <div className="wn-root">
       <div className="wn-app">
@@ -327,12 +224,14 @@ export function NotesApp({ data }: { data: NotesData }) {
             <button type="button" className={`wn-row ${folderSel === 'pinned' ? 'is-active' : ''}`} onClick={() => setFolderSel('pinned')}>
               <span className="wn-spacer" /><span className="wn-row__ic">{ICON.pin}</span>Pinned<span className="wn-row__count">{data.notes.filter((n) => n.pinned).length || ''}</span>
             </button>
-            {tree.length ? <div className="wn-tree__label">Folders</div> : null}
-            {tree.length ? (
-              <div role="tree" aria-label="Folders">
-                {renderTree(tree, 0)}
-              </div>
-            ) : null}
+            <NotesTree
+              tree={tree}
+              notes={data.notes}
+              activeId={folderSel}
+              isDemo={isDemo}
+              onSelectFolder={setFolderSel}
+              onChanged={() => router.refresh()}
+            />
           </nav>
         </aside>
 
@@ -390,6 +289,22 @@ export function NotesApp({ data }: { data: NotesData }) {
                   <button type="button" role="tab" id="wn-tab-edit" aria-selected={mode === 'edit'} aria-controls="wn-panel" className={mode === 'edit' ? 'is-on' : ''} onClick={() => setMode('edit')}>Edit</button>
                   <button type="button" role="tab" id="wn-tab-preview" aria-selected={mode === 'preview'} aria-controls="wn-panel" className={mode === 'preview' ? 'is-on' : ''} onClick={() => setMode('preview')}>Preview</button>
                 </div>
+                {!isDemo ? (
+                  <label className="wn-move">
+                    <span className="wn-move__label">Folder</span>
+                    <select
+                      className="wn-move__select"
+                      aria-label="Move note to folder"
+                      value={selected.folderId ?? ''}
+                      onChange={(e) => { const dest = e.target.value || null; void moveNote(selected.id, dest).then(() => router.refresh()) }}
+                    >
+                      <option value="">No folder</option>
+                      {folderOptions.map((o) => (
+                        <option key={o.id} value={o.id}>{o.label}</option>
+                      ))}
+                    </select>
+                  </label>
+                ) : null}
                 <button type="button" className={`wn-iconbtn ${selected.pinned ? 'is-on' : ''}`} aria-label={selected.pinned ? 'Unpin note' : 'Pin note'} disabled={isDemo} onClick={() => void togglePin(selected.id, !selected.pinned).then(() => router.refresh())}>{ICON.pin}</button>
                 <button type="button" className="wn-iconbtn wn-iconbtn--danger" aria-label="Delete note" disabled={isDemo} onClick={() => { if (window.confirm('Delete this note?')) void deleteNote(selected.id).then(() => { setNoteId(null); router.refresh() }) }}>{ICON.trash}</button>
               </div>

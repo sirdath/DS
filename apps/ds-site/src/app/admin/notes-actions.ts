@@ -94,6 +94,36 @@ export async function moveNote(id: string, folderId: string | null): Promise<voi
   revalidatePath(PATH)
 }
 
+/** Re-parent a folder (nest it / move it to top level). Rejects cycles. */
+export async function moveFolder(id: string, parentId: string | null): Promise<void> {
+  if (!id) throw new Error('Missing folder id')
+  if (parentId === id) throw new Error('A folder cannot be its own parent')
+  const supabase = await db()
+  // Cycle guard: walk up from the proposed parent; if we reach `id`, the move would
+  // create a loop (a folder inside its own descendant). Reject it.
+  if (parentId) {
+    let cursor: string | null = parentId
+    let guard = 0
+    while (cursor && guard++ < 100) {
+      if (cursor === id) throw new Error('Cannot move a folder into its own descendant')
+      // `here` is an explicitly-typed snapshot so the query's inferred type does not
+      // depend on `cursor` (which we reassign from the result) — avoids a TS7022 cycle.
+      const here: string = cursor
+      const { data, error } = await supabase
+        .from('admin_note_folders')
+        .select('parent_id')
+        .eq('id', here)
+        .maybeSingle<{ parent_id: string | null }>()
+      if (error) throw new Error(error.message)
+      const parent: string | null = data?.parent_id ?? null
+      cursor = parent
+    }
+  }
+  const { error } = await supabase.from('admin_note_folders').update({ parent_id: parentId ?? null }).eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath(PATH)
+}
+
 export async function togglePin(id: string, pinned: boolean): Promise<void> {
   if (!id) throw new Error('Missing note id')
   const supabase = await db()
