@@ -1,5 +1,4 @@
 import { SAMPLE_BUSINESSES, SAMPLE_KEYS } from '@ds/xenia'
-import Link from 'next/link'
 import { Chat } from './chat'
 
 export default function XeniaWorkspacePage() {
@@ -12,9 +11,6 @@ export default function XeniaWorkspacePage() {
 
   return (
     <>
-      <Link href="/products" className="ws-back">
-        ← All tools
-      </Link>
 
       <div className="ws-head">
         <span className="ws-head__eyebrow">Xenia · AI receptionist</span>

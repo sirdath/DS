@@ -1,13 +1,9 @@
-import Link from 'next/link'
 import { DEMO_FAMA_REPORT } from './demo-report'
 import { FamaReportView } from './report-view'
 
 export default function FamaWorkspacePage() {
   return (
     <>
-      <Link href="/products" className="ws-back">
-        ← All tools
-      </Link>
 
       <div className="ws-head">
         <span className="ws-head__eyebrow">Fama · Review intelligence</span>

@@ -1,5 +1,4 @@
 import { formatMoney, runDailyCycle, type AgeingBucket } from '@ds/plutus'
-import Link from 'next/link'
 import { ApprovalQueue, type QueueVM } from './approval-queue'
 import { DEMO_DRAFTS } from './demo-drafts'
 import { ImportPanel } from './import-panel'
@@ -44,9 +43,6 @@ export default async function PlutusWorkspacePage() {
 
   return (
     <>
-      <Link href="/products" className="ws-back">
-        ← All tools
-      </Link>
 
       <div className="ws-head">
         <span className="ws-head__eyebrow">Plutus · Collections</span>

@@ -16,7 +16,6 @@ export default async function PresentationsPage() {
 
   return (
     <>
-      <Link href="/products" className="ws-back">← All tools</Link>
       <div className="ws-head">
         <span className="ws-head__eyebrow">DS2 · Products</span>
         <h1 className="ws-head__title">Presentations</h1>
