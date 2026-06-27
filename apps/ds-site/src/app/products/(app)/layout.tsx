@@ -10,7 +10,9 @@ export default async function WorkspaceAppLayout({ children }: { children: React
   return (
     <div className="ws-shell">
       <WsRail session={session} />
-      <main className="ws-main">{children}</main>
+      <main className="ws-main">
+        <div className="ws-main__in">{children}</div>
+      </main>
     </div>
   )
 }

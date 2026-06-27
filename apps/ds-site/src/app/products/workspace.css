@@ -139,8 +139,10 @@
 }
 
 /* ── Main + launcher ────────────────────────────────────────────────────── */
-.ws-main {
-  max-width: 1040px;
+/* .ws-main fills the space beside the rail; .ws-main__in centres the content
+   (mirrors the admin .admin-main / .admin-container split). */
+.ws-main__in {
+  max-width: 1180px;
   margin: 0 auto;
   padding: 40px max(24px, env(safe-area-inset-right)) 64px max(24px, env(safe-area-inset-left));
 }
@@ -444,7 +446,7 @@ a.ws-card:focus-visible .ws-card__open {
   padding: 3px 8px;
   border-radius: 999px;
   background: #f5c451;
-  color: #1a1400;
+  color: var(--ws-on-accent);
   font-weight: 700;
   flex: none;
 }
@@ -493,7 +495,8 @@ a.ws-card:focus-visible .ws-card__open {
 .ws-rail__item.is-active { color: var(--ws-on-accent); background: var(--ws-cta); }
 .ws-rail__item svg { width: 19px; height: 19px; flex: none; }
 .ws-rail__item:focus-visible { outline: 2px solid var(--ws-cta); outline-offset: 2px; }
-.ws-rail__dot { width: 9px; height: 9px; border-radius: 999px; flex: none; margin: 0 5px; }
+.ws-rail__dot { width: 20px; height: 20px; border-radius: 6px; flex: none; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18), 0 1px 3px rgba(0, 0, 0, 0.25); }
+.ws-rail__item.is-active .ws-rail__dot { box-shadow: inset 0 0 0 1px rgba(5, 6, 7, 0.25); }
 .ws-rail__spacer { flex: 1; }
 .ws-rail__foot { display: flex; flex-direction: column; gap: 8px; padding: 10px 6px 0; border-top: 1px solid var(--ws-border); margin-top: 8px; }
 .ws-rail__email { font-size: 11px; color: var(--ws-ghost); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

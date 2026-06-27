@@ -150,8 +150,8 @@ export default async function ProjectAnalytics({
   return (
     <main style={{
       minHeight: '100vh',
-      background: '#050607',
-      color: '#f7f9fb',
+      background: 'var(--admin-bg)',
+      color: 'var(--admin-text)',
       padding: '52px 36px',
       fontFamily: 'var(--font-inter), ui-sans-serif, sans-serif',
     }}>
@@ -208,7 +208,7 @@ export default async function ProjectAnalytics({
         {/* Visits over time chart */}
         <div style={{
           background: 'rgba(255,255,255,0.02)',
-          border: '1px solid rgba(255,255,255,0.07)',
+          border: '1px solid var(--admin-border)',
           borderRadius: '12px',
           padding: '28px 28px 20px',
           marginBottom: '16px',
@@ -248,7 +248,7 @@ export default async function ProjectAnalytics({
         {/* Recent visits */}
         <div style={{
           background: 'rgba(255,255,255,0.02)',
-          border: '1px solid rgba(255,255,255,0.07)',
+          border: '1px solid var(--admin-border)',
           borderRadius: '12px',
           overflow: 'hidden',
         }}>
@@ -274,10 +274,10 @@ export default async function ProjectAnalytics({
                     <td style={{ padding: '12px 20px', color: '#626872', whiteSpace: 'nowrap', fontFamily: 'ui-monospace, monospace', fontSize: '12px' }}>
                       {formatDate(v.created_at, tz)}
                     </td>
-                    <td style={{ padding: '12px 20px', color: '#ccc', fontFamily: 'ui-monospace, monospace', fontSize: '12px' }}>
+                    <td style={{ padding: '12px 20px', color: 'var(--admin-text)', fontFamily: 'ui-monospace, monospace', fontSize: '12px' }}>
                       {(v.path ?? '/').replace(project.pathPrefix, '') || '/'}
                     </td>
-                    <td style={{ padding: '12px 20px', color: '#777' }}>
+                    <td style={{ padding: '12px 20px', color: 'var(--admin-text-muted)' }}>
                       {v.country ?? '—'}
                     </td>
                     <td style={{ padding: '12px 20px', color: v.client_id ? (v.client_id.includes('[blocked]') ? '#c96868' : v.client_id.endsWith('-admin') ? '#43a47a' : '#a78bfa') : '#626872', fontFamily: 'ui-monospace, monospace', fontSize: '12px', whiteSpace: 'nowrap' }}>
@@ -309,7 +309,7 @@ function StatCard({ label, value }: { label: string; value: string | number }) {
   return (
     <div style={{
       background: 'rgba(255,255,255,0.03)',
-      border: '1px solid rgba(255,255,255,0.07)',
+      border: '1px solid var(--admin-border)',
       borderRadius: '10px',
       padding: '22px 24px',
     }}>
@@ -334,7 +334,7 @@ function BreakdownTable({
   return (
     <div style={{
       background: 'rgba(255,255,255,0.02)',
-      border: '1px solid rgba(255,255,255,0.07)',
+      border: '1px solid var(--admin-border)',
       borderRadius: '12px',
       overflow: 'hidden',
     }}>
@@ -353,12 +353,12 @@ function BreakdownTable({
           return (
             <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 18px' }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontSize: '12px', color: '#ccc', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'ui-monospace, monospace' }}>
+                <p style={{ fontSize: '12px', color: 'var(--admin-text)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'ui-monospace, monospace' }}>
                   {display}
                 </p>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-                <div style={{ width: '56px', height: '2px', background: 'rgba(255,255,255,0.07)', borderRadius: '99px', overflow: 'hidden' }}>
+                <div style={{ width: '56px', height: '2px', background: 'var(--admin-border)', borderRadius: '99px', overflow: 'hidden' }}>
                   <div style={{ height: '100%', width: `${pct}%`, background: 'rgba(255,255,255,0.38)', borderRadius: '99px' }} />
                 </div>
                 <span style={{ fontSize: '11px', color: '#626872', fontFamily: 'ui-monospace, monospace', minWidth: '20px', textAlign: 'right' }}>{count}</span>
