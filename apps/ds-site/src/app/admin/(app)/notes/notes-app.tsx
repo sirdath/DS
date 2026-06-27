@@ -102,16 +102,17 @@ export function NotesApp({ data }: { data: NotesData }) {
   const selected: Note | null = useMemo(() => data.notes.find((n) => n.id === noteId) ?? null, [data.notes, noteId])
   const previewHtml = useMemo(() => renderMarkdown(draft.body) || '<p style="color:var(--dim)">Nothing written yet.</p>', [draft.body])
 
-  // On switching notes: flush any pending save for the PREVIOUS note (no lost edits),
-  // reset the save indicator, then load the newly-selected note into the draft.
+  // Seed the editor from the selected note, keyed on its IDENTITY only. A background
+  // router.refresh() returns a fresh note object with the SAME id — that must never
+  // clobber an in-progress draft, so we re-seed only when the id actually changes
+  // (i.e. switching notes). Committing the previous note's pending edits happens in
+  // selectNote(), BEFORE the id changes — so there is no stale-read race here. This is
+  // the fix for the title-bleed bug (edits appearing to vanish / cross between notes).
   useEffect(() => {
-    if (saveTimer.current) clearTimeout(saveTimer.current)
-    const p = pendingRef.current
-    if (p && p.id !== noteId && !isDemo) void flushSave(p.id, { title: p.title, body: p.body })
     setStatus('idle')
-    const sel = data.notes.find((nn) => nn.id === noteId)
-    if (sel) setDraft({ title: sel.title, body: sel.body })
-  }, [noteId]) // eslint-disable-line react-hooks/exhaustive-deps
+    setDraft(selected ? { title: selected.title, body: selected.body } : { title: '', body: '' })
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: seed on identity change only
+  }, [selected?.id])
 
   // Flush on unmount / tab-hide so edits inside the debounce window are never lost.
   useEffect(() => {
@@ -159,6 +160,19 @@ export function NotesApp({ data }: { data: NotesData }) {
     [isDemo, router],
   )
 
+  // Switch the open note, committing the CURRENT note's pending edits first so nothing
+  // is lost and no stale draft bleeds into the next note. All user-initiated switches
+  // go through here (card click, new note).
+  const selectNote = useCallback(
+    (nextId: string | null) => {
+      if (saveTimer.current) clearTimeout(saveTimer.current)
+      const p = pendingRef.current
+      if (p && p.id !== nextId && !isDemo) void flushSave(p.id, { title: p.title, body: p.body })
+      setNoteId(nextId)
+    },
+    [isDemo, flushSave],
+  )
+
   const onEdit = useCallback(
     (patch: Partial<{ title: string; body: string }>) => {
       if (!noteId || isDemo) return
@@ -194,8 +208,7 @@ export function NotesApp({ data }: { data: NotesData }) {
     const target = folderSel === 'all' || folderSel === 'pinned' ? null : folderSel
     const id = await createNote(target).catch(() => '')
     if (!id) return
-    setDraft({ title: '', body: '' })
-    setNoteId(id)
+    selectNote(id)
     setMode('edit')
     router.refresh()
   }
@@ -331,7 +344,7 @@ export function NotesApp({ data }: { data: NotesData }) {
               <p className="wn-list-empty">No notes here yet.{!isDemo ? ' Press ＋ Note to start.' : ''}</p>
             ) : (
               notes.map((n) => (
-                <button type="button" key={n.id} className={`wn-card ${n.id === noteId ? 'is-active' : ''}`} onClick={() => { setNoteId(n.id); setMode('preview') }}>
+                <button type="button" key={n.id} className={`wn-card ${n.id === noteId ? 'is-active' : ''}`} onClick={() => { selectNote(n.id); setMode('preview') }}>
                   <div className="wn-card__top">
                     {n.pinned ? <span className="wn-card__pin">{ICON.pinFill}</span> : null}
                     <span className="wn-card__title">{n.title || 'Untitled'}</span>
