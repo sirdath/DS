@@ -29,6 +29,12 @@ const ICONS: Record<string, ReactNode> = {
   collapse: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="m13 17-5-5 5-5" /><path d="m18 17-5-5 5-5" /></svg>
   ),
+  sun: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
+  ),
+  moon: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>
+  ),
 }
 
 interface Item {
@@ -60,6 +66,19 @@ export function AdminRail() {
       return next
     })
   }
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
+  useEffect(() => {
+    setTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark')
+  }, [])
+  function toggleTheme() {
+    setTheme((t) => {
+      const next = t === 'dark' ? 'light' : 'dark'
+      if (next === 'light') document.documentElement.setAttribute('data-theme', 'light')
+      else document.documentElement.removeAttribute('data-theme')
+      window.localStorage.setItem('ds-theme', next)
+      return next
+    })
+  }
   return (
     <nav className={`admin-rail${collapsed ? ' is-collapsed' : ''}`} aria-label="Admin navigation">
       <Link href="/admin" className="admin-rail__brand" aria-label="DS2 Admin home">
@@ -84,6 +103,15 @@ export function AdminRail() {
         })}
       </div>
       <div className="admin-rail__spacer" />
+      <button
+        type="button"
+        className="admin-rail__collapse is-theme"
+        onClick={toggleTheme}
+        aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+      >
+        {theme === 'dark' ? ICONS.sun : ICONS.moon}
+        <span className="admin-rail__label">{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
+      </button>
       <button
         type="button"
         className="admin-rail__collapse"

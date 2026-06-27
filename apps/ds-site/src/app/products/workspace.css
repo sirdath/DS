@@ -21,6 +21,7 @@
   --ws-radius: 16px;
   --ws-ease: cubic-bezier(0.4, 0, 0.2, 1);
   --ws-dur: 0.2s;
+  --ws-on-accent: #050607;
 
   min-height: 100dvh;
   background: var(--ws-bg);
@@ -341,7 +342,7 @@ a.ws-card:focus-visible .ws-card__open {
   padding-bottom: 1px;
 }
 .ws-panel__cta:hover {
-  color: #fff;
+  color: var(--ws-text);
 }
 
 /* ── Login ──────────────────────────────────────────────────────────────── */
@@ -400,7 +401,7 @@ a.ws-card:focus-visible .ws-card__open {
   width: 100%;
   font: inherit;
   font-weight: 600;
-  color: #050607;
+  color: var(--ws-on-accent);
   background: var(--ws-cta);
   border: none;
   border-radius: 10px;
@@ -489,7 +490,7 @@ a.ws-card:focus-visible .ws-card__open {
 .ws-rail__nav { display: flex; flex-direction: column; gap: 4px; }
 .ws-rail__item { display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 12px; border-radius: 11px; color: var(--ws-muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color var(--ws-dur) var(--ws-ease), background var(--ws-dur) var(--ws-ease); }
 .ws-rail__item:hover { color: var(--ws-text); background: rgba(255, 255, 255, 0.05); }
-.ws-rail__item.is-active { color: #050607; background: var(--ws-cta); }
+.ws-rail__item.is-active { color: var(--ws-on-accent); background: var(--ws-cta); }
 .ws-rail__item svg { width: 19px; height: 19px; flex: none; }
 .ws-rail__item:focus-visible { outline: 2px solid var(--ws-cta); outline-offset: 2px; }
 .ws-rail__dot { width: 9px; height: 9px; border-radius: 999px; flex: none; margin: 0 5px; }
@@ -530,7 +531,7 @@ a.ws-card:focus-visible .ws-card__open {
 .ws-rail.is-collapsed .ws-rail__item,
 .ws-rail.is-collapsed .ws-rail__collapse,
 .ws-rail.is-collapsed .ws-rail__signout { justify-content: center; padding: 0; gap: 0; position: relative; }
-.ws-rail.is-collapsed .ws-rail__collapse svg { transform: rotate(180deg); }
+.ws-rail.is-collapsed .ws-rail__collapse:not(.is-theme) svg { transform: rotate(180deg); }
 .ws-rail.is-collapsed .ws-rail__item span,
 .ws-rail.is-collapsed .ws-rail__collapse span,
 .ws-rail.is-collapsed .ws-rail__signout span {
@@ -545,3 +546,21 @@ a.ws-card:focus-visible .ws-card__open {
 .ws-rail.is-collapsed .ws-rail__collapse:hover span,
 .ws-rail.is-collapsed .ws-rail__signout:hover span { opacity: 1; transform: translateY(-50%) translateX(0); }
 @media (prefers-reduced-motion: reduce) { .ws-rail, .ws-rail__collapse svg { transition: none; } }
+
+/* ── LIGHT THEME (products) — [data-theme="light"] on <html> ── */
+:root[data-theme="light"] .ws-root {
+  --ws-bg: #f4f6f8;
+  --ws-surface: #ffffff;
+  --ws-surface-2: #eef1f4;
+  --ws-border: rgba(17, 20, 25, 0.10);
+  --ws-border-hover: rgba(17, 20, 25, 0.20);
+  --ws-text: #0c0f14;
+  --ws-muted: #5a6470;
+  --ws-ghost: #98a2ad;
+  --ws-cta: #173b67;
+  --ws-cta-glow: rgba(23, 59, 103, 0.26);
+  --ws-on-accent: #ffffff;
+}
+:root[data-theme="light"] .ws-topbar { background: rgba(255, 255, 255, 0.7); }
+:root[data-theme="light"] .ws-card { background: #ffffff; box-shadow: 0 1px 2px rgba(17, 20, 25, 0.06), 0 14px 32px -22px rgba(17, 20, 25, 0.35); }
+:root[data-theme="light"] .ws-card:hover { box-shadow: 0 1px 2px rgba(17, 20, 25, 0.08), 0 22px 50px -24px rgba(17, 20, 25, 0.4); }

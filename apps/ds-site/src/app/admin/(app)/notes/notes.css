@@ -166,7 +166,7 @@
 .wn-btn--primary {
   background: var(--ice);
   border-color: var(--ice);
-  color: #1a1400;
+  color: var(--admin-on-accent);
   font-weight: 600;
 }
 .wn-btn--primary:hover {
@@ -644,7 +644,7 @@
   font-family: var(--mono);
   font-size: 0.9rem;
   line-height: 1.65;
-  color: #d4d4d4;
+  color: var(--tx);
   background: none;
   border: 0;
   width: 100%;
@@ -699,7 +699,7 @@
   background: var(--bd);
 }
 .wn-md p {
-  color: #d4d4d4;
+  color: var(--tx);
   margin: 0.6em 0;
   font-size: 0.97rem;
   line-height: 1.6;
@@ -708,7 +708,7 @@
 .wn-md ol {
   margin: 0.6em 0;
   padding-left: 1.25em;
-  color: #d4d4d4;
+  color: var(--tx);
 }
 .wn-md li {
   margin: 0.32em 0;
@@ -762,7 +762,7 @@
   display: flex;
   align-items: flex-start;
   gap: 11px;
-  color: #d4d4d4;
+  color: var(--tx);
   padding: 6px 9px;
   margin: 0 -9px;
   border-radius: var(--r-sm);
@@ -792,7 +792,7 @@
 .wn-box.is-done {
   background: var(--ice);
   border-color: var(--ice);
-  color: #1a1400;
+  color: var(--admin-on-accent);
 }
 .wn-check li.is-done span:last-child {
   color: var(--dim);

@@ -40,7 +40,7 @@
 .cal__time, .cal__color { font: inherit; font-size: 13px; color: var(--admin-text); background: var(--admin-bg); border: 1px solid var(--admin-border); border-radius: 8px; padding: 7px 9px; }
 .cal__time { width: 96px; }
 .cal__color { flex: 1; cursor: pointer; }
-.cal__addbtn { font-size: 13px; font-weight: 500; color: #050607; background: var(--admin-amber); border: 0; border-radius: 8px; padding: 8px 16px; cursor: pointer; }
+.cal__addbtn { font-size: 13px; font-weight: 500; color: var(--admin-on-accent); background: var(--admin-amber); border: 0; border-radius: 8px; padding: 8px 16px; cursor: pointer; }
 .cal__addbtn:disabled { opacity: 0.4; cursor: default; }
 
 @media (max-width: 860px) {
