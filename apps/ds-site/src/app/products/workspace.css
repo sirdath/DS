@@ -458,3 +458,14 @@ a.ws-card:focus-visible .ws-card__open {
     transform: none;
   }
 }
+
+/* Internal-only entry to the presentation builder. */
+.ws-present-cta {
+  display: grid; gap: 4px; margin-bottom: 22px; padding: 16px 20px;
+  background: linear-gradient(120deg, rgba(141, 203, 255, 0.1), rgba(141, 203, 255, 0.03));
+  border: 1px solid rgba(141, 203, 255, 0.28); border-radius: 14px; text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.ws-present-cta:hover { border-color: rgba(141, 203, 255, 0.5); transform: translateY(-1px); }
+.ws-present-cta__eyebrow { font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8dcbff; }
+.ws-present-cta__title { font-size: 15px; font-weight: 500; color: #f7f9fb; }

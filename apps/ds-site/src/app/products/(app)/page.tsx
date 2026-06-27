@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { TOOLS, type ToolCard } from '../lib/tools-catalog'
+import { resolveWorkspaceSession } from '../lib/workspace-auth'
 
 const STATUS_LABEL: Record<ToolCard['status'], string> = { ready: 'Ready', preview: 'Preview', soon: 'Soon' }
 const STATUS_CLASS: Record<ToolCard['status'], string> = { ready: 'is-ready', preview: 'is-preview', soon: '' }
@@ -36,7 +37,10 @@ function Card({ tool }: { tool: ToolCard }) {
   )
 }
 
-export default function WorkspacePage() {
+export default async function WorkspacePage() {
+  const session = await resolveWorkspaceSession()
+  const internal = session?.role === 'internal'
+
   return (
     <>
       <div className="ws-head">
@@ -46,6 +50,13 @@ export default function WorkspacePage() {
           Open a tool to use it. Xenia takes bookings, Fama reads your reviews, Panoptes finds a site.
         </p>
       </div>
+
+      {internal ? (
+        <Link href="/products/presentations" className="ws-present-cta">
+          <span className="ws-present-cta__eyebrow">Presentation mode</span>
+          <span className="ws-present-cta__title">Build a client deck — pick products + order, get a shareable link →</span>
+        </Link>
+      ) : null}
 
       <div className="ws-grid">
         {TOOLS.map((tool) => (
