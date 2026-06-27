@@ -295,12 +295,6 @@ export function NotesApp({ data }: { data: NotesData }) {
 
   return (
     <div className="wn-root">
-      {isDemo ? (
-        <div className="wn-demo" role="status">
-          <b>Demo</b> Supabase is paused — restore it + apply the migration to edit for real.
-        </div>
-      ) : null}
-
       <div className="wn-app">
         {/* Sidebar */}
         <aside className="wn-side">
