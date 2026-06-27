@@ -27,11 +27,11 @@ function timeAgo(iso: string) {
 
 function MiniStat({ label, value, highlight, wide }: { label: string; value: string | number; highlight?: boolean; wide?: boolean }) {
   return (
-    <div style={{ background: '#111', padding: '16px 18px', gridColumn: wide ? 'span 2' : undefined }}>
-      <p style={{ fontSize: '10px', color: '#444', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace', margin: '0 0 6px' }}>
+    <div style={{ background: 'var(--admin-surface)', padding: '16px 18px', gridColumn: wide ? 'span 2' : undefined }}>
+      <p style={{ fontSize: '10px', color: 'var(--admin-text-dim)', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace', margin: '0 0 6px' }}>
         {label}
       </p>
-      <p style={{ fontSize: '22px', fontWeight: 300, letterSpacing: '-0.02em', margin: 0, color: highlight ? '#f5f5f5' : '#888' }}>
+      <p style={{ fontSize: '22px', fontWeight: 300, letterSpacing: '-0.02em', margin: 0, color: highlight ? 'var(--admin-text)' : 'var(--admin-text-muted)' }}>
         {value}
       </p>
     </div>
@@ -60,14 +60,14 @@ export default function ProjectCard({ slug, name, url, description, total, weekC
             <h2 style={{ fontSize: '20px', fontWeight: 500, letterSpacing: '-0.018em', margin: 0 }}>
               {name}
             </h2>
-            <span style={{ fontSize: '11px', color: '#444', fontFamily: 'ui-monospace, monospace', marginTop: '3px', flexShrink: 0 }}>
+            <span style={{ fontSize: '11px', color: 'var(--admin-text-dim)', fontFamily: 'ui-monospace, monospace', marginTop: '3px', flexShrink: 0 }}>
               {lastVisit ? timeAgo(lastVisit) : 'no visits yet'}
             </span>
           </div>
-          <p style={{ marginTop: '4px', fontSize: '12px', color: '#555', fontFamily: 'ui-monospace, monospace' }}>
+          <p style={{ marginTop: '4px', fontSize: '12px', color: 'var(--admin-text-muted)', fontFamily: 'ui-monospace, monospace' }}>
             {url}
           </p>
-          <p style={{ marginTop: '6px', fontSize: '13px', color: '#666' }}>
+          <p style={{ marginTop: '6px', fontSize: '13px', color: 'var(--admin-text-muted)' }}>
             {description}
           </p>
         </div>
@@ -79,7 +79,7 @@ export default function ProjectCard({ slug, name, url, description, total, weekC
           <MiniStat label="Top country" value={topCountry ?? '—'} />
         </div>
 
-        <div style={{ marginTop: '24px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px', fontSize: '12px', color: '#555' }}>
+        <div style={{ marginTop: '24px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px', fontSize: '12px', color: 'var(--admin-text-muted)' }}>
           <span>View insights</span>
           <span style={{ fontSize: '14px' }}>→</span>
         </div>

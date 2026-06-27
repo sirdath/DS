@@ -83,7 +83,7 @@ export default function FilterBar({ initialTz, activeGroup }: { initialTz: strin
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', position: 'relative' }}>
 
       {/* Timezone toggle */}
-      <div style={{ display: 'flex', background: '#111', borderRadius: '6px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.07)' }}>
+      <div style={{ display: 'flex', background: 'var(--admin-surface)', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--admin-border)' }}>
         {TZ_OPTIONS.map(opt => (
           <button
             key={opt.value}
@@ -92,7 +92,7 @@ export default function FilterBar({ initialTz, activeGroup }: { initialTz: strin
               padding: '7px 14px',
               background: tz === opt.value ? 'rgba(255,255,255,0.1)' : 'transparent',
               border: 'none',
-              color: tz === opt.value ? '#f7f9fb' : '#626872',
+              color: tz === opt.value ? 'var(--admin-text)' : '#626872',
               fontSize: '11px',
               fontFamily: 'ui-monospace, monospace',
               letterSpacing: '0.06em',
@@ -111,8 +111,8 @@ export default function FilterBar({ initialTz, activeGroup }: { initialTz: strin
           onClick={() => setCalOpen(v => !v)}
           style={{
             padding: '7px 14px',
-            background: calOpen ? 'rgba(255,255,255,0.1)' : '#111',
-            border: `1px solid ${range?.from ? 'rgba(99,102,241,0.5)' : 'rgba(255,255,255,0.07)'}`,
+            background: calOpen ? 'rgba(255,255,255,0.1)' : 'var(--admin-surface)',
+            border: `1px solid ${range?.from ? 'rgba(99,102,241,0.5)' : 'var(--admin-border)'}`,
             borderRadius: '6px',
             color: range?.from ? '#a5b4fc' : '#626872',
             fontSize: '11px',
@@ -131,7 +131,7 @@ export default function FilterBar({ initialTz, activeGroup }: { initialTz: strin
             top: 'calc(100% + 8px)',
             right: 0,
             zIndex: 100,
-            background: '#111419',
+            background: 'var(--admin-surface)',
             border: '1px solid rgba(255,255,255,0.1)',
             borderRadius: '12px',
             padding: '12px',
@@ -150,7 +150,7 @@ export default function FilterBar({ initialTz, activeGroup }: { initialTz: strin
                 font-family: ui-monospace, monospace;
                 font-size: 12px;
               }
-              .rdp-day_button:hover { background: rgba(255,255,255,0.07); border-radius: 6px; }
+              .rdp-day_button:hover { background: var(--admin-border); border-radius: 6px; }
               .rdp-selected .rdp-day_button { background: #6366f1 !important; color: #fff; border-radius: 6px; }
               .rdp-range_middle .rdp-day_button { background: rgba(99,102,241,0.15) !important; border-radius: 0; }
               .rdp-range_start .rdp-day_button, .rdp-range_end .rdp-day_button { background: #6366f1 !important; color: #fff; border-radius: 6px; }
@@ -168,7 +168,7 @@ export default function FilterBar({ initialTz, activeGroup }: { initialTz: strin
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '8px', paddingTop: '8px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
               <button
                 onClick={() => { setRange(undefined); }}
-                style={{ padding: '6px 12px', background: 'transparent', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '6px', color: '#626872', fontSize: '11px', fontFamily: 'ui-monospace, monospace', cursor: 'pointer' }}
+                style={{ padding: '6px 12px', background: 'transparent', border: '1px solid var(--admin-border)', borderRadius: '6px', color: '#626872', fontSize: '11px', fontFamily: 'ui-monospace, monospace', cursor: 'pointer' }}
               >
                 Clear
               </button>
@@ -184,9 +184,9 @@ export default function FilterBar({ initialTz, activeGroup }: { initialTz: strin
       </div>
 
       {/* Group filter */}
-      <div style={{ display: 'flex', background: '#111', borderRadius: '6px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.07)' }}>
+      <div style={{ display: 'flex', background: 'var(--admin-surface)', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--admin-border)' }}>
         {[
-          { label: 'All', value: null, activeColor: '#f7f9fb', activeBg: 'rgba(255,255,255,0.1)' },
+          { label: 'All', value: null, activeColor: 'var(--admin-text)', activeBg: 'rgba(255,255,255,0.1)' },
           { label: 'Leads', value: 'leads', activeColor: '#a78bfa', activeBg: 'rgba(99,102,241,0.2)' },
           { label: 'Admins', value: 'admins', activeColor: '#43a47a', activeBg: 'rgba(67,164,122,0.12)' },
         ].map((opt, i) => (
@@ -197,7 +197,7 @@ export default function FilterBar({ initialTz, activeGroup }: { initialTz: strin
               padding: '7px 14px',
               background: group === opt.value ? opt.activeBg : 'transparent',
               border: 'none',
-              borderLeft: i > 0 ? '1px solid rgba(255,255,255,0.07)' : 'none',
+              borderLeft: i > 0 ? '1px solid var(--admin-border)' : 'none',
               color: group === opt.value ? opt.activeColor : '#626872',
               fontSize: '11px',
               fontFamily: 'ui-monospace, monospace',
@@ -219,7 +219,7 @@ export default function FilterBar({ initialTz, activeGroup }: { initialTz: strin
           background: btnState === 'applied' ? 'rgba(99,102,241,0.2)' : 'rgba(255,255,255,0.08)',
           border: `1px solid ${btnState === 'applied' ? 'rgba(99,102,241,0.5)' : 'rgba(255,255,255,0.12)'}`,
           borderRadius: '6px',
-          color: btnState === 'applied' ? '#a5b4fc' : '#f7f9fb',
+          color: btnState === 'applied' ? '#a5b4fc' : 'var(--admin-text)',
           fontSize: '11px',
           fontFamily: 'ui-monospace, monospace',
           letterSpacing: '0.06em',
@@ -237,7 +237,7 @@ export default function FilterBar({ initialTz, activeGroup }: { initialTz: strin
           style={{
             padding: '7px 14px',
             background: 'transparent',
-            border: '1px solid rgba(255,255,255,0.07)',
+            border: '1px solid var(--admin-border)',
             borderRadius: '6px',
             color: '#626872',
             fontSize: '11px',
