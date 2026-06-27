@@ -188,7 +188,7 @@ export default function FilterBar({ initialTz, activeGroup }: { initialTz: strin
         {[
           { label: 'All', value: null, activeColor: '#f5f5f5', activeBg: 'rgba(255,255,255,0.1)' },
           { label: 'Leads', value: 'leads', activeColor: '#a78bfa', activeBg: 'rgba(99,102,241,0.2)' },
-          { label: 'Admins', value: 'admins', activeColor: '#4ade80', activeBg: 'rgba(74,222,128,0.12)' },
+          { label: 'Admins', value: 'admins', activeColor: '#43a47a', activeBg: 'rgba(67,164,122,0.12)' },
         ].map((opt, i) => (
           <button
             key={opt.label}

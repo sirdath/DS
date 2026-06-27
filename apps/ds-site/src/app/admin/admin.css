@@ -15,32 +15,32 @@
 
 /* ── Custom Properties ─────────────────────────── */
 :root {
-  /* Backgrounds */
-  --admin-bg:            #0a0a0a;
-  --admin-surface:       #141414;
-  --admin-surface-raise: #1c1c1c;
-  --admin-border:        rgba(255, 255, 255, 0.07);
-  --admin-border-hover:  rgba(255, 255, 255, 0.13);
+  /* Backgrounds — DS2 v2 ramp (Space / Graphite) */
+  --admin-bg:            #050607;
+  --admin-surface:       #111419;
+  --admin-surface-raise: #161a20;
+  --admin-border:        rgba(255, 255, 255, 0.08);
+  --admin-border-hover:  rgba(255, 255, 255, 0.14);
 
-  /* Text */
-  --admin-text:          #f5f5f5;
-  --admin-text-muted:    #888888;
-  --admin-text-dim:      #444444;
-  --admin-mono:          ui-monospace, 'SF Mono', 'Fira Code', monospace;
+  /* Text — Mineral / Silver / Titanium */
+  --admin-text:          #f7f9fb;
+  --admin-text-muted:    #aeb4bd;
+  --admin-text-dim:      #626872;
+  --admin-mono:          'IBM Plex Mono', ui-monospace, 'SF Mono', 'Fira Code', monospace;
 
-  /* Accent — warm amber only */
-  --admin-amber:         #e8b46a;
-  --admin-amber-dim:     rgba(232, 180, 106, 0.15);
-  --admin-amber-border:  rgba(232, 180, 106, 0.30);
+  /* Accent — DS2 Ice (focus & action only). Var name kept "amber" to avoid churn. */
+  --admin-amber:         #8dcbff;
+  --admin-amber-dim:     rgba(141, 203, 255, 0.15);
+  --admin-amber-border:  rgba(141, 203, 255, 0.30);
 
   /* Status pills */
   --pill-lead-bg:        rgba(255, 255, 255, 0.06);
   --pill-lead-text:      #888888;
   --pill-lead-border:    rgba(255, 255, 255, 0.10);
 
-  --pill-progress-bg:    rgba(232, 180, 106, 0.12);
-  --pill-progress-text:  #e8b46a;
-  --pill-progress-border:rgba(232, 180, 106, 0.28);
+  --pill-progress-bg:    rgba(141, 203, 255, 0.12);
+  --pill-progress-text:  #8dcbff;
+  --pill-progress-border:rgba(141, 203, 255, 0.28);
 
   --pill-delivered-bg:   rgba(160, 180, 155, 0.10);
   --pill-delivered-text: #a0b49b;
@@ -56,12 +56,12 @@
   /* lead: barely any progress — keep low-key neutral */
   --progress-lead:         linear-gradient(90deg, #5c5c5c, #7a7a7a);
   --progress-lead-glow:    transparent;
-  /* in progress: active warm amber */
-  --progress-inprogress:   linear-gradient(90deg, #d98f3c, #f2bd6b);
-  --progress-inprogress-glow: rgba(232, 180, 106, 0.45);
-  /* delivered: clear, confident green */
-  --progress-delivered:    linear-gradient(90deg, #2f9e6e, #57c98f);
-  --progress-delivered-glow: rgba(70, 190, 135, 0.40);
+  /* in progress: active — DS2 Action → Ice */
+  --progress-inprogress:   linear-gradient(90deg, #347fd1, #8dcbff);
+  --progress-inprogress-glow: rgba(141, 203, 255, 0.45);
+  /* delivered: clear, confident green (DS2 success — semantic, kept) */
+  --progress-delivered:    linear-gradient(90deg, #2f8a63, #43a47a);
+  --progress-delivered-glow: rgba(67, 164, 122, 0.40);
   /* retainer: the win — richest gold with a glow */
   --progress-retainer:     linear-gradient(90deg, #e0a23f, #f7d98a);
   --progress-retainer-glow: rgba(244, 205, 130, 0.55);
@@ -359,7 +359,7 @@
 .admin-card.is-retainer::before {
   background: radial-gradient(
     circle 260px at var(--card-mx, 50%) var(--card-my, 50%),
-    rgba(232, 180, 106, 0.10),
+    rgba(141, 203, 255, 0.10),
     transparent 60%
   );
 }
@@ -747,14 +747,14 @@
 }
 .admin-dash-bar__fill {
   height: 100%; border-radius: 999px;
-  background: linear-gradient(90deg, #4ade80, #86efac);
+  background: linear-gradient(90deg, #43a47a, #5cc795);
 }
 .admin-dash-bar__legend {
   display: flex; gap: 22px; margin-top: 12px;
   font-size: 12px; color: var(--admin-text-muted);
 }
 .admin-dash-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
-.admin-dash-dot--collected { background: #4ade80; }
+.admin-dash-dot--collected { background: #43a47a; }
 .admin-dash-dot--outstanding { background: rgba(255, 255, 255, 0.18); }
 .admin-dash-cta { margin-top: 8px; }
 
@@ -948,16 +948,16 @@
 
 /* pitched: bright amber + subtle pulse ring — "awaiting reply" */
 .admin-outreach-pill.is-pitched {
-  background: rgba(232, 180, 106, 0.22);
+  background: rgba(141, 203, 255, 0.22);
   color: #f2cc88;
-  border-color: rgba(232, 180, 106, 0.55);
-  box-shadow: 0 0 0 0 rgba(232, 180, 106, 0.40);
+  border-color: rgba(141, 203, 255, 0.55);
+  box-shadow: 0 0 0 0 rgba(141, 203, 255, 0.40);
   animation: outreach-pulse 2.4s ease-in-out infinite;
 }
 
 @keyframes outreach-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(232, 180, 106, 0.40); }
-  50%       { box-shadow: 0 0 0 5px rgba(232, 180, 106, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(141, 203, 255, 0.40); }
+  50%       { box-shadow: 0 0 0 5px rgba(141, 203, 255, 0); }
 }
 
 /* ── Project-type tag ──────────────────────────── */
@@ -994,7 +994,7 @@
   transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
 }
 .admin-new-btn:hover {
-  background: rgba(232, 180, 106, 0.22);
+  background: rgba(141, 203, 255, 0.22);
   border-color: var(--admin-amber);
   color: #f2cc88;
 }
@@ -1095,7 +1095,7 @@
 .admin-form__select:focus,
 .admin-form__textarea:focus {
   border-color: var(--admin-amber-border);
-  box-shadow: 0 0 0 2px rgba(232, 180, 106, 0.12);
+  box-shadow: 0 0 0 2px rgba(141, 203, 255, 0.12);
 }
 
 .admin-form__input::placeholder,
@@ -1173,7 +1173,7 @@
   transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
 }
 .admin-form__submit:hover {
-  background: rgba(232, 180, 106, 0.22);
+  background: rgba(141, 203, 255, 0.22);
   border-color: var(--admin-amber);
   color: #f2cc88;
 }
@@ -1488,13 +1488,13 @@
 
 .admin-edit-details--prominent[open] summary,
 .admin-edit-details--prominent[open] .admin-edit-details__summary--prominent {
-  background: rgba(232, 180, 106, 0.12);
+  background: rgba(141, 203, 255, 0.12);
   border-bottom: 1px solid var(--admin-border);
 }
 
 .admin-edit-details--prominent summary:hover,
 .admin-edit-details--prominent .admin-edit-details__summary--prominent:hover {
-  background: rgba(232, 180, 106, 0.22);
+  background: rgba(141, 203, 255, 0.22);
   color: #f2cc88;
 }
 
@@ -1727,7 +1727,7 @@
   display: inline-block;
   width: 14px;
   height: 14px;
-  border: 1.5px solid rgba(232, 180, 106, 0.25);
+  border: 1.5px solid rgba(141, 203, 255, 0.25);
   border-top-color: var(--admin-amber);
   border-radius: 50%;
   animation: admin-spin 0.7s linear infinite;
@@ -1921,7 +1921,7 @@
 .admin-hunt-tile__l { font-size: 12px; color: var(--admin-text-muted); }
 .admin-hunt-tile.is-disaster .admin-hunt-tile__n { color: #e96a6a; }
 .admin-hunt-tile.is-rough .admin-hunt-tile__n { color: #e8a86a; }
-.admin-hunt-tile.is-dated .admin-hunt-tile__n { color: var(--admin-amber); }
+.admin-hunt-tile.is-dated .admin-hunt-tile__n { color: #e8c86a; }
 .admin-hunt-tile.is-ok .admin-hunt-tile__n { color: #7dbe82; }
 
 .admin-hunt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-top: 12px; }
@@ -1936,7 +1936,7 @@
   padding: 4px 8px; border-radius: 999px; background: rgba(0,0,0,0.7); color: #fff; backdrop-filter: blur(4px); }
 .admin-hunt-badge.is-disaster { background: rgba(233,106,106,0.92); }
 .admin-hunt-badge.is-rough { background: rgba(232,168,106,0.92); color: #1a1a1a; }
-.admin-hunt-badge.is-dated { background: rgba(232,180,106,0.92); color: #1a1a1a; }
+.admin-hunt-badge.is-dated { background: rgba(232,200,106,0.92); color: #1a1a1a; }
 .admin-hunt-badge.is-ok { background: rgba(125,190,130,0.92); color: #102a13; }
 .admin-hunt-badge.is-unscored { background: rgba(255,255,255,0.12); color: var(--admin-text-muted); }
 .admin-hunt-card__body { padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }

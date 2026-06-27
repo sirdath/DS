@@ -184,10 +184,10 @@ export default async function ProjectAnalytics({
           <div style={{
             marginBottom: '24px',
             padding: '18px 22px',
-            border: '1px solid rgba(255,170,80,0.32)',
-            background: 'rgba(255,170,80,0.06)',
+            border: '1px solid rgba(141,203,255,0.32)',
+            background: 'rgba(141,203,255,0.06)',
             borderRadius: '10px',
-            color: '#e8b46a',
+            color: '#8dcbff',
             fontSize: '13px',
             lineHeight: 1.55,
             fontFamily: 'ui-monospace, monospace',
@@ -280,7 +280,7 @@ export default async function ProjectAnalytics({
                     <td style={{ padding: '12px 20px', color: '#777' }}>
                       {v.country ?? '—'}
                     </td>
-                    <td style={{ padding: '12px 20px', color: v.client_id ? (v.client_id.includes('[blocked]') ? '#f87171' : v.client_id.endsWith('-admin') ? '#4ade80' : '#a78bfa') : '#444', fontFamily: 'ui-monospace, monospace', fontSize: '12px', whiteSpace: 'nowrap' }}>
+                    <td style={{ padding: '12px 20px', color: v.client_id ? (v.client_id.includes('[blocked]') ? '#c96868' : v.client_id.endsWith('-admin') ? '#43a47a' : '#a78bfa') : '#444', fontFamily: 'ui-monospace, monospace', fontSize: '12px', whiteSpace: 'nowrap' }}>
                       {v.client_id ?? '—'}
                     </td>
                     <td style={{ padding: '12px 20px', color: '#555', maxWidth: '260px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
