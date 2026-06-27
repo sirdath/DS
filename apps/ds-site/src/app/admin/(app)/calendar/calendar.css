@@ -47,3 +47,11 @@
   .cal__layout { grid-template-columns: 1fr; }
   .cal__panel { position: static; }
 }
+
+/* Assignee — who's responsible */
+.cal__event-meta { display: flex; align-items: center; gap: 8px; }
+.cal__who { font-family: var(--admin-mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 7px; border-radius: 999px; border: 1px solid; }
+.cal__who--dath { color: #8dcbff; border-color: rgba(141, 203, 255, 0.4); background: rgba(141, 203, 255, 0.12); }
+.cal__who--stel { color: #5cc7a0; border-color: rgba(92, 199, 160, 0.4); background: rgba(92, 199, 160, 0.12); }
+.cal__who--both { color: #c89245; border-color: rgba(200, 146, 69, 0.4); background: rgba(200, 146, 69, 0.12); }
+.cal__who-sel { flex: 1; font: inherit; font-size: 13px; color: var(--admin-text); background: var(--admin-bg); border: 1px solid var(--admin-border); border-radius: 8px; padding: 7px 9px; cursor: pointer; }

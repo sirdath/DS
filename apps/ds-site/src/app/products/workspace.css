@@ -474,3 +474,38 @@ a.ws-card:focus-visible .ws-card__open {
 /* Real DS2 mark in the products topbar (replaces the text eyebrow). */
 .ws-topbar__brand { align-items: center; }
 .ws-topbar__mark { display: block; border-radius: 6px; }
+
+/* ── Left rail (matches the admin shell) ───────────────────────────────── */
+.ws-shell { display: flex; min-height: 100dvh; }
+.ws-main { flex: 1; min-width: 0; }
+.ws-rail {
+  position: sticky; top: 0; align-self: flex-start; height: 100dvh; width: 212px; flex: none;
+  display: flex; flex-direction: column; gap: 4px; padding: 18px 14px;
+  background: var(--ws-bg); border-right: 1px solid var(--ws-border); z-index: 10;
+}
+.ws-rail__brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px; margin-bottom: 16px; text-decoration: none; color: var(--ws-text); }
+.ws-rail__brand img { display: block; border-radius: 7px; }
+.ws-rail__brandname { font-family: var(--ws-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ws-ghost); }
+.ws-rail__nav { display: flex; flex-direction: column; gap: 4px; }
+.ws-rail__item { display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 12px; border-radius: 11px; color: var(--ws-muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color var(--ws-dur) var(--ws-ease), background var(--ws-dur) var(--ws-ease); }
+.ws-rail__item:hover { color: var(--ws-text); background: rgba(255, 255, 255, 0.05); }
+.ws-rail__item.is-active { color: #050607; background: var(--ws-cta); }
+.ws-rail__item svg { width: 19px; height: 19px; flex: none; }
+.ws-rail__item:focus-visible { outline: 2px solid var(--ws-cta); outline-offset: 2px; }
+.ws-rail__dot { width: 9px; height: 9px; border-radius: 999px; flex: none; margin: 0 5px; }
+.ws-rail__spacer { flex: 1; }
+.ws-rail__foot { display: flex; flex-direction: column; gap: 8px; padding: 10px 6px 0; border-top: 1px solid var(--ws-border); margin-top: 8px; }
+.ws-rail__email { font-size: 11px; color: var(--ws-ghost); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ws-rail__signout { display: flex; align-items: center; gap: 12px; height: 38px; padding: 0 8px; border-radius: 10px; border: 0; background: none; width: 100%; text-align: left; cursor: pointer; color: var(--ws-ghost); font: inherit; font-size: 13px; }
+.ws-rail__signout:hover { color: var(--ws-text); background: rgba(255, 255, 255, 0.05); }
+.ws-rail__signout svg { width: 18px; height: 18px; flex: none; }
+
+@media (max-width: 860px) {
+  .ws-shell { flex-direction: column; }
+  .ws-rail { flex-direction: row; flex-wrap: wrap; width: 100%; height: auto; top: 0; align-items: center; border-right: 0; border-bottom: 1px solid var(--ws-border); padding: 8px 12px; }
+  .ws-rail__brand { margin-bottom: 0; margin-right: auto; }
+  .ws-rail__nav { flex-direction: row; flex-wrap: wrap; }
+  .ws-rail__item { height: 36px; }
+  .ws-rail__spacer, .ws-rail__email { display: none; }
+  .ws-rail__foot { flex-direction: row; align-items: center; border-top: 0; margin-top: 0; padding: 0; }
+}

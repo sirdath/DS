@@ -6,6 +6,18 @@ export interface CalendarEvent {
   startTime: string | null // HH:MM[:SS] or null (all-day)
   color: string
   done: boolean
+  assignee: string // '' | 'dath' | 'stel' | 'both'
+}
+
+export const ASSIGNEES = [
+  { key: '', label: 'Unassigned' },
+  { key: 'dath', label: 'Dath' },
+  { key: 'stel', label: 'Stel' },
+  { key: 'both', label: 'Both' },
+] as const
+
+export function assigneeLabel(a: string): string {
+  return ASSIGNEES.find((x) => x.key === a)?.label ?? ''
 }
 
 export interface DayCell {
