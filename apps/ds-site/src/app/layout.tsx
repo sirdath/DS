@@ -23,6 +23,14 @@ export const metadata: Metadata = {
   title: "DS2, Digital Solutions Consulting",
   description:
     "A senior team for strategy, engineering, and applied AI. Athens and London.",
+  icons: {
+    icon: [
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/favicon-180.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

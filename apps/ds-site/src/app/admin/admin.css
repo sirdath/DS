@@ -2048,51 +2048,49 @@
 /* ── Left icon rail ── */
 .admin-rail {
   position: sticky; top: 0; align-self: flex-start;
-  height: 100vh; width: 72px; flex: none;
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  padding: 18px 0; background: var(--ds2-bg);
+  height: 100vh; width: 212px; flex: none;
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 18px 14px; background: var(--ds2-bg);
   border-right: 1px solid var(--ds2-border); z-index: 100;
 }
 .admin-rail__brand {
-  width: 38px; height: 38px; border-radius: 11px; margin-bottom: 12px;
-  display: grid; place-items: center; text-decoration: none;
-  background: var(--ds2-ice); color: #050607; font-weight: 700; font-size: 15px;
+  display: flex; align-items: center; gap: 10px; padding: 4px 8px; margin-bottom: 16px;
+  text-decoration: none; color: var(--ds2-text);
 }
-.admin-rail__nav { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+.admin-rail__brand img { display: block; border-radius: 7px; }
+.admin-rail__brandname { font-family: var(--admin-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ds2-text-3); }
+.admin-rail__nav { display: flex; flex-direction: column; gap: 4px; }
 .admin-rail__item {
-  position: relative; width: 44px; height: 44px; border-radius: 12px;
-  display: grid; place-items: center; color: var(--ds2-text-3); text-decoration: none;
+  display: flex; align-items: center; gap: 12px; height: 42px; padding: 0 12px; border-radius: 11px;
+  color: var(--ds2-text-2); text-decoration: none; font-size: 14px; font-weight: 500;
   transition: color 0.2s var(--ds2-ease), background 0.2s var(--ds2-ease);
 }
 .admin-rail__item:hover { color: var(--ds2-text); background: var(--ds2-glass); }
 .admin-rail__item.is-active { color: #050607; background: var(--ds2-ice); }
-.admin-rail__item svg { width: 20px; height: 20px; }
+.admin-rail__item svg { width: 20px; height: 20px; flex: none; }
 .admin-rail__item:focus-visible { outline: 2px solid var(--ds2-ice); outline-offset: 2px; }
-.admin-rail__label {
-  position: absolute; left: calc(100% + 10px); white-space: nowrap;
-  padding: 5px 10px; border-radius: 8px; font-size: 12px;
-  background: var(--ds2-surface-3); color: var(--ds2-text); border: 1px solid var(--ds2-border-2);
-  opacity: 0; transform: translateX(-4px); pointer-events: none;
-  transition: opacity 0.16s var(--ds2-ease), transform 0.16s var(--ds2-ease); z-index: 5;
-}
-.admin-rail__item:hover .admin-rail__label, .admin-rail__item:focus-visible .admin-rail__label { opacity: 1; transform: translateX(0); }
+.admin-rail__label { white-space: nowrap; }
 .admin-rail__spacer { flex: 1; }
 .admin-rail__signout {
-  width: 44px; height: 44px; border-radius: 12px; border: 0; background: none;
-  color: var(--ds2-text-3); cursor: pointer; display: grid; place-items: center;
+  display: flex; align-items: center; gap: 12px; height: 42px; padding: 0 12px; border-radius: 11px;
+  border: 0; background: none; width: 100%; text-align: left; cursor: pointer;
+  color: var(--ds2-text-3); font: inherit; font-size: 14px; font-weight: 500;
   transition: color 0.2s var(--ds2-ease), background 0.2s var(--ds2-ease);
 }
 .admin-rail__signout:hover { color: var(--ds2-text); background: var(--ds2-glass); }
-.admin-rail__signout svg { width: 20px; height: 20px; }
+.admin-rail__signout svg { width: 20px; height: 20px; flex: none; }
 
-@media (max-width: 720px) {
+@media (max-width: 860px) {
   .admin-shell { flex-direction: column; }
   .admin-rail {
-    flex-direction: row; width: 100%; height: auto; top: 0;
+    flex-direction: row; flex-wrap: wrap; width: 100%; height: auto; top: 0; align-items: center;
     border-right: 0; border-bottom: 1px solid var(--ds2-border); padding: 8px 12px; gap: 4px;
   }
-  .admin-rail__brand { margin-bottom: 0; }
-  .admin-rail__label { display: none; }
+  .admin-rail__brand { margin-bottom: 0; margin-right: auto; }
+  .admin-rail__nav { flex-direction: row; flex-wrap: wrap; }
+  .admin-rail__item { height: 38px; padding: 0 10px; }
+  .admin-rail__spacer { display: none; }
+  .admin-rail__signout { width: auto; }
 }
 
 /* ── Dashboard (DS2) ── */
