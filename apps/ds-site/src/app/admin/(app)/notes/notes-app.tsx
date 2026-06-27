@@ -92,7 +92,6 @@ export function NotesApp({ data }: { data: NotesData }) {
   useEffect(() => {
     setStatus('idle')
     setDraft(selected ? { title: selected.title, body: selected.body } : { title: '', body: '' })
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: seed on identity change only
   }, [selected?.id])
 
   // Flush on unmount / tab-hide so edits inside the debounce window are never lost.
