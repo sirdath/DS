@@ -5,14 +5,14 @@ import { resolveWorkspaceSession } from '../lib/workspace-auth'
 
 export default async function WorkspaceAppLayout({ children }: { children: ReactNode }) {
   const session = await resolveWorkspaceSession()
-  if (!session) redirect('/workspace/login')
+  if (!session) redirect('/products/login')
 
   return (
     <>
       <header className="ws-topbar">
-        <Link href="/workspace" className="ws-topbar__brand">
+        <Link href="/products" className="ws-topbar__brand">
           <span className="ws-topbar__eyebrow">DS2</span>
-          <span className="ws-topbar__title">Workspace</span>
+          <span className="ws-topbar__title">Products</span>
         </Link>
 
         <div className="ws-topbar__right">
@@ -25,7 +25,7 @@ export default async function WorkspaceAppLayout({ children }: { children: React
             {session.role === 'internal' ? 'Internal' : 'Client'}
           </span>
           <span className="ws-email">{session.email}</span>
-          <form method="post" action="/workspace/logout">
+          <form method="post" action="/products/logout">
             <button type="submit" className="ws-signout">
               Sign out
             </button>

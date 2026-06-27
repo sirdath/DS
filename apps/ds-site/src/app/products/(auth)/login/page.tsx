@@ -14,7 +14,7 @@ export default function WorkspaceLoginPage() {
   return (
     <div className="ws-login">
       <form className="ws-login__card" action={action}>
-        <div className="ws-login__title">Workspace</div>
+        <div className="ws-login__title">Products</div>
         <p className="ws-login__sub">Sign in to open your tools.</p>
 
         <div className="ws-field">

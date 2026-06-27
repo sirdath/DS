@@ -10,9 +10,9 @@
 
 import { runDailyCycle } from '@ds/plutus'
 import { NextResponse } from 'next/server'
-import { loadRealContext } from '../../../workspace/(app)/plutus/lib/plutus-context'
-import { insertAuditEvents, syncOutbox } from '../../../workspace/(app)/plutus/lib/persist'
-import { clientIp, rateLimited, resolveApiSession, sameOrigin } from '../../../workspace/(app)/plutus/lib/route-helpers'
+import { loadRealContext } from '../../../products/(app)/plutus/lib/plutus-context'
+import { insertAuditEvents, syncOutbox } from '../../../products/(app)/plutus/lib/persist'
+import { clientIp, rateLimited, resolveApiSession, sameOrigin } from '../../../products/(app)/plutus/lib/route-helpers'
 
 export const runtime = 'nodejs'
 

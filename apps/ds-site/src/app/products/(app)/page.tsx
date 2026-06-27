@@ -40,7 +40,7 @@ export default function WorkspacePage() {
   return (
     <>
       <div className="ws-head">
-        <span className="ws-head__eyebrow">DS2 · Workspace</span>
+        <span className="ws-head__eyebrow">DS2 · Products</span>
         <h1 className="ws-head__title">Your tools</h1>
         <p className="ws-head__sub">
           Open a tool to use it. Xenia takes bookings, Fama reads your reviews, Panoptes finds a site.

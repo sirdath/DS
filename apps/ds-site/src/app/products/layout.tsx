@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import './workspace.css'
 
 export const metadata = {
-  title: 'Workspace · DS2',
+  title: 'Products · DS2',
   robots: { index: false, follow: false },
 }
 

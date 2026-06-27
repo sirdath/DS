@@ -16,10 +16,10 @@ import {
   loadPendingOutbox,
   markOutbox,
   recipientEmailFor,
-} from '../../../workspace/(app)/plutus/lib/approve'
-import { getChannel } from '../../../workspace/(app)/plutus/lib/email-channel'
-import { insertAuditEvents } from '../../../workspace/(app)/plutus/lib/persist'
-import { clientIp, rateLimited, resolveApiSession, sameOrigin } from '../../../workspace/(app)/plutus/lib/route-helpers'
+} from '../../../products/(app)/plutus/lib/approve'
+import { getChannel } from '../../../products/(app)/plutus/lib/email-channel'
+import { insertAuditEvents } from '../../../products/(app)/plutus/lib/persist'
+import { clientIp, rateLimited, resolveApiSession, sameOrigin } from '../../../products/(app)/plutus/lib/route-helpers'
 
 export const runtime = 'nodejs'
 

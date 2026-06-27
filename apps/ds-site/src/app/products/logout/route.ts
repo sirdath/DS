@@ -15,5 +15,5 @@ export async function POST(request: Request): Promise<Response> {
   } catch {
     // No Supabase env (keyless dev) or already signed out — nothing to clear.
   }
-  return NextResponse.redirect(new URL('/workspace/login', request.url), { status: 303 })
+  return NextResponse.redirect(new URL('/products/login', request.url), { status: 303 })
 }

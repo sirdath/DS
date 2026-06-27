@@ -26,8 +26,8 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           <Link href="/admin/outreach" className="admin-topbar__link">
             Outreach
           </Link>
-          <Link href="/workspace" className="admin-topbar__link">
-            Workspace
+          <Link href="/products" className="admin-topbar__link">
+            Products
           </Link>
         </nav>
 

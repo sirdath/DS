@@ -22,15 +22,15 @@ const GENERIC_ERROR = 'Incorrect email or password.'
 const MIN_RESPONSE_MS = 300
 
 function sanitiseRedirect(raw: unknown): string {
-  if (typeof raw !== 'string' || raw === '') return '/workspace'
+  if (typeof raw !== 'string' || raw === '') return '/products'
   try {
     const u = new URL(raw, 'https://invalid.local')
-    if (u.host !== 'invalid.local') return '/workspace'
-    if (u.pathname !== '/workspace' && !u.pathname.startsWith('/workspace/')) return '/workspace'
-    if (u.pathname.startsWith('/workspace//') || u.pathname.includes('\\')) return '/workspace'
+    if (u.host !== 'invalid.local') return '/products'
+    if (u.pathname !== '/products' && !u.pathname.startsWith('/products/')) return '/products'
+    if (u.pathname.startsWith('/products//') || u.pathname.includes('\\')) return '/products'
     return u.pathname + u.search
   } catch {
-    return '/workspace'
+    return '/products'
   }
 }
 
@@ -44,7 +44,7 @@ export async function workspaceLoginAction(formData: FormData): Promise<LoginSta
 
   const email = (formData.get('email') as string | null)?.trim().toLowerCase() ?? ''
   const password = (formData.get('password') as string | null) ?? ''
-  const redirectTo = (formData.get('redirect') as string | null) ?? '/workspace'
+  const redirectTo = (formData.get('redirect') as string | null) ?? '/products'
 
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return failWithDelay()

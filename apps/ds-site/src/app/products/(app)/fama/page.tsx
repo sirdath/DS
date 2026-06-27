@@ -5,7 +5,7 @@ import { FamaReportView } from './report-view'
 export default function FamaWorkspacePage() {
   return (
     <>
-      <Link href="/workspace" className="ws-back">
+      <Link href="/products" className="ws-back">
         ← All tools
       </Link>
 

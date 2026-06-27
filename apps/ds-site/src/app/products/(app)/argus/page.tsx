@@ -96,7 +96,7 @@ export default async function ArgusWorkspacePage() {
 
   return (
     <>
-      <Link href="/workspace" className="ws-back">
+      <Link href="/products" className="ws-back">
         ← All tools
       </Link>
 

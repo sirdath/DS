@@ -27,6 +27,17 @@ const nextConfig = {
         destination: "/client-login",
         permanent: false,
       },
+      // The tools dashboard moved from /workspace to /products — keep old links working.
+      {
+        source: "/workspace",
+        destination: "/products",
+        permanent: true,
+      },
+      {
+        source: "/workspace/:path*",
+        destination: "/products/:path*",
+        permanent: true,
+      },
     ];
   },
   // Long-lived immutable caching for the heavy, settled media (hero films + posters,
