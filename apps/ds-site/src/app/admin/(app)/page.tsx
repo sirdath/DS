@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { getDataSource } from '@/app/admin/lib/get-data-source'
 import { portfolioTotals, partitionProjects } from '@/app/admin/lib/derive'
+import { getAdminDisplayName } from '@/app/admin/lib/get-admin-display-name'
 import { CountUp } from '@/app/admin/count-up'
 
 export const dynamic = 'force-dynamic'
@@ -13,7 +14,7 @@ const SEARCH_ICON = (
 
 export default async function DashboardPage() {
   const ds = getDataSource()
-  const all = await ds.listProjects()
+  const [all, name] = await Promise.all([ds.listProjects(), getAdminDisplayName()])
   const { leads, active } = partitionProjects(all)
   const totals = portfolioTotals(active)
 
@@ -33,7 +34,7 @@ export default async function DashboardPage() {
     <div className="ds2-dash animate-page-in">
       <header className="ds2-head">
         <div className="ds2-head__greet">
-          <h1 className="ds2-head__hi">Hi, Dath</h1>
+          <h1 className="ds2-head__hi">Hi, {name}</h1>
           <p className="ds2-head__sub">Here&rsquo;s the book today — money in, owed, and in the pipeline.</p>
         </div>
         <form className="ds2-search" action="/admin/funnel/leads" method="get">
