@@ -38,6 +38,10 @@ const nextConfig = {
         destination: "/products/:path*",
         permanent: true,
       },
+      // Leads / Hunt / Outreach unified under one "Funnel" tab — keep old links working.
+      { source: "/admin/leads", destination: "/admin/funnel/leads", permanent: true },
+      { source: "/admin/hunt", destination: "/admin/funnel/hunt", permanent: true },
+      { source: "/admin/outreach", destination: "/admin/funnel/outreach", permanent: true },
     ];
   },
   // Long-lived immutable caching for the heavy, settled media (hero films + posters,

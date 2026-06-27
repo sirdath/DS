@@ -14,17 +14,11 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           <Link href="/admin/projects" className="admin-topbar__link">
             Projects
           </Link>
-          <Link href="/admin/leads" className="admin-topbar__link">
-            Leads
-          </Link>
-          <Link href="/admin/hunt" className="admin-topbar__link">
-            Hunt
+          <Link href="/admin/funnel/leads" className="admin-topbar__link">
+            Funnel
           </Link>
           <Link href="/admin/notes" className="admin-topbar__link">
             Notes
-          </Link>
-          <Link href="/admin/outreach" className="admin-topbar__link">
-            Outreach
           </Link>
           <Link href="/products" className="admin-topbar__link">
             Products

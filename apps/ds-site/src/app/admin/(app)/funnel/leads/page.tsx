@@ -96,7 +96,7 @@ export default async function LeadsPage({ searchParams }: PageProps) {
       category, area, analysis, page: undefined, ...params,
     }
     const qs = Object.entries(merged).filter(([, v]) => v).map(([k, v]) => `${k}=${encodeURIComponent(v as string)}`).join('&')
-    return `/admin/leads${qs ? `?${qs}` : ''}`
+    return `/admin/funnel/leads${qs ? `?${qs}` : ''}`
   }
   const pageHref = (p: number) => filterHref({ page: String(p) })
   const hasFilters = Boolean(priority || status || contacted || nosite || search || category || area || analysis)
@@ -130,7 +130,7 @@ export default async function LeadsPage({ searchParams }: PageProps) {
           <a href="/api/admin/leads/export" className="admin-repo-link" style={{ flexShrink: 0 }}>Export Excel &#8594;</a>
         </div>
 
-        <form className="admin-leads-filters" action="/admin/leads" method="get">
+        <form className="admin-leads-filters" action="/admin/funnel/leads" method="get">
           <input type="search" name="q" defaultValue={search ?? ''} placeholder="Search name…" className="admin-form__input admin-leads-filter--search" />
           <select name="priority" defaultValue={priority ?? ''} className="admin-leads-select">
             <option value="">Any priority</option>
@@ -163,7 +163,7 @@ export default async function LeadsPage({ searchParams }: PageProps) {
             <option value="done">Analysed</option>
           </select>
           <button type="submit" className="admin-new-btn">Apply</button>
-          {hasFilters && <Link href="/admin/leads" className="admin-filter-link">Clear</Link>}
+          {hasFilters && <Link href="/admin/funnel/leads" className="admin-filter-link">Clear</Link>}
         </form>
 
         {leads.length === 0 ? (

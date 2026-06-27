@@ -69,7 +69,7 @@ export default async function HuntPage({ searchParams }: PageProps) {
   const href = (params: Record<string, string | undefined>) => {
     const merged: Record<string, string | undefined> = { industry, area, tier, contacted, page: undefined, ...params }
     const qs = Object.entries(merged).filter(([, v]) => v).map(([k, v]) => `${k}=${encodeURIComponent(v as string)}`).join('&')
-    return `/admin/hunt${qs ? `?${qs}` : ''}`
+    return `/admin/funnel/hunt${qs ? `?${qs}` : ''}`
   }
   const shotBase = `${process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''}/storage/v1/object/public/redesign-shots`
 
@@ -101,7 +101,7 @@ export default async function HuntPage({ searchParams }: PageProps) {
         ))}
         <span className="admin-filter-sep" />
         <Link href={href({ contacted: contacted === 'no' ? undefined : 'no' })} className={`admin-filter-link${contacted === 'no' ? ' is-active' : ''}`}>Not contacted</Link>
-        {(industry || area || tier || contacted) && <Link href="/admin/hunt" className="admin-filter-link">Clear</Link>}
+        {(industry || area || tier || contacted) && <Link href="/admin/funnel/hunt" className="admin-filter-link">Clear</Link>}
       </div>
 
       {targets.length === 0 ? (

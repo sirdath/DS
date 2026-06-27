@@ -43,7 +43,7 @@ export function OutreachTable({ leads, latestByLead, selectedLeadId, model, filt
       .filter(([, v]) => v)
       .map(([k, v]) => `${k}=${encodeURIComponent(v as string)}`)
       .join('&')
-    return `/admin/outreach${qs ? `?${qs}` : ''}`
+    return `/admin/funnel/outreach${qs ? `?${qs}` : ''}`
   }
 
   async function researchOne(id: string, refresh = true): Promise<void> {
@@ -105,7 +105,7 @@ export function OutreachTable({ leads, latestByLead, selectedLeadId, model, filt
         )}
       </div>
 
-      <form className="admin-leads-filters" action="/admin/outreach" method="get">
+      <form className="admin-leads-filters" action="/admin/funnel/outreach" method="get">
         <input type="hidden" name="model" value={model} />
         <input type="search" name="q" defaultValue={filters.q} placeholder="Search name…" className="admin-form__input admin-leads-filter--search" />
         <select name="priority" defaultValue={filters.priority} className="admin-leads-select">
