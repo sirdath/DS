@@ -48,7 +48,7 @@ export const TOOLS: ToolCard[] = [
     slug: 'site-selection',
     name: 'Panoptes',
     tagline: 'Site selection — demand, competition and access scored across a city, on a map.',
-    href: '/panoptes-viewer?demo=1',
+    href: '/products/panoptes',
     status: 'ready',
     accent: '#22d3ee',
   },

@@ -567,3 +567,115 @@ a.ws-card:focus-visible .ws-card__open {
 :root[data-theme="light"] .ws-topbar { background: rgba(255, 255, 255, 0.7); }
 :root[data-theme="light"] .ws-card { background: #ffffff; box-shadow: 0 1px 2px rgba(17, 20, 25, 0.06), 0 14px 32px -22px rgba(17, 20, 25, 0.35); }
 :root[data-theme="light"] .ws-card:hover { box-shadow: 0 1px 2px rgba(17, 20, 25, 0.08), 0 22px 50px -24px rgba(17, 20, 25, 0.4); }
+
+/* ── Products top tool-nav (sticky sub-header inside the admin shell) ─────────
+   Press between tools; each opens within the shell. Uses the --admin-* chrome
+   tokens (loaded via admin.css) so it matches the rail and flips in light mode. */
+.ws-tabbar {
+  position: sticky;
+  top: 0;
+  z-index: 8;
+  border-bottom: 1px solid var(--admin-border, rgba(255, 255, 255, 0.08));
+  background: var(--admin-surface, #111419);
+}
+.ws-tabs {
+  display: flex;
+  gap: 2px;
+  max-width: 1180px;
+  margin: 0 auto;
+  /* Match .ws-main__in's gutter so the tab edges line up with the page title
+     below — and use the correct inset axis on each side for notched devices. */
+  padding-left: max(24px, env(safe-area-inset-left));
+  padding-right: max(24px, env(safe-area-inset-right));
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.ws-tabs::-webkit-scrollbar {
+  display: none;
+}
+.ws-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 13px 15px;
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--admin-text-muted, #888);
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: color 0.16s var(--ws-ease), border-color 0.16s var(--ws-ease);
+}
+.ws-tab:hover {
+  color: var(--admin-text, #f5f5f5);
+}
+.ws-tab.is-on {
+  color: var(--admin-text, #f5f5f5);
+  border-bottom-color: var(--admin-amber, #8dcbff);
+}
+.ws-tab:focus-visible {
+  outline: 2px solid var(--admin-amber, #8dcbff);
+  outline-offset: -2px;
+  border-radius: 4px;
+}
+@media (pointer: coarse) {
+  .ws-tab {
+    padding: 16px 15px;
+  }
+}
+
+/* ── Embedded tool preview (Panoptes lives in its own full-screen app; we frame
+   it live inside the admin shell). ──────────────────────────────────────────── */
+.ws-embed {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.ws-embed__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.ws-embed__full {
+  flex: none;
+  align-self: center;
+  font-size: 0.82rem;
+  color: var(--ws-text);
+  text-decoration: none;
+  border: 1px solid var(--ws-border);
+  border-radius: 9px;
+  padding: 9px 14px;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  transition: border-color var(--ws-dur) var(--ws-ease), background var(--ws-dur) var(--ws-ease);
+}
+.ws-embed__full:hover {
+  border-color: var(--ws-border-hover);
+  background: var(--ws-surface-2);
+}
+.ws-embed__full:focus-visible {
+  outline: 2px solid var(--ws-cta);
+  outline-offset: 2px;
+}
+.ws-embed__frame {
+  border: 1px solid var(--ws-border);
+  border-radius: var(--ws-radius);
+  overflow: hidden;
+  background: var(--ws-surface);
+  height: min(72vh, 760px);
+  box-shadow: 0 18px 50px -28px rgba(0, 0, 0, 0.7);
+}
+.ws-embed__frame iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+/* Light mode: soften the embed frame's drop-shadow to match .ws-card on a white
+   field (the dark 0.7-alpha shadow reads muddy otherwise). */
+:root[data-theme="light"] .ws-embed__frame {
+  box-shadow: 0 1px 2px rgba(17, 20, 25, 0.06), 0 18px 50px -30px rgba(17, 20, 25, 0.35);
+}
