@@ -10,21 +10,32 @@ function rowToEvent(r: Record<string, unknown>): CalendarEvent {
     startTime: typeof r.start_time === 'string' ? r.start_time : null,
     color: typeof r.color === 'string' ? r.color : 'default',
     done: Boolean(r.done),
+    assignee: typeof r.assignee === 'string' ? r.assignee : '',
   }
 }
 
 /** Load all shared events (small table). Returns [] gracefully if the table/DB is
  * unavailable (e.g. before the migration is applied), so the UI never crashes. */
+const WITH_ASSIGNEE = 'id, title, description, event_date, start_time, color, done, assignee'
+const BASE_COLS = 'id, title, description, event_date, start_time, color, done'
+
 export async function loadEvents(): Promise<CalendarEvent[]> {
   try {
     const supabase = await getSupabaseServerClient()
-    const { data, error } = await supabase
-      .from('calendar_events')
-      .select('id, title, description, event_date, start_time, color, done')
-      .order('event_date', { ascending: true })
-      .order('start_time', { ascending: true, nullsFirst: true })
-    if (error || !data) return []
-    return data.map((r) => rowToEvent(r as Record<string, unknown>))
+    const q = (cols: string) =>
+      supabase
+        .from('calendar_events')
+        .select(cols)
+        .order('event_date', { ascending: true })
+        .order('start_time', { ascending: true, nullsFirst: true })
+    let res = await q(WITH_ASSIGNEE)
+    // The assignee column may not exist yet (migration pending) — load without it so
+    // existing events still show; rowToEvent defaults assignee to ''.
+    if (res.error) res = await q(BASE_COLS)
+    if (res.error || !res.data) return []
+    // A non-literal select string defeats supabase's column-type inference, so data is
+    // mistyped — the rows are correct at runtime; cast through unknown.
+    return (res.data as unknown as Record<string, unknown>[]).map((r) => rowToEvent(r))
   } catch {
     return []
   }

@@ -21,6 +21,7 @@
   --ws-radius: 16px;
   --ws-ease: cubic-bezier(0.4, 0, 0.2, 1);
   --ws-dur: 0.2s;
+  --ws-on-accent: #050607;
 
   min-height: 100dvh;
   background: var(--ws-bg);
@@ -341,7 +342,7 @@ a.ws-card:focus-visible .ws-card__open {
   padding-bottom: 1px;
 }
 .ws-panel__cta:hover {
-  color: #fff;
+  color: var(--ws-text);
 }
 
 /* ── Login ──────────────────────────────────────────────────────────────── */
@@ -400,7 +401,7 @@ a.ws-card:focus-visible .ws-card__open {
   width: 100%;
   font: inherit;
   font-weight: 600;
-  color: #050607;
+  color: var(--ws-on-accent);
   background: var(--ws-cta);
   border: none;
   border-radius: 10px;
@@ -474,3 +475,92 @@ a.ws-card:focus-visible .ws-card__open {
 /* Real DS2 mark in the products topbar (replaces the text eyebrow). */
 .ws-topbar__brand { align-items: center; }
 .ws-topbar__mark { display: block; border-radius: 6px; }
+
+/* ── Left rail (matches the admin shell) ───────────────────────────────── */
+.ws-shell { display: flex; min-height: 100dvh; }
+.ws-main { flex: 1; min-width: 0; }
+.ws-rail {
+  position: sticky; top: 0; align-self: flex-start; height: 100dvh; width: 212px; flex: none;
+  display: flex; flex-direction: column; gap: 4px; padding: 18px 14px;
+  background: var(--ws-bg); border-right: 1px solid var(--ws-border); z-index: 10;
+}
+.ws-rail__brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px; margin-bottom: 16px; text-decoration: none; color: var(--ws-text); }
+.ws-rail__brand img { display: block; border-radius: 7px; }
+.ws-rail__brandname { font-family: var(--ws-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ws-ghost); }
+.ws-rail__nav { display: flex; flex-direction: column; gap: 4px; }
+.ws-rail__item { display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 12px; border-radius: 11px; color: var(--ws-muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color var(--ws-dur) var(--ws-ease), background var(--ws-dur) var(--ws-ease); }
+.ws-rail__item:hover { color: var(--ws-text); background: rgba(255, 255, 255, 0.05); }
+.ws-rail__item.is-active { color: var(--ws-on-accent); background: var(--ws-cta); }
+.ws-rail__item svg { width: 19px; height: 19px; flex: none; }
+.ws-rail__item:focus-visible { outline: 2px solid var(--ws-cta); outline-offset: 2px; }
+.ws-rail__dot { width: 9px; height: 9px; border-radius: 999px; flex: none; margin: 0 5px; }
+.ws-rail__spacer { flex: 1; }
+.ws-rail__foot { display: flex; flex-direction: column; gap: 8px; padding: 10px 6px 0; border-top: 1px solid var(--ws-border); margin-top: 8px; }
+.ws-rail__email { font-size: 11px; color: var(--ws-ghost); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ws-rail__signout { display: flex; align-items: center; gap: 12px; height: 38px; padding: 0 8px; border-radius: 10px; border: 0; background: none; width: 100%; text-align: left; cursor: pointer; color: var(--ws-ghost); font: inherit; font-size: 13px; }
+.ws-rail__signout:hover { color: var(--ws-text); background: rgba(255, 255, 255, 0.05); }
+.ws-rail__signout svg { width: 18px; height: 18px; flex: none; }
+
+@media (max-width: 860px) {
+  .ws-shell { flex-direction: column; }
+  .ws-rail { flex-direction: row; flex-wrap: wrap; width: 100%; height: auto; top: 0; align-items: center; border-right: 0; border-bottom: 1px solid var(--ws-border); padding: 8px 12px; }
+  .ws-rail__brand { margin-bottom: 0; margin-right: auto; }
+  .ws-rail__nav { flex-direction: row; flex-wrap: wrap; }
+  .ws-rail__item { height: 36px; }
+  .ws-rail__spacer, .ws-rail__email { display: none; }
+  .ws-rail__foot { flex-direction: row; align-items: center; border-top: 0; margin-top: 0; padding: 0; }
+}
+
+/* ── Rail collapse toggle + collapsed (icons-only) state ── */
+.ws-rail { transition: width 0.22s var(--ws-ease); }
+.ws-rail__collapse {
+  display: flex; align-items: center; gap: 12px; height: 38px; padding: 0 12px; border-radius: 11px;
+  border: 0; background: none; width: 100%; text-align: left; cursor: pointer;
+  color: var(--ws-ghost); font: inherit; font-size: 13px; font-weight: 500;
+  transition: color var(--ws-dur) var(--ws-ease), background var(--ws-dur) var(--ws-ease);
+}
+.ws-rail__collapse:hover { color: var(--ws-text); background: rgba(255, 255, 255, 0.05); }
+.ws-rail__collapse svg { width: 18px; height: 18px; flex: none; transition: transform 0.22s var(--ws-ease); }
+
+.ws-rail.is-collapsed { width: 64px; padding: 18px 10px; }
+.ws-rail.is-collapsed .ws-rail__brandname,
+.ws-rail.is-collapsed .ws-rail__email,
+.ws-rail.is-collapsed .ws-role { display: none; }
+.ws-rail.is-collapsed .ws-rail__brand { justify-content: center; padding: 4px 0; }
+.ws-rail.is-collapsed .ws-rail__foot { align-items: center; }
+.ws-rail.is-collapsed .ws-rail__item,
+.ws-rail.is-collapsed .ws-rail__collapse,
+.ws-rail.is-collapsed .ws-rail__signout { justify-content: center; padding: 0; gap: 0; position: relative; }
+.ws-rail.is-collapsed .ws-rail__collapse:not(.is-theme) svg { transform: rotate(180deg); }
+.ws-rail.is-collapsed .ws-rail__item span,
+.ws-rail.is-collapsed .ws-rail__collapse span,
+.ws-rail.is-collapsed .ws-rail__signout span {
+  position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%) translateX(-4px);
+  white-space: nowrap; padding: 5px 10px; border-radius: 8px; font-size: 12px;
+  background: var(--ws-surface-2); color: var(--ws-text); border: 1px solid var(--ws-border-hover);
+  opacity: 0; pointer-events: none; z-index: 50;
+  transition: opacity 0.16s var(--ws-ease), transform 0.16s var(--ws-ease);
+}
+.ws-rail.is-collapsed .ws-rail__item:hover span,
+.ws-rail.is-collapsed .ws-rail__item:focus-visible span,
+.ws-rail.is-collapsed .ws-rail__collapse:hover span,
+.ws-rail.is-collapsed .ws-rail__signout:hover span { opacity: 1; transform: translateY(-50%) translateX(0); }
+@media (prefers-reduced-motion: reduce) { .ws-rail, .ws-rail__collapse svg { transition: none; } }
+
+/* ── LIGHT THEME (products) — [data-theme="light"] on <html> ── */
+:root[data-theme="light"] .ws-root {
+  --ws-bg: #f4f6f8;
+  --ws-surface: #ffffff;
+  --ws-surface-2: #eef1f4;
+  --ws-border: rgba(17, 20, 25, 0.10);
+  --ws-border-hover: rgba(17, 20, 25, 0.20);
+  --ws-text: #0c0f14;
+  --ws-muted: #5a6470;
+  --ws-ghost: #98a2ad;
+  --ws-cta: #173b67;
+  --ws-cta-glow: rgba(23, 59, 103, 0.26);
+  --ws-on-accent: #ffffff;
+}
+:root[data-theme="light"] .ws-topbar { background: rgba(255, 255, 255, 0.7); }
+:root[data-theme="light"] .ws-card { background: #ffffff; box-shadow: 0 1px 2px rgba(17, 20, 25, 0.06), 0 14px 32px -22px rgba(17, 20, 25, 0.35); }
+:root[data-theme="light"] .ws-card:hover { box-shadow: 0 1px 2px rgba(17, 20, 25, 0.08), 0 22px 50px -24px rgba(17, 20, 25, 0.4); }

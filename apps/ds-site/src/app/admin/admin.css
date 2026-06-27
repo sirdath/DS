@@ -32,6 +32,7 @@
   --admin-amber:         #8dcbff;
   --admin-amber-dim:     rgba(141, 203, 255, 0.15);
   --admin-amber-border:  rgba(141, 203, 255, 0.30);
+  --admin-on-accent:     #050607; /* text/icon sitting ON the accent (dark on Ice) */
 
   /* Status pills */
   --pill-lead-bg:        rgba(255, 255, 255, 0.06);
@@ -100,9 +101,48 @@
   --ds2-action: #347fd1;
   --ds2-glass: rgba(255, 255, 255, 0.05);
   --ds2-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --ds2-on-accent: #050607; /* text/icon ON the accent (dark on Ice) */
   --admin-topbar-h: 0px;
 }
-.admin-main { flex: 1; min-width: 0; position: relative; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   LIGHT THEME — set [data-theme="light"] on <html> (no-flash init in the layout).
+   Overrides every admin token for the .admin-shell subtree: light surfaces, dark
+   text, and the accent flips Ice → Action-Deep with white on-accent text so buttons
+   stay readable. DS2 light spec (Mineral / White / Action-Deep #173B67).
+   ════════════════════════════════════════════════════════════════════════ */
+:root[data-theme="light"] .admin-shell {
+  --admin-bg: #f4f6f8;
+  --admin-surface: #ffffff;
+  --admin-surface-raise: #eef1f4;
+  --admin-border: rgba(17, 20, 25, 0.10);
+  --admin-border-hover: rgba(17, 20, 25, 0.20);
+  --admin-text: #0c0f14;
+  --admin-text-muted: #5a6470;
+  --admin-text-dim: #98a2ad;
+  --admin-amber: #173b67;
+  --admin-amber-dim: rgba(23, 59, 103, 0.10);
+  --admin-amber-border: rgba(23, 59, 103, 0.30);
+  --admin-on-accent: #ffffff;
+
+  --ds2-bg: #f4f6f8;
+  --ds2-surface: #ffffff;
+  --ds2-surface-2: #eef1f4;
+  --ds2-surface-3: #e3e8ee;
+  --ds2-text: #0c0f14;
+  --ds2-text-2: #5a6470;
+  --ds2-text-3: #98a2ad;
+  --ds2-border: rgba(17, 20, 25, 0.10);
+  --ds2-border-2: rgba(17, 20, 25, 0.18);
+  --ds2-ice: #173b67;
+  --ds2-action: #347fd1;
+  --ds2-glass: rgba(17, 20, 25, 0.04);
+  --ds2-on-accent: #ffffff;
+}
+/* The film-grain + cursor-glow read as noise on a light field — drop them. */
+:root[data-theme="light"] .admin-shell::after { display: none; }
+
+.admin-main { flex: 1; min-width: 0; min-height: 100vh; position: relative; }
 
 /* ── Film Grain Overlay (ported from noise-grain.css .grain-light) ── */
 /* Using ::after on .admin-shell; fixed to viewport so it covers the whole page */
@@ -666,7 +706,7 @@
   flex-shrink: 0;
   display: inline-flex; align-items: center; gap: 7px;
   padding: 11px 20px; border-radius: var(--admin-radius);
-  background: var(--admin-amber); color: #1a1208;
+  background: var(--admin-amber); color: var(--admin-on-accent);
   font-size: 13px; font-weight: 700; text-decoration: none;
   white-space: nowrap; transition: opacity 0.18s ease;
 }
@@ -2066,7 +2106,7 @@
   transition: color 0.2s var(--ds2-ease), background 0.2s var(--ds2-ease);
 }
 .admin-rail__item:hover { color: var(--ds2-text); background: var(--ds2-glass); }
-.admin-rail__item.is-active { color: #050607; background: var(--ds2-ice); }
+.admin-rail__item.is-active { color: var(--ds2-on-accent); background: var(--ds2-ice); }
 .admin-rail__item svg { width: 20px; height: 20px; flex: none; }
 .admin-rail__item:focus-visible { outline: 2px solid var(--ds2-ice); outline-offset: 2px; }
 .admin-rail__label { white-space: nowrap; }
@@ -2103,7 +2143,7 @@
 .ds2-search svg { width: 16px; height: 16px; color: var(--ds2-text-3); flex: none; }
 .ds2-search input { background: none; border: 0; color: var(--ds2-text); font: inherit; font-size: 13px; width: 100%; outline: none; }
 .ds2-search input::placeholder { color: var(--ds2-text-3); }
-.ds2-action { display: inline-flex; align-items: center; gap: 6px; background: var(--ds2-ice); color: #050607; font-weight: 500; font-size: 13px; text-decoration: none; padding: 10px 18px; border-radius: 999px; transition: filter 0.2s var(--ds2-ease), transform 0.2s var(--ds2-ease); }
+.ds2-action { display: inline-flex; align-items: center; gap: 6px; background: var(--ds2-ice); color: var(--ds2-on-accent); font-weight: 500; font-size: 13px; text-decoration: none; padding: 10px 18px; border-radius: 999px; transition: filter 0.2s var(--ds2-ease), transform 0.2s var(--ds2-ease); }
 .ds2-action:hover { filter: brightness(1.08); transform: translateY(-1px); }
 
 .ds2-grid { display: grid; grid-template-columns: 1.55fr 1fr; gap: 20px; align-items: start; }
@@ -2180,11 +2220,43 @@
 .ds2-calmini__grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
 .ds2-calmini__d { position: relative; aspect-ratio: 1; display: grid; place-items: center; font-size: 11px; color: var(--ds2-text-2); border-radius: 6px; font-variant-numeric: tabular-nums; }
 .ds2-calmini__d.is-out { color: var(--ds2-text-3); opacity: 0.5; }
-.ds2-calmini__d.is-today { background: var(--ds2-ice); color: #050607; font-weight: 600; }
+.ds2-calmini__d.is-today { background: var(--ds2-ice); color: var(--ds2-on-accent); font-weight: 600; }
 .ds2-calmini__d.has-ev::after { content: ''; position: absolute; bottom: 2px; width: 4px; height: 4px; border-radius: 999px; background: var(--ds2-ice); }
-.ds2-calmini__d.is-today.has-ev::after { background: #050607; }
+.ds2-calmini__d.is-today.has-ev::after { background: var(--ds2-on-accent); }
 .ds2-calcard__up { display: grid; gap: 6px; border-top: 1px solid var(--ds2-border); padding-top: 12px; }
 .ds2-calcard__ev { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ds2-text); }
 .ds2-calcard__ev i { width: 7px; height: 7px; border-radius: 999px; flex: none; }
 .ds2-calcard__ev span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ds2-calcard__empty { font-size: 12px; color: var(--ds2-text-3); }
+
+/* ── Rail collapse toggle + collapsed (icons-only) state ── */
+.admin-rail { transition: width 0.22s var(--ds2-ease); }
+.admin-rail__collapse {
+  display: flex; align-items: center; gap: 12px; height: 38px; padding: 0 12px; border-radius: 11px;
+  border: 0; background: none; width: 100%; text-align: left; cursor: pointer;
+  color: var(--ds2-text-3); font: inherit; font-size: 13px; font-weight: 500;
+  transition: color 0.2s var(--ds2-ease), background 0.2s var(--ds2-ease);
+}
+.admin-rail__collapse:hover { color: var(--ds2-text); background: var(--ds2-glass); }
+.admin-rail__collapse svg { width: 18px; height: 18px; flex: none; transition: transform 0.22s var(--ds2-ease); }
+
+.admin-rail.is-collapsed { width: 64px; padding: 18px 10px; }
+.admin-rail.is-collapsed .admin-rail__brandname { display: none; }
+.admin-rail.is-collapsed .admin-rail__brand { justify-content: center; padding: 4px 0; }
+.admin-rail.is-collapsed .admin-rail__item,
+.admin-rail.is-collapsed .admin-rail__collapse,
+.admin-rail.is-collapsed .admin-rail__signout { justify-content: center; padding: 0; gap: 0; position: relative; }
+.admin-rail.is-collapsed .admin-rail__collapse:not(.is-theme) svg { transform: rotate(180deg); }
+/* When collapsed, labels become hover tooltips so the icons stay identifiable. */
+.admin-rail.is-collapsed .admin-rail__label {
+  position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%) translateX(-4px);
+  white-space: nowrap; padding: 5px 10px; border-radius: 8px; font-size: 12px;
+  background: var(--ds2-surface-3); color: var(--ds2-text); border: 1px solid var(--ds2-border-2);
+  opacity: 0; pointer-events: none; z-index: 50;
+  transition: opacity 0.16s var(--ds2-ease), transform 0.16s var(--ds2-ease);
+}
+.admin-rail.is-collapsed .admin-rail__item:hover .admin-rail__label,
+.admin-rail.is-collapsed .admin-rail__item:focus-visible .admin-rail__label,
+.admin-rail.is-collapsed .admin-rail__collapse:hover .admin-rail__label,
+.admin-rail.is-collapsed .admin-rail__signout:hover .admin-rail__label { opacity: 1; transform: translateY(-50%) translateX(0); }
+@media (prefers-reduced-motion: reduce) { .admin-rail, .admin-rail__collapse svg { transition: none; } }

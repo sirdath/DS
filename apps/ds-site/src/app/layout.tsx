@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "(function(){try{var q=new URLSearchParams(location.search);var s=q.get('scheme')||'mono';document.body.setAttribute('data-scheme',s);var g=q.get('glass')||localStorage.getItem('ds2-glass')||'smoked';document.body.setAttribute('data-glass',g);}catch(e){document.body.setAttribute('data-scheme','mono');document.body.setAttribute('data-glass','smoked');}})();",
+              "(function(){try{var q=new URLSearchParams(location.search);var s=q.get('scheme')||'mono';document.body.setAttribute('data-scheme',s);var g=q.get('glass')||localStorage.getItem('ds2-glass')||'smoked';document.body.setAttribute('data-glass',g);if(localStorage.getItem('ds-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){document.body.setAttribute('data-scheme','mono');document.body.setAttribute('data-glass','smoked');}})();",
           }}
         />
         <LanguageProvider>{children}</LanguageProvider>

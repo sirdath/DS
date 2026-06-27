@@ -13,6 +13,7 @@ import { getSessionUser, getSupabaseServerClient } from './lib/supabase-server'
 const TITLE_MAX = 300
 const DESC_MAX = 2000
 const COLORS = new Set(['default', 'meeting', 'deadline', 'personal'])
+const ASSIGNEES = new Set(['', 'dath', 'stel', 'both'])
 
 async function db() {
   await assertAdmin()
@@ -39,6 +40,7 @@ export async function createEvent(input: {
   description?: string
   startTime?: string | null
   color?: string
+  assignee?: string
 }): Promise<string> {
   const supabase = await db()
   const { data, error } = await supabase
@@ -49,6 +51,7 @@ export async function createEvent(input: {
       description: clean(input.description ?? '', DESC_MAX),
       start_time: input.startTime || null,
       color: input.color && COLORS.has(input.color) ? input.color : 'default',
+      assignee: input.assignee && ASSIGNEES.has(input.assignee) ? input.assignee : '',
       created_by: await currentUserId(),
     })
     .select('id')
@@ -60,7 +63,7 @@ export async function createEvent(input: {
 
 export async function updateEvent(
   id: string,
-  patch: { title?: string; description?: string; eventDate?: string; startTime?: string | null; color?: string; done?: boolean },
+  patch: { title?: string; description?: string; eventDate?: string; startTime?: string | null; color?: string; done?: boolean; assignee?: string },
 ): Promise<void> {
   if (!id) throw new Error('Missing event id')
   const supabase = await db()
@@ -71,6 +74,7 @@ export async function updateEvent(
   if (patch.startTime !== undefined) row.start_time = patch.startTime || null
   if (patch.color !== undefined) row.color = COLORS.has(patch.color) ? patch.color : 'default'
   if (patch.done !== undefined) row.done = Boolean(patch.done)
+  if (patch.assignee !== undefined) row.assignee = ASSIGNEES.has(patch.assignee) ? patch.assignee : ''
   const { error } = await supabase.from('calendar_events').update(row).eq('id', id)
   if (error) throw new Error(error.message)
   refresh()

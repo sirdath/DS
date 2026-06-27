@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createEvent, deleteEvent, updateEvent } from '../../calendar-actions'
-import { MONTHS, WEEKDAYS, type CalendarEvent, isoDate, monthGrid, monthLabel } from './lib/calendar'
+import { ASSIGNEES, MONTHS, WEEKDAYS, type CalendarEvent, assigneeLabel, isoDate, monthGrid, monthLabel } from './lib/calendar'
 import './calendar.css'
 
 const COLORS = [
@@ -30,6 +30,7 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
   const [title, setTitle] = useState('')
   const [time, setTime] = useState('')
   const [color, setColor] = useState('default')
+  const [assignee, setAssignee] = useState('')
 
   const byDate = useMemo(() => {
     const map = new Map<string, CalendarEvent[]>()
@@ -60,10 +61,11 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
     if (!title.trim() || busy) return
     setBusy(true)
     try {
-      await createEvent({ title, eventDate: selected, startTime: time || null, color })
+      await createEvent({ title, eventDate: selected, startTime: time || null, color, assignee })
       setTitle('')
       setTime('')
       setColor('default')
+      setAssignee('')
       router.refresh()
     } finally {
       setBusy(false)
@@ -138,7 +140,12 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
                 </button>
                 <div className="cal__event-main">
                   <span className="cal__event-title">{e.title}</span>
-                  {e.startTime ? <span className="cal__event-time">{e.startTime.slice(0, 5)}</span> : null}
+                  {e.startTime || e.assignee ? (
+                    <span className="cal__event-meta">
+                      {e.startTime ? <span className="cal__event-time">{e.startTime.slice(0, 5)}</span> : null}
+                      {e.assignee ? <span className={`cal__who cal__who--${e.assignee}`}>{assigneeLabel(e.assignee)}</span> : null}
+                    </span>
+                  ) : null}
                 </div>
                 <button
                   type="button"
@@ -170,6 +177,13 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
               <select className="cal__color" value={color} onChange={(e) => setColor(e.target.value)} aria-label="Category">
                 {COLORS.map((c) => (
                   <option key={c.key} value={c.key}>{c.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="cal__add-row">
+              <select className="cal__who-sel" value={assignee} onChange={(e) => setAssignee(e.target.value)} aria-label="Who's responsible">
+                {ASSIGNEES.map((a) => (
+                  <option key={a.key} value={a.key}>{a.key === '' ? 'Unassigned' : `For ${a.label}`}</option>
                 ))}
               </select>
               <button type="button" className="cal__addbtn" disabled={!title.trim() || busy} onClick={() => void add()}>Add</button>
