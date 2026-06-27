@@ -3,6 +3,8 @@ import { getDataSource } from '@/app/admin/lib/get-data-source'
 import { portfolioTotals, partitionProjects } from '@/app/admin/lib/derive'
 import { getAdminDisplayName } from '@/app/admin/lib/get-admin-display-name'
 import { CountUp } from '@/app/admin/count-up'
+import { CalendarCard } from './calendar/calendar-card'
+import { loadEvents } from './calendar/lib/calendar-source'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,21 +16,13 @@ const SEARCH_ICON = (
 
 export default async function DashboardPage() {
   const ds = getDataSource()
-  const [all, name] = await Promise.all([ds.listProjects(), getAdminDisplayName()])
+  const [all, name, events] = await Promise.all([ds.listProjects(), getAdminDisplayName(), loadEvents()])
   const { leads, active } = partitionProjects(all)
   const totals = portfolioTotals(active)
 
   const pipelineValue = leads.reduce((sum, p) => sum + (p.estimatedValue ?? 0), 0)
-  const collectionRate =
-    totals.totalContractValue > 0 ? Math.round((totals.totalCollected / totals.totalContractValue) * 100) : 0
-
   const topLeads = [...leads].sort((a, b) => (b.estimatedValue ?? 0) - (a.estimatedValue ?? 0)).slice(0, 5)
   const maxLead = Math.max(1, ...topLeads.map((l) => l.estimatedValue ?? 0))
-
-  // Collection ring geometry (r=74 in a 168 box).
-  const R = 74
-  const C = 2 * Math.PI * R
-  const offset = C * (1 - Math.min(100, Math.max(0, collectionRate)) / 100)
 
   return (
     <div className="ds2-dash animate-page-in">
@@ -82,24 +76,8 @@ export default async function DashboardPage() {
         </div>
 
         <div className="ds2-col">
-          {/* Dark collection ring */}
-          <section className="ds2-card ds2-ring-card">
-            <span className="ds2-card__eyebrow">Collection</span>
-            <div className="ds2-ring">
-              <svg width="168" height="168" viewBox="0 0 168 168" role="img" aria-label={`${collectionRate}% of contract value collected`}>
-                <circle className="ds2-ring__c-bg" cx="84" cy="84" r={R} fill="none" strokeWidth="12" />
-                <circle className="ds2-ring__c-fg" cx="84" cy="84" r={R} fill="none" strokeWidth="12" strokeDasharray={C} strokeDashoffset={offset} />
-              </svg>
-              <div className="ds2-ring__label">
-                <span className="ds2-ring__pct">{collectionRate}%</span>
-                <span className="ds2-ring__cap">collected</span>
-              </div>
-            </div>
-            <div className="ds2-ring-legend">
-              <span><i style={{ background: 'var(--ds2-ice)' }} />{fmt(totals.totalCollected)}</span>
-              <span><i style={{ background: 'rgba(255,255,255,0.14)' }} />{fmt(totals.totalOutstanding)}</span>
-            </div>
-          </section>
+          {/* Shared calendar — opens the full view */}
+          <CalendarCard events={events} />
 
           {/* Top open leads */}
           <section className="ds2-card">

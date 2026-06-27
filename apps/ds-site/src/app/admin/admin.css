@@ -2169,3 +2169,22 @@
 .admin-skel__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-top: 24px; }
 @keyframes admin-shimmer { 100% { transform: translateX(100%); } }
 @media (prefers-reduced-motion: reduce) { .admin-skel__bar::after { animation: none; } }
+
+/* ── Dashboard calendar card (links to /admin/calendar) ── */
+.ds2-calcard { display: flex; flex-direction: column; gap: 14px; text-decoration: none; color: inherit; transition: border-color 0.2s var(--ds2-ease), transform 0.2s var(--ds2-ease); }
+.ds2-calcard:hover { border-color: var(--ds2-border-2); transform: translateY(-1px); }
+.ds2-calcard__head { display: flex; align-items: baseline; justify-content: space-between; }
+.ds2-calcard__month { font-size: 13px; color: var(--ds2-text-2); }
+.ds2-calmini__wd { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 4px; }
+.ds2-calmini__wd span { text-align: center; font-size: 9px; color: var(--ds2-text-3); font-family: var(--admin-mono); }
+.ds2-calmini__grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.ds2-calmini__d { position: relative; aspect-ratio: 1; display: grid; place-items: center; font-size: 11px; color: var(--ds2-text-2); border-radius: 6px; font-variant-numeric: tabular-nums; }
+.ds2-calmini__d.is-out { color: var(--ds2-text-3); opacity: 0.5; }
+.ds2-calmini__d.is-today { background: var(--ds2-ice); color: #050607; font-weight: 600; }
+.ds2-calmini__d.has-ev::after { content: ''; position: absolute; bottom: 2px; width: 4px; height: 4px; border-radius: 999px; background: var(--ds2-ice); }
+.ds2-calmini__d.is-today.has-ev::after { background: #050607; }
+.ds2-calcard__up { display: grid; gap: 6px; border-top: 1px solid var(--ds2-border); padding-top: 12px; }
+.ds2-calcard__ev { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ds2-text); }
+.ds2-calcard__ev i { width: 7px; height: 7px; border-radius: 999px; flex: none; }
+.ds2-calcard__ev span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ds2-calcard__empty { font-size: 12px; color: var(--ds2-text-3); }
