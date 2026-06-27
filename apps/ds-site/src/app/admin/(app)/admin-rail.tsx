@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import type { ReactNode } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 
 const ICONS: Record<string, ReactNode> = {
   dashboard: (
@@ -26,6 +26,9 @@ const ICONS: Record<string, ReactNode> = {
   signout: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M15 17l5-5-5-5" /><path d="M20 12H9" /><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3" /></svg>
   ),
+  collapse: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="m13 17-5-5 5-5" /><path d="m18 17-5-5 5-5" /></svg>
+  ),
 }
 
 interface Item {
@@ -46,8 +49,19 @@ const ITEMS: Item[] = [
 
 export function AdminRail() {
   const path = usePathname() ?? ''
+  const [collapsed, setCollapsed] = useState(false)
+  useEffect(() => {
+    setCollapsed(window.localStorage.getItem('ds-admin-rail') === 'collapsed')
+  }, [])
+  function toggle() {
+    setCollapsed((c) => {
+      const next = !c
+      window.localStorage.setItem('ds-admin-rail', next ? 'collapsed' : 'open')
+      return next
+    })
+  }
   return (
-    <nav className="admin-rail" aria-label="Admin navigation">
+    <nav className={`admin-rail${collapsed ? ' is-collapsed' : ''}`} aria-label="Admin navigation">
       <Link href="/admin" className="admin-rail__brand" aria-label="DS2 Admin home">
         <img src="/brand/ds2-mark.png" alt="DS2" width={26} height={26} />
         <span className="admin-rail__brandname">Admin</span>
@@ -70,10 +84,20 @@ export function AdminRail() {
         })}
       </div>
       <div className="admin-rail__spacer" />
+      <button
+        type="button"
+        className="admin-rail__collapse"
+        onClick={toggle}
+        aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        aria-pressed={collapsed}
+      >
+        {ICONS.collapse}
+        <span className="admin-rail__label">Collapse</span>
+      </button>
       <form method="post" action="/admin/logout">
         <button type="submit" className="admin-rail__signout" aria-label="Sign out">
           {ICONS.signout}
-          <span>Sign out</span>
+          <span className="admin-rail__label">Sign out</span>
         </button>
       </form>
     </nav>

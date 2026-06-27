@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { TOOLS } from '../lib/tools-catalog'
 import type { WorkspaceSession } from '../lib/workspace-auth'
 
@@ -18,12 +19,26 @@ const ICON = {
   signout: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M15 17l5-5-5-5" /><path d="M20 12H9" /><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3" /></svg>
   ),
+  collapse: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="m13 17-5-5 5-5" /><path d="m18 17-5-5 5-5" /></svg>
+  ),
 }
 
 export function WsRail({ session }: { session: WorkspaceSession }) {
   const path = usePathname() ?? ''
+  const [collapsed, setCollapsed] = useState(false)
+  useEffect(() => {
+    setCollapsed(window.localStorage.getItem('ds-products-rail') === 'collapsed')
+  }, [])
+  function toggle() {
+    setCollapsed((c) => {
+      const next = !c
+      window.localStorage.setItem('ds-products-rail', next ? 'collapsed' : 'open')
+      return next
+    })
+  }
   return (
-    <nav className="ws-rail" aria-label="Products navigation">
+    <nav className={`ws-rail${collapsed ? ' is-collapsed' : ''}`} aria-label="Products navigation">
       <Link href="/products" className="ws-rail__brand" aria-label="Products home">
         <img src="/brand/ds2-mark.png" alt="DS2" width={26} height={26} />
         <span className="ws-rail__brandname">Products</span>
@@ -54,6 +69,17 @@ export function WsRail({ session }: { session: WorkspaceSession }) {
       </div>
 
       <div className="ws-rail__spacer" />
+
+      <button
+        type="button"
+        className="ws-rail__collapse"
+        onClick={toggle}
+        aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        aria-pressed={collapsed}
+      >
+        {ICON.collapse}
+        <span>Collapse</span>
+      </button>
 
       {session.role === 'internal' ? (
         <Link href="/admin" className="ws-rail__item">

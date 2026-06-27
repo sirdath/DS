@@ -102,7 +102,7 @@
   --ds2-ease: cubic-bezier(0.32, 0.72, 0, 1);
   --admin-topbar-h: 0px;
 }
-.admin-main { flex: 1; min-width: 0; position: relative; }
+.admin-main { flex: 1; min-width: 0; min-height: 100vh; position: relative; }
 
 /* ── Film Grain Overlay (ported from noise-grain.css .grain-light) ── */
 /* Using ::after on .admin-shell; fixed to viewport so it covers the whole page */
@@ -2188,3 +2188,35 @@
 .ds2-calcard__ev i { width: 7px; height: 7px; border-radius: 999px; flex: none; }
 .ds2-calcard__ev span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ds2-calcard__empty { font-size: 12px; color: var(--ds2-text-3); }
+
+/* ── Rail collapse toggle + collapsed (icons-only) state ── */
+.admin-rail { transition: width 0.22s var(--ds2-ease); }
+.admin-rail__collapse {
+  display: flex; align-items: center; gap: 12px; height: 38px; padding: 0 12px; border-radius: 11px;
+  border: 0; background: none; width: 100%; text-align: left; cursor: pointer;
+  color: var(--ds2-text-3); font: inherit; font-size: 13px; font-weight: 500;
+  transition: color 0.2s var(--ds2-ease), background 0.2s var(--ds2-ease);
+}
+.admin-rail__collapse:hover { color: var(--ds2-text); background: var(--ds2-glass); }
+.admin-rail__collapse svg { width: 18px; height: 18px; flex: none; transition: transform 0.22s var(--ds2-ease); }
+
+.admin-rail.is-collapsed { width: 64px; padding: 18px 10px; }
+.admin-rail.is-collapsed .admin-rail__brandname { display: none; }
+.admin-rail.is-collapsed .admin-rail__brand { justify-content: center; padding: 4px 0; }
+.admin-rail.is-collapsed .admin-rail__item,
+.admin-rail.is-collapsed .admin-rail__collapse,
+.admin-rail.is-collapsed .admin-rail__signout { justify-content: center; padding: 0; gap: 0; position: relative; }
+.admin-rail.is-collapsed .admin-rail__collapse svg { transform: rotate(180deg); }
+/* When collapsed, labels become hover tooltips so the icons stay identifiable. */
+.admin-rail.is-collapsed .admin-rail__label {
+  position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%) translateX(-4px);
+  white-space: nowrap; padding: 5px 10px; border-radius: 8px; font-size: 12px;
+  background: var(--ds2-surface-3); color: var(--ds2-text); border: 1px solid var(--ds2-border-2);
+  opacity: 0; pointer-events: none; z-index: 50;
+  transition: opacity 0.16s var(--ds2-ease), transform 0.16s var(--ds2-ease);
+}
+.admin-rail.is-collapsed .admin-rail__item:hover .admin-rail__label,
+.admin-rail.is-collapsed .admin-rail__item:focus-visible .admin-rail__label,
+.admin-rail.is-collapsed .admin-rail__collapse:hover .admin-rail__label,
+.admin-rail.is-collapsed .admin-rail__signout:hover .admin-rail__label { opacity: 1; transform: translateY(-50%) translateX(0); }
+@media (prefers-reduced-motion: reduce) { .admin-rail, .admin-rail__collapse svg { transition: none; } }
