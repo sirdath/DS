@@ -69,3 +69,7 @@ DS2-CONSULTING/
 # Claude Code ephemeral
 .claude/tmp/
 Icon
+
+# Stel's brand-identity repo, cloned in as its own git repo (Stel777/DS2-BRAND-MATERIALS).
+# Lives inside the folder for convenience but is NOT part of the monorepo's git.
+/DS2-BRAND-MATERIALS/

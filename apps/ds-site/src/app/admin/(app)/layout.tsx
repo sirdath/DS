@@ -20,6 +20,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           <Link href="/admin/hunt" className="admin-topbar__link">
             Hunt
           </Link>
+          <Link href="/admin/notes" className="admin-topbar__link">
+            Notes
+          </Link>
+          <Link href="/admin/outreach" className="admin-topbar__link">
+            Outreach
+          </Link>
           <Link href="/workspace" className="admin-topbar__link">
             Workspace
           </Link>
