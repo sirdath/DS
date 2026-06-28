@@ -940,3 +940,96 @@
 
 /* ── Save-failed retry chip ── */
 .wn-saved--err { font: inherit; font-size: 12px; color: #e0524f; background: none; border: 0; cursor: pointer; text-decoration: underline; padding: 0; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   Mobile — the desktop 3-column (folders · list · editor) becomes a
+   browse → editor drill-in. Browse = folders + list stacked; opening a note
+   shows the editor full-screen with a "← Notes" back control. (≤860px keeps
+   the repo's breakpoint convention.)
+   ════════════════════════════════════════════════════════════════════════ */
+.wn-back {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  /* Flow + scroll the page instead of three internally-scrolling columns. */
+  .wn-root {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+  .wn-app {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  .wn-side {
+    border-right: 0;
+    border-bottom: 1px solid var(--bd);
+  }
+  .wn-tree {
+    overflow: visible;
+  }
+  .wn-list {
+    border-right: 0;
+  }
+  .wn-cards {
+    overflow: visible;
+  }
+  .wn-editor {
+    overflow: visible;
+    min-height: calc(100dvh - 60px);
+  }
+
+  /* One pane at a time, driven by data-pane on .wn-app. */
+  .wn-app[data-pane="editor"] .wn-side,
+  .wn-app[data-pane="editor"] .wn-list {
+    display: none;
+  }
+  .wn-app[data-pane="browse"] .wn-editor {
+    display: none;
+  }
+
+  /* Back control + a roomier toolbar that wraps. */
+  .wn-back {
+    display: inline-flex;
+    align-items: center;
+    flex: none;
+    min-height: 40px;
+    padding: 7px 12px;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--tx);
+    background: var(--glass);
+    border: 1px solid var(--bd-2);
+    border-radius: var(--r-sm);
+    cursor: pointer;
+  }
+  .wn-back:hover {
+    border-color: var(--bd-3);
+  }
+  .wn-bar {
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    position: static; /* the admin rail is sticky on mobile; avoid a double-stick overlap */
+  }
+  .wn-textarea,
+  .wn-md {
+    min-height: 50vh;
+  }
+
+  /* Touch targets: tree rows + the per-row controls reach the mobile floor. */
+  .wn-row {
+    padding: 11px 10px;
+  }
+  .wn-caret-btn {
+    width: 30px;
+    height: 30px;
+  }
+  .wn-folder-del,
+  .wn-kebab {
+    width: 32px;
+    height: 32px;
+    opacity: 1;
+  }
+}

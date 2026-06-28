@@ -127,9 +127,13 @@ export function NotesApp({ data }: { data: NotesData }) {
     return [...list].sort((a, b) => Number(b.pinned) - Number(a.pinned) || b.updatedAt.localeCompare(a.updatedAt))
   }, [data.notes, folderSel, query])
 
-  // Always show something in the editor: if nothing is open, open the first note.
+  // Desktop shows the editor beside the list, so auto-open the first note. On mobile
+  // the default view is the browse list (folders + notes); auto-opening would trap the
+  // user in the editor and fight the ← Notes back control, so skip it there.
   useEffect(() => {
-    if (!noteId && notes.length) setNoteId(notes[0]?.id ?? null)
+    if (noteId || !notes.length) return
+    if (typeof window !== 'undefined' && window.matchMedia('(max-width: 860px)').matches) return
+    setNoteId(notes[0]?.id ?? null)
   }, [notes, noteId])
 
   const flushSave = useCallback(
@@ -223,7 +227,7 @@ export function NotesApp({ data }: { data: NotesData }) {
   return (
     <div className="wn-root">
       {toast ? <div className="wn-toast" role="alert">{toast}</div> : null}
-      <div className="wn-app">
+      <div className="wn-app" data-pane={noteId ? 'editor' : 'browse'}>
         {/* Sidebar */}
         <aside className="wn-side">
           <div className="wn-brand"><span className="wn-brand__dot" /><span className="wn-brand__name">DS2 · Notes</span></div>
@@ -291,6 +295,7 @@ export function NotesApp({ data }: { data: NotesData }) {
           ) : (
             <>
               <div className="wn-bar">
+                <button type="button" className="wn-back" onClick={() => selectNote(null)} aria-label="Back to notes">←&nbsp;Notes</button>
                 <span className="wn-crumb">
                   {(() => {
                     const parts = folderPathParts(selected.folderId)

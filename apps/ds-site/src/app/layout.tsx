@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Orbitron } from "next/font/google";
 import "./globals.css";
 import "./themes.css";
@@ -31,6 +31,12 @@ export const metadata: Metadata = {
     shortcut: "/favicon.ico",
     apple: "/favicon-180.png",
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#050607",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -1927,7 +1927,7 @@
   .admin-leads-table tbody td, .admin-leads-table thead th { padding: 8px 8px; }
   .admin-leads-edit, .admin-leads-select { font-size: 13px; }
   .admin-leads-table input[type="checkbox"] { width: 18px; height: 18px; }
-  .admin-leads-actions button { width: 30px; height: 30px; }
+  .admin-leads-actions button { width: 40px; height: 40px; }
 
   /* Run-area + paste panels: full-width controls */
   .admin-leads-row { flex-direction: column; align-items: stretch; }
@@ -2192,8 +2192,12 @@
 
 @media (max-width: 920px) { .ds2-grid { grid-template-columns: 1fr; } }
 @media (max-width: 560px) {
-  .ds2-head { flex-wrap: wrap; }
-  .ds2-search { order: 3; min-width: 100%; }
+  /* Stack the header so the greeting, action button + search never collide:
+     greeting on its own row, then the action, then a full-width search. */
+  .ds2-head { flex-wrap: wrap; gap: 12px; }
+  .ds2-head__greet { flex: 1 1 100%; }
+  .ds2-action { order: 2; }
+  .ds2-search { order: 3; flex: 1 1 100%; min-width: 0; }
   .ds2-statrow { grid-template-columns: 1fr; }
 }
 
