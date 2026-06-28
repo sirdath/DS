@@ -29,6 +29,9 @@ function inline(s: string): string {
   out = out.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+|mailto:[^\s)]+)\)/g, (_m, t, u) => `<a href="${u}" target="_blank" rel="noopener noreferrer">${t}</a>`)
   out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
   out = out.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>')
+  // underline: ++text++ (a non-standard extension the toolbar inserts, so authors
+  // never type it; HTML is already escaped, so <u> is added here, not passed through)
+  out = out.replace(/\+\+([^+\n]+)\+\+/g, '<u>$1</u>')
   // 3) re-insert the (already-escaped) code spans
   out = out.replace(CODE_RE, (_m, i) => `<code>${codes[Number(i)] ?? ''}</code>`)
   return out
@@ -70,6 +73,14 @@ export function renderMarkdown(text: string): string {
     if (h) {
       const lvl = (h[1] ?? '#').length
       out.push(`<h${lvl}>${inline((h[2] ?? '').trim())}</h${lvl}>`)
+      i++
+      continue
+    }
+
+    // centred line: -> text <-  (inserted by the toolbar's Centre button)
+    const c = line.match(/^\s*->\s*(.*?)\s*<-\s*$/)
+    if (c) {
+      out.push(`<p class="wn-center">${inline((c[1] ?? '').trim())}</p>`)
       i++
       continue
     }
@@ -145,6 +156,7 @@ export function noteSnippet(body: string): string {
     .split('\n')
     .map((l) => l.replace(/^\s*(#{1,4}|>|[-*+]|\d+\.)\s+/, '').replace(/^\[[ xX]\]\s+/, ''))
     .join(' ')
+    .replace(/\+\+|->|<-/g, '')
     .replace(/[*_`~]/g, '')
     .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
     .replace(/\s+/g, ' ')
