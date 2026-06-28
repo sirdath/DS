@@ -2190,6 +2190,20 @@
 .ds2-row__fill { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--ds2-action), var(--ds2-ice)); }
 .ds2-empty { font-size: 13px; color: var(--ds2-text-3); padding: 18px 0; }
 
+/* Site-activity card rows (live traffic per tracked site). */
+.ds2-act { display: block; text-decoration: none; color: inherit; padding: 11px 0; border-top: 1px solid var(--ds2-border); }
+.ds2-act:first-of-type { border-top: 0; }
+.ds2-act:hover .ds2-act__name { color: var(--ds2-ice); }
+.ds2-act__top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.ds2-act__name { font-size: 13px; font-weight: 600; transition: color 0.15s var(--ds2-ease); }
+.ds2-act__today { font-size: 12px; color: var(--ds2-text-2); white-space: nowrap; }
+.ds2-act__today b { font-size: 15px; font-weight: 600; color: var(--ds2-text); font-variant-numeric: tabular-nums; margin-right: 3px; }
+.ds2-act__meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 3px; }
+.ds2-act__delta { font-size: 11.5px; font-variant-numeric: tabular-nums; color: var(--ds2-text-3); }
+.ds2-act__delta.is-up { color: #43a47a; }
+.ds2-act__delta.is-down { color: #c96868; }
+.ds2-act__7 { font-size: 11.5px; color: var(--ds2-text-3); font-variant-numeric: tabular-nums; }
+
 @media (max-width: 920px) { .ds2-grid { grid-template-columns: 1fr; } }
 @media (max-width: 560px) {
   /* Stack the header so the greeting, action button + search never collide:

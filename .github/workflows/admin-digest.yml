@@ -1,0 +1,40 @@
+name: Admin daily digest
+
+# Sends the founders a once-a-day Telegram digest of site traffic (views today vs
+# yesterday per tracked site) by calling the /api/admin/digest route, which computes
+# the numbers and posts to the private founders chat. The route guards itself with
+# CRON_SECRET, so this job only needs the matching secret + the bot/chat env set on
+# Vercel. With the secret unset the job no-ops; with the bot/chat unset the route
+# logs instead of sending (still returns 200).
+
+on:
+  schedule:
+    # 06:17 UTC daily (~09:17 Athens). Off the hour — GitHub delays :00 crons.
+    - cron: "17 6 * * *"
+  workflow_dispatch: {} # allow a manual run from the Actions tab
+
+concurrency:
+  group: admin-digest
+  cancel-in-progress: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Trigger the digest
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "::notice::CRON_SECRET not set as a repo secret — skipping digest."
+            exit 0
+          fi
+          base="${SITE_URL:-https://www.ds2-consulting.com}"
+          # -f fails the job on HTTP >= 400 (e.g. 401 bad secret, 502 send failed) so a
+          # broken digest surfaces as a failed run + GitHub email.
+          code=$(curl -fsS -o /dev/null -w '%{http_code}' \
+            "$base/api/admin/digest" \
+            -H "Authorization: Bearer $CRON_SECRET")
+          echo "Digest triggered (HTTP $code) at $(date -u +%FT%TZ)"
