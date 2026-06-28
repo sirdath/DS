@@ -4,6 +4,7 @@ import { AdminRail } from '@/app/admin/(app)/admin-rail'
 import { resolveWorkspaceSession } from '../lib/workspace-auth'
 import { ProductsTabs } from './products-tabs'
 import '@/app/admin/admin.css'
+import '@/app/admin/ds-kit.css'
 
 // Products is just another tab in the SAME shell as the admin — it renders the very
 // same left rail (AdminRail) with "Products" active, so switching Admin ⇄ Products is

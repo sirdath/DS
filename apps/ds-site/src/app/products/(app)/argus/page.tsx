@@ -55,14 +55,14 @@ function CompetitorRow({ c }: { c: BoardRow }) {
         </span>
         {c.note ? <span className="wr-comp-note">{c.note}</span> : null}
       </td>
-      <td className="wr-num">
+      <td className="ds-num">
         {c.avgRate != null ? formatMoney(c.avgRate, c.currency) : '–'}{' '}
         <span className={`wr-delta ${c.rateDeltaPct < 0 ? 'is-down' : c.rateDeltaPct > 0 ? 'is-up' : ''}`}>{delta(c.rateDeltaPct)}</span>
       </td>
-      <td className="wr-num">{c.rating != null ? `${c.rating.toFixed(1)}★` : '–'}</td>
-      <td className="wr-num">{c.reviewCount ?? '–'}</td>
-      <td className="wr-num">+{c.reviewVelocity}</td>
-      <td className="wr-num">
+      <td className="ds-num">{c.rating != null ? `${c.rating.toFixed(1)}★` : '–'}</td>
+      <td className="ds-num">{c.reviewCount ?? '–'}</td>
+      <td className="ds-num">+{c.reviewVelocity}</td>
+      <td className="ds-num">
         {c.instagramFollowers != null ? c.instagramFollowers.toLocaleString('en') : '–'}{' '}
         <span className={`wr-delta ${c.followerDeltaPct > 0 ? 'is-up' : ''}`}>{delta(c.followerDeltaPct)}</span>
       </td>
@@ -125,14 +125,14 @@ export default async function ArgusWorkspacePage() {
           {highCount > 0 ? <span className="wr-flag">{highCount} to act on</span> : null}
         </div>
 
-        <section className="wr-card wr-brief">
-          <h3 className="wr-h3">The briefing</h3>
+        <section className="ds-card wr-brief">
+          <h3 className="ds-card__title">The briefing</h3>
           <p>{summary}</p>
         </section>
 
         <div className="wr-cols">
-          <section className="wr-card wr-feed">
-            <h3 className="wr-h3">Movements</h3>
+          <section className="ds-card">
+            <h3 className="ds-card__title">Movements</h3>
             <ul className="wr-moves">
               {briefing.movements.map((m, i) => (
                 <MovementRow key={`${m.competitorId}-${m.type}-${i}`} m={m} />
@@ -140,8 +140,8 @@ export default async function ArgusWorkspacePage() {
             </ul>
           </section>
 
-          <section className="wr-card wr-side">
-            <h3 className="wr-h3">Do this next</h3>
+          <section className="ds-card">
+            <h3 className="ds-card__title">Do this next</h3>
             <ol className="wr-recs">
               {recommendations.map((r, i) => (
                 <li key={i}>
@@ -156,18 +156,18 @@ export default async function ArgusWorkspacePage() {
           </section>
         </div>
 
-        <section className="wr-card">
-          <h3 className="wr-h3">Competitor board</h3>
-          <div className="wr-table-wrap">
-            <table className="wr-table">
+        <section className="ds-card">
+          <h3 className="ds-card__title">Competitor board</h3>
+          <div className="ds-table-wrap">
+            <table className="ds-table" style={{ minWidth: 540 }}>
               <thead>
                 <tr>
                   <th>Competitor</th>
-                  <th className="wr-num">Avg rate</th>
-                  <th className="wr-num">Rating</th>
-                  <th className="wr-num">Reviews</th>
-                  <th className="wr-num">New</th>
-                  <th className="wr-num">Instagram</th>
+                  <th className="ds-num">Avg rate</th>
+                  <th className="ds-num">Rating</th>
+                  <th className="ds-num">Reviews</th>
+                  <th className="ds-num">New</th>
+                  <th className="ds-num">Instagram</th>
                 </tr>
               </thead>
               <tbody>
