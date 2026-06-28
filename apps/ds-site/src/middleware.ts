@@ -235,15 +235,15 @@ export async function middleware(request: NextRequest) {
       },
     })
 
-    // getSession() reads the signed session cookie locally — no auth-server round-trip,
-    // so every navigation is ~150-300ms faster. Trust shifts to the cookie signature +
-    // RLS: every protected table independently enforces is_admin() with JWT signature
-    // verification at the Postgres layer, so a forged/stale cookie at most reveals the
-    // empty admin chrome, never data. (Deliberate speed/security tradeoff, owner-approved.)
+    // getUser() validates the JWT with the Supabase Auth server AND — critically in the
+    // @supabase/ssr middleware flow — refreshes the access token + writes the refreshed
+    // cookie, so the page's own queries get a fresh token. Do NOT swap this for
+    // getSession(): that left pages with an expired token → "page couldn't load" and
+    // Notes stuck read-only. The perceived-speed wins come from the prefetch exemption
+    // above + the loading.tsx skeletons, not from weakening this call.
     const {
-      data: { session },
-    } = await supabase.auth.getSession()
-    const user = session?.user ?? null
+      data: { user },
+    } = await supabase.auth.getUser()
 
     if (!user || !isAdminEmail(user.email)) {
       // Redirect to /admin/login/ (with trailing slash) so trailingSlash:true
@@ -299,11 +299,11 @@ export async function middleware(request: NextRequest) {
       },
     })
 
-    // getSession() — local cookie read, no auth-server round-trip (see the admin gate).
+    // getUser() — validates + refreshes the session token (see the admin gate; do not
+    // swap for getSession()).
     const {
-      data: { session },
-    } = await supabase.auth.getSession()
-    const user = session?.user ?? null
+      data: { user },
+    } = await supabase.auth.getUser()
 
     if (!user) {
       const loginUrl = new URL('/products/login/', request.url)
