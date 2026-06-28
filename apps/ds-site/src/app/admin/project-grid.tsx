@@ -15,7 +15,9 @@ interface Props {
 export function ProjectGrid({ projects }: Props) {
   const gridRef = useStaggerIn<HTMLDivElement>()
 
-  // Progress sweep: animate fills from 0 -> final width after card stagger
+  // Progress sweep: animate fills from 0 -> final width after card stagger.
+  // GSAP imported lazily (no top-level import in this file); without this the bare
+  // `gsap` reference would be a runtime ReferenceError that crashes the page.
   useEffect(() => {
     const root = gridRef.current
     if (!root) return
@@ -25,20 +27,19 @@ export function ProjectGrid({ projects }: Props) {
     // Delay slightly so fill sweeps AFTER the card fade-up (stagger is 0.05 * n)
     const delay = 0.5 + fills.length * 0.05
 
-    const ctx = gsap.context(() => {
-      fills.forEach((fill) => {
-        const target = fill.style.width
-        fill.style.width = '0%'
-        gsap.to(fill, {
-          width: target,
-          duration: 0.8,
-          ease: 'power2.out',
-          delay,
+    let ctx: { revert: () => void } | undefined
+    void import('gsap').then(({ default: gsap }) => {
+      if (!root.isConnected) return
+      ctx = gsap.context(() => {
+        fills.forEach((fill) => {
+          const target = fill.style.width
+          fill.style.width = '0%'
+          gsap.to(fill, { width: target, duration: 0.8, ease: 'power2.out', delay })
         })
-      })
-    }, root)
+      }, root)
+    })
 
-    return () => ctx.revert()
+    return () => ctx?.revert()
   }, [projects, gridRef])
 
   if (projects.length === 0) {
