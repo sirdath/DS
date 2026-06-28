@@ -203,7 +203,7 @@ export function NotesApp({ data }: { data: NotesData }) {
       setMode('edit')
       router.refresh()
     } catch {
-      showError("Couldn't create the note — try again.")
+      showError("Couldn't create the note, try again.")
     }
   }
 
@@ -216,7 +216,7 @@ export function NotesApp({ data }: { data: NotesData }) {
       await createFolder(name, parent)
       router.refresh()
     } catch {
-      showError("Couldn't create the folder — try again.")
+      showError("Couldn't create the folder, try again.")
     }
   }
 
@@ -307,7 +307,7 @@ export function NotesApp({ data }: { data: NotesData }) {
                     aria-live="assertive"
                     onClick={() => { const p = pendingRef.current; if (p) void flushSave(p.id, { title: p.title, body: p.body }) }}
                   >
-                    Save failed — retry
+                    Save failed, retry
                   </button>
                 ) : (
                   <span className={`wn-saved ${status === 'saving' ? 'is-saving' : ''}`} role="status" aria-live="polite">
@@ -344,7 +344,7 @@ export function NotesApp({ data }: { data: NotesData }) {
                       onClick={() => {
                         void deleteNote(selected.id)
                           .then(() => { setConfirmDel(false); setNoteId(null); router.refresh() })
-                          .catch(() => showError("Couldn't delete the note — try again."))
+                          .catch(() => showError("Couldn't delete the note, try again."))
                       }}
                     >
                       Delete
@@ -372,7 +372,7 @@ export function NotesApp({ data }: { data: NotesData }) {
 
               <div className="wn-body" role="tabpanel" id="wn-panel" aria-labelledby={mode === 'edit' ? 'wn-tab-edit' : 'wn-tab-preview'}>
                 {mode === 'edit' ? (
-                  <textarea className="wn-textarea" value={draft.body} placeholder="Write in markdown — # heading, - bullet, - [ ] task, **bold**, `code`…" aria-label="Note body" readOnly={isDemo} onChange={(e) => onEdit({ body: e.target.value })} />
+                  <textarea className="wn-textarea" value={draft.body} placeholder="Write in markdown, # heading, - bullet, - [ ] task, **bold**, `code`…" aria-label="Note body" readOnly={isDemo} onChange={(e) => onEdit({ body: e.target.value })} />
                 ) : (
                   <div
                     className="wn-md"

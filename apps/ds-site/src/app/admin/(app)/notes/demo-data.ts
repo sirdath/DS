@@ -25,7 +25,7 @@ export const DEMO_NOTES_DATA: NotesData = {
     {
       id: 'n-aetheria',
       folderId: 'f-athens',
-      title: 'Aetheria Suites — boutique hotel',
+      title: 'Aetheria Suites, boutique hotel',
       pinned: true,
       position: 0,
       updatedAt: '2026-06-17T07:30:00.000Z',
@@ -33,7 +33,7 @@ export const DEMO_NOTES_DATA: NotesData = {
       projectIds: ['p-aetheria'],
       body: [
         '## Why them',
-        '4.7★ across 600+ reviews but the site is a 2016 template — the direct-booking flow breaks on mobile, so they’re funnelling guests to Booking.com and paying ~18% commission. A clean `Internal Rewiring` story: keep the brand, fix the machine.',
+        '4.7★ across 600+ reviews but the site is a 2016 template, the direct-booking flow breaks on mobile, so they’re funnelling guests to Booking.com and paying ~18% commission. A clean `Internal Rewiring` story: keep the brand, fix the machine.',
         '',
         '## What we noticed',
         '- Booking widget 404s below the fold on iOS Safari.',
@@ -56,7 +56,7 @@ export const DEMO_NOTES_DATA: NotesData = {
       updatedAt: '2026-06-16T16:00:00.000Z',
       updatedByName: 'Dath',
       projectIds: ['p-kafeneio'],
-      body: 'No website at all — Instagram only. Owner **replied to the cold email**, wants a call next week about a brand upgrade.\n\n- [ ] Send 3 time slots\n- [ ] Pull their Instagram numbers for the deck',
+      body: 'No website at all, Instagram only. Owner **replied to the cold email**, wants a call next week about a brand upgrade.\n\n- [ ] Send 3 time slots\n- [ ] Pull their Instagram numbers for the deck',
     },
     {
       id: 'n-plaka',
@@ -78,7 +78,7 @@ export const DEMO_NOTES_DATA: NotesData = {
       updatedAt: '2026-06-12T09:00:00.000Z',
       updatedByName: 'Dath',
       projectIds: [],
-      body: '## Thesis\nMost SMBs don’t need a redesign — they need the **machine** fixed (booking, SEO, performance). Package it as a fixed-scope 2-week sprint.\n\n## Open questions\n- Price point?\n- How to scope without a full audit first?',
+      body: '## Thesis\nMost SMBs don’t need a redesign, they need the **machine** fixed (booking, SEO, performance). Package it as a fixed-scope 2-week sprint.\n\n## Open questions\n- Price point?\n- How to scope without a full audit first?',
     },
   ],
 }

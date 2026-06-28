@@ -90,7 +90,7 @@ export function PresentationBuilder({ tools }: { tools: Tool[] }) {
           <h2 className="pb-panel__title">In this order</h2>
           <p className="pb-panel__hint">Each becomes a full section, top to bottom.</p>
           {selected.length === 0 ? (
-            <p className="pb-empty">No products yet — add some on the left.</p>
+            <p className="pb-empty">No products yet, add some on the left.</p>
           ) : (
             <ol className="pb-order">
               {selected.map((slug, i) => {

@@ -54,7 +54,7 @@ export default async function WorkspacePage() {
       {internal ? (
         <Link href="/products/presentations" className="ws-present-cta">
           <span className="ws-present-cta__eyebrow">Presentation mode</span>
-          <span className="ws-present-cta__title">Build a client deck — pick products + order, get a shareable link →</span>
+          <span className="ws-present-cta__title">Build a client deck, pick products + order, get a shareable link →</span>
         </Link>
       ) : null}
 

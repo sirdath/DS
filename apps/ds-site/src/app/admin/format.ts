@@ -3,9 +3,9 @@ export function formatMoney(n: number): string {
 }
 
 export function formatDate(iso: string | null): string {
-  if (!iso) return '—'
+  if (!iso) return '–'
   const d = new Date(iso)
-  if (isNaN(d.getTime())) return '—'
+  if (isNaN(d.getTime())) return '–'
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 

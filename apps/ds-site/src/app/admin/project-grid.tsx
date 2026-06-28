@@ -171,7 +171,7 @@ function ProjectCard({ project: p }: { project: Project }) {
               target="_blank"
               rel="noopener noreferrer"
               className="admin-open-link"
-              title={`Open ${site.name} as admin — no password`}
+              title={`Open ${site.name} as admin, no password`}
             >
               Open site &#8599;
             </a>

@@ -28,7 +28,7 @@ export function buildTree(folders: NoteFolder[]): TreeNode[] {
 export function flatFolderOptions(nodes: TreeNode[], depth = 0): { id: string; label: string }[] {
   const out: { id: string; label: string }[] = []
   for (const n of nodes) {
-    out.push({ id: n.id, label: `${'— '.repeat(depth)}${n.name}` })
+    out.push({ id: n.id, label: `${', '.repeat(depth)}${n.name}` })
     if (n.children.length) out.push(...flatFolderOptions(n.children, depth + 1))
   }
   return out

@@ -6,7 +6,7 @@ import { buildSection } from './sections'
 import './presentation.css'
 
 // Shared decks are never indexed.
-export const metadata: Metadata = { robots: { index: false, follow: false }, title: 'DS2 — products in action' }
+export const metadata: Metadata = { robots: { index: false, follow: false }, title: 'DS2, products in action' }
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 

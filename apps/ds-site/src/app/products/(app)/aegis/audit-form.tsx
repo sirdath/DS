@@ -130,7 +130,7 @@ function Report({ report: r }: { report: AegisReport }) {
         </p>
         {r.accessibility_statement ? (
           <>
-            <p className="wg-statement-label">Draft accessibility statement — review before publishing</p>
+            <p className="wg-statement-label">Draft accessibility statement, review before publishing</p>
             <blockquote className="wg-statement">{r.accessibility_statement}</blockquote>
           </>
         ) : null}
@@ -146,7 +146,7 @@ function Report({ report: r }: { report: AegisReport }) {
                 <span className="wg-finding-area">{CAT_LABEL[f.category] ?? f.category}</span>
                 <span className="wg-finding-title">
                   {f.title}
-                  {f.displayValue ? ` — ${f.displayValue}` : ''}
+                  {f.displayValue ? `, ${f.displayValue}` : ''}
                 </span>
               </li>
             ))}
@@ -183,7 +183,7 @@ export function AuditForm() {
       if (!res.ok || !data.report) setError(data.error ?? 'Something went wrong.')
       else setReport(data.report)
     } catch {
-      setError('Network error — try again.')
+      setError('Network error, try again.')
     } finally {
       setBusy(false)
     }
@@ -232,7 +232,7 @@ export function AuditForm() {
         </button>
       </div>
 
-      {busy ? <p className="wg-note">Scanning with PageSpeed Insights — this takes 15–40 seconds.</p> : null}
+      {busy ? <p className="wg-note">Scanning with PageSpeed Insights, this takes 15–40 seconds.</p> : null}
       {error ? (
         <p className="wg-error" role="alert">
           {error}
@@ -245,7 +245,7 @@ export function AuditForm() {
         <>
           <div className="ws-demo-banner" style={{ marginTop: 24 }}>
             <span className="ws-demo-banner__tag">Example</span>
-            <span className="ws-demo-banner__text">A sample audit — run your own above to replace it.</span>
+            <span className="ws-demo-banner__text">A sample audit, run your own above to replace it.</span>
           </div>
           <Report report={DEMO_AEGIS_REPORT} />
         </>

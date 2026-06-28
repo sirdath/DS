@@ -1,4 +1,4 @@
-# 03 — Wedge & positioning for DS2
+# 03, Wedge & positioning for DS2
 
 > The single most-leveraged decision DS2 will make in its first 18 months. Pick wrong and you stay generalist. Pick right and inbound starts.
 
@@ -6,7 +6,7 @@
 
 Across every source in [02](02-consulting-marketing-playbook.md), one finding repeats: **boutique consultancies that scale niche down before they grow. The ones that try to be everything stay small forever.** The Visible Authority's case studies show the same firm increasing revenue *while cutting 30% of its services*.
 
-DS2 today reads as: *"Athens-London digital solutions consultancy, consulting + build + Stewardship, two senior founders."* That's the same positioning as ~10,000 other firms. The only thing differentiating you so far is the **challenge-first method** (real and rare) and the **senior-only delivery** (real and rare) — but neither, on its own, is a wedge. A wedge is a **who** + **what** + **when**.
+DS2 today reads as: *"Athens-London digital solutions consultancy, consulting + build + Stewardship, two senior founders."* That's the same positioning as ~10,000 other firms. The only thing differentiating you so far is the **challenge-first method** (real and rare) and the **senior-only delivery** (real and rare), but neither, on its own, is a wedge. A wedge is a **who** + **what** + **when**.
 
 ## The frameworks (applied)
 
@@ -27,8 +27,8 @@ For each candidate wedge below:
 
 ### 3. Philip Morgan's horizontal × vertical
 A wedge has at least one axis, ideally both:
-- **Horizontal** — a *problem* (e.g., "post-CTO-quitting rescue," "pre-engineering-hire spec audit").
-- **Vertical** — an *industry* (e.g., "B2B SaaS," "fintech," "Greek-export FMCG").
+- **Horizontal**, a *problem* (e.g., "post-CTO-quitting rescue," "pre-engineering-hire spec audit").
+- **Vertical**, an *industry* (e.g., "B2B SaaS," "fintech," "Greek-export FMCG").
 
 The strongest wedges combine both: *"Code-rescue (horizontal) for B2B SaaS (vertical)."*
 
@@ -42,11 +42,11 @@ If yes, the wedge is sharp enough. If no, keep cutting.
 
 ---
 
-## DS2 candidate wedges — five to react to
+## DS2 candidate wedges, five to react to
 
-These are starting points, not committed positions. Each is scored against the criteria below. **None are right or wrong yet** — they're shaped to be argued with.
+These are starting points, not committed positions. Each is scored against the criteria below. **None are right or wrong yet**, they're shaped to be argued with.
 
-### Wedge A — "Pre-build truth-tellers for funded startups"
+### Wedge A, "Pre-build truth-tellers for funded startups"
 **Onlyness draft:** *"DS2 is the only senior-led digital partner that audits and challenges the brief before building, for funded-but-pre-team startups in the seed-to-Series-A window."*
 
 | Component | Value |
@@ -58,11 +58,11 @@ These are starting points, not committed positions. Each is scored against the c
 | Category | "Pre-build advisory" (could become a named category) |
 
 **Pros**: Plays directly to challenge-first. Buyer is well-funded and reachable (VCs, accelerator demo days). Premium pricing natural. Could create a category.
-**Cons**: Buyer is sceptical of "consultants" — needs proof. Demands a network into the funded-startup pipeline (some, but not deep).
+**Cons**: Buyer is sceptical of "consultants", needs proof. Demands a network into the funded-startup pipeline (some, but not deep).
 **Distribution**: VC partner-network referrals, accelerator office-hours, *"How to brief your first build"* POV essay/talk.
 
-### Wedge B — "Inherited-software rescue for mid-market SaaS"
-**Onlyness draft:** *"DS2 is the only senior, challenge-first technical partner that takes ownership of inherited B2B-SaaS codebases the in-house team is afraid to touch — and ships the rescue."*
+### Wedge B, "Inherited-software rescue for mid-market SaaS"
+**Onlyness draft:** *"DS2 is the only senior, challenge-first technical partner that takes ownership of inherited B2B-SaaS codebases the in-house team is afraid to touch, and ships the rescue."*
 
 | Component | Value |
 |---|---|
@@ -76,8 +76,8 @@ These are starting points, not committed positions. Each is scored against the c
 **Cons**: Buyer requires earned trust before they hand over the keys. Sales cycle longer.
 **Distribution**: SaaS-CTO conferences, "code-debt audit" pro-bono offer for 1 anchor case study, partnerships with PE / VC technical-DD firms.
 
-### Wedge C — "Stewardship-as-entry — for orphaned digital products"
-**Onlyness draft:** *"DS2 is the only firm whose entry product is taking over an orphaned digital product — when the original agency or team is gone — and stewarding it forward, with full rebuild capability if needed."*
+### Wedge C, "Stewardship-as-entry, for orphaned digital products"
+**Onlyness draft:** *"DS2 is the only firm whose entry product is taking over an orphaned digital product, when the original agency or team is gone, and stewarding it forward, with full rebuild capability if needed."*
 
 | Component | Value |
 |---|---|
@@ -85,14 +85,14 @@ These are starting points, not committed positions. Each is scored against the c
 | Unique attributes | Stewardship-as-a-service productized; senior-only; can rebuild after stewarding |
 | Value | Avoid total rewrite cost; preserve sunk-cost; sleep at night |
 | Best-fit customer | Mid-market companies who outsourced to a now-defunct agency or had a team leave |
-| Category | "Digital stewardship" / "product caretaking" — could be DS2's invented category |
+| Category | "Digital stewardship" / "product caretaking", could be DS2's invented category |
 
 **Pros**: Plays your Stewardship phase as the *first* sale, not the last. MRR-shaped revenue. Differentiated category. Low-stakes entry → expand to rebuild.
 **Cons**: New category = market-education burden. Lower upfront ticket size.
 **Distribution**: POV essays on "what happens when your agency disappears," partnerships with the agencies themselves (referral-up).
 
-### Wedge D — "AI-augmented consulting for traditional businesses"
-**Onlyness draft:** *"DS2 is the only challenge-first consultancy that helps traditional non-tech businesses adopt AI without being sold AI — diagnosis-first, then build the one or two things that actually move the needle."*
+### Wedge D, "AI-augmented consulting for traditional businesses"
+**Onlyness draft:** *"DS2 is the only challenge-first consultancy that helps traditional non-tech businesses adopt AI without being sold AI, diagnosis-first, then build the one or two things that actually move the needle."*
 
 | Component | Value |
 |---|---|
@@ -103,11 +103,11 @@ These are starting points, not committed positions. Each is scored against the c
 | Category | "AI implementation" (crowded) → "AI integrity consulting" (open) |
 
 **Pros**: Massive market, urgency real, premium pricing easy, narrative timeliness in 2026.
-**Cons**: Crowded — everyone says this. Differentiation has to be *very* loud. "Challenge-first" actually shines here (everyone else is *selling* AI).
+**Cons**: Crowded, everyone says this. Differentiation has to be *very* loud. "Challenge-first" actually shines here (everyone else is *selling* AI).
 **Distribution**: Industry-specific (pick: logistics, manufacturing, or pro-services). Sponsored content in trade publications. CEO-roundtable formats.
 
-### Wedge E — "Bilingual digital partner for Greek-export family business"
-**Onlyness draft:** *"DS2 is the only Athens-London digital partner that takes Greek family-run brands international — challenge-first to the family dynamics, then end-to-end build in EN/GR."*
+### Wedge E, "Bilingual digital partner for Greek-export family business"
+**Onlyness draft:** *"DS2 is the only Athens-London digital partner that takes Greek family-run brands international, challenge-first to the family dynamics, then end-to-end build in EN/GR."*
 
 | Component | Value |
 |---|---|
@@ -118,15 +118,15 @@ These are starting points, not committed positions. Each is scored against the c
 | Category | "Bilingual digital export partner" |
 
 **Pros**: Plays the Athens-London asymmetry. Real personal access (Greek founder). Underserved market.
-**Cons**: Market size is small (limits ceiling — see [[project_naming_direction]] memory: brand needs to read internationally). Could be a *secondary* wedge or a feeder pipeline, not the primary.
+**Cons**: Market size is small (limits ceiling, see [[project_naming_direction]] memory: brand needs to read internationally). Could be a *secondary* wedge or a feeder pipeline, not the primary.
 
 ---
 
 ## Scoring matrix
 
-Score each candidate 1–5 on each dimension. (Honest — not aspirational.)
+Score each candidate 1–5 on each dimension. (Honest, not aspirational.)
 
-| Criterion | A — Pre-build | B — Code rescue | C — Stewardship | D — AI for traditional | E — Greek-export |
+| Criterion | A, Pre-build | B, Code rescue | C, Stewardship | D, AI for traditional | E, Greek-export |
 |---|---|---|---|---|---|
 | Premium pricing natural | 4 | 5 | 3 | 5 | 3 |
 | DS2's actual edge applies | 5 | 5 | 4 | 4 | 4 |
@@ -136,7 +136,7 @@ Score each candidate 1–5 on each dimension. (Honest — not aspirational.)
 | Founder energy / interest | ? | ? | ? | ? | ? |
 | **Total (sum)** | **19+?** | **22+?** | **17+?** | **20+?** | **17+?** |
 
-(*Founder energy is the missing variable — only you and Stelios can fill those rows. It's also the most important; passion compounds for 18 months.*)
+(*Founder energy is the missing variable, only you and Stelios can fill those rows. It's also the most important; passion compounds for 18 months.*)
 
 ---
 
@@ -154,5 +154,5 @@ Score each candidate 1–5 on each dimension. (Honest — not aspirational.)
 
 ## Sources verified May 2026
 
-- The Visible Authority case studies — boutique firms that grew via narrow positioning ([thevisibleauthority.com](https://www.thevisibleauthority.com/))
+- The Visible Authority case studies, boutique firms that grew via narrow positioning ([thevisibleauthority.com](https://www.thevisibleauthority.com/))
 - Win Without Pitching (Blair Enns) on specialization → diagnostic → value-pricing ([winwithoutpitching.com](https://www.winwithoutpitching.com/))

@@ -4,7 +4,7 @@
 
 **Goal:** A private `/admin` portal for the two DS2 founders to track every client engagement (pipeline status, completion, money, activity), with the existing unprotected `$ecretAnalytics` page folded behind the same real auth.
 
-**Architecture:** Contract-first / frontend-first (Approach A). Define the shared `Project` TypeScript type + pure derivation helpers first (TDD). Build the entire frontend against a typed in-memory mock behind a `ProjectDataSource` interface. Then swap the mock implementation for Supabase (tables + RLS + Server Actions) and gate `/admin` + `/admin/analytics` in middleware — components never change because they code against the contract.
+**Architecture:** Contract-first / frontend-first (Approach A). Define the shared `Project` TypeScript type + pure derivation helpers first (TDD). Build the entire frontend against a typed in-memory mock behind a `ProjectDataSource` interface. Then swap the mock implementation for Supabase (tables + RLS + Server Actions) and gate `/admin` + `/admin/analytics` in middleware, components never change because they code against the contract.
 
 **Tech Stack:** Next.js 16 App Router (`apps/ds-site`), React 19, TypeScript 5.6, Supabase (`@supabase/supabase-js` ^2.105), GSAP ^3.15, Vitest (added here), ported CSS/JS from `packages/frontendmaxxing-reference`.
 
@@ -21,12 +21,12 @@
 - Shell is Windows PowerShell. Use `;` not `&&` to chain. No `/dev/null` (`$null`).
 - All new files are kebab-case. Components functional. No `any`. Strict TS.
 - Commit after every task with a conventional-commit message. Never `--no-verify`.
-- Never hardcode colors outside the established dark palette (pure neutral grays, R=G=B — no blue undertone). Reuse `.lock-*` classes from `globals.css` for the login.
+- Never hardcode colors outside the established dark palette (pure neutral grays, R=G=B, no blue undertone). Reuse `.lock-*` classes from `globals.css` for the login.
 - The service-role key is server-only. The browser uses the anon key only.
 
 ---
 
-## Phase 0 — Test tooling
+## Phase 0, Test tooling
 
 ### Task 0: Add Vitest to ds-site
 
@@ -89,7 +89,7 @@ git commit -m "chore: add vitest to ds-site for admin logic tests"
 
 ---
 
-## Phase 1 — The contract (types + pure derivations, TDD)
+## Phase 1, The contract (types + pure derivations, TDD)
 
 ### Task 1: Shared domain types
 
@@ -169,7 +169,7 @@ git add apps/ds-site/src/app/admin/types.ts
 git commit -m "feat(admin): shared Project domain types (the contract)"
 ```
 
-### Task 2: Derivation helpers — write failing tests
+### Task 2: Derivation helpers, write failing tests
 
 **Files:**
 - Create: `apps/ds-site/src/app/admin/lib/derive.test.ts`
@@ -234,7 +234,7 @@ describe('portfolioTotals', () => {
 **Step 2: Run to verify failure**
 
 Run: `pnpm --filter @ds/site test`
-Expected: FAIL — cannot resolve `./derive`.
+Expected: FAIL, cannot resolve `./derive`.
 
 **Step 3: Commit the tests**
 
@@ -295,7 +295,7 @@ export function portfolioTotals(projects: Project[]): PortfolioTotals {
 **Step 2: Run tests**
 
 Run: `pnpm --filter @ds/site test`
-Expected: PASS — all derive tests green.
+Expected: PASS, all derive tests green.
 
 **Step 3: Commit**
 
@@ -306,7 +306,7 @@ git commit -m "feat(admin): money/overdue/portfolio derivations"
 
 ---
 
-## Phase 2 — Data-source interface + in-memory mock
+## Phase 2, Data-source interface + in-memory mock
 
 ### Task 4: ProjectDataSource interface + mock (TDD)
 
@@ -383,7 +383,7 @@ describe('MockDataSource', () => {
 **Step 3: Run to verify failure**
 
 Run: `pnpm --filter @ds/site test`
-Expected: FAIL — cannot resolve `./mock-data-source`.
+Expected: FAIL, cannot resolve `./mock-data-source`.
 
 **Step 4: Implement `mock-data-source.ts`**
 
@@ -413,7 +413,7 @@ const SEED: Project[] = [
     clientContact: 'Owner',
     clientEmail: null,
     clientPhone: null,
-    notes: 'Fitness centre — Athens. First delivered client.',
+    notes: 'Fitness centre, Athens. First delivered client.',
     createdAt: '2026-02-01T00:00:00Z',
     updatedAt: '2026-03-12T00:00:00Z',
   },
@@ -471,7 +471,7 @@ export class MockDataSource implements ProjectDataSource {
 **Step 5: Run tests**
 
 Run: `pnpm --filter @ds/site test`
-Expected: PASS — all MockDataSource tests green.
+Expected: PASS, all MockDataSource tests green.
 
 **Step 6: Commit**
 
@@ -486,7 +486,7 @@ git commit -m "feat(admin): ProjectDataSource interface + in-memory mock"
 - Create: `apps/ds-site/src/app/admin/lib/get-data-source.ts`
 - Create: `apps/ds-site/src/app/admin/actions.ts`
 
-**Step 1: `get-data-source.ts` — single seam to swap in Phase 4**
+**Step 1: `get-data-source.ts`, single seam to swap in Phase 4**
 
 ```ts
 import type { ProjectDataSource } from './data-source'
@@ -502,7 +502,7 @@ export function getDataSource(): ProjectDataSource {
 }
 ```
 
-**Step 2: `actions.ts` — Server Actions with boundary validation**
+**Step 2: `actions.ts`, Server Actions with boundary validation**
 
 ```ts
 'use server'
@@ -593,7 +593,7 @@ git commit -m "feat(admin): data-source resolver + mock-backed Server Actions"
 
 ---
 
-## Phase 3 — Frontend (frontendmaxxing + GSAP, against the mock)
+## Phase 3, Frontend (frontendmaxxing + GSAP, against the mock)
 
 ### Task 6: Port frontendmaxxing card/stagger assets into the admin app
 
@@ -602,7 +602,7 @@ git commit -m "feat(admin): data-source resolver + mock-backed Server Actions"
 - Read: `packages/frontendmaxxing-reference/animations/stagger.js`
 - Create: `apps/ds-site/src/app/admin/admin.css`
 
-**Step 1:** Read the two reference files. Port — do not import — the card surface
+**Step 1:** Read the two reference files. Port, do not import, the card surface
 and stagger keyframes you need into `admin.css`, adapted to the dark palette
 (pure neutral grays, R=G=B). `admin.css` owns all admin styling not already
 covered by the reused `.lock-*` classes in `globals.css`. Keep it under 500 lines.
@@ -612,7 +612,7 @@ Include: `.admin-shell`, `.admin-topbar`, `.admin-totals`, `.admin-grid`,
 `.admin-activity`, and a `@media (prefers-reduced-motion: reduce)` block that
 disables transforms/animations.
 
-**Step 2:** Typecheck/build sanity — `pnpm --filter @ds/site check-types` → PASS.
+**Step 2:** Typecheck/build sanity, `pnpm --filter @ds/site check-types` → PASS.
 
 **Step 3: Commit**
 
@@ -627,13 +627,13 @@ git commit -m "feat(admin): port frontendmaxxing card+stagger styles (dark)"
 - Create: `apps/ds-site/src/app/admin/layout.tsx`
 - Create: `apps/ds-site/src/app/admin/use-stagger-in.ts`
 
-**Step 1:** `layout.tsx` — server component, imports `./admin.css`, renders a
+**Step 1:** `layout.tsx`, server component, imports `./admin.css`, renders a
 dark `<div className="admin-shell">` wrapper with a header (`DS2 · Admin`,
 nav links: Projects `/admin`, Analytics `/admin/analytics`, a logout form
-posting to a `/admin/logout` route — created in Phase 4, stub the link now) and
+posting to a `/admin/logout` route, created in Phase 4, stub the link now) and
 `{children}`. No data fetching here.
 
-**Step 2:** `use-stagger-in.ts` — `'use client'` hook wrapping GSAP:
+**Step 2:** `use-stagger-in.ts`, `'use client'` hook wrapping GSAP:
 
 ```ts
 'use client'
@@ -675,15 +675,15 @@ git commit -m "feat(admin): dark admin layout + GSAP stagger hook"
 - Create: `apps/ds-site/src/app/admin/project-grid.tsx` (`'use client'`)
 - Create: `apps/ds-site/src/app/admin/format.ts`
 
-**Step 1:** `format.ts` — `formatMoney(n)` (e.g. `€6,000`), `formatDate(iso)`,
+**Step 1:** `format.ts`, `formatMoney(n)` (e.g. `€6,000`), `formatDate(iso)`,
 `relativeAge(iso)`. Pure functions.
 
-**Step 2:** `page.tsx` — `export const dynamic = 'force-dynamic'`. Reads
+**Step 2:** `page.tsx`, `export const dynamic = 'force-dynamic'`. Reads
 `getDataSource().listProjects()`, computes `portfolioTotals`, renders the
 `.admin-totals` bar (total contract value, collected, outstanding, MRR, counts)
 and `<ProjectGrid projects={...} />`. Reads `searchParams.status` to filter.
 
-**Step 3:** `project-grid.tsx` — `'use client'`, uses `useStaggerIn`. Renders a
+**Step 3:** `project-grid.tsx`, `'use client'`, uses `useStaggerIn`. Renders a
 `.admin-grid`; each card (`data-stagger`) links to `/admin/project/[id]`, shows
 name, status pill, animated `.admin-progress` bar (width = completionPct),
 lead, `formatMoney(amountPaid)` / `formatMoney(outstanding(p))`, and an
@@ -693,7 +693,7 @@ that set `?status=`.
 **Step 4:** Build check.
 
 Run: `pnpm --filter @ds/site build`
-Expected: PASS — `/admin` route compiles.
+Expected: PASS, `/admin` route compiles.
 
 **Step 5: Manual smoke**
 
@@ -715,18 +715,18 @@ git commit -m "feat(admin): dashboard grid with totals + status filter"
 - Create: `apps/ds-site/src/app/admin/project/[id]/edit-form.tsx` (`'use client'`)
 - Create: `apps/ds-site/src/app/admin/project/[id]/not-found.tsx`
 
-**Step 1:** `page.tsx` — server component. `const { id } = await params`
+**Step 1:** `page.tsx`, server component. `const { id } = await params`
 (Next 16 async params). `getProject(id)` → if null, call `notFound()`. Render
 full record, the activity feed (`listActivity`) newest-first, an "add update"
 form bound to `addActivityAction.bind(null, id)`, and `<EditForm project={p} />`.
 
-**Step 2:** `edit-form.tsx` — `'use client'`. A `<form action={updateAction}>`
+**Step 2:** `edit-form.tsx`, `'use client'`. A `<form action={updateAction}>`
 where `updateAction = updateProjectAction.bind(null, project.id)`. Inputs for
 every editable field (status `<select>` from `PROJECT_STATUSES`/`STATUS_LABELS`,
 `completionPct` range, money number inputs, dates, client contact, notes).
 Reuse `.admin-field` styling.
 
-**Step 3:** `not-found.tsx` — minimal dark "Project not found" with a link back
+**Step 3:** `not-found.tsx`, minimal dark "Project not found" with a link back
 to `/admin`.
 
 **Step 4:** Build + typecheck.
@@ -774,7 +774,7 @@ remain: `Grep "\$ecretAnalytics"` over `apps/ds-site` → zero hits.
 **Step 3:** Build.
 
 Run: `pnpm --filter @ds/site build`
-Expected: PASS — `/admin/analytics` and `/admin/analytics/[project]` compile,
+Expected: PASS, `/admin/analytics` and `/admin/analytics/[project]` compile,
 `$ecretAnalytics` gone.
 
 **Step 4: Commit**
@@ -786,10 +786,10 @@ git commit -m "refactor(admin): relocate analytics under /admin/analytics"
 
 ---
 
-## Phase 4 — Backend: Supabase + auth + middleware gate
+## Phase 4, Backend: Supabase + auth + middleware gate
 
 > Uses the Supabase MCP. Confirm the target project with `list_projects` first.
-> `apply_migration` writes to the live project — read the design's security
+> `apply_migration` writes to the live project, read the design's security
 > section before running.
 
 ### Task 11: Database schema + RLS migration
@@ -883,13 +883,13 @@ git commit -m "feat(admin): supabase schema + RLS for projects/activity/admins"
 - Create: `apps/ds-site/src/app/admin/lib/supabase-data-source.ts`
 - Modify: `apps/ds-site/src/app/admin/lib/get-data-source.ts`
 
-**Step 1:** `supabase-server.ts` — create a request-scoped Supabase client using
+**Step 1:** `supabase-server.ts`, create a request-scoped Supabase client using
 `@supabase/supabase-js` with `NEXT_PUBLIC_SUPABASE_URL` + anon key, reading the
-auth session from the `sb-*` cookies (Next 16 `cookies()` is async — `await`
+auth session from the `sb-*` cookies (Next 16 `cookies()` is async, `await`
 it). Export `getSupabaseServer()` returning the client, and
 `getSessionUser()` returning the authenticated user or `null`.
 
-**Step 2:** `supabase-data-source.ts` — a `SupabaseDataSource` class
+**Step 2:** `supabase-data-source.ts`, a `SupabaseDataSource` class
 implementing `ProjectDataSource`, mapping snake_case columns ↔ the camelCase
 `Project` type. Every method uses the session client (RLS-enforced). Throw on
 Supabase errors so the Server Action surfaces them.
@@ -923,21 +923,21 @@ git commit -m "feat(admin): supabase server client + data source; swap seam"
 - Create: `apps/ds-site/src/app/admin/logout/route.ts`
 - Create: `apps/ds-site/src/app/admin/lib/allowlist.ts`
 
-**Step 1:** `allowlist.ts` — `ADMIN_USERNAMES = ['dimitris','stelios']`; helper
+**Step 1:** `allowlist.ts`, `ADMIN_USERNAMES = ['dimitris','stelios']`; helper
 `isAllowed(username)`.
 
-**Step 2:** `login-action.ts` — `'use server'`. Takes username+password.
+**Step 2:** `login-action.ts`, `'use server'`. Takes username+password.
 Reject if `!isAllowed(username)`. Look up `admin_users` by username (via a
-service-role client — server only — to resolve the linked auth email), then
+service-role client, server only, to resolve the linked auth email), then
 `signInWithPassword({ email, password })` on a cookie-writing server client.
 Generic error message on any failure (no user enumeration). On success redirect
 to `?redirect` or `/admin`.
 
-**Step 3:** `login/page.tsx` — reuse the `.lock-shell/.lock-card/.lock-input`
+**Step 3:** `login/page.tsx`, reuse the `.lock-shell/.lock-card/.lock-input`
 markup from `megagym-login` but with a **username** field + password field,
 posting to the login action. Suspense-wrapped like the existing one.
 
-**Step 4:** `logout/route.ts` — POST handler: sign out (clear Supabase cookies),
+**Step 4:** `logout/route.ts`, POST handler: sign out (clear Supabase cookies),
 redirect to `/admin/login`.
 
 **Step 5:** Wire the layout's logout link/form (Task 7 stub) to POST `/admin/logout`.
@@ -1002,7 +1002,7 @@ git commit -m "feat(admin): middleware gate for /admin and /admin/analytics"
 
 ---
 
-## Phase 5 — Verification & finish
+## Phase 5, Verification & finish
 
 ### Task 15: Full verification gate
 
@@ -1036,7 +1036,7 @@ and the design doc if reality diverged.
 ## YAGNI guardrails (do NOT build)
 
 - No public signup, password reset, or "forgot password" UI.
-- No roles/permissions — both admins are equal.
-- No realtime/websockets, no charts library — text + CSS bars only.
+- No roles/permissions, both admins are equal.
+- No realtime/websockets, no charts library, text + CSS bars only.
 - No new UI framework. Reuse `.lock-*` + ported frontendmaxxing CSS only.
 - Do not touch the megagym/`clients`/`visits` flow beyond the middleware addition.

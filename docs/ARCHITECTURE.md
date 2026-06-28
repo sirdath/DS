@@ -1,4 +1,4 @@
-# DS monorepo — architecture snapshot
+# DS monorepo, architecture snapshot
 
 > Structural snapshot of the workspace and its internal (`@ds/*`) dependency edges.
 > Regenerate when packages or cross-package deps change. GitHub renders the Mermaid below.
@@ -39,10 +39,10 @@ graph TD
 
 ## Reading it
 
-- **`@ds/site` is the only integrator** — it consumes `@ds/tokens`, `@ds/ui`, and the shared `@ds/eslint-config` / `@ds/tsconfig`. Everything else is currently standalone.
-- **`@ds/ui` does not yet depend on `@ds/tokens`** — worth wiring up so shared components pull from the token source rather than re-declaring values.
+- **`@ds/site` is the only integrator**, it consumes `@ds/tokens`, `@ds/ui`, and the shared `@ds/eslint-config` / `@ds/tsconfig`. Everything else is currently standalone.
+- **`@ds/ui` does not yet depend on `@ds/tokens`**, worth wiring up so shared components pull from the token source rather than re-declaring values.
 - **`@ds/inspo-gallery`, `@ds/video`, `@ds/motion-editor`, `@ds/lead-finder`** are independent (no internal deps yet).
-- **`frontendmaxxing-reference`** is a read-only inspiration library (no `package.json`) — ported *from*, never imported directly (per CLAUDE.md).
+- **`frontendmaxxing-reference`** is a read-only inspiration library (no `package.json`), ported *from*, never imported directly (per CLAUDE.md).
 
 ## Tree (top 2 levels)
 
@@ -54,4 +54,4 @@ DATHSTEL/
 └── docs/        brand/, ARCHITECTURE.md, DELIVERY-CHECKLIST.md, …
 ```
 
-*For a deeper, queryable graph (call chains, per-symbol edges), drop a repo ZIP into [gitnexus.vercel.app](https://gitnexus.vercel.app) — runs client-side, safe for this private repo.*
+*For a deeper, queryable graph (call chains, per-symbol edges), drop a repo ZIP into [gitnexus.vercel.app](https://gitnexus.vercel.app), runs client-side, safe for this private repo.*

@@ -58,7 +58,7 @@ export function LinkFields({ project: p }: Props) {
       <h3 className="admin-form__section-title">Links</h3>
 
       <div className="admin-form__group">
-        <label htmlFor="pf-url" className="admin-form__label">Live site — the site we built</label>
+        <label htmlFor="pf-url" className="admin-form__label">Live site, the site we built</label>
         <input
           id="pf-url"
           name="url"

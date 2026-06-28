@@ -23,7 +23,7 @@ export const TRACKED_SITES: TrackedSite[] = [
   {
     slug: 'megagym',
     name: 'MegaGym',
-    description: 'Fitness centre — Athens',
+    description: 'Fitness centre, Athens',
     pathPrefix: '/MegaGym-Website',
     openPath: '/MegaGym-Website/',
     url: 'ds2-consulting.com/MegaGym-Website',
@@ -31,7 +31,7 @@ export const TRACKED_SITES: TrackedSite[] = [
   {
     slug: 'samioglou',
     name: 'Samioglou',
-    description: 'Moving & removals — Athens',
+    description: 'Moving & removals, Athens',
     pathPrefix: '/samioglou',
     openPath: '/samioglou/',
     url: 'ds2-consulting.com/samioglou',

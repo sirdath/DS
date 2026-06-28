@@ -8,7 +8,7 @@ export default function AegisWorkspacePage() {
         <span className="ws-head__eyebrow">Aegis · Site audit</span>
         <h1 className="ws-head__title">Audit any site</h1>
         <p className="ws-head__sub">
-          Paste a URL — yours or a prospect&rsquo;s. Aegis pulls the technical reality (speed, accessibility,
+          Paste a URL, yours or a prospect&rsquo;s. Aegis pulls the technical reality (speed, accessibility,
           SEO) and turns it into the few fixes that matter, with the EU Accessibility Act exposure spelled out.
         </p>
       </div>

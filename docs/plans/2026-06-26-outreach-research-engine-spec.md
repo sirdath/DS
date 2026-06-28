@@ -1,12 +1,12 @@
-# Outreach Research Engine ("Peitho") — Build Spec (FINAL)
+# Outreach Research Engine ("Peitho"), Build Spec (FINAL)
 
-**Status:** Ready to build. Final handoff spec — all decisions locked (see §1). Written 2026-06-26.
+**Status:** Ready to build. Final handoff spec, all decisions locked (see §1). Written 2026-06-26.
 **Relationship to other docs:** Extends and supersedes the parked
 [2026-06-17-lead-outreach-research.md](2026-06-17-lead-outreach-research.md), which designed the
 *email sender*. This doc designs the **deep-research brief engine** that feeds it (and feeds manual
 calls). Build the brief engine first (Phases 1–3); the email sender (Phase 4) reuses Plutus.
 
-> **For the implementing session:** every decision is locked — there is nothing to ask the user.
+> **For the implementing session:** every decision is locked, there is nothing to ask the user.
 > Follow §1 (decisions) → §13 (build order). All code skeletons are grounded in existing files;
 > match the surrounding style exactly (§1.7).
 
@@ -18,10 +18,10 @@ A new **`/admin/outreach`** tab. The admin picks a business from the existing `m
 table, picks a model (Opus default / Sonnet cheap toggle), clicks **"Research"**, and the Anthropic
 SDK runs a web-grounded research pass (web search) and produces a **structured, readable company
 brief**: overview, what they do, ICP/customers, ranked pain points, market environment, competitors,
-recent signals, a recommended outreach angle, and call talking points — each with a **confidence
+recent signals, a recommended outreach angle, and call talking points, each with a **confidence
 score and cited sources**. The brief is stored (with full history) and rendered in the admin. From a
 ready brief the admin can **(a) generate a personalised sales email** (Phase 4: Claude drafts using
-the brief as grounding, fact-checked, approval-gated, sent via Resend — reusing the Plutus pipeline)
+the brief as grounding, fact-checked, approval-gated, sent via Resend, reusing the Plutus pipeline)
 or **(b) read the talking points and call the business manually**.
 
 It mirrors the proven **Plutus** architecture: a pure engine package (`@ds/peitho`) that owns the
@@ -39,26 +39,26 @@ page, server actions, a route handler) that owns auth, persistence, and UI.
    (Firecrawl exists in `packages/argus/src/observers/firecrawl.ts` and can be added later; **not**
    required.)
 2. **Two-stage Claude pipeline** (mirrors aegis/argus "gather facts → one structured call"):
-   - **Stage A — Research** (`research()`): `client.messages.create` with the web tool(s) and an
+   - **Stage A, Research** (`research()`): `client.messages.create` with the web tool(s) and an
      agentic continuation loop (handle `stop_reason: "pause_turn"`). Produces a cited dossier (text)
      + the list of sources the model actually consulted.
-   - **Stage B — Synthesize** (`synthesizeBrief()`): a second call **with no tools** that takes the
+   - **Stage B, Synthesize** (`synthesizeBrief()`): a second call **with no tools** that takes the
      dossier + lead facts and emits the typed `CompanyBrief` JSON via
      `output_config: { format: { type: "json_schema", schema } }`. Toolless so structured output
      works cleanly (it can't combine with an active server-tool loop, and is incompatible with
      citations).
-3. **🔒 Model routing — Opus 4.8 default, Sonnet 4.6 toggle.** Default both stages to
+3. **🔒 Model routing, Opus 4.8 default, Sonnet 4.6 toggle.** Default both stages to
    **`claude-opus-4-8`** (deep reasoning, per [CLAUDE.md](../../CLAUDE.md) §"Model routing"). The
    research route accepts a `model` param (`"opus"` | `"sonnet"`); the UI exposes a per-run
    **fast/cheap** switch that maps `"sonnet"` → `claude-sonnet-4-6`. Store the chosen model on the
    brief row. Adaptive thinking + `effort` per the profile (§1.8).
-4. **🔒 Storage — keep full history.** `outreach_briefs` is append-only: each research run inserts a
+4. **🔒 Storage, keep full history.** `outreach_briefs` is append-only: each research run inserts a
    new row; the newest *ready* row is marked `is_current = true`. There is **no** unique index on
    `lead_id`. A **failed** run never clears the previous good brief (it leaves the old `is_current`
    row intact). The UI shows the current brief and lets you browse prior runs.
-5. **🔒 Granularity — one lead per research call; multi-select fires sequentially.** The route handles
+5. **🔒 Granularity, one lead per research call; multi-select fires sequentially.** The route handles
    a single lead per request. For a multi-select, the client fires requests **one at a time**
-   (await each before the next) — gentle on rate limits + cost — each row showing its own spinner.
+   (await each before the next), gentle on rate limits + cost, each row showing its own spinner.
 6. **Shape = admin-only, human-in-the-loop.** Briefs are generated on demand (not a cron spray).
    Email sends (Phase 4) stay approval-gated (Plutus CAS pattern). No tracking pixels.
 7. **🔒 Code style by location** (match the surrounding files exactly):
@@ -68,10 +68,10 @@ page, server actions, a route handler) that owns auth, persistence, and UI.
      `packages/plutus/src/*`).
    - TS strict, no `any`, functional React, files < 500 lines, components < 200 lines
      ([coding-style.md](../../.claude/rules/coding-style.md)).
-8. **🔒 Hosting / runtime — ship the 60s-safe "lean" profile by default; widen to "deep" on Vercel
+8. **🔒 Hosting / runtime, ship the 60s-safe "lean" profile by default; widen to "deep" on Vercel
    Pro.** The Vercel plan is unconfirmed, so the route defaults to `maxDuration = 60` and a **lean**
    research profile sized to finish under 60s. A single constant switches to the **deep** profile;
-   when Pro is confirmed, also raise `maxDuration` to `300`. See §1.9. (Package name `@ds/peitho` —
+   when Pro is confirmed, also raise `maxDuration` to `300`. See §1.9. (Package name `@ds/peitho`, 
    Greek goddess of persuasion, matches the deity-named package convention; rename freely.)
 9. **🔒 Research profiles** (defined once in `@ds/peitho/src/client.ts`, selected by the route):
 
@@ -120,8 +120,8 @@ Two-pane working surface, styled with existing `.admin-*` classes (see
 - **Researching** → button shows spinner + keeps its label ("Researching…"); status pill
   `researching`; refresh until ready. Respect the 150–300ms spinner delay.
 - **Ready** → render the brief; `[Re-research]` available (creates a new history row).
-- **Failed** → red status, show `error`, `[Retry]` — the previous current brief (if any) still shows.
-- **Low confidence** (`< 0.6`) → render with a visible "Preliminary — confidence X.XX" banner + the
+- **Failed** → red status, show `error`, `[Retry]`, the previous current brief (if any) still shows.
+- **Low confidence** (`< 0.6`) → render with a visible "Preliminary, confidence X.XX" banner + the
   `gaps` list (CLAUDE.md §"Research-agent output discipline").
 - **History** → list prior runs (date · model · confidence); selecting one shows it read-only.
 - Deep-link the selected lead via `?lead=<id>` (URL state, not just `useState`).
@@ -149,7 +149,7 @@ internal so it can be blunt; the **email** (Phase 4) must follow the challenge-f
 │  /api/admin/outreach/research/route.ts    outreach_briefs (NEW, append-only)   │
 │        │  assertAdmin → load lead                                              │
 │        ▼                                                                       │
-│   @ds/peitho  (NEW pure package — mirrors @ds/plutus)                          │
+│   @ds/peitho  (NEW pure package, mirrors @ds/plutus)                          │
 │     buildFacts(lead)  →  research(facts, profile)  →  synthesizeBrief(...)     │
 │            │                  │ web_search [+web_fetch]    │ json_schema        │
 │            │                  ▼ (Stage A)                  ▼ (Stage B)          │
@@ -174,7 +174,7 @@ Create `packages/peitho/`. Mirror `packages/plutus/`'s structure, `package.json`
 ### 4.1 `package.json`
 Copy [packages/plutus/package.json](../../packages/plutus/package.json) and rename to `@ds/peitho`.
 Depend on `@anthropic-ai/sdk` at the **same version Plutus pins** (`^0.104.1` per
-[packages/plutus/src/client.ts](../../packages/plutus/src/client.ts)). Pure TS — no React, no
+[packages/plutus/src/client.ts](../../packages/plutus/src/client.ts)). Pure TS, no React, no
 Supabase (persistence lives in the app layer, exactly like Plutus).
 
 ### 4.2 File map
@@ -185,8 +185,8 @@ packages/peitho/src/
   types.ts          OutreachFacts, ResearchResult, CompanyBrief, BriefSource, PeithoUsage, ResearchProfile
   schema.ts         BRIEF_SCHEMA (json_schema for CompanyBrief)
   facts.ts          buildFacts(lead): OutreachFacts                              (pure, code-computed)
-  research.ts       research(facts, opts): ResearchResult                       (Stage A — web tools loop)
-  synthesize.ts     synthesizeBrief(facts, dossier, opts): { brief, usage, usd } (Stage B — json_schema)
+  research.ts       research(facts, opts): ResearchResult                       (Stage A, web tools loop)
+  synthesize.ts     synthesizeBrief(facts, dossier, opts): { brief, usage, usd } (Stage B, json_schema)
   factcheck.ts      factCheckBrief(brief, facts): { confidence, gaps, issues }
   render.ts         renderBriefMarkdown(brief, sources): string                 (brief → markdown, like aegis/report.ts)
   prompts.ts        RESEARCH_SYSTEM, SYNTH_SYSTEM
@@ -202,7 +202,7 @@ packages/peitho/src/
 import Anthropic from "@anthropic-ai/sdk";
 import type { ResearchProfile } from "./types.js";
 
-export const OPUS   = "claude-opus-4-8" as const;    // default — deep reasoning (CLAUDE.md routing)
+export const OPUS   = "claude-opus-4-8" as const;    // default, deep reasoning (CLAUDE.md routing)
 export const SONNET = "claude-sonnet-4-6" as const;  // fast/cheap toggle
 
 /** Map the UI/route token to a model id. */
@@ -278,7 +278,7 @@ export interface OutreachFacts {
   phone: string | null;
   email: string | null;
   lang: Lang;                   // el for .gr / Greek area, else en (facts.ts)
-  // Signals already mined by the lead-finder — give the model a head start:
+  // Signals already mined by the lead-finder, give the model a head start:
   pitchAngle: string | null;   // marketing_leads.pitch_angle
   tags: string[];              // marketing_leads.tags  (e.g. "not-mobile-friendly")
   tech: string[];              // marketing_leads.tech  (e.g. "jQuery 1.11")
@@ -287,7 +287,7 @@ export interface OutreachFacts {
 
 export interface BriefSource { title: string; url: string; }
 
-/** The structured, readable brief — what the UI renders and what the email (Phase 4) uses. */
+/** The structured, readable brief, what the UI renders and what the email (Phase 4) uses. */
 export interface CompanyBrief {
   overview: string;                 // 2–4 sentences: who they are
   whatTheyDo: string;               // products/services
@@ -295,11 +295,11 @@ export interface CompanyBrief {
   painPoints: { title: string; detail: string; severity: "high" | "medium" | "low" }[];
   marketEnvironment: string;        // competition, trends, local market
   competitors: string[];            // named competitors if found
-  recentSignals: string[];          // news, hiring, launches, review trends — recency matters
+  recentSignals: string[];          // news, hiring, launches, review trends, recency matters
   outreachAngle: string;            // the ONE honest hook DS leads with (challenge-first)
   talkingPoints: string[];          // 3–6 bullets for a manual call
   emailSeeds: string[];             // 2–3 candidate subject/opening ideas (input to Phase 4)
-  confidence: number;               // 0..1 — the model's self-assessed grounding
+  confidence: number;               // 0..1, the model's self-assessed grounding
   gaps: string[];                   // what it couldn't verify
 }
 
@@ -372,7 +372,7 @@ export async function research(facts: OutreachFacts, opts: ResearchOptions): Pro
     lastText = extractText(res.content) || lastText;
 
     if (res.stop_reason === "refusal") break;         // route records `failed`; don't throw here
-    if (res.stop_reason !== "pause_turn") break;      // end_turn / max_tokens — done
+    if (res.stop_reason !== "pause_turn") break;      // end_turn / max_tokens, done
     messages.push({ role: "assistant", content: res.content }); // resume; NO "continue" user msg
   }
 
@@ -385,7 +385,7 @@ export async function research(facts: OutreachFacts, opts: ResearchOptions): Pro
 }
 ```
 
-### 4.7 `synthesize.ts` (Stage B — structured)
+### 4.7 `synthesize.ts` (Stage B, structured)
 ```typescript
 import { getClient, OPUS, costUsd } from "./client.js";
 import { SYNTH_SYSTEM } from "./prompts.js";
@@ -412,7 +412,7 @@ export async function synthesizeBrief(
       content: [
         "Synthesize the company brief. Facts (use exactly, never contradict):",
         "```json", JSON.stringify(facts, null, 2), "```",
-        "Research dossier (your only evidence — do not invent beyond it):",
+        "Research dossier (your only evidence, do not invent beyond it):",
         research.dossier,
       ].join("\n"),
     }],
@@ -476,14 +476,14 @@ No Claude call. It:
 
 ### 4.10 `prompts.ts`
 Two careful, cache-stable system prompts. Tune per the Opus 4.8 guidance in §6 (it under-reaches for
-tools by default — be explicit about *when* to search; it narrates a lot — ask for a tight dossier).
-- **`RESEARCH_SYSTEM`** — "You are the research layer of DS's outreach engine. Use web search to
+tools by default, be explicit about *when* to search; it narrates a lot, ask for a tight dossier).
+- **`RESEARCH_SYSTEM`**, "You are the research layer of DS's outreach engine. Use web search to
   build an accurate, current dossier about a business." Rules: search the business name + area +
   website first; verify what they do, who they serve, their market, named competitors, recent
-  signals (news/hiring/reviews); **never invent** — say so if not found; prefer primary sources;
+  signals (news/hiring/reviews); **never invent**, say so if not found; prefer primary sources;
   cite every nontrivial claim with its URL; keep the dossier under ~1200 words (lean) ; end with an
   explicit "Confidence & gaps" section. Include a `<search_first>` instruction (Opus 4.8 needs it).
-- **`SYNTH_SYSTEM`** — "You convert a research dossier into a structured outreach brief for a
+- **`SYNTH_SYSTEM`**, "You convert a research dossier into a structured outreach brief for a
   digital-solutions consultancy (DS) that sells websites, apps, data/ML, and chatbots and works
   challenge-first." Rules: use ONLY the dossier + facts; `outreachAngle` = one honest, specific hook
   tied to a real observed problem (protective framing, never "your site is bad"); rank `painPoints`;
@@ -497,7 +497,7 @@ JSON directly.
 
 ---
 
-## 5. Data model (new migration — append-only with history)
+## 5. Data model (new migration, append-only with history)
 
 Create `apps/ds-site/supabase/migrations/20260626120000_outreach_briefs.sql` (timestamp after the
 latest, `20260617_admin_notes.sql`). Follow the conventions in
@@ -506,7 +506,7 @@ and [20260519154207_admin_panel_init.sql](../../apps/ds-site/supabase/migrations
 (`is_admin()` RLS, `set_updated_at()`, admin + service_role grants).
 
 ```sql
--- Outreach research briefs — append-only history of deep-research briefs per marketing lead.
+-- Outreach research briefs, append-only history of deep-research briefs per marketing lead.
 -- Each research run inserts a row; the newest ready row has is_current = true. A failed run does
 -- NOT clear the previous current brief. Admin-only (mirrors marketing_leads).
 
@@ -554,33 +554,33 @@ create policy outreach_briefs_admin_all on public.outreach_briefs
 grant select, insert, update, delete on public.outreach_briefs to authenticated, service_role;
 ```
 
-Types are **hand-written** in this repo (no codegen) — extend the app-side TS interfaces by hand.
+Types are **hand-written** in this repo (no codegen), extend the app-side TS interfaces by hand.
 
 **Phase 4 tables** (`outreach_emails`, `outreach_suppressions`) come from the parked
-[2026-06-17 doc](2026-06-17-lead-outreach-research.md) — create them only when building the sender.
+[2026-06-17 doc](2026-06-17-lead-outreach-research.md), create them only when building the sender.
 
 ---
 
-## 6. Claude API specifics (authoritative — verified 2026-06-26 against the in-repo `claude-api` ref)
+## 6. Claude API specifics (authoritative, verified 2026-06-26 against the in-repo `claude-api` ref)
 
 ### 6.1 Models & pricing
-- **`claude-opus-4-8`** (default) — $5 / $25 per 1M (in/out). 1M context, 128K max out.
-- **`claude-sonnet-4-6`** (cheap toggle + Phase-4 email) — $3 / $15 per 1M.
-- Use **bare** model id strings — never append a date suffix.
+- **`claude-opus-4-8`** (default), $5 / $25 per 1M (in/out). 1M context, 128K max out.
+- **`claude-sonnet-4-6`** (cheap toggle + Phase-4 email), $3 / $15 per 1M.
+- Use **bare** model id strings, never append a date suffix.
 
 ### 6.2 Web search / web fetch (server tools)
 - Tool types: **`web_search_20260209`** (always) and **`web_fetch_20260209`** (deep profile only).
   Declare in `tools`; no beta header.
-- **Do NOT also declare `code_execution`** alongside the `_20260209` web tools — dynamic filtering
+- **Do NOT also declare `code_execution`** alongside the `_20260209` web tools, dynamic filtering
   runs code under the hood; a second exec env confuses the model.
 - `web_fetch` only fetches URLs already in the conversation (i.e. ones search surfaced). Params used:
   `max_uses`.
 - **Results:** a `web_search_tool_result` block whose `.content` is a **list** of `web_search_result`
   (`url`, `title`). On error its `.content` is a single object (e.g.
-  `{ error_code: "max_uses_exceeded" }`) — branch on list-vs-object before indexing. Collect into
+  `{ error_code: "max_uses_exceeded" }`), branch on list-vs-object before indexing. Collect into
   `ResearchResult.sources`.
 - **Continuation:** the server runs its own loop; on its cap it returns `stop_reason: "pause_turn"`.
-  To continue: append the assistant `content` and re-send — **do not** add a "Continue." user
+  To continue: append the assistant `content` and re-send, **do not** add a "Continue." user
   message. Cap with `maxContinuations`.
 - Server-tool errors return HTTP 200 with an error block, not an exception.
 
@@ -590,17 +590,17 @@ Types are **hand-written** in this repo (no codegen) — extend the app-side TS 
 - Depth via `output_config: { effort: <profile.effort> }`.
 - Structured output: `output_config: { format: { type: "json_schema", schema } }` on the **toolless**
   synthesis call. Schema rules in §4.8. Incompatible with citations and with an active server-tool
-  loop — hence the separate synthesis call.
+  loop, hence the separate synthesis call.
 - Prompt caching: stable system prompt in `system: [{ type, text, cache_control: { type:
   "ephemeral" } }]`; per-lead facts go last. Verify `usage.cache_read_input_tokens > 0` on the 2nd+
   call. (Plutus already does this.)
 
 ### 6.4 Cost accounting
 - Token cost via `costUsd(model, res.usage)` summed across continuation hops.
-- **🔒 Web search billed per search** — `searchCostUsd = search_count * WEB_SEARCH_USD_PER_1K / 1000`
+- **🔒 Web search billed per search**, `searchCostUsd = search_count * WEB_SEARCH_USD_PER_1K / 1000`
   with `WEB_SEARCH_USD_PER_1K = 10` (§4.3). Store `tokenCost + searchCost` in
   `outreach_briefs.cost_usd`.
-- `max_tokens`: profile `researchMaxTokens` (4000 lean / 8000 deep), 4000 synthesis — under the
+- `max_tokens`: profile `researchMaxTokens` (4000 lean / 8000 deep), 4000 synthesis, under the
   non-streaming ~16K timeout guidance; no streaming needed.
 - `stop_reason: "refusal"` → record `failed`, don't crash. Rare for ordinary SMEs.
 
@@ -631,7 +631,7 @@ Create `apps/ds-site/src/app/admin/(app)/outreach/page.tsx`. Copy the shape of
 
 ### 7.3 Client components
 - `outreach-table.tsx` (`'use client'`): left lead picker. Mirrors
-  [leads-table.tsx](../../apps/ds-site/src/app/admin/leads-table.tsx) — `useTransition`, the
+  [leads-table.tsx](../../apps/ds-site/src/app/admin/leads-table.tsx), `useTransition`, the
   Opus/Sonnet toggle, multi-select. Per-row `[Research]` POSTs `{ leadId, model }` to
   `/api/admin/outreach/research`; **"Research selected" awaits each request before the next** (locked
   decision #5). After each success, `router.refresh()`.
@@ -656,10 +656,10 @@ async function db() { await assertAdmin(); return getSupabaseServerClient() }
 export async function markContacted(leadId: string): Promise<void> { /* update marketing_leads.contacted = true; revalidatePath(PATH) */ }
 export async function deleteBrief(briefId: string): Promise<void> { /* delete outreach_briefs by id; revalidatePath(PATH) */ }
 ```
-(The heavy research work runs in a route handler, not a server action — it's long-running and needs
+(The heavy research work runs in a route handler, not a server action, it's long-running and needs
 `maxDuration`.)
 
-### 7.5 Route handler — research (history-aware)
+### 7.5 Route handler, research (history-aware)
 Create `apps/ds-site/src/app/api/admin/outreach/research/route.ts`. Auth pattern from
 [find-area/route.ts](../../apps/ds-site/src/app/api/admin/leads/find-area/route.ts):
 ```ts
@@ -727,7 +727,7 @@ export async function POST(request: Request): Promise<Response> {
 > **Note on the partial unique index** `where is_current`: set the new row current *before* clearing
 > the old one and there's a momentary 2-current overlap that the unique index would reject. The order
 > above (set new current, then clear others `neq id`) is fine because the *update that would
-> conflict* is the demotion, which only ever sets `is_current=false` — never two trues. If Postgres
+> conflict* is the demotion, which only ever sets `is_current=false`, never two trues. If Postgres
 > still flags it under your isolation level, swap to: clear existing current first
 > (`update ... set is_current=false where lead_id=? and is_current`), then set the new row current.
 
@@ -741,13 +741,13 @@ reference in the app `tsconfig` the same way `@ds/plutus` is wired, and add the 
 
 ---
 
-## 8. Phase 4 — sales email from the brief (reuse Plutus)
+## 8. Phase 4, sales email from the brief (reuse Plutus)
 
 Only after Phases 1–3 ship. Realises "use the brief as context for a sales email for automated
-outreach" — the parked [2026-06-17 doc](2026-06-17-lead-outreach-research.md) made concrete by a real
+outreach", the parked [2026-06-17 doc](2026-06-17-lead-outreach-research.md) made concrete by a real
 brief.
 
-- **Draft:** add `draftEmail(facts, brief, opts)` to `@ds/peitho` — one `claude-sonnet-4-6` call
+- **Draft:** add `draftEmail(facts, brief, opts)` to `@ds/peitho`, one `claude-sonnet-4-6` call
   (mirrors [packages/plutus/src/draft.ts](../../packages/plutus/src/draft.ts)) with a challenge-first
   DS system prompt, `output_config.format` = `{ subject, body }` json_schema, the brief's
   `outreachAngle` + `painPoints` + `emailSeeds` as grounding, language = `facts.lang`. Add
@@ -758,7 +758,7 @@ brief.
   [approve.ts](../../apps/ds-site/src/app/workspace/(app)/plutus/lib/approve.ts) (the `claimPending`
   compare-and-swap = exactly-once send). New env: `OUTREACH_EMAIL_FROM`, `OUTREACH_REPLY_TO` (reuse
   `RESEND_API_KEY`).
-- **Manual call path needs no code** — the brief's `talkingPoints` + `phone` are already on screen.
+- **Manual call path needs no code**, the brief's `talkingPoints` + `phone` are already on screen.
 
 ---
 
@@ -768,9 +768,9 @@ Already present (verify in `apps/ds-site/.env.example`): `ANTHROPIC_API_KEY`,
 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`,
 `ADMIN_ALLOWED_EMAILS`, `RESEND_API_KEY`.
 
-Add now: `OUTREACH_RESEARCH_DEEP` (optional, `"true"` to enable the deep profile — leave unset for
+Add now: `OUTREACH_RESEARCH_DEEP` (optional, `"true"` to enable the deep profile, leave unset for
 lean). Add for Phase 4: `OUTREACH_EMAIL_FROM`, `OUTREACH_REPLY_TO`. (Optional later:
-`FIRECRAWL_API_KEY` for a deep-fetch observer — already used by `@ds/argus`.) Document all in
+`FIRECRAWL_API_KEY` for a deep-fetch observer, already used by `@ds/argus`.) Document all in
 `.env.example`. Never commit secrets.
 
 ---
@@ -785,13 +785,13 @@ lean). Add for Phase 4: `OUTREACH_EMAIL_FROM`, `OUTREACH_REPLY_TO`. (Optional la
   fine to log.
 - Research uses only public web data via official Anthropic tools; the brief is internal sales
   intel. The **email** (Phase 4) must carry sender identity + one-click unsubscribe and respect the
-  suppression list (parked doc, locked decision #2) — that's where compliance bites, not the brief.
+  suppression list (parked doc, locked decision #2), that's where compliance bites, not the brief.
 
 ---
 
 ## 11. Testing (per coding-style.md "AAA"; behaviour, not implementation)
 
-Pure-engine units (no network — inject a fake Anthropic `client` via `opts.client`, like Plutus does
+Pure-engine units (no network, inject a fake Anthropic `client` via `opts.client`, like Plutus does
 with `StubChannel`/`SpyChannel`):
 - `facts.ts`: language pick (`.gr` → el; "Athens, Greece" → el; "Shoreditch, London" → en); maps
   tags/tech/pitchAngle through.
@@ -843,11 +843,11 @@ App integration:
    button (sequential multi-select); verify end-to-end on one lead.
 8. **States & polish** (spinner timing, confidence/preliminary banner, deep-link `?lead=`/`?model=`,
    empty/error/history states).
-9. **Phase 4 (email)** — only if approved: `draftEmail` + `outreach_emails`/`outreach_suppressions`
+9. **Phase 4 (email)**, only if approved: `draftEmail` + `outreach_emails`/`outreach_suppressions`
    + reuse Plutus Resend/CAS.
 
 **Definition of done (Phases 1–3):** from `/admin/outreach`, selecting a real lead, choosing a model,
-and clicking Research produces — within the lean time budget — a stored brief (new history row marked
+and clicking Research produces, within the lean time budget, a stored brief (new history row marked
 current) with non-empty overview, ≥1 pain point, an outreach angle, ≥3 talking points, a confidence
 score, and ≥1 cited source, rendered in the right pane, with cost/tokens recorded; a failed run
 leaves any prior brief intact.

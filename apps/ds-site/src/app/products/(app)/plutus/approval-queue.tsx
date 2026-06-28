@@ -73,13 +73,13 @@ export function ApprovalQueue({ items }: { items: QueueVM[] }) {
               </div>
             ) : (
               <p className={`wp-draft__decision is-${d}`}>
-                {d === 'approved' ? '✓ Approved — queued to send' : '✕ Rejected'}
+                {d === 'approved' ? '✓ Approved, queued to send' : '✕ Rejected'}
               </p>
             )}
           </div>
         )
       })}
-      <p className="wp-note">Preview — approvals here don&rsquo;t send anything.</p>
+      <p className="wp-note">Preview, approvals here don&rsquo;t send anything.</p>
     </div>
   )
 }

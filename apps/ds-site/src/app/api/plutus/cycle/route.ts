@@ -31,7 +31,7 @@ export async function POST(request: Request): Promise<Response> {
     return NextResponse.json({ error: 'Could not read your receivables.' }, { status: 502 })
   }
   if (!ctx) {
-    return NextResponse.json({ queued: 0, drafted: 0, message: 'No invoices yet — import a CSV first.' })
+    return NextResponse.json({ queued: 0, drafted: 0, message: 'No invoices yet, import a CSV first.' })
   }
 
   try {

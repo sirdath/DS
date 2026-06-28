@@ -82,7 +82,7 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
       <div className="admin-page-header">
         <p className="admin-page-eyebrow">DS2 · Calendar</p>
         <h1 className="admin-page-title">What we have to do</h1>
-        <p className="admin-page-sub">Shared between Dath and Stel — you both see and edit the same events.</p>
+        <p className="admin-page-sub">Shared between Dath and Stel, you both see and edit the same events.</p>
       </div>
 
       <div className="cal__layout">

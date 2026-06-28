@@ -142,7 +142,7 @@ export function OutreachTable({ leads, latestByLead, selectedLeadId, model, filt
                 <Link className="admin-outreach__rowmain" href={hrefFor({ lead: l.id })} aria-current={isOpen ? 'true' : undefined}>
                   <span className="admin-outreach__name" translate="no">{l.name || 'Untitled'}</span>
                   <span className="admin-outreach__meta">
-                    {l.category ?? '—'} {l.priority ? `· ${l.priority}` : ''}
+                    {l.category ?? '–'} {l.priority ? `· ${l.priority}` : ''}
                   </span>
                 </Link>
                 {pill && (

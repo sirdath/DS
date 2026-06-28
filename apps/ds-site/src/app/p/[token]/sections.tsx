@@ -42,7 +42,7 @@ function ArgusShowcase() {
   return (
     <div className="pv2-cap">
       <p className="pv2-cap__lead">
-        Every week, Argus reads your competitors so you don&rsquo;t have to — and tells you only what changed and why
+        Every week, Argus reads your competitors so you don&rsquo;t have to, and tells you only what changed and why
         it matters.
       </p>
       <div className="pv2-chips">
@@ -58,7 +58,7 @@ function PlutusShowcase() {
   const steps = [
     { t: 'Predict', d: 'Flags the invoices most likely to pay late, before they do.' },
     { t: 'Prioritise', d: 'Ranks exactly who to chase first by amount and risk.' },
-    { t: 'Draft', d: 'Writes the reminder in your voice — you approve before it sends.' },
+    { t: 'Draft', d: 'Writes the reminder in your voice, you approve before it sends.' },
   ]
   return (
     <div className="pv2-steps">
@@ -76,9 +76,9 @@ function PlutusShowcase() {
 function XeniaShowcase() {
   const turns = [
     { who: 'them', text: 'Γεια σας, έχετε τραπέζι για 4 απόψε στις 9;' },
-    { who: 'xenia', text: 'Καλησπέρα! Ναι — έχουμε τραπέζι για 4 στις 21:00. Να το κρατήσω; Σε ποιο όνομα;' },
+    { who: 'xenia', text: 'Καλησπέρα! Ναι, έχουμε τραπέζι για 4 στις 21:00. Να το κρατήσω; Σε ποιο όνομα;' },
     { who: 'them', text: 'Ναι, στο όνομα Νίκος.' },
-    { who: 'xenia', text: 'Κλεισμένο, Νίκο — 4 άτομα, 21:00 απόψε. Θα σας περιμένουμε!' },
+    { who: 'xenia', text: 'Κλεισμένο, Νίκο, 4 άτομα, 21:00 απόψε. Θα σας περιμένουμε!' },
   ]
   return (
     <div className="pv2-chat">
@@ -97,7 +97,7 @@ export function buildSection(slug: string): DeckSection | null {
         key: slug, name: 'Fama', accent: '#6D5DD3',
         eyebrow: 'Fama · Review intelligence',
         headline: 'Every review, read for you.',
-        sub: 'Sentiment, themes, reply drafts and the few things to fix next — in Greek and English.',
+        sub: 'Sentiment, themes, reply drafts and the few things to fix next, in Greek and English.',
         body: <div className="pv2-embed"><FamaReportView report={DEMO_FAMA_REPORT} /></div>,
       }
     case 'site-audit':
@@ -105,7 +105,7 @@ export function buildSection(slug: string): DeckSection | null {
         key: slug, name: 'Aegis', accent: '#F5C451',
         eyebrow: 'Aegis · Site audit',
         headline: 'The technical reality, in plain words.',
-        sub: 'Speed, accessibility (EU Accessibility Act) and SEO — with the fixes that matter.',
+        sub: 'Speed, accessibility (EU Accessibility Act) and SEO, with the fixes that matter.',
         body: <AegisShowcase />,
       }
     case 'competitor-watch':
@@ -113,7 +113,7 @@ export function buildSection(slug: string): DeckSection | null {
         key: slug, name: 'Argus', accent: '#E896C4',
         eyebrow: 'Argus · Competitor watch',
         headline: 'Know what your market just did.',
-        sub: 'Weekly intelligence on your competitors’ moves — without you lifting a finger.',
+        sub: 'Weekly intelligence on your competitors’ moves, without you lifting a finger.',
         body: <ArgusShowcase />,
       }
     case 'collections':
@@ -137,7 +137,7 @@ export function buildSection(slug: string): DeckSection | null {
         key: slug, name: 'Panoptes', accent: '#22D3EE',
         eyebrow: 'Panoptes · Site selection',
         headline: 'The best place to open, scored.',
-        sub: 'Demand, competition and access scored across a city — on a live map.',
+        sub: 'Demand, competition and access scored across a city, on a live map.',
         body: (
           <div className="pv2-embed pv2-embed--map">
             <iframe src="/panoptes-viewer?demo=1" title="Panoptes demo map" loading="lazy" />

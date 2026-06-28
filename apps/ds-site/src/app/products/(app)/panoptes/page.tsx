@@ -10,7 +10,7 @@ export default function PanoptesEmbedPage() {
           <span className="ws-head__eyebrow">DS2 · Panoptes</span>
           <h1 className="ws-head__title">Site selection</h1>
           <p className="ws-head__sub">
-            Demand, competition and access scored across a city, on a map — a live Athens demo below.
+            Demand, competition and access scored across a city, on a map, a live Athens demo below.
           </p>
         </div>
         <a
@@ -25,7 +25,7 @@ export default function PanoptesEmbedPage() {
       <div className="ws-embed__frame">
         <iframe
           src="/panoptes-viewer?demo=1"
-          title="Panoptes — site-selection viewer (Athens demo)"
+          title="Panoptes, site-selection viewer (Athens demo)"
           loading="lazy"
         />
       </div>

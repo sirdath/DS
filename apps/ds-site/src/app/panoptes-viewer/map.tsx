@@ -357,7 +357,7 @@ export function MapView({
     if (!detectWebGL()) {
       isInitializedRef.current = false
       setMapError(
-        'This browser couldn’t start the map — WebGL appears to be unavailable. Turn on hardware acceleration (or disable a privacy/anti-fingerprint extension for this site), then reload. Chrome or Safari usually work out of the box.',
+        'This browser couldn’t start the map, WebGL appears to be unavailable. Turn on hardware acceleration (or disable a privacy/anti-fingerprint extension for this site), then reload. Chrome or Safari usually work out of the box.',
       )
       return
     }

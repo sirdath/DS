@@ -103,14 +103,14 @@ function LeadRow({ lead, selected, onToggle }: { lead: MarketingLead; selected: 
         <div className="admin-leads-sub">{[lead.area, lead.source].filter(Boolean).join(' · ')}</div>
       </td>
       <td className="dim hide-sm">{lead.category ?? ''}</td>
-      <td className="hide-sm"><span className={`admin-prio ${prioClass}`}>{lead.priority ?? '—'}</span></td>
+      <td className="hide-sm"><span className={`admin-prio ${prioClass}`}>{lead.priority ?? '–'}</span></td>
       <td className="ce strong hide-sm">{lead.leadScore}</td>
       <td>
-        <input className="admin-leads-edit" value={phone} placeholder="—" onChange={(e) => setPhone(e.target.value)}
+        <input className="admin-leads-edit" value={phone} placeholder=", " onChange={(e) => setPhone(e.target.value)}
           onBlur={() => phone !== (lead.phone ?? '') && run(() => updateLeadContact(lead.id, { phone }))} />
       </td>
       <td className="hide-sm">
-        <input className="admin-leads-edit" value={email} placeholder="—" onChange={(e) => setEmail(e.target.value)}
+        <input className="admin-leads-edit" value={email} placeholder=", " onChange={(e) => setEmail(e.target.value)}
           onBlur={() => email !== (lead.email ?? '') && run(() => updateLeadContact(lead.id, { email }))} />
       </td>
       <td className="hide-sm">
@@ -125,7 +125,7 @@ function LeadRow({ lead, selected, onToggle }: { lead: MarketingLead; selected: 
         </select>
       </td>
       <td className="hide-sm">
-        <input className="admin-leads-edit" value={notes} placeholder="—" onChange={(e) => setNotes(e.target.value)}
+        <input className="admin-leads-edit" value={notes} placeholder=", " onChange={(e) => setNotes(e.target.value)}
           onBlur={() => notes !== (lead.notes ?? '') && run(() => updateLeadContact(lead.id, { notes }))} />
       </td>
       <td className="admin-leads-actions">

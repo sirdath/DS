@@ -35,7 +35,7 @@ function formatDate(iso: string, tz: string) {
 }
 
 function truncate(str: string | null, n: number) {
-  if (!str) return '—'
+  if (!str) return '–'
   return str.length > n ? str.slice(0, n) + '…' : str
 }
 
@@ -193,7 +193,7 @@ export default async function ProjectAnalytics({
             fontFamily: 'ui-monospace, monospace',
           }}>
             <strong style={{ color: '#f5c98a' }}>Analytics data unavailable.</strong>{' '}
-            {fetchError} Stats below show zero — check Vercel project env vars.
+            {fetchError} Stats below show zero, check Vercel project env vars.
           </div>
         )}
 
@@ -202,7 +202,7 @@ export default async function ProjectAnalytics({
           <StatCard label="Unique visitors" value={uniqueVisitors} />
           <StatCard label="Total views" value={total} />
           <StatCard label="This week" value={weekVisits.length} />
-          <StatCard label="Top country" value={topCountries[0]?.[0] ?? '—'} />
+          <StatCard label="Top country" value={topCountries[0]?.[0] ?? '–'} />
         </div>
 
         {/* Visits over time chart */}
@@ -214,7 +214,7 @@ export default async function ProjectAnalytics({
           marginBottom: '16px',
         }}>
           <p style={{ fontSize: '11px', color: '#626872', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace', marginBottom: '24px' }}>
-            Visits — last 30 days ({tz === 'Europe/Athens' ? 'Athens time' : 'London time'})
+            Visits, last 30 days ({tz === 'Europe/Athens' ? 'Athens time' : 'London time'})
           </p>
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: '3px', height: '80px' }}>
             {chartData.map(({ day, count }) => (
@@ -278,10 +278,10 @@ export default async function ProjectAnalytics({
                       {(v.path ?? '/').replace(project.pathPrefix, '') || '/'}
                     </td>
                     <td style={{ padding: '12px 20px', color: 'var(--admin-text-muted)' }}>
-                      {v.country ?? '—'}
+                      {v.country ?? '–'}
                     </td>
                     <td style={{ padding: '12px 20px', color: v.client_id ? (v.client_id.includes('[blocked]') ? '#c96868' : v.client_id.endsWith('-admin') ? '#43a47a' : '#a78bfa') : '#626872', fontFamily: 'ui-monospace, monospace', fontSize: '12px', whiteSpace: 'nowrap' }}>
-                      {v.client_id ?? '—'}
+                      {v.client_id ?? '–'}
                     </td>
                     <td style={{ padding: '12px 20px', color: '#626872', maxWidth: '260px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {truncate(v.referrer, 48)}

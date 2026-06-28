@@ -9,7 +9,7 @@ export default function FamaWorkspacePage() {
         <span className="ws-head__eyebrow">Fama · Review intelligence</span>
         <h1 className="ws-head__title">Your reviews, read</h1>
         <p className="ws-head__sub">
-          Fama aggregates your reviews and reads them — sentiment, themes, reply drafts, and the few things to fix
+          Fama aggregates your reviews and reads them, sentiment, themes, reply drafts, and the few things to fix
           next, in Greek and English.
         </p>
       </div>
@@ -19,7 +19,7 @@ export default function FamaWorkspacePage() {
       <div className="ws-demo-banner">
         <span className="ws-demo-banner__tag">Example</span>
         <span className="ws-demo-banner__text">
-          Sample report for a demo hotel — this is what yours will look like once a review source is connected.
+          Sample report for a demo hotel, this is what yours will look like once a review source is connected.
         </span>
       </div>
 

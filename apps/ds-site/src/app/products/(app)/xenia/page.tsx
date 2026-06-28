@@ -16,7 +16,7 @@ export default function XeniaWorkspacePage() {
         <span className="ws-head__eyebrow">Xenia · AI receptionist</span>
         <h1 className="ws-head__title">Try the receptionist</h1>
         <p className="ws-head__sub">
-          Pick a business and talk to Xenia in Greek or English. She checks availability and books — against a
+          Pick a business and talk to Xenia in Greek or English. She checks availability and books, against a
           demo store, so book away.
         </p>
       </div>

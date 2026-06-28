@@ -1,4 +1,4 @@
-# Cloud-studies hero — design (2026-06-03)
+# Cloud-studies hero, design (2026-06-03)
 
 ## Goal
 Replace the DS2 hero's warm studio backdrop with a **fully original white + periwinkle
@@ -7,7 +7,7 @@ cloud scene**, the existing 3D black-glass DS2 logo composited in front of it. B
 into `apps/ds-site`.
 
 ## Decisions (approved)
-- **Rendering:** procedural **WebGL fragment shaders** (not CSS/SVG, not AI images) — only
+- **Rendering:** procedural **WebGL fragment shaders** (not CSS/SVG, not AI images), only
   route that gives animated, volumetric, original clouds in the same 3D space as the logo.
 - **Constant:** same black-glass DS2 logo across all three, reflection env retuned warm →
   **cool periwinkle/white**, so only the clouds vary (clean comparison).
@@ -21,9 +21,9 @@ into `apps/ds-site`.
 - smoke `#9990F1`
 
 ## Variants
-- **A · Soft dreamy haze** — low-contrast fbm, big soft periwinkle blooms on white, slow drift, airy.
-- **B · Volumetric puffy** — lightweight raymarch through 3D fbm, white tops + periwinkle-shadowed undersides, depth.
-- **C · Nebula / flowing smoke** — domain-warped flow noise, wispy periwinkle streaks drifting over white.
+- **A · Soft dreamy haze**, low-contrast fbm, big soft periwinkle blooms on white, slow drift, airy.
+- **B · Volumetric puffy**, lightweight raymarch through 3D fbm, white tops + periwinkle-shadowed undersides, depth.
+- **C · Nebula / flowing smoke**, domain-warped flow noise, wispy periwinkle streaks drifting over white.
 
 ## Architecture (shared harness)
 - One Three.js scene: large **background plane** (cloud `ShaderMaterial`, fills view) +

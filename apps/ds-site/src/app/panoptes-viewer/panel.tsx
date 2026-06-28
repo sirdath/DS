@@ -125,7 +125,7 @@ function MoransReadout({ i, p }: { i: number; p: number }) {
         I&thinsp;=&thinsp;{i.toFixed(3)}
       </span>
       <span className={`pv-morans__verdict${significant ? '' : ' pv-morans__verdict--weak'}`}>
-        {significant ? 'location matters' : 'weak — site choice matters less'}
+        {significant ? 'location matters' : 'weak, site choice matters less'}
       </span>
     </div>
   )

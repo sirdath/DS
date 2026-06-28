@@ -68,7 +68,7 @@ interface RequestBody {
 export async function POST(request: Request): Promise<Response> {
   if (!sameOrigin(request)) return NextResponse.json({ error: "Bad origin." }, { status: 403 });
   if (rateLimited(clientIp(request))) {
-    return NextResponse.json({ error: "Too many audits — give it a minute." }, { status: 429 });
+    return NextResponse.json({ error: "Too many audits, give it a minute." }, { status: 429 });
   }
 
   if (hasSupabaseEnv()) {
@@ -101,6 +101,6 @@ export async function POST(request: Request): Promise<Response> {
         { status: 503 },
       );
     }
-    return NextResponse.json({ error: "Couldn't complete the audit — check the address and try again." }, { status: 502 });
+    return NextResponse.json({ error: "Couldn't complete the audit, check the address and try again." }, { status: 502 });
   }
 }

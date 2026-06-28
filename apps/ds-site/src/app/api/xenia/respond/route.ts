@@ -68,7 +68,7 @@ interface RequestBody {
 
 export async function POST(request: Request): Promise<Response> {
   if (!sameOrigin(request)) return NextResponse.json({ error: 'Bad origin.' }, { status: 403 })
-  if (rateLimited(clientIp(request))) return NextResponse.json({ error: 'Too many messages — slow down.' }, { status: 429 })
+  if (rateLimited(clientIp(request))) return NextResponse.json({ error: 'Too many messages, slow down.' }, { status: 429 })
 
   if (hasSupabaseEnv()) {
     const user = await getSessionUser()

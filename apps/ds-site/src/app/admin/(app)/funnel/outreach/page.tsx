@@ -99,7 +99,7 @@ export default async function OutreachPage({ searchParams }: PageProps) {
       </div>
 
       {!hasSupabase && (
-        <p className="admin-leads-note">Supabase isn’t configured here — outreach is read-only/empty. Restore the project and apply the migration to use it.</p>
+        <p className="admin-leads-note">Supabase isn’t configured here, outreach is read-only/empty. Restore the project and apply the migration to use it.</p>
       )}
       {loadError && (
         <p className="admin-leads-note admin-leads-note--err">Couldn’t load: {loadError}. Has the outreach_briefs migration been applied?</p>
