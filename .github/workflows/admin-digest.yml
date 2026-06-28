@@ -34,7 +34,8 @@ jobs:
           base="${SITE_URL:-https://www.ds2-consulting.com}"
           # -f fails the job on HTTP >= 400 (e.g. 401 bad secret, 502 send failed) so a
           # broken digest surfaces as a failed run + GitHub email.
-          code=$(curl -fsS -o /dev/null -w '%{http_code}' \
+          # -L follows the trailing-slash 308 (same host, so the auth header is kept).
+          code=$(curl -fsSL -o /dev/null -w '%{http_code}' \
             "$base/api/admin/digest" \
             -H "Authorization: Bearer $CRON_SECRET")
           echo "Digest triggered (HTTP $code) at $(date -u +%FT%TZ)"
