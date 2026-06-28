@@ -49,12 +49,12 @@
   color: var(--ws-muted);
 }
 .wx__status.is-confirmed {
-  color: #7dd3a8;
-  border-color: rgba(125, 211, 168, 0.4);
+  color: #43a47a;
+  border-color: rgba(67, 164, 122, 0.4);
 }
 .wx__status.is-handoff {
-  color: #ffb27d;
-  border-color: rgba(255, 178, 125, 0.4);
+  color: #c89245;
+  border-color: rgba(200, 146, 69, 0.4);
 }
 
 .wx__transcript {
@@ -98,9 +98,9 @@
   text-transform: uppercase;
   padding: 3px 9px;
   border-radius: 999px;
-  background: rgba(245, 196, 81, 0.14);
-  border: 1px solid rgba(245, 196, 81, 0.3);
-  color: #f5c451;
+  background: rgba(200, 146, 69, 0.14);
+  border: 1px solid rgba(200, 146, 69, 0.3);
+  color: #c89245;
   margin-bottom: 4px;
 }
 .wx__bubble.is-example {
@@ -159,7 +159,7 @@
 
 .wx__error {
   font-size: 0.85rem;
-  color: #ff8d8d;
+  color: #c96868;
 }
 
 .wx__composer {

@@ -16,8 +16,8 @@
   gap: 4px;
 }
 .wp-kpi--lead {
-  background: linear-gradient(180deg, rgba(46, 197, 168, 0.08), rgba(46, 197, 168, 0.02));
-  border-color: rgba(46, 197, 168, 0.25);
+  background: linear-gradient(180deg, rgba(67, 164, 122, 0.08), rgba(67, 164, 122, 0.02));
+  border-color: rgba(67, 164, 122, 0.25);
 }
 .wp-kpi__label {
   font-size: 0.74rem;
@@ -33,7 +33,7 @@
   font-variant-numeric: tabular-nums;
 }
 .wp-kpi--lead .wp-kpi__value {
-  color: #5fe3c6;
+  color: #43a47a;
 }
 .wp-kpi__sub {
   font-size: 0.82rem;
@@ -83,7 +83,7 @@
   display: block;
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #2ec5a8, #f5c451);
+  background: linear-gradient(90deg, #43a47a, #c89245);
 }
 .wp-age-val {
   text-align: right;
@@ -136,20 +136,20 @@
   white-space: nowrap;
 }
 .wp-band.is-low {
-  color: #7dd3a8;
-  border-color: rgba(125, 211, 168, 0.4);
+  color: #43a47a;
+  border-color: rgba(67, 164, 122, 0.4);
 }
 .wp-band.is-medium {
-  color: #f5c451;
-  border-color: rgba(245, 196, 81, 0.4);
+  color: #c89245;
+  border-color: rgba(200, 146, 69, 0.4);
 }
 .wp-band.is-high {
-  color: #ffb27d;
-  border-color: rgba(255, 178, 125, 0.45);
+  color: #c89245;
+  border-color: rgba(200, 146, 69, 0.45);
 }
 .wp-band.is-severe {
-  color: #ff8d8d;
-  border-color: rgba(255, 141, 141, 0.5);
+  color: #c96868;
+  border-color: rgba(201, 104, 104, 0.5);
 }
 .wp-lc {
   margin-left: 5px;
@@ -170,7 +170,7 @@
   background: var(--ws-surface-2);
 }
 .wp-draft.is-approved {
-  border-color: rgba(125, 211, 168, 0.4);
+  border-color: rgba(67, 164, 122, 0.4);
 }
 .wp-draft.is-rejected {
   opacity: 0.6;
@@ -261,13 +261,13 @@
   outline-offset: 1px;
 }
 .wp-btn.is-approve {
-  background: #2ec5a8;
-  border-color: #2ec5a8;
-  color: #04261f;
+  background: #43a47a;
+  border-color: #43a47a;
+  color: #050607;
   font-weight: 600;
 }
 .wp-btn.is-reject {
-  color: #ff8d8d;
+  color: #c96868;
 }
 .wp-draft__decision {
   margin-top: 12px;
@@ -275,10 +275,10 @@
   font-weight: 600;
 }
 .wp-draft__decision.is-approved {
-  color: #7dd3a8;
+  color: #43a47a;
 }
 .wp-draft__decision.is-rejected {
-  color: #ff8d8d;
+  color: #c96868;
 }
 .wp-note {
   margin-top: 4px;
@@ -328,13 +328,13 @@
 }
 .wp-import__ok {
   font-size: 0.88rem;
-  color: #7dd3a8;
+  color: #43a47a;
   font-weight: 600;
 }
 .wp-import__err {
   margin-top: 14px;
   font-size: 0.88rem;
-  color: #ff8d8d;
+  color: #c96868;
 }
 .wp-import__warn {
   margin-top: 8px;
@@ -353,6 +353,6 @@
   gap: 4px;
 }
 .ws-demo-banner[data-live='true'] .ws-demo-banner__tag {
-  background: rgba(46, 197, 168, 0.16);
-  color: #5fe3c6;
+  background: rgba(67, 164, 122, 0.16);
+  color: #43a47a;
 }
