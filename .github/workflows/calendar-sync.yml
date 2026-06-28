@@ -1,0 +1,36 @@
+name: Calendar sync (Google → admin)
+
+# Pulls Google Calendar changes (made on the founders' phones) back into the admin
+# calendar by calling /api/calendar/sync, which reconciles by google_event_id. The
+# admin → Google direction is a synchronous write-through in the server actions; this
+# job only handles the reverse. The route guards itself with CRON_SECRET and no-ops
+# when Google isn't configured, so this is safe to run before setup is complete.
+
+on:
+  schedule:
+    - cron: "*/15 * * * *" # every 15 minutes
+  workflow_dispatch: {}
+
+concurrency:
+  group: calendar-sync
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Pull Google changes
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "::notice::CRON_SECRET not set — skipping calendar sync."
+            exit 0
+          fi
+          base="${SITE_URL:-https://www.ds2-consulting.com}"
+          code=$(curl -fsS -o /dev/null -w '%{http_code}' \
+            "$base/api/calendar/sync" \
+            -H "Authorization: Bearer $CRON_SECRET")
+          echo "Calendar sync ran (HTTP $code) at $(date -u +%FT%TZ)"
