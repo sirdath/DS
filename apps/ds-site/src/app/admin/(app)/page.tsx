@@ -5,6 +5,8 @@ import { getAdminDisplayName } from '@/app/admin/lib/get-admin-display-name'
 import { CountUp } from '@/app/admin/count-up'
 import { CalendarCard } from './calendar/calendar-card'
 import { loadEvents } from './calendar/lib/calendar-source'
+import { SiteActivityCard } from './site-activity-card'
+import { loadSiteActivity } from '@/app/admin/lib/site-activity'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,7 +18,12 @@ const SEARCH_ICON = (
 
 export default async function DashboardPage() {
   const ds = getDataSource()
-  const [all, name, events] = await Promise.all([ds.listProjects(), getAdminDisplayName(), loadEvents()])
+  const [all, name, events, activity] = await Promise.all([
+    ds.listProjects(),
+    getAdminDisplayName(),
+    loadEvents(),
+    loadSiteActivity(),
+  ])
   const { leads, active } = partitionProjects(all)
   const totals = portfolioTotals(active)
 
@@ -78,6 +85,9 @@ export default async function DashboardPage() {
         <div className="ds2-col">
           {/* Shared calendar — opens the full view */}
           <CalendarCard events={events} />
+
+          {/* Live site traffic — today vs yesterday, links to full analytics */}
+          <SiteActivityCard activity={activity} />
 
           {/* Top open leads */}
           <section className="ds2-card">
