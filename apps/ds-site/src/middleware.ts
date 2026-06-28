@@ -161,6 +161,23 @@ export async function middleware(request: NextRequest) {
   const isAnalyticsPath =
     pathname === '/$ecretAnalytics' || pathname.startsWith('/$ecretAnalytics/')
 
+  // Next.js prefetches <Link> targets on hover/viewport. For a force-dynamic route a
+  // prefetch only fetches the static shell up to the loading.tsx boundary (no page
+  // data), so the expensive auth round-trip would just delay warming the skeleton.
+  // Let prefetches reach the shell — the REAL navigation (no prefetch header) still
+  // hits the full gate below, and page data is protected by RLS regardless. This is
+  // what makes clicking a tab show its skeleton instantly instead of stalling.
+  const isPrefetch =
+    request.headers.get('next-router-prefetch') === '1' ||
+    request.headers.get('purpose') === 'prefetch' ||
+    (request.headers.get('sec-purpose')?.includes('prefetch') ?? false)
+  if (
+    isPrefetch &&
+    (isAdminPath || isAnalyticsPath || pathname === '/products' || pathname.startsWith('/products/'))
+  ) {
+    return NextResponse.next()
+  }
+
   if (isAdminPath || isAnalyticsPath) {
     // Normalise trailing slash so /admin/login/ and /admin/login both match.
     // trailingSlash:true in next.config causes Next.js to 308-redirect bare
