@@ -86,6 +86,8 @@ export function NotesApp({ data }: { data: NotesData }) {
   const previewRef = useRef<HTMLDivElement | null>(null)
   const pendingRef = useRef<{ id: string; title: string; body: string } | null>(null)
   const mountedRef = useRef(true)
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
+  const formatSel = useRef<{ start: number; end: number } | null>(null)
 
   const selected: Note | null = useMemo(() => data.notes.find((n) => n.id === noteId) ?? null, [data.notes, noteId])
   const previewHtml = useMemo(() => renderMarkdown(draft.body) || '<p style="color:var(--dim)">Nothing written yet.</p>', [draft.body])
@@ -181,6 +183,96 @@ export function NotesApp({ data }: { data: NotesData }) {
       }, 650)
     },
     [draft, noteId, isDemo, flushSave],
+  )
+
+  // ── Formatting toolbar: apply markdown to the textarea selection so the user never
+  //    has to type the syntax. Each helper computes the new body + where the caret
+  //    should land; formatSel is restored after the controlled re-render. ──
+  useEffect(() => {
+    const ta = textareaRef.current
+    if (formatSel.current && ta) {
+      ta.focus()
+      ta.setSelectionRange(formatSel.current.start, formatSel.current.end)
+      formatSel.current = null
+    }
+  })
+
+  const applyFmt = useCallback(
+    (fn: (sel: string, body: string, start: number, end: number) => { body: string; start: number; end: number }) => {
+      const ta = textareaRef.current
+      if (!ta || isDemo) return
+      const start = ta.selectionStart
+      const end = ta.selectionEnd
+      const next = fn(draft.body.slice(start, end), draft.body, start, end)
+      formatSel.current = { start: next.start, end: next.end }
+      onEdit({ body: next.body })
+    },
+    [draft.body, isDemo, onEdit],
+  )
+
+  // wrap the selection in a pair of markers (bold/italic/underline/code/link)
+  const wrapFmt = useCallback(
+    (open: string, close = open) =>
+      applyFmt((sel, body, start, end) => {
+        const text = open + sel + close
+        const s = start + open.length
+        return { body: body.slice(0, start) + text + body.slice(end), start: s, end: sel ? s + sel.length : s }
+      }),
+    [applyFmt],
+  )
+
+  // toggle a line prefix across the selected line(s) (lists / quote / checklist)
+  const linePrefixFmt = useCallback(
+    (prefix: string) =>
+      applyFmt((_sel, body, start, end) => {
+        const ls = body.lastIndexOf('\n', start - 1) + 1
+        let le = body.indexOf('\n', end)
+        if (le === -1) le = body.length
+        const block = body
+          .slice(ls, le)
+          .split('\n')
+          .map((l) => (l.startsWith(prefix) ? l.slice(prefix.length) : prefix + l))
+          .join('\n')
+        return { body: body.slice(0, ls) + block + body.slice(le), start: ls, end: ls + block.length }
+      }),
+    [applyFmt],
+  )
+
+  // bigger / smaller: step the current line's heading level (body ↔ H3 ↔ H2 ↔ H1)
+  const headingFmt = useCallback(
+    (dir: 1 | -1) =>
+      applyFmt((_sel, body, start) => {
+        const ls = body.lastIndexOf('\n', start - 1) + 1
+        let le = body.indexOf('\n', start)
+        if (le === -1) le = body.length
+        const line = body.slice(ls, le)
+        const hashes = line.match(/^(#{1,4})\s+/)?.[1]?.length ?? 0
+        const hashToSize: Record<number, number> = { 0: 0, 3: 1, 2: 2, 1: 3 }
+        const sizeToHash = ['', '### ', '## ', '# ']
+        const sizeNow = hashToSize[hashes] ?? 0
+        const next = Math.max(0, Math.min(3, sizeNow + dir))
+        const newLine = (sizeToHash[next] ?? '') + line.replace(/^#{1,4}\s+/, '')
+        const caret = ls + newLine.length
+        return { body: body.slice(0, ls) + newLine + body.slice(le), start: caret, end: caret }
+      }),
+    [applyFmt],
+  )
+
+  // centre the current line: wrap / unwrap in -> … <-
+  const centreFmt = useCallback(
+    () =>
+      applyFmt((_sel, body, start) => {
+        const ls = body.lastIndexOf('\n', start - 1) + 1
+        let le = body.indexOf('\n', start)
+        if (le === -1) le = body.length
+        const line = body.slice(ls, le)
+        const newLine = /^\s*->.*<-\s*$/.test(line)
+          ? line.replace(/^\s*->\s*/, '').replace(/\s*<-\s*$/, '')
+          : `-> ${line} <-`
+        const caret = ls + newLine.length
+        return { body: body.slice(0, ls) + newLine + body.slice(le), start: caret, end: caret }
+      }),
+    [applyFmt],
   )
 
   const folderTitle =
@@ -382,8 +474,26 @@ export function NotesApp({ data }: { data: NotesData }) {
               </div></header>
 
               <div className="wn-body" role="tabpanel" id="wn-panel" aria-labelledby={mode === 'edit' ? 'wn-tab-edit' : 'wn-tab-preview'}>
+                {mode === 'edit' && !isDemo ? (
+                  <div className="wn-fmt" role="toolbar" aria-label="Formatting">
+                    <button type="button" className="wn-fmt__btn" title="Bold" aria-label="Bold" onClick={() => wrapFmt('**')}><b>B</b></button>
+                    <button type="button" className="wn-fmt__btn" title="Italic" aria-label="Italic" onClick={() => wrapFmt('*')}><i>I</i></button>
+                    <button type="button" className="wn-fmt__btn" title="Underline" aria-label="Underline" onClick={() => wrapFmt('++')}><u>U</u></button>
+                    <span className="wn-fmt__sep" />
+                    <button type="button" className="wn-fmt__btn" title="Bigger / heading" aria-label="Increase size" onClick={() => headingFmt(1)}>A&#9650;</button>
+                    <button type="button" className="wn-fmt__btn" title="Smaller" aria-label="Decrease size" onClick={() => headingFmt(-1)}>A&#9660;</button>
+                    <span className="wn-fmt__sep" />
+                    <button type="button" className="wn-fmt__btn" title="Bulleted list" aria-label="Bulleted list" onClick={() => linePrefixFmt('- ')}>&#8226;</button>
+                    <button type="button" className="wn-fmt__btn" title="Numbered list" aria-label="Numbered list" onClick={() => linePrefixFmt('1. ')}>1.</button>
+                    <button type="button" className="wn-fmt__btn" title="Checklist" aria-label="Checklist" onClick={() => linePrefixFmt('- [ ] ')}>&#9745;</button>
+                    <button type="button" className="wn-fmt__btn" title="Quote" aria-label="Quote" onClick={() => linePrefixFmt('> ')}>&#10077;</button>
+                    <button type="button" className="wn-fmt__btn" title="Centre" aria-label="Centre" onClick={centreFmt}>&#8596;</button>
+                    <button type="button" className="wn-fmt__btn wn-fmt__btn--mono" title="Code" aria-label="Code" onClick={() => wrapFmt('`')}>&lt;/&gt;</button>
+                    <button type="button" className="wn-fmt__btn" title="Link" aria-label="Link" onClick={() => wrapFmt('[', '](https://)')}>&#128279;</button>
+                  </div>
+                ) : null}
                 {mode === 'edit' ? (
-                  <textarea className="wn-textarea" value={draft.body} placeholder="Write in markdown, # heading, - bullet, - [ ] task, **bold**, `code`…" aria-label="Note body" readOnly={isDemo} onChange={(e) => onEdit({ body: e.target.value })} />
+                  <textarea ref={textareaRef} className="wn-textarea" value={draft.body} placeholder="Write, or select text and use the toolbar above…" aria-label="Note body" readOnly={isDemo} onChange={(e) => onEdit({ body: e.target.value })} />
                 ) : (
                   <div
                     className="wn-md"

@@ -1033,3 +1033,71 @@
     opacity: 1;
   }
 }
+
+/* ── Formatting toolbar: select text, click a button, the markdown is applied for
+   you (no syntax to type). Shown above the editor in edit mode. ── */
+.wn-fmt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 0 10px;
+}
+.wn-fmt__btn {
+  min-width: 30px;
+  height: 30px;
+  padding: 0 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  font-size: 0.82rem;
+  color: var(--mut);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+.wn-fmt__btn:hover {
+  color: var(--tx);
+  background: var(--glass);
+  border-color: var(--bd);
+}
+.wn-fmt__btn:focus-visible {
+  outline: 2px solid var(--ice);
+  outline-offset: 1px;
+}
+.wn-fmt__btn b {
+  font-weight: 800;
+}
+.wn-fmt__btn i {
+  font-style: italic;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+.wn-fmt__btn u {
+  text-decoration: underline;
+}
+.wn-fmt__btn--mono {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+}
+.wn-fmt__sep {
+  width: 1px;
+  height: 18px;
+  background: var(--bd);
+  margin: 0 3px;
+}
+
+/* centred paragraph produced by the toolbar's Centre button (-> … <-) */
+.wn-md .wn-center {
+  text-align: center;
+}
+
+@media (pointer: coarse) {
+  .wn-fmt__btn {
+    min-width: 38px;
+    height: 38px;
+  }
+}
