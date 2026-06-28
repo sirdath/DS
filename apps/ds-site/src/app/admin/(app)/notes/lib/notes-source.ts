@@ -9,8 +9,13 @@
 import 'server-only'
 
 import { getSupabaseServerClient } from '../../../lib/supabase-server'
-import { DEMO_NOTES_DATA } from '../demo-data'
 import type { Note, NoteFolder, NoteProjectRef, NotesData } from '../types'
+
+// Fallback when the database can't be read (paused / unreachable / keyless dev): an
+// honest EMPTY workspace, never fake placeholder notes. isDemo:true keeps writes
+// disabled (they'd fail anyway) and lets the UI show a "couldn't reach the database"
+// message instead of pretending the notes are empty.
+const UNAVAILABLE: NotesData = { folders: [], notes: [], projects: [], isDemo: true }
 
 type Row = Record<string, unknown>
 const str = (v: unknown, d = ''): string => (typeof v === 'string' ? v : d)
@@ -25,7 +30,7 @@ function prettyName(username: string): string {
 }
 
 export async function loadNotesData(): Promise<NotesData> {
-  if (!hasSupabaseEnv()) return DEMO_NOTES_DATA
+  if (!hasSupabaseEnv()) return UNAVAILABLE
 
   try {
     const db = await getSupabaseServerClient()
@@ -38,7 +43,7 @@ export async function loadNotesData(): Promise<NotesData> {
     ])
 
     // Folders/notes are the load-bearing reads; if either failed, fall back.
-    if (foldersRes.error || notesRes.error) return DEMO_NOTES_DATA
+    if (foldersRes.error || notesRes.error) return UNAVAILABLE
 
     const nameById = new Map<string, string>()
     for (const u of (usersRes.data ?? []) as Row[]) {
@@ -83,6 +88,6 @@ export async function loadNotesData(): Promise<NotesData> {
 
     return { folders, notes, projects, isDemo: false }
   } catch {
-    return DEMO_NOTES_DATA
+    return UNAVAILABLE
   }
 }
