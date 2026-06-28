@@ -1,7 +1,6 @@
 'use client'
 import Link from 'next/link'
 import { useEffect, useRef } from 'react'
-import gsap from 'gsap'
 import type { Project, ProjectStatus } from './types'
 import { STATUS_LABELS, PROJECT_TYPE_LABELS } from './types'
 import { outstanding, isOverdue } from './lib/derive'
@@ -64,57 +63,52 @@ function ProjectCard({ project: p }: { project: Project }) {
   const overdue = isOverdue(p)
   const site = siteForProject(p)
   const cardRef = useRef<HTMLAnchorElement>(null)
-  const glowXSetter = useRef<ReturnType<typeof gsap.quickTo> | null>(null)
-  const glowYSetter = useRef<ReturnType<typeof gsap.quickTo> | null>(null)
+  const glowXSetter = useRef<((value: number) => void) | null>(null)
+  const glowYSetter = useRef<((value: number) => void) | null>(null)
 
-  // Set up quickTo setters for glow position and GSAP hover lift
+  // Card glow + hover lift. GSAP is imported lazily so it leaves the route's initial
+  // bundle (faster hydration on the projects/leads lists); the hover wiring attaches
+  // a beat after mount, which is imperceptible.
   useEffect(() => {
     const el: HTMLAnchorElement | null = cardRef.current
     if (el === null) return
     const safeEl: HTMLAnchorElement = el
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-    // Glow position smoothing via quickTo on CSS vars
-    glowXSetter.current = gsap.quickTo(safeEl, '--card-mx', { duration: 0.4, ease: 'power2.out' })
-    glowYSetter.current = gsap.quickTo(safeEl, '--card-my', { duration: 0.4, ease: 'power2.out' })
+    let cleanup: (() => void) | undefined
+    void import('gsap').then(({ default: gsap }) => {
+      if (!safeEl.isConnected) return
+      glowXSetter.current = gsap.quickTo(safeEl, '--card-mx', { duration: 0.4, ease: 'power2.out' })
+      glowYSetter.current = gsap.quickTo(safeEl, '--card-my', { duration: 0.4, ease: 'power2.out' })
 
-    function onPointerMove(e: PointerEvent) {
-      const rect = safeEl.getBoundingClientRect()
-      const x = ((e.clientX - rect.left) / rect.width) * 100
-      const y = ((e.clientY - rect.top) / rect.height) * 100
-      glowXSetter.current?.(x)
-      glowYSetter.current?.(y)
-    }
+      function onPointerMove(e: PointerEvent) {
+        const rect = safeEl.getBoundingClientRect()
+        const x = ((e.clientX - rect.left) / rect.width) * 100
+        const y = ((e.clientY - rect.top) / rect.height) * 100
+        glowXSetter.current?.(x)
+        glowYSetter.current?.(y)
+      }
+      function onPointerEnter() {
+        gsap.to(safeEl, { y: -3, duration: 0.3, ease: 'power2.out', overwrite: 'auto' })
+      }
+      function onPointerLeave() {
+        gsap.to(safeEl, { y: 0, duration: 0.4, ease: 'power2.out', overwrite: 'auto' })
+        glowXSetter.current?.(50)
+        glowYSetter.current?.(50)
+      }
 
-    function onPointerEnter() {
-      gsap.to(safeEl, {
-        y: -3,
-        duration: 0.3,
-        ease: 'power2.out',
-        overwrite: 'auto',
-      })
-    }
-
-    function onPointerLeave() {
-      gsap.to(safeEl, {
-        y: 0,
-        duration: 0.4,
-        ease: 'power2.out',
-        overwrite: 'auto',
-      })
-      // Reset glow to center
-      glowXSetter.current?.(50)
-      glowYSetter.current?.(50)
-    }
-
-    safeEl.addEventListener('pointermove', onPointerMove)
-    safeEl.addEventListener('pointerenter', onPointerEnter)
-    safeEl.addEventListener('pointerleave', onPointerLeave)
+      safeEl.addEventListener('pointermove', onPointerMove)
+      safeEl.addEventListener('pointerenter', onPointerEnter)
+      safeEl.addEventListener('pointerleave', onPointerLeave)
+      cleanup = () => {
+        safeEl.removeEventListener('pointermove', onPointerMove)
+        safeEl.removeEventListener('pointerenter', onPointerEnter)
+        safeEl.removeEventListener('pointerleave', onPointerLeave)
+      }
+    })
 
     return () => {
-      safeEl.removeEventListener('pointermove', onPointerMove)
-      safeEl.removeEventListener('pointerenter', onPointerEnter)
-      safeEl.removeEventListener('pointerleave', onPointerLeave)
+      cleanup?.()
     }
   }, [])
 
