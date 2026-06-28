@@ -24,7 +24,7 @@ export function OutreachFields({ project: p }: Props) {
             className="admin-form__select"
             defaultValue={p?.outreachStage ?? ''}
           >
-            <option value="">— none —</option>
+            <option value="">, none, </option>
             {OUTREACH_STAGES.map((s) => (
               <option key={s} value={s}>{OUTREACH_LABELS[s]}</option>
             ))}

@@ -22,7 +22,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 function ExternalLink({ href, label }: { href: string | null; label: string }) {
-  if (!href) return <span style={{ color: 'var(--admin-text-dim)' }}>—</span>
+  if (!href) return <span style={{ color: 'var(--admin-text-dim)' }}>–</span>
   return (
     <a href={href} target="_blank" rel="noopener noreferrer">
       {label} &#8599;
@@ -42,7 +42,7 @@ export function ProjectDetailView({ project: p }: Props) {
           <div className="admin-detail__visit-text">
             <span className="admin-detail__visit-eyebrow">Live site</span>
             <p className="admin-detail__visit-desc">
-              Opens <strong>{site.name}</strong> logged in as you — no password — and records the
+              Opens <strong>{site.name}</strong> logged in as you, no password, and records the
               visit in this project&rsquo;s analytics.
             </p>
           </div>
@@ -104,14 +104,14 @@ export function ProjectDetailView({ project: p }: Props) {
       <section className="admin-detail__section">
         <h2 className="admin-detail__section-title">Client contact</h2>
         <div className="admin-detail__grid">
-          <Field label="Company">{p.clientCompany ?? '—'}</Field>
-          <Field label="Contact">{p.clientContact ?? '—'}</Field>
+          <Field label="Company">{p.clientCompany ?? '–'}</Field>
+          <Field label="Contact">{p.clientContact ?? '–'}</Field>
           <Field label="Email">
             {p.clientEmail
               ? <a href={`mailto:${p.clientEmail}`}>{p.clientEmail}</a>
-              : '—'}
+              : '–'}
           </Field>
-          <Field label="Phone">{p.clientPhone ?? '—'}</Field>
+          <Field label="Phone">{p.clientPhone ?? '–'}</Field>
         </div>
       </section>
 

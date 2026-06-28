@@ -19,7 +19,7 @@ export default async function PresentationsPage() {
       <div className="ws-head">
         <span className="ws-head__eyebrow">DS2 · Products</span>
         <h1 className="ws-head__title">Presentations</h1>
-        <p className="ws-head__sub">Shareable decks that show our products in action — pick what to showcase, send a link.</p>
+        <p className="ws-head__sub">Shareable decks that show our products in action, pick what to showcase, send a link.</p>
       </div>
       <div className="pb-toolbar">
         <Link href="/products/presentations/new" className="pb-newbtn">＋ New presentation</Link>

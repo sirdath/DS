@@ -48,7 +48,7 @@ function parseEntry(block: string): ParsedLead | null {
   // Name = first line with the extracted bits removed; fall back to the leftover.
   let name = lines[0]!.replace(EMAIL, "").replace(URL, "");
   if (phone) name = name.replace(phone, "");
-  name = name.replace(/[•·|,;:]+/g, " ").replace(/\s{2,}/g, " ").trim().replace(/[-–—•·|,;:]+$/, "").trim();
+  name = name.replace(/[•·|,;:]+/g, " ").replace(/\s{2,}/g, " ").trim().replace(/[-–, •·|,;:]+$/, "").trim();
   if (name.length < 2) {
     name = rest.replace(/[•·|,;:]+/g, " ").replace(/\s{2,}/g, " ").trim();
   }
@@ -94,7 +94,7 @@ export async function POST(request: Request): Promise<Response> {
 
   const leads = parseRawLeads(text);
   if (!leads.length) {
-    return NextResponse.json({ ok: false, error: "Couldn't pick out any leads — put one business per line." }, { status: 422 });
+    return NextResponse.json({ ok: false, error: "Couldn't pick out any leads, put one business per line." }, { status: 422 });
   }
   return NextResponse.json({ ok: true, leads });
 }

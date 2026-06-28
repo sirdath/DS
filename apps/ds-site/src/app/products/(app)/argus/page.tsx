@@ -42,7 +42,7 @@ function MovementRow({ m }: { m: Movement }) {
 }
 
 function delta(n: number, suffix = '%'): string {
-  if (n === 0) return '—'
+  if (n === 0) return '–'
   return `${n > 0 ? '+' : ''}${n}${suffix}`
 }
 
@@ -56,14 +56,14 @@ function CompetitorRow({ c }: { c: BoardRow }) {
         {c.note ? <span className="wr-comp-note">{c.note}</span> : null}
       </td>
       <td className="wr-num">
-        {c.avgRate != null ? formatMoney(c.avgRate, c.currency) : '—'}{' '}
+        {c.avgRate != null ? formatMoney(c.avgRate, c.currency) : '–'}{' '}
         <span className={`wr-delta ${c.rateDeltaPct < 0 ? 'is-down' : c.rateDeltaPct > 0 ? 'is-up' : ''}`}>{delta(c.rateDeltaPct)}</span>
       </td>
-      <td className="wr-num">{c.rating != null ? `${c.rating.toFixed(1)}★` : '—'}</td>
-      <td className="wr-num">{c.reviewCount ?? '—'}</td>
+      <td className="wr-num">{c.rating != null ? `${c.rating.toFixed(1)}★` : '–'}</td>
+      <td className="wr-num">{c.reviewCount ?? '–'}</td>
       <td className="wr-num">+{c.reviewVelocity}</td>
       <td className="wr-num">
-        {c.instagramFollowers != null ? c.instagramFollowers.toLocaleString('en') : '—'}{' '}
+        {c.instagramFollowers != null ? c.instagramFollowers.toLocaleString('en') : '–'}{' '}
         <span className={`wr-delta ${c.followerDeltaPct > 0 ? 'is-up' : ''}`}>{delta(c.followerDeltaPct)}</span>
       </td>
     </tr>
@@ -100,7 +100,7 @@ export default async function ArgusWorkspacePage() {
         <span className="ws-head__eyebrow">Argus · Competitor watch</span>
         <h1 className="ws-head__title">This week&rsquo;s movements</h1>
         <p className="ws-head__sub">
-          Argus watches your competitors — rates, offers, content, search, social and reviews — detects what changed
+          Argus watches your competitors, rates, offers, content, search, social and reviews, detects what changed
           week-over-week, and tells you what to do about it. One briefing a week.
         </p>
       </div>

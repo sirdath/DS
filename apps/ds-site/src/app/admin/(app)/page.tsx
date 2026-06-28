@@ -29,7 +29,7 @@ export default async function DashboardPage() {
       <header className="ds2-head">
         <div className="ds2-head__greet">
           <h1 className="ds2-head__hi">Hi, {name}</h1>
-          <p className="ds2-head__sub">Here&rsquo;s the book today — money in, owed, and in the pipeline.</p>
+          <p className="ds2-head__sub">Here&rsquo;s the book today, money in, owed, and in the pipeline.</p>
         </div>
         <form className="ds2-search" action="/admin/funnel/leads" method="get">
           {SEARCH_ICON}
@@ -62,13 +62,13 @@ export default async function DashboardPage() {
           <div className="ds2-statrow">
             <section className="ds2-card">
               <span className="ds2-card__eyebrow">Pipeline</span>
-              <div className="ds2-stat__val">{pipelineValue > 0 ? <CountUp value={pipelineValue} prefix="€" /> : '—'}</div>
+              <div className="ds2-stat__val">{pipelineValue > 0 ? <CountUp value={pipelineValue} prefix="€" /> : '–'}</div>
               <span className="ds2-stat__sub">{leads.length} open lead{leads.length === 1 ? '' : 's'}</span>
             </section>
             <section className="ds2-card">
               <span className="ds2-card__eyebrow">Recurring</span>
               <div className="ds2-stat__val">
-                {totals.monthlyRecurringRevenue > 0 ? <CountUp value={totals.monthlyRecurringRevenue} prefix="€" /> : '—'}
+                {totals.monthlyRecurringRevenue > 0 ? <CountUp value={totals.monthlyRecurringRevenue} prefix="€" /> : '–'}
               </div>
               <span className="ds2-stat__sub">per month</span>
             </section>
@@ -91,7 +91,7 @@ export default async function DashboardPage() {
               topLeads.map((l) => (
                 <div className="ds2-row" key={l.id}>
                   <span className="ds2-row__name" translate="no">{l.name || 'Untitled'}</span>
-                  <span className="ds2-row__val">{l.estimatedValue ? fmt(l.estimatedValue) : '—'}</span>
+                  <span className="ds2-row__val">{l.estimatedValue ? fmt(l.estimatedValue) : '–'}</span>
                   <span className="ds2-row__bar">
                     <span className="ds2-row__fill" style={{ width: `${Math.round(((l.estimatedValue ?? 0) / maxLead) * 100)}%` }} />
                   </span>

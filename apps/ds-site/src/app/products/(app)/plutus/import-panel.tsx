@@ -18,7 +18,7 @@ export function ImportPanel() {
 
   async function onFile(file: File) {
     if (file.size > CSV_MAX) {
-      setState({ kind: 'error', message: 'That file is over 2 MB — export a smaller range.' })
+      setState({ kind: 'error', message: 'That file is over 2 MB, export a smaller range.' })
       return
     }
     setState({ kind: 'working', label: 'Reading file…' })
@@ -60,7 +60,7 @@ export function ImportPanel() {
     <section className="wp-card wp-import">
       <h3 className="wp-h3">Import your receivables</h3>
       <p className="wp-import__lead">
-        Drop a CSV export from any accounting system — invoice number, customer, amount, issue &amp; due date. We map
+        Drop a CSV export from any accounting system, invoice number, customer, amount, issue &amp; due date. We map
         the columns, parse Greek or English number formats, and skip rows we can&rsquo;t read.
       </p>
 

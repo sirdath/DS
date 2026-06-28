@@ -23,7 +23,7 @@ export const TOOLS: ToolCard[] = [
   {
     slug: 'ai-receptionist',
     name: 'Xenia',
-    tagline: 'AI receptionist — books appointments and answers enquiries, by chat or phone, in Greek & English.',
+    tagline: 'AI receptionist, books appointments and answers enquiries, by chat or phone, in Greek & English.',
     href: '/products/xenia',
     status: 'ready',
     accent: '#60C4A8',
@@ -31,7 +31,7 @@ export const TOOLS: ToolCard[] = [
   {
     slug: 'collections',
     name: 'Plutus',
-    tagline: 'Collections — predicts which invoices pay late, ranks who to chase, drafts the reminder (you approve).',
+    tagline: 'Collections, predicts which invoices pay late, ranks who to chase, drafts the reminder (you approve).',
     href: '/products/plutus',
     status: 'ready',
     accent: '#2ec5a8',
@@ -39,7 +39,7 @@ export const TOOLS: ToolCard[] = [
   {
     slug: 'review-intelligence',
     name: 'Fama',
-    tagline: 'Review intelligence — sentiment, themes, reply drafts and the few things to fix next.',
+    tagline: 'Review intelligence, sentiment, themes, reply drafts and the few things to fix next.',
     href: '/products/fama',
     status: 'ready',
     accent: '#6D5DD3',
@@ -47,7 +47,7 @@ export const TOOLS: ToolCard[] = [
   {
     slug: 'site-selection',
     name: 'Panoptes',
-    tagline: 'Site selection — demand, competition and access scored across a city, on a map.',
+    tagline: 'Site selection, demand, competition and access scored across a city, on a map.',
     href: '/products/panoptes',
     status: 'ready',
     accent: '#22d3ee',
@@ -55,7 +55,7 @@ export const TOOLS: ToolCard[] = [
   {
     slug: 'site-audit',
     name: 'Aegis',
-    tagline: 'Site audit — speed, accessibility (EU Accessibility Act) and SEO, with the fixes that matter.',
+    tagline: 'Site audit, speed, accessibility (EU Accessibility Act) and SEO, with the fixes that matter.',
     href: '/products/aegis',
     status: 'ready',
     accent: '#f5c451',
@@ -63,7 +63,7 @@ export const TOOLS: ToolCard[] = [
   {
     slug: 'competitor-watch',
     name: 'Argus',
-    tagline: 'Competitor watch — weekly intelligence on the moves your market is making.',
+    tagline: 'Competitor watch, weekly intelligence on the moves your market is making.',
     href: '/products/argus',
     status: 'preview',
     accent: '#E896C4',

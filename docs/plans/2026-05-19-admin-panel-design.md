@@ -1,4 +1,4 @@
-# Admin Panel — Design
+# Admin Panel, Design
 
 **Date:** 2026-05-19
 **Status:** Approved (design phase)
@@ -9,13 +9,13 @@
 
 A private internal portal for the two DS2 founders to track every client/website
 engagement in one place: pipeline status, completion progress, ownership, money,
-and an activity log. Becomes the single secured front door — the existing
+and an activity log. Becomes the single secured front door, the existing
 `$ecretAnalytics` page (currently protected only by an obscure URL) moves behind
 this same auth gate, making it actually safe.
 
 Not a client-facing feature. Not multi-tenant. Exactly two users, ever.
 
-## 2. Build approach — Contract-first, frontend-first, then wire backend
+## 2. Build approach, Contract-first, frontend-first, then wire backend
 
 Chosen approach (Approach A):
 
@@ -27,23 +27,23 @@ Chosen approach (Approach A):
    code unchanged, because components already code against the final type.
 
 Rationale: honors the "frontend first" preference while eliminating the one
-expensive failure mode — rebuilding UI when the data model shifts.
+expensive failure mode, rebuilding UI when the data model shifts.
 
 ## 3. Architecture, routing & security
 
 ### Routes (App Router, in `apps/ds-site`)
 
-- `/admin/login` — username + password form (the only unguarded admin route)
-- `/admin` — dashboard grid of all projects
-- `/admin/project/[id]` — single project detail + inline edit
-- `/admin/analytics` — relocated from `$ecretAnalytics` (code preserved, gated)
+- `/admin/login`, username + password form (the only unguarded admin route)
+- `/admin`, dashboard grid of all projects
+- `/admin/project/[id]`, single project detail + inline edit
+- `/admin/analytics`, relocated from `$ecretAnalytics` (code preserved, gated)
 
-### Auth — username on the surface, Supabase Auth underneath
+### Auth, username on the surface, Supabase Auth underneath
 
 Supabase Auth is email-based internally; we expose **username + password**.
 Server-side resolves username → linked Supabase account via a small
 `admin_users` table, then completes sign-in. Supabase session management + RLS
-are retained (we do NOT hand-roll auth — that would create risk for
+are retained (we do NOT hand-roll auth, that would create risk for
 client/revenue data).
 
 ### Defence in depth (four layers)
@@ -51,12 +51,12 @@ client/revenue data).
 1. **Supabase Auth** email+password; public signup disabled at project level.
    The two users are seeded manually once in the Supabase dashboard.
 2. **Username → account resolution** via `admin_users` (username, auth_user_id).
-3. **Email/account allowlist** — a valid session is still rejected unless the
+3. **Email/account allowlist**, a valid session is still rejected unless the
    underlying account is in a hardcoded server-side allowlist.
-4. **Middleware** — `src/middleware.ts` matcher extended to
+4. **Middleware**, `src/middleware.ts` matcher extended to
    `/admin/:path*` and the analytics route; no valid session → redirect to
    `/admin/login`. Runs at the edge before any page renders.
-5. **Postgres RLS** — `projects` / `project_activity` have RLS ON, policies
+5. **Postgres RLS**, `projects` / `project_activity` have RLS ON, policies
    allow only authenticated allowlisted accounts. Browser uses the **anon** key
    only; the **service-role** key is never shipped client-side.
 
@@ -85,7 +85,7 @@ and gated by the same auth. Existing analytics code is preserved, only moved.
 | `start_date` | date (nullable) | |
 | `target_date` | date (nullable) | drives "overdue" flag |
 | `delivered_date` | date (nullable) | |
-| `client_company` | text | PII — RLS-protected |
+| `client_company` | text | PII, RLS-protected |
 | `client_contact` | text | PII |
 | `client_email` | text | PII |
 | `client_phone` | text | PII |
@@ -111,7 +111,7 @@ swap touches zero components.
 ## 5. Frontend (frontendmaxxing + GSAP)
 
 - **Visual language:** dark, matte, pure-neutral grays (R=G=B, no blue
-  undertone — per palette preference), consistent with existing analytics so
+  undertone, per palette preference), consistent with existing analytics so
   admin + analytics feel like one product.
 - **Dashboard (`/admin`):** GSAP-staggered card grid. Card = name, color-coded
   status pill, animated completion bar, lead, money summary (paid / outstanding),
@@ -148,7 +148,7 @@ swap touches zero components.
 
 ---
 
-## Addendum 1 (2026-05-19) — Potential Leads / speculative-build pitch motion
+## Addendum 1 (2026-05-19), Potential Leads / speculative-build pitch motion
 
 DS approaches prospects by building a proposal/demo site *before* they are a
 client, then showing it to win them. Approved delta:
@@ -168,36 +168,36 @@ client, then showing it to win them. Approved delta:
 - Phase-4 Supabase schema (Task 11) must include these columns + an
   `outreach_stage` enum.
 
-## Addendum 2 (2026-05-19) — CRUD, project type, current site, analytics URL
+## Addendum 2 (2026-05-19), CRUD, project type, current site, analytics URL
 
 - **Full CRUD is in scope:** create / edit / **delete** projects from the UI.
   Add `deleteProject(id)` to ProjectDataSource + `deleteProjectAction`
   (delete requires confirm in the UI).
 - **New Project fields:**
-  - `currentWebsiteUrl: string | null` — the client's existing/old site
+  - `currentWebsiteUrl: string | null`, the client's existing/old site
     (drives the before/after pitch story; may be empty if they have none).
-  - `projectType` — required enum tag shown on every card:
+  - `projectType`, required enum tag shown on every card:
     `website | application | datascience | aichatbot | agent | consulting`
     (default `website`). Add `PROJECT_TYPES` + `PROJECT_TYPE_LABELS`.
   - Existing `url` is relabelled "Live site" (the site we built them);
     existing `clientCompany/clientContact/clientEmail/clientPhone` are the
     contact details, surfaced on the detail/edit screens.
-- **Analytics URL — reversal of the §3 default:** do NOT relocate
+- **Analytics URL, reversal of the §3 default:** do NOT relocate
   `$ecretAnalytics`. Keep the live path
   `https://www.ds2-consulting.com/$ecretAnalytics/`, link the admin
   Analytics tab to it, and gate it via the Phase-4 middleware matcher
   (matcher includes `/$ecretAnalytics`). Rationale: relocating breaks a
-  live URL already in use for no security gain — gating in place is the
+  live URL already in use for no security gain, gating in place is the
   same outcome without the breakage. Task 10 changes from "relocate" to
   "gate in place"; Task 14 matcher must include `/$ecretAnalytics/:path*`.
 - Phase-4 Supabase schema (Task 11) must add `current_website_url` and a
   `project_type` enum/column.
 
-## Addendum 3 (2026-05-19) — Archive workflow (soft delete)
+## Addendum 3 (2026-05-19), Archive workflow (soft delete)
 
 - Every project/lead carries the full field set and is fully editable; the
   edit form's Save button is the "update backend" action (mock now, Supabase
-  in Phase 4 — unchanged signature).
+  in Phase 4, unchanged signature).
 - **Replace hard delete with archive.** Add `archived: boolean` (default
   false) to `Project`. Add `archiveProject(id)` + `unarchiveProject(id)` to
   ProjectDataSource (+ actions). Keep `deleteProject` ONLY for permanent

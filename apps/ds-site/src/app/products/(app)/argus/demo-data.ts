@@ -13,10 +13,10 @@ import type { Recommendation } from '@ds/argus'
 
 export const DEMO_BRIEFING_PROSE: { summary: string; recommendations: Recommendation[] } = {
   summary:
-    'Two competitors moved aggressively this week. Plaka Central Suites cut rates 12% and overtook you for “boutique hotel Plaka” — a direct pull on midweek bookings. Acropolis View paired a free-airport-transfer offer with a 19-review surge, which reads as a coordinated direct-booking push. Your weekend position looks safe; the pressure is squarely on Tue–Thu pricing and your core search ranking.',
+    'Two competitors moved aggressively this week. Plaka Central Suites cut rates 12% and overtook you for “boutique hotel Plaka”, a direct pull on midweek bookings. Acropolis View paired a free-airport-transfer offer with a 19-review surge, which reads as a coordinated direct-booking push. Your weekend position looks safe; the pressure is squarely on Tue–Thu pricing and your core search ranking.',
   recommendations: [
     {
-      action: 'Defend midweek without a price war — add a perk to Tue–Thu direct bookings instead of matching the 12% cut',
+      action: 'Defend midweek without a price war, add a perk to Tue–Thu direct bookings instead of matching the 12% cut',
       rationale:
         'Matching on price erodes your ADR. You win where Plaka Central can’t: the breakfast guests already rave about. Bundle breakfast + late checkout for midweek direct stays.',
     },

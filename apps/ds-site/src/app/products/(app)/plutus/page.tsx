@@ -49,7 +49,7 @@ export default async function PlutusWorkspacePage() {
         <h1 className="ws-head__title">Get paid faster</h1>
         <p className="ws-head__sub">
           Plutus reads your receivables, predicts which invoices will pay late, ranks who to chase first, and drafts
-          the reminder in Greek or English — you approve every send.
+          the reminder in Greek or English, you approve every send.
         </p>
       </div>
 
@@ -57,14 +57,14 @@ export default async function PlutusWorkspacePage() {
         <div className="ws-demo-banner" data-live="true">
           <span className="ws-demo-banner__tag">Live</span>
           <span className="ws-demo-banner__text">
-            Your receivables — computed live by the engine. Import an updated CSV any time to refresh.
+            Your receivables, computed live by the engine. Import an updated CSV any time to refresh.
           </span>
         </div>
       ) : (
         <div className="ws-demo-banner">
           <span className="ws-demo-banner__tag">Example</span>
           <span className="ws-demo-banner__text">
-            A demo business&rsquo;s receivables — computed live by the engine. Import your own invoices below to make it
+            A demo business&rsquo;s receivables, computed live by the engine. Import your own invoices below to make it
             real.
           </span>
         </div>
@@ -110,7 +110,7 @@ export default async function PlutusWorkspacePage() {
 
       {/* Chase list */}
       <section className="wp-card">
-        <h3 className="wp-h3">Chase list — who to chase first</h3>
+        <h3 className="wp-h3">Chase list, who to chase first</h3>
         <div className="wp-table-wrap">
           <table className="wp-table">
             <thead>
@@ -138,11 +138,11 @@ export default async function PlutusWorkspacePage() {
                       <span className={`wp-band ${BAND_CLASS[p.risk.band] ?? ''}`}>
                         {p.risk.band} {p.risk.score}
                       </span>
-                      {p.risk.lowConfidence ? <span className="wp-lc" title="thin history — low confidence">·?</span> : null}
+                      {p.risk.lowConfidence ? <span className="wp-lc" title="thin history, low confidence">·?</span> : null}
                     </td>
                     <td className="wp-num">{formatMoney(p.exposure, cur)}</td>
                     <td className="wp-num">{p.oldestDaysOverdue}d</td>
-                    <td className="wp-why">{why || '—'}</td>
+                    <td className="wp-why">{why || '–'}</td>
                   </tr>
                 )
               })}
@@ -153,7 +153,7 @@ export default async function PlutusWorkspacePage() {
 
       {/* Approval queue */}
       <section className="wp-card">
-        <h3 className="wp-h3">Approval queue — {queueVM.length} to review</h3>
+        <h3 className="wp-h3">Approval queue, {queueVM.length} to review</h3>
         <ApprovalQueue items={queueVM} />
       </section>
     </>

@@ -26,7 +26,7 @@ export const DEMO_FAMA_REPORT: FamaReport = {
       ],
       summary: 'AC broken on arrival, not fixed across a two-night June stay',
       reply_draft:
-        "James, I'm so sorry the air conditioning failed during your stay — in an Athens June that is simply not good enough, and an apology can't cool a room. We've since serviced every unit. If you'll give us another chance I'd like to make it right personally.",
+        "James, I'm so sorry the air conditioning failed during your stay, in an Athens June that is simply not good enough, and an apology can't cool a room. We've since serviced every unit. If you'll give us another chance I'd like to make it right personally.",
       reply_priority: 'high',
     },
     {
@@ -40,7 +40,7 @@ export const DEMO_FAMA_REPORT: FamaReport = {
       ],
       summary: 'Felt the small room did not justify the price',
       reply_draft:
-        'Νίκο, ευχαριστούμε για την ειλικρίνεια. Καταλαβαίνουμε ότι το δωμάτιο σάς φάνηκε μικρό για την τιμή — θα φροντίσουμε να είμαστε πιο ξεκάθαροι για τα μεγέθη κατά την κράτηση και θα χαρούμε να σας προτείνουμε μεγαλύτερο δωμάτιο την επόμενη φορά.',
+        'Νίκο, ευχαριστούμε για την ειλικρίνεια. Καταλαβαίνουμε ότι το δωμάτιο σάς φάνηκε μικρό για την τιμή, θα φροντίσουμε να είμαστε πιο ξεκάθαροι για τα μεγέθη κατά την κράτηση και θα χαρούμε να σας προτείνουμε μεγαλύτερο δωμάτιο την επόμενη φορά.',
       reply_priority: 'high',
     },
     {
@@ -54,13 +54,13 @@ export const DEMO_FAMA_REPORT: FamaReport = {
       ],
       summary: 'Loved breakfast; third-floor wifi kept dropping during work calls',
       reply_draft:
-        "Thank you Thomas — so glad the breakfast was a highlight. You're right about the third-floor wifi; we're installing a new access point on that floor this month so calls hold steady. Hope to host you again.",
+        "Thank you Thomas, so glad the breakfast was a highlight. You're right about the third-floor wifi; we're installing a new access point on that floor this month so calls hold steady. Hope to host you again.",
       reply_priority: 'normal',
     },
   ],
   aggregate: {
     overall_summary:
-      'Guests love Aetheria for its unbeatable Plaka location, warm staff and a genuinely special breakfast — those three themes drive almost every five-star review. The rating is slipping slightly, and the cause is concentrated: small rooms, an unreliable air-conditioning unit, and patchy third-floor wifi account for nearly every low score.',
+      'Guests love Aetheria for its unbeatable Plaka location, warm staff and a genuinely special breakfast, those three themes drive almost every five-star review. The rating is slipping slightly, and the cause is concentrated: small rooms, an unreliable air-conditioning unit, and patchy third-floor wifi account for nearly every low score.',
     rating_average: 4.08,
     rating_distribution: { '1': 1, '2': 2, '3': 3, '4': 6, '5': 12 },
     rating_trend: -0.2,
@@ -81,7 +81,7 @@ export const DEMO_FAMA_REPORT: FamaReport = {
       {
         theme: 'location',
         mentions: 16,
-        example: 'We walked to the Acropolis in 8 minutes — never took a taxi once.',
+        example: 'We walked to the Acropolis in 8 minutes, never took a taxi once.',
       },
       {
         theme: 'breakfast',
@@ -93,7 +93,7 @@ export const DEMO_FAMA_REPORT: FamaReport = {
       {
         theme: 'room_quality',
         mentions: 10,
-        impact: 'The two lowest reviews cite a failing AC unit and cramped rooms — the single biggest drag on the rating.',
+        impact: 'The two lowest reviews cite a failing AC unit and cramped rooms, the single biggest drag on the rating.',
         recommendation: 'Service every AC unit on a schedule and set room-size expectations clearly at booking.',
       },
       {
@@ -105,7 +105,7 @@ export const DEMO_FAMA_REPORT: FamaReport = {
       {
         theme: 'wifi',
         mentions: 5,
-        impact: 'Third-floor wifi drops during work calls — a real issue for the business travellers who book midweek.',
+        impact: 'Third-floor wifi drops during work calls, a real issue for the business travellers who book midweek.',
         recommendation: 'Add an access point on the third floor; mention reliable wifi in the listing.',
       },
     ],

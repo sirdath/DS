@@ -39,7 +39,7 @@ export function CalendarCard({ events }: { events: CalendarEvent[] }) {
       </div>
       <div className="ds2-calcard__up">
         {upcoming.length === 0 ? (
-          <span className="ds2-calcard__empty">Nothing coming up — open to add</span>
+          <span className="ds2-calcard__empty">Nothing coming up, open to add</span>
         ) : (
           upcoming.map((e) => (
             <span key={e.id} className="ds2-calcard__ev">

@@ -1,6 +1,6 @@
 # DS delivery checklist
 
-Every client site must pass this before handoff. No exceptions — this is how we earn the "no surprises" claim in [POSITIONING.md §8](brand/POSITIONING.md).
+Every client site must pass this before handoff. No exceptions, this is how we earn the "no surprises" claim in [POSITIONING.md §8](brand/POSITIONING.md).
 
 ## Performance (Lighthouse, mobile + desktop)
 - [ ] Performance ≥ 90
@@ -34,7 +34,7 @@ Every client site must pass this before handoff. No exceptions — this is how w
 - [ ] Headlines are **sentence-case** (POSITIONING.md §8)
 - [ ] No fluff words in copy ("synergy", "transformation" unqualified, "guru", "hybrid innovation studio")
 - [ ] Locations (if shown) match the "Athens / London" format
-- [ ] Case studies follow the **Transformation Story** format (POSITIONING.md §10) — never a naked before/after slider
+- [ ] Case studies follow the **Transformation Story** format (POSITIONING.md §10), never a naked before/after slider
 - [ ] One CTA per major section; final CTA block above the footer
 
 ## Chatbot (if present)
@@ -57,7 +57,7 @@ Every client site must pass this before handoff. No exceptions — this is how w
 - [ ] `pnpm lint` clean
 - [ ] `pnpm check-types` clean
 - [ ] Test coverage ≥ 70% for any `packages/*` code touched (TDD skill)
-- [ ] No hardcoded colors/spacing/motion-durations — all via `@ds/tokens`
+- [ ] No hardcoded colors/spacing/motion-durations, all via `@ds/tokens`
 - [ ] No secrets in committed files (pre-push hook active)
 
 ## Deployment
@@ -70,8 +70,8 @@ Every client site must pass this before handoff. No exceptions — this is how w
 ## Handoff
 - [ ] `apps/{slug}/README.md` explains: how to run locally, how to deploy, where content is edited
 - [ ] Walkthrough video (Loom or similar) covering the site for the client's team
-- [ ] Admin credentials handover doc (if CMS / Supabase involved) — sent via 1Password, never email
-- [ ] Post-launch review scheduled (see POSITIONING.md §4 Phase 2 — Stewardship transition)
+- [ ] Admin credentials handover doc (if CMS / Supabase involved), sent via 1Password, never email
+- [ ] Post-launch review scheduled (see POSITIONING.md §4 Phase 2, Stewardship transition)
 - [ ] Stewardship engagement offered explicitly (opt-in, not implied)
 
 ## Sign-off
@@ -82,4 +82,4 @@ Every client site must pass this before handoff. No exceptions — this is how w
 
 ---
 
-**If any item is unticked, the site is not delivered.** If the client is pressuring launch — that's the moment the *Decision Pause* rule (POSITIONING.md §4) kicks in: *"You don't need to decide now. Take time — we're happy to proceed either way."* We don't ship broken.
+**If any item is unticked, the site is not delivered.** If the client is pressuring launch, that's the moment the *Decision Pause* rule (POSITIONING.md §4) kicks in: *"You don't need to decide now. Take time, we're happy to proceed either way."* We don't ship broken.

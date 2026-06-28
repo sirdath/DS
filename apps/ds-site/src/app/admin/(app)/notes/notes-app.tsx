@@ -127,9 +127,13 @@ export function NotesApp({ data }: { data: NotesData }) {
     return [...list].sort((a, b) => Number(b.pinned) - Number(a.pinned) || b.updatedAt.localeCompare(a.updatedAt))
   }, [data.notes, folderSel, query])
 
-  // Always show something in the editor: if nothing is open, open the first note.
+  // Desktop shows the editor beside the list, so auto-open the first note. On mobile
+  // the default view is the browse list (folders + notes); auto-opening would trap the
+  // user in the editor and fight the ← Notes back control, so skip it there.
   useEffect(() => {
-    if (!noteId && notes.length) setNoteId(notes[0]?.id ?? null)
+    if (noteId || !notes.length) return
+    if (typeof window !== 'undefined' && window.matchMedia('(max-width: 860px)').matches) return
+    setNoteId(notes[0]?.id ?? null)
   }, [notes, noteId])
 
   const flushSave = useCallback(
@@ -203,7 +207,7 @@ export function NotesApp({ data }: { data: NotesData }) {
       setMode('edit')
       router.refresh()
     } catch {
-      showError("Couldn't create the note — try again.")
+      showError("Couldn't create the note, try again.")
     }
   }
 
@@ -216,14 +220,14 @@ export function NotesApp({ data }: { data: NotesData }) {
       await createFolder(name, parent)
       router.refresh()
     } catch {
-      showError("Couldn't create the folder — try again.")
+      showError("Couldn't create the folder, try again.")
     }
   }
 
   return (
     <div className="wn-root">
       {toast ? <div className="wn-toast" role="alert">{toast}</div> : null}
-      <div className="wn-app">
+      <div className="wn-app" data-pane={noteId ? 'editor' : 'browse'}>
         {/* Sidebar */}
         <aside className="wn-side">
           <div className="wn-brand"><span className="wn-brand__dot" /><span className="wn-brand__name">DS2 · Notes</span></div>
@@ -291,6 +295,7 @@ export function NotesApp({ data }: { data: NotesData }) {
           ) : (
             <>
               <div className="wn-bar">
+                <button type="button" className="wn-back" onClick={() => selectNote(null)} aria-label="Back to notes">←&nbsp;Notes</button>
                 <span className="wn-crumb">
                   {(() => {
                     const parts = folderPathParts(selected.folderId)
@@ -307,7 +312,7 @@ export function NotesApp({ data }: { data: NotesData }) {
                     aria-live="assertive"
                     onClick={() => { const p = pendingRef.current; if (p) void flushSave(p.id, { title: p.title, body: p.body }) }}
                   >
-                    Save failed — retry
+                    Save failed, retry
                   </button>
                 ) : (
                   <span className={`wn-saved ${status === 'saving' ? 'is-saving' : ''}`} role="status" aria-live="polite">
@@ -344,7 +349,7 @@ export function NotesApp({ data }: { data: NotesData }) {
                       onClick={() => {
                         void deleteNote(selected.id)
                           .then(() => { setConfirmDel(false); setNoteId(null); router.refresh() })
-                          .catch(() => showError("Couldn't delete the note — try again."))
+                          .catch(() => showError("Couldn't delete the note, try again."))
                       }}
                     >
                       Delete
@@ -372,7 +377,7 @@ export function NotesApp({ data }: { data: NotesData }) {
 
               <div className="wn-body" role="tabpanel" id="wn-panel" aria-labelledby={mode === 'edit' ? 'wn-tab-edit' : 'wn-tab-preview'}>
                 {mode === 'edit' ? (
-                  <textarea className="wn-textarea" value={draft.body} placeholder="Write in markdown — # heading, - bullet, - [ ] task, **bold**, `code`…" aria-label="Note body" readOnly={isDemo} onChange={(e) => onEdit({ body: e.target.value })} />
+                  <textarea className="wn-textarea" value={draft.body} placeholder="Write in markdown, # heading, - bullet, - [ ] task, **bold**, `code`…" aria-label="Note body" readOnly={isDemo} onChange={(e) => onEdit({ body: e.target.value })} />
                 ) : (
                   <div
                     className="wn-md"

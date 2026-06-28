@@ -76,7 +76,7 @@ export default function ProjectCard({ slug, name, url, description, total, weekC
           <MiniStat label="Unique visitors" value={uniqueVisitors} highlight={uniqueVisitors > 0} />
           <MiniStat label="Total views" value={total} />
           <MiniStat label="This week" value={weekCount} highlight={weekCount > 0} />
-          <MiniStat label="Top country" value={topCountry ?? '—'} />
+          <MiniStat label="Top country" value={topCountry ?? '–'} />
         </div>
 
         <div style={{ marginTop: '24px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px', fontSize: '12px', color: 'var(--admin-text-muted)' }}>

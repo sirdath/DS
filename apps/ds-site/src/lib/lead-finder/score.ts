@@ -11,17 +11,17 @@ export function buildLead(raw: RawLead, analysis: SiteAnalysis | null): Lead {
   if (!hasWebsite) {
     // No website at all → strongest intent for a build / end-to-end engagement.
     leadScore = clamp(72 + businessBoost);
-    pitchAngle = "No website found — strongest case for a build-only or end-to-end engagement.";
+    pitchAngle = "No website found, strongest case for a build-only or end-to-end engagement.";
   } else if (analysis && !analysis.reachable) {
     leadScore = clamp(74 + businessBoost * 0.5);
-    pitchAngle = "Their listed website is broken / won't load — urgent rebuild opportunity.";
+    pitchAngle = "Their listed website is broken / won't load, urgent rebuild opportunity.";
   } else if (analysis) {
     // Has a working site → redesign lead, driven by how dated it looks.
     leadScore = clamp(Math.round(analysis.ugliness * 0.9) + businessBoost);
     pitchAngle = pitchFromAnalysis(analysis);
   } else {
     leadScore = clamp(40 + businessBoost);
-    pitchAngle = "Has a website (not analysed) — review manually.";
+    pitchAngle = "Has a website (not analysed), review manually.";
   }
 
   const tags = collectTags(raw, analysis, hasWebsite);
@@ -42,14 +42,14 @@ export function buildLead(raw: RawLead, analysis: SiteAnalysis | null): Lead {
 
 function pitchFromAnalysis(a: SiteAnalysis): string {
   const has = (t: string) => a.signals.some((s) => s.tag === t);
-  if (has("not-mobile-friendly")) return "Not mobile-friendly — most local searches are on phones; they're losing them.";
-  if (has("no-https")) return "No HTTPS — visitors see a 'Not secure' warning; quick, credible win to fix.";
+  if (has("not-mobile-friendly")) return "Not mobile-friendly, most local searches are on phones; they're losing them.";
+  if (has("no-https")) return "No HTTPS, visitors see a 'Not secure' warning; quick, credible win to fix.";
   if (has("table-layout") || has("deprecated-html") || has("legacy-cms") || has("flash"))
-    return "Visibly dated build (legacy HTML) — undermines trust vs competitors.";
-  if (has("stale-copyright")) return "Site looks abandoned (old copyright) — a refresh signals they're active.";
-  if (has("diy-builder")) return "DIY template site — opportunity to differentiate and own the brand properly.";
-  if (a.ugliness >= 30) return "Several dated signals — solid redesign candidate.";
-  return "Reasonable site — lower priority; possible performance/SEO tune-up.";
+    return "Visibly dated build (legacy HTML), undermines trust vs competitors.";
+  if (has("stale-copyright")) return "Site looks abandoned (old copyright), a refresh signals they're active.";
+  if (has("diy-builder")) return "DIY template site, opportunity to differentiate and own the brand properly.";
+  if (a.ugliness >= 30) return "Several dated signals, solid redesign candidate.";
+  return "Reasonable site, lower priority; possible performance/SEO tune-up.";
 }
 
 function collectTags(raw: RawLead, analysis: SiteAnalysis | null, hasWebsite: boolean): string[] {

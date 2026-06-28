@@ -37,7 +37,7 @@ export function PresentationList({ decks }: { decks: Deck[] }) {
     }
   }
 
-  if (decks.length === 0) return <p className="pb-empty pb-empty--big">No presentations yet — create your first.</p>
+  if (decks.length === 0) return <p className="pb-empty pb-empty--big">No presentations yet, create your first.</p>
 
   return (
     <ul className="pb-list">

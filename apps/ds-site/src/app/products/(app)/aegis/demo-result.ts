@@ -30,12 +30,12 @@ export const DEMO_AEGIS_REPORT: AegisReport = {
   severity_counts: { critical: 1, serious: 3, moderate: 2, minor: 5 },
   accessibility_issue_count: 4,
   overall_verdict:
-    'The site looks the part but is slow on a phone — the hero image alone is pushing the largest paint to 4.6 seconds, and over half of mobile visitors abandon a load over three. Content and SEO are in good shape; the real exposure is accessibility, where four failures put you on the wrong side of the EU Accessibility Act.',
+    'The site looks the part but is slow on a phone, the hero image alone is pushing the largest paint to 4.6 seconds, and over half of mobile visitors abandon a load over three. Content and SEO are in good shape; the real exposure is accessibility, where four failures put you on the wrong side of the EU Accessibility Act.',
   headline_risks: [
     {
       area: 'performance',
       risk: 'The page is slow to load on mobile',
-      why_it_matters: 'Largest paint is 4.6s; roughly 53% of mobile visitors abandon a load over 3 seconds — that is bookings lost before the page even appears.',
+      why_it_matters: 'Largest paint is 4.6s; roughly 53% of mobile visitors abandon a load over 3 seconds, that is bookings lost before the page even appears.',
     },
     {
       area: 'accessibility',
@@ -79,9 +79,9 @@ export const DEMO_AEGIS_REPORT: AegisReport = {
     },
   ],
   accessibility_statement:
-    'Aetheria Suites is working towards WCAG 2.1 AA conformance for this website. We are aware of the following limitations, which we are actively addressing: some images lack text alternatives, and some text does not yet meet the minimum colour-contrast ratio. If you encounter a barrier using this site, please contact us at access@aetheria-suites.gr and we will help and prioritise a fix. (Draft — review before publishing.)',
+    'Aetheria Suites is working towards WCAG 2.1 AA conformance for this website. We are aware of the following limitations, which we are actively addressing: some images lack text alternatives, and some text does not yet meet the minimum colour-contrast ratio. If you encounter a barrier using this site, please contact us at access@aetheria-suites.gr and we will help and prioritise a fix. (Draft, review before publishing.)',
   eaa_exposure_note:
-    'Moderate exposure — there are real accessibility gaps. Under the EU Accessibility Act (in force since June 2025) these are a legal liability, not just a UX nicety; Greek penalties reach €100,000 and new builds must comply at launch.',
+    'Moderate exposure, there are real accessibility gaps. Under the EU Accessibility Act (in force since June 2025) these are a legal liability, not just a UX nicety; Greek penalties reach €100,000 and new builds must comply at launch.',
   findings: [
     { id: 'image-alt', category: 'accessibility', title: 'Image elements do not have [alt] attributes', description: '', severity: 'critical', displayValue: '6 elements' },
     { id: 'color-contrast', category: 'accessibility', title: 'Background and foreground colours do not have sufficient contrast', description: '', severity: 'serious' },

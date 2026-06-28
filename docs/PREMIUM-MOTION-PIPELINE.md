@@ -2,7 +2,7 @@
 
 DS's cinematic hero-animation pipeline. Generates scroll-scrubbed image sequences that *feel* 3D without any runtime 3D. Much cheaper than React Three Fiber for non-interactive heroes; performs better on low-end mobile.
 
-This is the **reference recipe**. The matching skill is at [`.claude/skills/premium-motion-pipeline/SKILL.md`](../.claude/skills/premium-motion-pipeline/SKILL.md) — it's what Claude Code uses to orchestrate this pipeline.
+This is the **reference recipe**. The matching skill is at [`.claude/skills/premium-motion-pipeline/SKILL.md`](../.claude/skills/premium-motion-pipeline/SKILL.md), it's what Claude Code uses to orchestrate this pipeline.
 
 ---
 
@@ -13,17 +13,17 @@ This is the **reference recipe**. The matching skill is at [`.claude/skills/prem
 - DS's own site, once the brand identity is locked
 
 We **don't** use it when:
-- The client's brand is utilitarian / developer-facing — a tasteful static hero outperforms a half-finished scroll sequence
-- The page needs interactivity (rotate-the-product, configurator) — that needs real 3D, deferred to Phase 4
+- The client's brand is utilitarian / developer-facing, a tasteful static hero outperforms a half-finished scroll sequence
+- The page needs interactivity (rotate-the-product, configurator), that needs real 3D, deferred to Phase 4
 - Budget is tight and research hasn't confirmed the client has a premium-positioning opportunity
 
 ## Full pipeline (copy-pasteable)
 
-### Step 1 — Generate keyframe 1
+### Step 1, Generate keyframe 1
 
 Model: **Flux 1.1 Pro** via fal.ai.
 
-Prompt pattern — physics-first, not vibe-first:
+Prompt pattern, physics-first, not vibe-first:
 
 ```
 A [subject], shot at [distance: 80cm / 2m / wide establishing],
@@ -39,13 +39,13 @@ Camera: [35mm / 50mm / 85mm equivalent].
 
 Save as `keyframe-01.png`, 1920×1080 or square 1024×1024.
 
-### Step 2 — Generate keyframe 2
+### Step 2, Generate keyframe 2
 
-Same prompt template; change **only** camera position, product state, or focal depth. Keep lighting and material language identical — that's what makes the interpolation clean.
+Same prompt template; change **only** camera position, product state, or focal depth. Keep lighting and material language identical, that's what makes the interpolation clean.
 
 Save as `keyframe-02.png`.
 
-### Step 3 — Interpolate to video
+### Step 3, Interpolate to video
 
 **Primary:** Google **Veo 3.1** "first-last-frame to video" mode.
 - Access: Gemini API / Vertex AI / fal.ai
@@ -56,15 +56,15 @@ Save as `keyframe-02.png`.
 
 Save as `motion.mp4`.
 
-### Step 4 — Extract frames
+### Step 4, Extract frames
 
 ```bash
 mkdir -p raw
 ffmpeg -i motion.mp4 -r 15 raw/frame_%04d.png
-# 15 fps × 8 s = 120 frames — the sweet spot
+# 15 fps × 8 s = 120 frames, the sweet spot
 ```
 
-### Step 5 — Compress
+### Step 5, Compress
 
 ```bash
 mkdir -p webp avif
@@ -86,7 +86,7 @@ du -sh webp avif
 # Target: webp ≤ 1.5 MB, avif ≤ 1 MB for 120 frames @ 1080p
 ```
 
-### Step 6 — Deliver
+### Step 6, Deliver
 
 File layout:
 ```
@@ -120,7 +120,7 @@ In the Next.js app:
 
 Mobile < 576 px: the component serves `poster.jpg` only, no scroll scrubbing.
 
-### Step 7 — Scroll-scrub with GSAP
+### Step 7, Scroll-scrub with GSAP
 
 ```ts
 // packages/motion-sequences/src/ScrollFrameSequence.tsx (simplified)
@@ -171,19 +171,19 @@ Total: **~$5–15 in API calls** + engineer time. Compare to 20–80 hours of 3D
 
 ## Debugging common issues
 
-- **Muddy interpolation** — keyframes have inconsistent lighting. Regenerate both with a more constrained prompt.
-- **Judder on scroll** — not preloading all frames. Add the `<link rel="preload">` for every frame in `<head>`.
-- **Mobile lag** — you're still scrubbing. Mobile < 576 px must fall back to static poster.
-- **Build output huge** — WebP quality too high. Drop to `-q 80` and re-measure.
-- **LCP > 2.5 s** — hero frame isn't preloaded with `fetchpriority="high"`, or the canvas is blocking paint. Render a static `<img>` of frame 1 first, then hydrate canvas on top.
+- **Muddy interpolation**, keyframes have inconsistent lighting. Regenerate both with a more constrained prompt.
+- **Judder on scroll**, not preloading all frames. Add the `<link rel="preload">` for every frame in `<head>`.
+- **Mobile lag**, you're still scrubbing. Mobile < 576 px must fall back to static poster.
+- **Build output huge**, WebP quality too high. Drop to `-q 80` and re-measure.
+- **LCP > 2.5 s**, hero frame isn't preloaded with `fetchpriority="high"`, or the canvas is blocking paint. Render a static `<img>` of frame 1 first, then hydrate canvas on top.
 
 ## Open-source references
 
-- https://github.com/olivier3lanc/Scroll-Frames — frame-sequence lib, lightweight
-- https://github.com/finnursig/VideoScroller — minimal scroll scrub
-- https://github.com/emanuelefavero/apple-scroll-animation — vanilla Apple-style implementation
-- https://www.builder.io/blog/3d-gsap — GSAP + Veo 3 tutorial walking through the whole pattern
-- https://ai.google.dev/gemini-api/docs/video — Veo 3.1 first-last-frame official docs
+- https://github.com/olivier3lanc/Scroll-Frames, frame-sequence lib, lightweight
+- https://github.com/finnursig/VideoScroller, minimal scroll scrub
+- https://github.com/emanuelefavero/apple-scroll-animation, vanilla Apple-style implementation
+- https://www.builder.io/blog/3d-gsap, GSAP + Veo 3 tutorial walking through the whole pattern
+- https://ai.google.dev/gemini-api/docs/video, Veo 3.1 first-last-frame official docs
 
 ## Where this fits in DS
 

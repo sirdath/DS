@@ -29,7 +29,7 @@ export function fingerprint(html: string, headers: Headers | null, generator: st
   if (jq) {
     const major = Number(jq[1]);
     const minor = Number(jq[2]);
-    if (major < 2) flag(`jQuery ${major}.${minor}`, "tech-old-jquery", `Ancient jQuery (${major}.${minor}) — pre-2016`, 7);
+    if (major < 2) flag(`jQuery ${major}.${minor}`, "tech-old-jquery", `Ancient jQuery (${major}.${minor}), pre-2016`, 7);
     else if (major === 2) flag(`jQuery 2.x`, "tech-old-jquery", "Old jQuery 2.x", 4);
     else add(`jQuery ${major}.x`);
   }
@@ -46,15 +46,15 @@ export function fingerprint(html: string, headers: Headers | null, generator: st
   }
 
   // ── Genuinely obsolete JS libraries ──
-  if (/mootools/i.test(html)) flag("MooTools", "tech-obsolete-lib", "Uses MooTools — abandoned ~2010", 9);
-  if (/prototype(?:\.min)?\.js/i.test(html)) flag("Prototype.js", "tech-obsolete-lib", "Uses Prototype.js — long dead", 9);
-  if (/scriptaculous/i.test(html)) flag("script.aculo.us", "tech-obsolete-lib", "Uses script.aculo.us — ~2008 era", 9);
-  if (/yui(?:-min)?\.js|yui\.yahooapis\.com/i.test(html)) flag("YUI", "tech-obsolete-lib", "Uses Yahoo YUI — discontinued 2014", 8);
-  if (/swfobject/i.test(html)) flag("SWFObject", "tech-obsolete-lib", "SWFObject (Flash embedding) — Flash is dead", 8);
+  if (/mootools/i.test(html)) flag("MooTools", "tech-obsolete-lib", "Uses MooTools, abandoned ~2010", 9);
+  if (/prototype(?:\.min)?\.js/i.test(html)) flag("Prototype.js", "tech-obsolete-lib", "Uses Prototype.js, long dead", 9);
+  if (/scriptaculous/i.test(html)) flag("script.aculo.us", "tech-obsolete-lib", "Uses script.aculo.us, ~2008 era", 9);
+  if (/yui(?:-min)?\.js|yui\.yahooapis\.com/i.test(html)) flag("YUI", "tech-obsolete-lib", "Uses Yahoo YUI, discontinued 2014", 8);
+  if (/swfobject/i.test(html)) flag("SWFObject", "tech-obsolete-lib", "SWFObject (Flash embedding), Flash is dead", 8);
 
   // ── AngularJS 1.x (legacy) vs modern Angular ──
   if (/angular(?:\.min)?\.js/i.test(html) && !/@angular|zone\.js/i.test(html)) {
-    flag("AngularJS 1.x", "tech-angularjs", "AngularJS 1.x — end-of-life since 2022", 7);
+    flag("AngularJS 1.x", "tech-angularjs", "AngularJS 1.x, end-of-life since 2022", 7);
   }
 
   // ── Icon/asset era ──
@@ -64,13 +64,13 @@ export function fingerprint(html: string, headers: Headers | null, generator: st
 
   // ── Analytics era ──
   if (/google-analytics\.com\/(ga|urchin)\.js|_gaq\.push/i.test(html)) {
-    flag("Legacy Google Analytics (ga.js)", "tech-legacy-analytics", "Uses ga.js/urchin — Google killed it; site untouched for years", 6);
+    flag("Legacy Google Analytics (ga.js)", "tech-legacy-analytics", "Uses ga.js/urchin, Google killed it; site untouched for years", 6);
   } else if (/gtag\(|googletagmanager\.com\/gtag|analytics\.js/i.test(html)) {
     add("Google Analytics (modern)");
   }
 
   // ── Server-side era from headers / markup ──
-  if (/__VIEWSTATE/i.test(html) || /\.aspx?(\?|"|')/i.test(html)) flag("ASP.NET WebForms", "tech-webforms", "ASP.NET WebForms (__VIEWSTATE) — legacy stack", 8);
+  if (/__VIEWSTATE/i.test(html) || /\.aspx?(\?|"|')/i.test(html)) flag("ASP.NET WebForms", "tech-webforms", "ASP.NET WebForms (__VIEWSTATE), legacy stack", 8);
   if (/php\/[45]\./i.test(xPoweredBy)) flag(`PHP ${xPoweredBy.match(/php\/([\d.]+)/i)?.[1] ?? ""}`.trim(), "tech-old-php", `End-of-life PHP (${xPoweredBy})`, 6);
   if (aspNet && /^[12]\./.test(aspNet)) flag(`ASP.NET ${aspNet}`, "tech-old-aspnet", `Old ASP.NET runtime (${aspNet})`, 5);
 

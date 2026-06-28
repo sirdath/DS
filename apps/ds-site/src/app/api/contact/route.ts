@@ -13,7 +13,7 @@ const DEV_MODE = !BOT_TOKEN || !CHAT_ID;
 // back to a known string (that would make thread signatures forgeable).
 const SECURE_SECRET = SIGNING_SECRET !== INSECURE_DEFAULT;
 if (!DEV_MODE && !SECURE_SECRET) {
-  console.warn("[contact] CONTACT_SIGNING_SECRET unset in production — thread continuity disabled until it is set.");
+  console.warn("[contact] CONTACT_SIGNING_SECRET unset in production, thread continuity disabled until it is set.");
 }
 
 const NAME_MAX = 80;

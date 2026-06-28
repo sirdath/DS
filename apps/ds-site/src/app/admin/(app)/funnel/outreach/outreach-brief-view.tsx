@@ -14,10 +14,10 @@ interface Props {
 
 function fmtDate(iso: string): string {
   const t = Date.parse(iso)
-  return Number.isFinite(t) ? new Date(t).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—'
+  return Number.isFinite(t) ? new Date(t).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '–'
 }
 function shortModel(m: string | null): string {
-  if (!m) return '—'
+  if (!m) return '–'
   return m.includes('opus') ? 'Opus' : m.includes('sonnet') ? 'Sonnet' : m
 }
 
@@ -31,7 +31,7 @@ export function OutreachBriefView({ lead, current, history, model }: Props) {
     return (
       <section className="admin-outreach__brief is-empty">
         <p className="admin-outreach__empty-title">Pick a lead and click Research</p>
-        <p className="admin-outreach__empty-sub">A grounded company brief appears here — overview, pain points, an outreach angle, and talking points.</p>
+        <p className="admin-outreach__empty-sub">A grounded company brief appears here, overview, pain points, an outreach angle, and talking points.</p>
       </section>
     )
   }
@@ -68,7 +68,7 @@ export function OutreachBriefView({ lead, current, history, model }: Props) {
       ) : (
         <div className="admin-outreach__brief-body">
           {preliminary && (
-            <p className="admin-outreach__prelim">Preliminary — confidence {conf?.toFixed(2)}. Verify before quoting; see gaps below.</p>
+            <p className="admin-outreach__prelim">Preliminary, confidence {conf?.toFixed(2)}. Verify before quoting; see gaps below.</p>
           )}
 
           <h3 className="admin-outreach__h3">Overview</h3>
@@ -83,7 +83,7 @@ export function OutreachBriefView({ lead, current, history, model }: Props) {
             {brief.painPoints.map((p, i) => (
               <li key={i}>
                 <span className={`admin-outreach__sev is-${p.severity}`}>{p.severity}</span>
-                <span><strong>{p.title}</strong> — {p.detail}</span>
+                <span><strong>{p.title}</strong>, {p.detail}</span>
               </li>
             ))}
           </ul>
@@ -134,7 +134,7 @@ export function OutreachBriefView({ lead, current, history, model }: Props) {
 
       {history.length > 0 && (
         <details className="admin-outreach__history">
-          <summary>History — {history.length} run{history.length === 1 ? '' : 's'}</summary>
+          <summary>History, {history.length} run{history.length === 1 ? '' : 's'}</summary>
           <ul>
             {history.map((h) => (
               <li key={h.id}>
@@ -150,7 +150,7 @@ export function OutreachBriefView({ lead, current, history, model }: Props) {
       )}
 
       <div className="admin-outreach__actions">
-        <button type="button" className="admin-new-btn" disabled title="Phase 4 — coming soon">Draft sales email</button>
+        <button type="button" className="admin-new-btn" disabled title="Phase 4, coming soon">Draft sales email</button>
         <button
           type="button"
           className="admin-outreach__contact"

@@ -77,7 +77,7 @@ export async function insertManualLeads(leads: ParsedLead[]): Promise<{ inserted
       has_website: Boolean(l.website),
       phone: l.phone,
       email: l.email,
-      pitch_angle: l.website ? 'Pasted lead — review their site.' : 'Pasted lead — no website noted.',
+      pitch_angle: l.website ? 'Pasted lead, review their site.' : 'Pasted lead, no website noted.',
       lead_score: l.website ? 40 : 60,
       priority: l.website ? 'Medium' : 'High',
       analysis_status: l.website ? 'pending' : 'na',

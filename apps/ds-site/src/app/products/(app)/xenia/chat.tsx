@@ -32,7 +32,7 @@ const EXAMPLE_TRANSCRIPT: Bubble[] = [
   { role: 'user', text: 'Στις 21:00 τέλεια.' },
   { role: 'assistant', text: 'Υπέροχα! Πείτε μου ένα όνομα κι ένα τηλέφωνο για την κράτηση;' },
   { role: 'user', text: 'Γιώργος, 6944 123456' },
-  { role: 'assistant', text: 'Έκλεισε, Γιώργο — τραπέζι για 4 την Παρασκευή στις 21:00. Σας περιμένουμε!' },
+  { role: 'assistant', text: 'Έκλεισε, Γιώργο, τραπέζι για 4 την Παρασκευή στις 21:00. Σας περιμένουμε!' },
 ]
 
 export function Chat({ samples }: { samples: SampleOption[] }) {
@@ -79,7 +79,7 @@ export function Chat({ samples }: { samples: SampleOption[] }) {
         setState(data.state)
       }
     } catch {
-      setError('Network error — try again.')
+      setError('Network error, try again.')
     } finally {
       setPendingUser(null)
       setBusy(false)
@@ -104,7 +104,7 @@ export function Chat({ samples }: { samples: SampleOption[] }) {
           <select value={sample} onChange={(e) => reset(e.target.value)} className="wx__select">
             {samples.map((s) => (
               <option key={s.key} value={s.key}>
-                {s.name} — {s.type}
+                {s.name}, {s.type}
               </option>
             ))}
           </select>
@@ -122,11 +122,11 @@ export function Chat({ samples }: { samples: SampleOption[] }) {
                   {b.text}
                 </div>
               ))}
-              <p className="wx__hint wx__hint--sm">Type below to start your own — Greek or English.</p>
+              <p className="wx__hint wx__hint--sm">Type below to start your own, Greek or English.</p>
             </div>
           ) : (
             <p className="wx__hint">
-              Say hello to {current?.name ?? 'the business'} — try “Can I book a table for two on Friday at 8?” or
+              Say hello to {current?.name ?? 'the business'}, try “Can I book a table for two on Friday at 8?” or
               “Θέλω ραντεβού την Πέμπτη το πρωί”.
             </p>
           )

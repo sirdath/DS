@@ -46,6 +46,12 @@
 @media (max-width: 860px) {
   .cal__layout { grid-template-columns: 1fr; }
   .cal__panel { position: static; }
+  /* Add-event row reflows: title on its own line, then time / colour / add. */
+  .cal__add-row { flex-wrap: wrap; }
+  .cal__add-row > :first-child { flex: 1 1 100%; }
+  .cal__time, .cal__color, .cal__addbtn { min-height: 40px; }
+  /* Day cells keep a tappable floor on small phones. */
+  .cal__day { min-height: 44px; }
 }
 
 /* Assignee — who's responsible */

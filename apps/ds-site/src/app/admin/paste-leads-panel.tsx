@@ -53,7 +53,7 @@ export function PasteLeadsPanel() {
       <textarea
         className="admin-form__textarea"
         rows={5}
-        placeholder="Paste leads — one business per line (name, phone, email, site in any order). We'll structure them automatically."
+        placeholder="Paste leads, one business per line (name, phone, email, site in any order). We'll structure them automatically."
         value={text}
         onChange={(e) => setText(e.target.value)}
         disabled={busy || saving}

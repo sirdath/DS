@@ -78,7 +78,7 @@ export default async function AnalyticsOverview() {
           fontFamily: 'ui-monospace, monospace',
         }}>
           <strong style={{ color: 'var(--admin-text-muted)' }}>Analytics data unavailable.</strong>{' '}
-          {fetchError} Cards show empty stats — check the deployment env vars.
+          {fetchError} Cards show empty stats, check the deployment env vars.
         </div>
       )}
 

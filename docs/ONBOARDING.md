@@ -1,4 +1,4 @@
-# Onboarding — first week at DS
+# Onboarding, first week at DS
 
 For Stelios (and any future contributor). Work through this in order. Should take 2–4 hours total.
 
@@ -7,9 +7,9 @@ For Stelios (and any future contributor). Work through this in order. Should tak
 - [ ] GitHub collaborator access to [daththeanalyst/DS](https://github.com/daththeanalyst/DS)
 - [ ] Anthropic API key (shared billing)
 - [ ] Supabase org access (for client projects)
-- [ ] Vercel team access (once we have one — Phase 2)
+- [ ] Vercel team access (once we have one, Phase 2)
 - [ ] Firecrawl API key
-- [ ] fal.ai account (for the motion pipeline) — optional until a client's hero needs it
+- [ ] fal.ai account (for the motion pipeline), optional until a client's hero needs it
 
 ## 1. Local setup
 
@@ -41,10 +41,10 @@ pnpm --filter @ds/site dev
 
 ## 2. Read the canon (30 minutes)
 
-1. **[docs/brand/POSITIONING.md](brand/POSITIONING.md)** — every section. This is the company.
-2. **[CLAUDE.md](../CLAUDE.md)** — how we use Claude Code here.
-3. **[docs/SKILLS-AND-REPOS.md](SKILLS-AND-REPOS.md)** — what's available to you.
-4. **[docs/DELIVERY-CHECKLIST.md](DELIVERY-CHECKLIST.md)** — what "done" looks like.
+1. **[docs/brand/POSITIONING.md](brand/POSITIONING.md)**, every section. This is the company.
+2. **[CLAUDE.md](../CLAUDE.md)**, how we use Claude Code here.
+3. **[docs/SKILLS-AND-REPOS.md](SKILLS-AND-REPOS.md)**, what's available to you.
+4. **[docs/DELIVERY-CHECKLIST.md](DELIVERY-CHECKLIST.md)**, what "done" looks like.
 
 ## 3. Install Claude Code + MCPs
 
@@ -59,16 +59,16 @@ You should see: `chrome-devtools`, `playwright`, `shadcn-ui`, `firecrawl`, `21st
 ## 4. Dry-run the skills
 
 In a Claude Code session at repo root, try these prompts one at a time:
-- *"Scaffold a client project for Acme Coffee (cafe chain in Athens)"* — triggers `client-project-scaffold`. Verify an `apps/acme-coffee/` appears, then discard it.
-- *"What does the premium motion pipeline look like end to end?"* — triggers `premium-motion-pipeline`. Verify it references Flux + Veo 3.1 + ffmpeg.
-- *"Build me a hero section for a consulting landing page"* — triggers `frontend-design`. Verify it references `@ds/ui` and sentence-case headlines.
+- *"Scaffold a client project for Acme Coffee (cafe chain in Athens)"*, triggers `client-project-scaffold`. Verify an `apps/acme-coffee/` appears, then discard it.
+- *"What does the premium motion pipeline look like end to end?"*, triggers `premium-motion-pipeline`. Verify it references Flux + Veo 3.1 + ffmpeg.
+- *"Build me a hero section for a consulting landing page"*, triggers `frontend-design`. Verify it references `@ds/ui` and sentence-case headlines.
 
 ## 5. Read the reference codebases (optional but recommended)
 
 These live outside DS but inform a lot of DS decisions:
-- `c:\Users\Dath\OneDrive\Desktop\AntiGravity Stuff\DATH-PERSONAL-PORTFOLIO` — React Three Fiber + Framer Motion premium-site reference
-- `c:\Users\Dath\OneDrive\Desktop\AntiGravity Stuff\CareerWebApp` — Next.js + Supabase + Anthropic integration reference
-- `D:\AEGIS\agents\crew.py` + `D:\AEGIS\rag\retriever.py` — agent architecture reference (we're building the DS research agents in TypeScript via Claude Agent SDK, but the pattern carries)
+- `c:\Users\Dath\OneDrive\Desktop\AntiGravity Stuff\DATH-PERSONAL-PORTFOLIO`, React Three Fiber + Framer Motion premium-site reference
+- `c:\Users\Dath\OneDrive\Desktop\AntiGravity Stuff\CareerWebApp`, Next.js + Supabase + Anthropic integration reference
+- `D:\AEGIS\agents\crew.py` + `D:\AEGIS\rag\retriever.py`, agent architecture reference (we're building the DS research agents in TypeScript via Claude Agent SDK, but the pattern carries)
 
 ## 6. Your first contribution
 
@@ -88,5 +88,5 @@ Pick one of these to commit within your first week:
 - **Conventional commits:** `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`
 - **Small PRs.** If the diff is > 500 lines, split it.
 - **Research before code.** New client work starts with the two research skills. No exceptions.
-- **Challenge-first.** If you disagree with a design decision, say so — that's the DS workstyle. *"This creates risk because…"*, not *"this is wrong"*.
+- **Challenge-first.** If you disagree with a design decision, say so, that's the DS workstyle. *"This creates risk because…"*, not *"this is wrong"*.
 - **Don't ship without the delivery checklist.** It exists for a reason.

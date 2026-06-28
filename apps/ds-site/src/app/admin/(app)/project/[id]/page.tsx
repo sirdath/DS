@@ -80,7 +80,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           <ProjectForm
             action={updateBound}
             project={p}
-            submitLabel="Save changes — update record"
+            submitLabel="Save changes, update record"
           />
         </div>
       </details>

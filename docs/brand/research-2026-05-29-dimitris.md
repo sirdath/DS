@@ -1,19 +1,19 @@
-# DS² — Website content & brand recommendations (Dimitris, 2026-05-29)
+# DS², Website content & brand recommendations (Dimitris, 2026-05-29)
 
 > Research input from Dimitris. Preserved verbatim. Kept **separate** from
 > `docs/library/` (which is the curated knowledge base). Both will be used as
-> inputs into the next website redesign — neither overrides the other.
+> inputs into the next website redesign, neither overrides the other.
 >
 > Related artifacts:
-> - `docs/brand/POSITIONING.md` — canonical brand playbook
-> - `docs/library/01-brand-identity-foundations.md` — frameworks (Neumeier, Dunford, Olins…)
-> - `docs/library/02-consulting-marketing-playbook.md` — Maister, Enns, Weiss
-> - `docs/library/03-wedge-and-positioning.md` — 5 wedge candidates
-> - `docs/library/SITE-AUDIT-2026-05.md` — audit of the current live site
+> - `docs/brand/POSITIONING.md`, canonical brand playbook
+> - `docs/library/01-brand-identity-foundations.md`, frameworks (Neumeier, Dunford, Olins…)
+> - `docs/library/02-consulting-marketing-playbook.md`, Maister, Enns, Weiss
+> - `docs/library/03-wedge-and-positioning.md`, 5 wedge candidates
+> - `docs/library/SITE-AUDIT-2026-05.md`, audit of the current live site
 
 ---
 
-# DS² — Website Content & Design Direction
+# DS², Website Content & Design Direction
 
 *Ready-to-use copy + a "simple but cool" animation/effects spec.*
 Replace `[VERTICAL]` with your phase-1 niche once chosen (e.g. salons, clinics, tavernas).
@@ -29,11 +29,11 @@ Replace `[VERTICAL]` with your phase-1 niche once chosen (e.g. salons, clinics, 
 
 ---
 
-# PART 1 — WEBSITE COPY
+# PART 1, WEBSITE COPY
 
 ## Hero
 
-**H1:** We build the digital tools that help small businesses win —
+**H1:** We build the digital tools that help small businesses win, 
 and handle the tech so you don't have to.
 
 **Sub:** Websites, AI assistants, and automation. Built by two senior founders in
@@ -42,21 +42,21 @@ Athens and London. No jargon, no junior staff, no surprises.
 **Buttons:** `Start a conversation` · `See our work`
 
 > Optional one-liner under the buttons, kept from your current brand:
-> *"We work best when we can be honest early — even if that means challenging the idea."*
+> *"We work best when we can be honest early, even if that means challenging the idea."*
 
 ---
 
-## Services — "Six things we build, and we build them seriously."
+## Services, "Six things we build, and we build them seriously."
 
 *Lead with 01–03 (what an SME buys first). Present 04–06 as "when you're ready to go further."*
 
 **01 · Websites**
-A site that earns trust and turns visitors into customers — fast, polished,
+A site that earns trust and turns visitors into customers, fast, polished,
 and built to be found on Google.
 
 **02 · AI Assistant**
 Never miss a customer again. It answers, books jobs, and follows up by text and
-call — day and night.
+call, day and night.
 
 **03 · Automation**
 The repetitive busywork between your tools, handled quietly in the background,
@@ -67,7 +67,7 @@ Straight answers from the numbers you already have: what's working, what isn't,
 and what to do next.
 
 **05 · Predictions**
-See demand, risk, and opportunity coming before they arrive — so you can plan
+See demand, risk, and opportunity coming before they arrive, so you can plan
 instead of react.
 
 **06 · Mobile Apps**
@@ -79,7 +79,7 @@ than a website.
 ## Featured work
 
 **Heading:** A look at what we ship.
-**Sub:** A couple of recent builds — the rest live in the portfolio.
+**Sub:** A couple of recent builds, the rest live in the portfolio.
 
 *(Each card: client name · tags · one-line outcome · "Visit ↗")*
 > When you have them, swap in `[VERTICAL]` case studies with a hard number:
@@ -91,35 +91,35 @@ than a website.
 
 > The biggest cost is **lack of knowledge.**
 
-*(Keep this — it reassures an SME that you'll teach, not gatekeep.)*
+*(Keep this, it reassures an SME that you'll teach, not gatekeep.)*
 
 ---
 
-## How we engage — "Three ways to work with us."
+## How we engage, "Three ways to work with us."
 
-**▶ End-to-end — we handle everything.** *(lead with this)*
+**▶ End-to-end, we handle everything.** *(lead with this)*
 Idea to live, under one roof. You stay informed without being overwhelmed.
 *Best for: you know the problem, not the solution.*
 
 **Build only.**
-You know what you need — we ship it with senior hands and weekly visibility.
+You know what you need, we ship it with senior hands and weekly visibility.
 
 **Consulting only.**
 A senior second opinion before you commit time or money.
 
 **+ Stewardship (monthly).**
-After launch we keep it running, updated, and watched — and make the honest call
+After launch we keep it running, updated, and watched, and make the honest call
 if something starts to drift.
 
 ---
 
-## Team — "Two senior founders. You talk to one of us, always."
+## Team, "Two senior founders. You talk to one of us, always."
 
-**[Founder name] — Strategy & Consulting · Athens**
+**[Founder name], Strategy & Consulting · Athens**
 Asks the uncomfortable questions early, so they're not asked late.
 
-**[Founder name] — Engineering & Data · London**
-Decides whether what we build will still be standing in three years — and says so
+**[Founder name], Engineering & Data · London**
+Decides whether what we build will still be standing in three years, and says so
 before we ship.
 
 > Add real names + photos. This section's whole job is trust.
@@ -135,7 +135,7 @@ before we ship.
 
 ---
 
-# PART 2 — DESIGN & ANIMATION DIRECTION
+# PART 2, DESIGN & ANIMATION DIRECTION
 
 **Aesthetic:** refined minimalism. Confident, lots of negative space, one strong
 accent. Premium enough for a future enterprise client, calm enough not to intimidate
@@ -148,12 +148,12 @@ a shop owner. *Elegance comes from restraint, not from adding more.*
   or a fresh green). Avoid corporate-blue cliché and purple-gradient-on-white "AI slop."
 - **Space:** generous margins, big type, few elements per screen. Let it breathe.
 
-### The signature moment — the DS² mark
+### The signature moment, the DS² mark
 Make the squared **²** the brand's one memorable animation: on load, the `2` lifts
 into superscript position and settles (a ~500ms ease-out). Reuse the same motif as a
 tiny accent on hover for the logo in the nav. **One** signature beat, done well.
 
-### Motion — high-impact, low-quantity
+### Motion, high-impact, low-quantity
 The rule from good design practice: *one orchestrated page-load beats scattered
 micro-interactions.* Pick a few, execute precisely.
 
@@ -166,7 +166,7 @@ micro-interactions.* Pick a few, execute precisely.
 
 ### Keep-it-simple guardrails (important)
 - All transitions **150–400ms**, `ease-out`. Nothing slow or bouncy.
-- **Respect `prefers-reduced-motion`** — disable non-essential motion for those users.
+- **Respect `prefers-reduced-motion`**, disable non-essential motion for those users.
 - No autoplay video, no parallax overload, no animation on *every* element.
 - Animation should make it feel *considered*, never *busy*. If in doubt, remove it.
 
@@ -208,7 +208,7 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
 ---
 
-# DS² — Website & Brand Recommendations
+# DS², Website & Brand Recommendations
 
 *Strategy notes for improving ds2-consulting.com*
 
@@ -217,11 +217,11 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 ## The core strategy: two phases, not two companies
 
 The tension between "premium senior consultancy" and "mass-market small-business
-digitization" isn't a contradiction — it's a **sequence**:
+digitization" isn't a contradiction, it's a **sequence**:
 
-1. **Phase 1 — Land down-market.** Win small businesses to build cash, repetitions,
+1. **Phase 1, Land down-market.** Win small businesses to build cash, repetitions,
    and a portfolio of proof.
-2. **Phase 2 — Climb up-market.** Use that portfolio to credibly sell to bigger
+2. **Phase 2, Climb up-market.** Use that portfolio to credibly sell to bigger
    companies who pay more and need proof of competence.
 
 This is how most respected agencies actually started. The job of the website right
@@ -235,11 +235,11 @@ now is to **sell to small businesses today without capping the ceiling for tomor
 
 Accessible to a small business does **not** mean cheap or junior. Keep every senior
 quality signal; strip only the *insider jargon* that assumes the reader already builds
-software. That jargon is what repels your phase-1 buyer — and it's the main thing
+software. That jargon is what repels your phase-1 buyer, and it's the main thing
 wrong with the current site.
 
 The brand stance that wins phase 1 **and** ages up gracefully:
-*the team that makes technology make sense — and handles it so you don't have to.*
+*the team that makes technology make sense, and handles it so you don't have to.*
 
 ---
 
@@ -247,10 +247,10 @@ The brand stance that wins phase 1 **and** ages up gracefully:
 
 | Section | Problem today | Fix |
 |---|---|---|
-| **Hero** | "A senior team for strategy, engineering, and applied AI" — a line for a CTO, not a shop owner | Lead with the **outcome + the relief**. Senior in quality, human in language. |
-| **Services** | Framed as *what they are* (Data, Predictions) | Reframe as *what they do for the business*. Your "AI assistant" line is already perfect — make all six read like that. Lead with the 2–3 an SME actually buys. |
+| **Hero** | "A senior team for strategy, engineering, and applied AI", a line for a CTO, not a shop owner | Lead with the **outcome + the relief**. Senior in quality, human in language. |
+| **Services** | Framed as *what they are* (Data, Predictions) | Reframe as *what they do for the business*. Your "AI assistant" line is already perfect, make all six read like that. Lead with the 2–3 an SME actually buys. |
 | **Engagement modes** | "Consulting only / Build only / you bring the spec" is enterprise-speak | An SME can't write a spec. **Lead hard with End-to-end ("we handle everything")**; keep the other modes quieter. |
-| **Team** | "You talk to one of these two" — but no names or faces | Add **names + photos**. That's the exact trust the section is reaching for. |
+| **Team** | "You talk to one of these two", but no names or faces | Add **names + photos**. That's the exact trust the section is reaching for. |
 | **Contact** | `gmail.com` address; "reply within 1–3 business days" | Domain email (`hello@ds2-consulting.com`); promise **same / next business day**. |
 
 ---
@@ -261,7 +261,7 @@ Your phase-2 plan depends entirely on portfolio. Build it deliberately:
 
 - **First 3–5 clients:** over-deliver. Consider discounting a couple of *logo-able,
   photogenic* clients in exchange for a case study + testimonial.
-- **Outcome-led case studies:** "bookings up X%", "20 hrs/week saved" — not just
+- **Outcome-led case studies:** "bookings up X%", "20 hrs/week saved", not just
   screenshots. Outcomes convince the next SME *and* the future enterprise client.
 - **Video testimonials from non-technical owners.** Nothing sells a wary small-business
   owner like another small-business owner saying "I was scared of this; they made it easy."
@@ -277,7 +277,7 @@ Keep the signals that already translate upward:
 - "Two founders, no layers in between"
 - The Athens + London footprint
 
-Then you never rebrand — you **re-feature**. As bigger logos land, they move to the top
+Then you never rebrand, you **re-feature**. As bigger logos land, they move to the top
 of the portfolio, and the homepage leads with the highest tier you're currently selling.
 The proof does the repositioning for you.
 
@@ -298,6 +298,6 @@ The proof does the repositioning for you.
 **Pick your phase-1 beachhead vertical.** (e.g. salons, clinics, tavernas/hospitality,
 trades, small retail, tourism operators.)
 
-Everything above — the homepage examples, the case studies, the niche compounding —
+Everything above, the homepage examples, the case studies, the niche compounding, 
 gets sharper the moment that's chosen. The website content draft uses
 `[VERTICAL]` placeholders so you can drop it in once decided.

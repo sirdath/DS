@@ -1,6 +1,6 @@
 # DS2 research library
 
-A curated, opinionated knowledge base for building **DS2's identity** and **marketing it like a firm that gets paid premium**. Not a link-dump — each entry has *why it matters* for DS2 and *how to apply it*.
+A curated, opinionated knowledge base for building **DS2's identity** and **marketing it like a firm that gets paid premium**. Not a link-dump, each entry has *why it matters* for DS2 and *how to apply it*.
 
 Treat this as a living index. Add to it whenever you find a source you'd revisit.
 
@@ -17,11 +17,11 @@ Treat this as a living index. Add to it whenever you find a source you'd revisit
 
 ## Related docs already in the repo
 
-- [`docs/brand/POSITIONING.md`](../brand/POSITIONING.md) — the DS playbook (workstyle, signature sentences, voice). This library exists to **pressure-test and extend** that, not replace it.
-- [`docs/brand/TRUST-ROADMAP.md`](../brand/TRUST-ROADMAP.md), [`TRUST-UI-PLAYBOOK.md`](../brand/TRUST-UI-PLAYBOOK.md) — the trust-signaling side.
-- [`docs/UI-OPEN-SOURCE-REPOS.md`](../UI-OPEN-SOURCE-REPOS.md) — the curated OSS UI repo list (separate stream, design tools).
-- [`docs/SKILLS-AND-REPOS.md`](../SKILLS-AND-REPOS.md) — the skills/agents/MCP index.
-- [`packages/frontendmaxxing-reference/`](../../packages/frontendmaxxing-reference/) — vanilla JS/CSS visual inspiration lib.
+- [`docs/brand/POSITIONING.md`](../brand/POSITIONING.md), the DS playbook (workstyle, signature sentences, voice). This library exists to **pressure-test and extend** that, not replace it.
+- [`docs/brand/TRUST-ROADMAP.md`](../brand/TRUST-ROADMAP.md), [`TRUST-UI-PLAYBOOK.md`](../brand/TRUST-UI-PLAYBOOK.md), the trust-signaling side.
+- [`docs/UI-OPEN-SOURCE-REPOS.md`](../UI-OPEN-SOURCE-REPOS.md), the curated OSS UI repo list (separate stream, design tools).
+- [`docs/SKILLS-AND-REPOS.md`](../SKILLS-AND-REPOS.md), the skills/agents/MCP index.
+- [`packages/frontendmaxxing-reference/`](../../packages/frontendmaxxing-reference/), vanilla JS/CSS visual inspiration lib.
 
 ## How to use this library
 

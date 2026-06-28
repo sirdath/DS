@@ -105,7 +105,7 @@ export function CoreFields({ project: p }: Props) {
           className="admin-form__select"
           defaultValue={p?.siteSlug ?? ''}
         >
-          <option value="">— none —</option>
+          <option value="">, none, </option>
           {TRACKED_SITES.map((s) => (
             <option key={s.slug} value={s.slug}>{s.name}</option>
           ))}

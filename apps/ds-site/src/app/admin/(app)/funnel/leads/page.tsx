@@ -112,7 +112,7 @@ export default async function LeadsPage({ searchParams }: PageProps) {
       </div>
 
       {!hasSupabase && (
-        <p className="admin-leads-note">Supabase isn’t configured in this environment — leads are read-only/empty here.</p>
+        <p className="admin-leads-note">Supabase isn’t configured in this environment, leads are read-only/empty here.</p>
       )}
       {loadError && <p className="admin-leads-note admin-leads-note--err">Couldn’t load leads: {loadError}. Has the migration been applied?</p>}
 

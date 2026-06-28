@@ -43,12 +43,12 @@ export function analyseSite(site: FetchedSite): SiteAnalysis {
   const isModernBuilder = MODERN_BUILDERS.test(generator ?? "") || MODERN_BUILDERS.test(headLower);
 
   // ── HTTPS ──
-  if (!https) add("no-https", "Served over plain HTTP — no SSL (browsers flag it 'Not secure')", 18);
+  if (!https) add("no-https", "Served over plain HTTP, no SSL (browsers flag it 'Not secure')", 18);
 
   // ── Mobile responsiveness (the single biggest tell) ──
   const viewport = $('meta[name="viewport"]').attr("content");
   const mobileFriendly = Boolean(viewport && /width\s*=\s*(device-width|\d)/i.test(viewport));
-  if (!mobileFriendly) add("not-mobile-friendly", "No responsive viewport meta — breaks on phones", 22);
+  if (!mobileFriendly) add("not-mobile-friendly", "No responsive viewport meta, breaks on phones", 22);
 
   // ── Quirks mode / missing doctype ──
   if (!/^\s*<!doctype html>/i.test(html)) add("legacy-doctype", "Missing modern <!doctype html> (renders in quirks mode)", 9);
@@ -58,7 +58,7 @@ export function analyseSite(site: FetchedSite): SiteAnalysis {
     const role = ($(el).attr("role") ?? "").toLowerCase();
     return role !== "presentation" && ($(el).find("table").length > 0 || $(el).attr("width") != null || $(el).attr("bgcolor") != null);
   }).length;
-  if (layoutTables >= 1) add("table-layout", `Page laid out with <table>s (${layoutTables}) — a pre-2010 technique`, 14);
+  if (layoutTables >= 1) add("table-layout", `Page laid out with <table>s (${layoutTables}), a pre-2010 technique`, 14);
 
   // ── Deprecated tags / attributes ──
   const deprecatedTags = $("font, center, marquee, frameset, frame, blink").length;
@@ -67,7 +67,7 @@ export function analyseSite(site: FetchedSite): SiteAnalysis {
 
   // ── Flash / legacy plugins ──
   if (/\.swf(["')\s]|$)/i.test(html) || $('object[type*="flash"], embed[type*="flash"]').length > 0) {
-    add("flash", "Embeds Flash (.swf) — dead since 2020", 12);
+    add("flash", "Embeds Flash (.swf), dead since 2020", 12);
   }
 
   // ── Document/title/meta basics ──
@@ -81,7 +81,7 @@ export function analyseSite(site: FetchedSite): SiteAnalysis {
   // ── Stale copyright year ──
   const copyrightYear = extractCopyrightYear($.text());
   if (copyrightYear && copyrightYear < THIS_YEAR - 2) {
-    add("stale-copyright", `Footer copyright says ${copyrightYear} — looks abandoned`, 10);
+    add("stale-copyright", `Footer copyright says ${copyrightYear}, looks abandoned`, 10);
   }
 
   // ── Old generators / servers ──
@@ -106,11 +106,11 @@ export function analyseSite(site: FetchedSite): SiteAnalysis {
 
   // ── Page weight / responsiveness proxies ──
   const pageKb = Math.round(site.bytes / 1024);
-  if (site.bytes > 0 && site.bytes < 1500) add("under-construction", "Almost no content — placeholder / parked page", 8);
+  if (site.bytes > 0 && site.bytes < 1500) add("under-construction", "Almost no content, placeholder / parked page", 8);
   if (site.ttfbMs != null && site.ttfbMs > 1800) add("slow", `Slow to respond (${site.ttfbMs}ms first byte)`, 6);
 
   // ── Modern DIY builder: a real but commoditised site — upsell, lower weight. ──
-  if (isModernBuilder) add("diy-builder", "Built on a DIY template builder (Wix/Squarespace/…) — room to differentiate", 6);
+  if (isModernBuilder) add("diy-builder", "Built on a DIY template builder (Wix/Squarespace/…), room to differentiate", 6);
 
   // ── Freshness: Last-Modified header as a "last touched" proxy ──
   const lmHeader = site.headers?.get("last-modified");
