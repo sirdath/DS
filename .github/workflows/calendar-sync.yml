@@ -30,7 +30,8 @@ jobs:
             exit 0
           fi
           base="${SITE_URL:-https://www.ds2-consulting.com}"
-          code=$(curl -fsS -o /dev/null -w '%{http_code}' \
+          # -L follows the trailing-slash 308 (same host, so the auth header is kept).
+          code=$(curl -fsSL -o /dev/null -w '%{http_code}' \
             "$base/api/calendar/sync" \
             -H "Authorization: Bearer $CRON_SECRET")
           echo "Calendar sync ran (HTTP $code) at $(date -u +%FT%TZ)"
