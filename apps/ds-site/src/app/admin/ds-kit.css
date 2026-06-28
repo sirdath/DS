@@ -1,0 +1,295 @@
+/*
+ * DS2 shared component kit, one source of truth for the primitives every admin and
+ * product surface uses. The canonical --ds-* tokens ALIAS the admin shell tokens, so
+ * light mode and any future value change flow through automatically and stay in sync.
+ * Tool-specific CSS (chat, map, gauges) builds FROM these primitives, it does not
+ * re-implement them. Migrate a tool by swapping its bespoke classes for .ds-* and
+ * deleting the duplicates. (Cohesion spec: docs/strategy/2026-06-28-tool-design-cohesion-spec.md)
+ */
+
+.admin-shell {
+  --ds-bg: var(--admin-bg);
+  --ds-surface: var(--admin-surface);
+  --ds-surface-2: var(--admin-surface-raise);
+  --ds-border: var(--admin-border);
+  --ds-border-hover: var(--admin-border-hover);
+  --ds-text: var(--admin-text);
+  --ds-muted: var(--admin-text-muted);
+  --ds-dim: var(--admin-text-dim);
+  --ds-accent: var(--admin-amber); /* Ice on dark, Action Deep on light (admin flips it) */
+  --ds-accent-dim: var(--admin-amber-dim);
+  --ds-accent-border: var(--admin-amber-border);
+  --ds-on-accent: var(--admin-on-accent);
+  --ds-radius: var(--admin-radius, 10px);
+  --ds-radius-lg: 14px;
+  --ds-mono: var(--admin-mono, 'IBM Plex Mono', ui-monospace, monospace);
+  --ds-ease: var(--admin-ease, cubic-bezier(0.4, 0, 0.2, 1));
+  --ds-dur: var(--admin-duration-base, 0.18s);
+  /* Semantic, identical in both themes (mid-tones), always paired with a label */
+  --ds-success: #43a47a;
+  --ds-warning: #c89245;
+  --ds-danger: #c96868;
+}
+
+/* ── Page header ─────────────────────────────────────────────────────────── */
+.ds-page-header {
+  margin-bottom: 28px;
+}
+.ds-page-header__eyebrow {
+  font-family: var(--ds-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ds-muted);
+}
+.ds-page-header__title {
+  margin: 6px 0 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ds-text);
+}
+.ds-page-header__sub {
+  margin: 8px 0 0;
+  max-width: 62ch;
+  color: var(--ds-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* ── Card ────────────────────────────────────────────────────────────────── */
+.ds-card {
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius-lg);
+  padding: 20px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 18px 44px -28px rgba(0, 0, 0, 0.6);
+}
+.ds-card__title {
+  margin: 0 0 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ds-text);
+}
+
+/* ── Section header (eyebrow + title + count) ────────────────────────────── */
+.ds-section {
+  margin-bottom: 28px;
+}
+.ds-section__header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.ds-section__eyebrow {
+  font-family: var(--ds-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ds-muted);
+}
+.ds-section__title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ds-text);
+}
+.ds-section__count {
+  font-family: var(--ds-mono);
+  font-size: 0.7rem;
+  color: var(--ds-dim);
+}
+
+/* ── Button ──────────────────────────────────────────────────────────────── */
+.ds-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  min-height: 40px;
+  padding: 9px 16px;
+  border-radius: var(--ds-radius);
+  border: 1px solid var(--ds-border-hover);
+  background: var(--ds-surface-2);
+  color: var(--ds-text);
+  cursor: pointer;
+  transition: border-color var(--ds-dur) var(--ds-ease), background var(--ds-dur) var(--ds-ease),
+    filter var(--ds-dur) var(--ds-ease);
+}
+.ds-btn:hover {
+  border-color: var(--ds-accent-border);
+}
+.ds-btn:focus-visible {
+  outline: 2px solid var(--ds-accent);
+  outline-offset: 1px;
+}
+.ds-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.ds-btn--primary {
+  background: var(--ds-accent);
+  border-color: var(--ds-accent);
+  color: var(--ds-on-accent);
+  font-weight: 600;
+}
+.ds-btn--primary:hover {
+  filter: brightness(1.08);
+  border-color: var(--ds-accent);
+}
+.ds-btn--ghost {
+  background: none;
+  border-color: transparent;
+  color: var(--ds-muted);
+}
+.ds-btn--ghost:hover {
+  color: var(--ds-text);
+  background: var(--ds-surface-2);
+}
+@media (pointer: coarse) {
+  .ds-btn {
+    min-height: 44px;
+  }
+}
+
+/* ── Field (label + input/select/textarea) ───────────────────────────────── */
+.ds-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ds-field__label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--ds-muted);
+}
+.ds-input,
+.ds-select,
+.ds-textarea {
+  font: inherit;
+  font-size: 0.9rem;
+  width: 100%;
+  color: var(--ds-text);
+  background: var(--ds-bg);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius);
+  padding: 10px 12px;
+  min-height: 44px;
+}
+.ds-textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+.ds-input::placeholder,
+.ds-textarea::placeholder {
+  color: var(--ds-dim);
+}
+.ds-input:focus-visible,
+.ds-select:focus-visible,
+.ds-textarea:focus-visible {
+  outline: 2px solid var(--ds-accent);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+/* ── Table (left text, right numbers, sticky header, hairline rows) ──────── */
+.ds-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius);
+  -webkit-overflow-scrolling: touch;
+}
+.ds-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.ds-table thead th {
+  position: sticky;
+  top: 0;
+  text-align: left;
+  font-family: var(--ds-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ds-muted);
+  background: var(--ds-surface-2);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--ds-border);
+  white-space: nowrap;
+}
+.ds-table tbody td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--ds-border);
+  color: var(--ds-text);
+  vertical-align: top;
+}
+.ds-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.ds-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ── Badge / pill (status, always carries a text label) ──────────────────── */
+.ds-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--ds-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--ds-border-hover);
+  color: var(--ds-muted);
+}
+.ds-badge--success {
+  color: var(--ds-success);
+  border-color: color-mix(in srgb, var(--ds-success) 40%, transparent);
+  background: color-mix(in srgb, var(--ds-success) 12%, transparent);
+}
+.ds-badge--warning {
+  color: var(--ds-warning);
+  border-color: color-mix(in srgb, var(--ds-warning) 40%, transparent);
+  background: color-mix(in srgb, var(--ds-warning) 12%, transparent);
+}
+.ds-badge--danger {
+  color: var(--ds-danger);
+  border-color: color-mix(in srgb, var(--ds-danger) 40%, transparent);
+  background: color-mix(in srgb, var(--ds-danger) 12%, transparent);
+}
+.ds-badge--accent {
+  color: var(--ds-accent);
+  border-color: var(--ds-accent-border);
+  background: var(--ds-accent-dim);
+}
+
+/* ── Stat / KPI ──────────────────────────────────────────────────────────── */
+.ds-stat__val {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ds-text);
+  font-variant-numeric: tabular-nums;
+}
+.ds-stat__label {
+  font-size: 0.78rem;
+  color: var(--ds-muted);
+}
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+.ds-empty {
+  padding: 28px 0;
+  text-align: center;
+  color: var(--ds-muted);
+  font-size: 0.9rem;
+}
