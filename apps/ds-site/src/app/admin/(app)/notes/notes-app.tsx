@@ -262,7 +262,9 @@ export function NotesApp({ data }: { data: NotesData }) {
           <div className="wn-list__head"><span className="wn-list__title">{folderTitle}</span><span className="wn-list__sub">{notes.length} NOTE{notes.length === 1 ? '' : 'S'}</span></div>
           <div className="wn-cards">
             {notes.length === 0 ? (
-              <p className="wn-list-empty">No notes here yet.{!isDemo ? ' Press ＋ Note to start.' : ''}</p>
+              <p className="wn-list-empty">
+                {isDemo ? 'Couldn’t reach the notes database. Refresh to try again.' : 'No notes here yet. Press ＋ Note to start.'}
+              </p>
             ) : (
               notes.map((n) => (
                 <button type="button" key={n.id} className={`wn-card ${n.id === noteId ? 'is-active' : ''}`} onClick={() => { selectNote(n.id); setMode('preview') }}>
@@ -289,8 +291,12 @@ export function NotesApp({ data }: { data: NotesData }) {
         <section className="wn-editor">
           {!selected ? (
             <div className="wn-empty">
-              <p className="wn-empty__title">Nothing open</p>
-              <p className="wn-empty__sub">Pick a note from the list{!isDemo ? ', or press ＋ Note to write a new one' : ''}.</p>
+              <p className="wn-empty__title">{isDemo ? 'Notes unavailable' : 'Nothing open'}</p>
+              <p className="wn-empty__sub">
+                {isDemo
+                  ? 'Couldn’t reach the database. Refresh to try again.'
+                  : 'Pick a note from the list, or press ＋ Note to write a new one.'}
+              </p>
             </div>
           ) : (
             <>
