@@ -26,7 +26,7 @@ export const TOOLS: ToolCard[] = [
     tagline: 'AI receptionist, books appointments and answers enquiries, by chat or phone, in Greek & English.',
     href: '/products/xenia',
     status: 'ready',
-    accent: '#60C4A8',
+    accent: '#8dcbff',
   },
   {
     slug: 'collections',
@@ -34,7 +34,7 @@ export const TOOLS: ToolCard[] = [
     tagline: 'Collections, predicts which invoices pay late, ranks who to chase, drafts the reminder (you approve).',
     href: '/products/plutus',
     status: 'ready',
-    accent: '#2ec5a8',
+    accent: '#8dcbff',
   },
   {
     slug: 'review-intelligence',
@@ -42,7 +42,7 @@ export const TOOLS: ToolCard[] = [
     tagline: 'Review intelligence, sentiment, themes, reply drafts and the few things to fix next.',
     href: '/products/fama',
     status: 'ready',
-    accent: '#6D5DD3',
+    accent: '#8dcbff',
   },
   {
     slug: 'site-selection',
@@ -50,7 +50,7 @@ export const TOOLS: ToolCard[] = [
     tagline: 'Site selection, demand, competition and access scored across a city, on a map.',
     href: '/products/panoptes',
     status: 'ready',
-    accent: '#22d3ee',
+    accent: '#8dcbff',
   },
   {
     slug: 'site-audit',
@@ -58,7 +58,7 @@ export const TOOLS: ToolCard[] = [
     tagline: 'Site audit, speed, accessibility (EU Accessibility Act) and SEO, with the fixes that matter.',
     href: '/products/aegis',
     status: 'ready',
-    accent: '#f5c451',
+    accent: '#8dcbff',
   },
   {
     slug: 'competitor-watch',
@@ -66,6 +66,6 @@ export const TOOLS: ToolCard[] = [
     tagline: 'Competitor watch, weekly intelligence on the moves your market is making.',
     href: '/products/argus',
     status: 'preview',
-    accent: '#E896C4',
+    accent: '#8dcbff',
   },
 ]

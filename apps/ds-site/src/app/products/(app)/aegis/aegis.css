@@ -42,8 +42,8 @@
   gap: 8px;
   font: inherit;
   font-weight: 600;
-  color: #1a1400;
-  background: #f5c451;
+  color: #050607;
+  background: #c89245;
   border: none;
   border-radius: 11px;
   padding: 0 20px;
@@ -55,8 +55,8 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  border: 2px solid rgba(26, 20, 0, 0.3);
-  border-top-color: #1a1400;
+  border: 2px solid rgba(5, 6, 7, 0.3);
+  border-top-color: #050607;
   animation: wg-spin 0.6s linear infinite;
 }
 @keyframes wg-spin {
@@ -88,7 +88,7 @@
 }
 .wg-error {
   margin-top: 12px;
-  color: #ff8d8d;
+  color: #c96868;
   font-size: 0.88rem;
 }
 
@@ -196,16 +196,16 @@
   white-space: nowrap;
 }
 .wg-vital__rating[data-rating='good'] {
-  color: #7dd3a8;
-  border-color: rgba(125, 211, 168, 0.4);
+  color: #43a47a;
+  border-color: rgba(67, 164, 122, 0.4);
 }
 .wg-vital__rating[data-rating='needs-improvement'] {
-  color: #f5c451;
-  border-color: rgba(245, 196, 81, 0.4);
+  color: #c89245;
+  border-color: rgba(200, 146, 69, 0.4);
 }
 .wg-vital__rating[data-rating='poor'] {
-  color: #ff8d8d;
-  border-color: rgba(255, 141, 141, 0.45);
+  color: #c96868;
+  border-color: rgba(201, 104, 104, 0.45);
 }
 
 .wg__verdict {
@@ -253,8 +253,8 @@
   border-radius: 999px;
   display: grid;
   place-items: center;
-  background: #f5c451;
-  color: #1a1400;
+  background: #c89245;
+  color: #050607;
   font-size: 0.8rem;
   font-weight: 700;
 }
@@ -297,7 +297,7 @@
 .wg-statement {
   margin-top: 8px;
   padding: 12px 14px;
-  border-left: 2px solid #f5c451;
+  border-left: 2px solid #c89245;
   background: var(--ws-surface-2);
   border-radius: 0 10px 10px 0;
   color: var(--ws-muted);
@@ -333,16 +333,16 @@
   color: var(--ws-muted);
 }
 .wg-sev.is-critical {
-  color: #ff8d8d;
-  border-color: rgba(255, 141, 141, 0.4);
+  color: #c96868;
+  border-color: rgba(201, 104, 104, 0.4);
 }
 .wg-sev.is-serious {
-  color: #ffb27d;
-  border-color: rgba(255, 178, 125, 0.4);
+  color: #c89245;
+  border-color: rgba(200, 146, 69, 0.4);
 }
 .wg-sev.is-moderate {
-  color: #f5c451;
-  border-color: rgba(245, 196, 81, 0.35);
+  color: #c89245;
+  border-color: rgba(200, 146, 69, 0.35);
 }
 .wg-finding-area {
   color: var(--ws-ghost);

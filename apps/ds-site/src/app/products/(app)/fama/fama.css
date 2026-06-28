@@ -25,7 +25,7 @@
 }
 .wf__rating-star {
   font-size: 1.4rem;
-  color: #f5c451;
+  color: #c89245;
 }
 .wf__trend {
   margin-left: 8px;
@@ -36,10 +36,10 @@
   color: var(--ws-muted);
 }
 .wf__trend.is-down {
-  color: #ffb27d;
+  color: #c89245;
 }
 .wf__trend.is-up {
-  color: #7dd3a8;
+  color: #43a47a;
 }
 .wf__meta {
   display: flex;
@@ -106,7 +106,7 @@
   display: block;
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--ws-cta), #6aa7ff);
+  background: linear-gradient(90deg, var(--ws-cta), #8dcbff);
 }
 .wf__bar-count {
   font-size: 0.8rem;
@@ -130,12 +130,12 @@
   font-variant-numeric: tabular-nums;
 }
 .wf__chip.is-pos {
-  color: #7dd3a8;
-  border-color: rgba(125, 211, 168, 0.35);
+  color: #43a47a;
+  border-color: rgba(67, 164, 122, 0.35);
 }
 .wf__chip.is-neg {
-  color: #ff8d8d;
-  border-color: rgba(255, 141, 141, 0.35);
+  color: #c96868;
+  border-color: rgba(201, 104, 104, 0.35);
 }
 
 /* Themes table */
@@ -163,10 +163,10 @@
   font-variant-numeric: tabular-nums;
 }
 .wf__num.is-up {
-  color: #7dd3a8;
+  color: #43a47a;
 }
 .wf__num.is-down {
-  color: #ffb27d;
+  color: #c89245;
 }
 
 /* Strengths / issues lists */
@@ -212,7 +212,7 @@
   font-size: 0.64rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #7dd3a8;
+  color: #43a47a;
   margin-right: 6px;
 }
 
