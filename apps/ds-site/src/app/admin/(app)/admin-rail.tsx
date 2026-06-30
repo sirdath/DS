@@ -23,6 +23,9 @@ const ICONS: Record<string, ReactNode> = {
   products: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="6" cy="6" r="2.4" /><circle cx="18" cy="6" r="2.4" /><circle cx="6" cy="18" r="2.4" /><circle cx="18" cy="18" r="2.4" /></svg>
   ),
+  competitors: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3.5" /><path d="M12 3v3M12 18v3M3 12h3M18 12h3" /></svg>
+  ),
   signout: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M15 17l5-5-5-5" /><path d="M20 12H9" /><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3" /></svg>
   ),
@@ -51,6 +54,7 @@ const ITEMS: Item[] = [
   { href: '/admin/calendar', label: 'Calendar', icon: ICONS.calendar, match: (p) => p.startsWith('/admin/calendar') },
   { href: '/admin/notes', label: 'Notes', icon: ICONS.notes, match: (p) => p.startsWith('/admin/notes') },
   { href: '/products', label: 'Products', icon: ICONS.products, match: (p) => p.startsWith('/products') },
+  { href: '/admin/competitors', label: 'Competitors', icon: ICONS.competitors, match: (p) => p.startsWith('/admin/competitors') },
 ]
 
 export function AdminRail() {
