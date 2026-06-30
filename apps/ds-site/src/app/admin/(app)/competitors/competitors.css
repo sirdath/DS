@@ -1,0 +1,167 @@
+/* Competitors tab — layout + content only; cards, buttons, inputs and badges come
+   from the shared ds-kit (.ds-*). Tokens are the kit's --ds-* (light-mode aware). */
+
+.cmp-add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.cmp-add .ds-input {
+  flex: 1;
+  min-width: 240px;
+}
+.cmp-add__name {
+  flex: 0 1 200px;
+  min-width: 160px;
+}
+.cmp-err {
+  margin: -8px 0 14px;
+  color: var(--ds-danger);
+  font-size: 0.85rem;
+}
+
+.cmp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+.cmp-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cmp-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.cmp-card__name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ds-text);
+}
+.cmp-card__url {
+  font-size: 0.8rem;
+  color: var(--ds-muted);
+  text-decoration: none;
+  word-break: break-all;
+}
+.cmp-card__url:hover {
+  color: var(--ds-accent);
+  text-decoration: underline;
+}
+.cmp-card__sum {
+  flex: 1;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--ds-muted);
+}
+.cmp-card__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+.cmp-card__foot .ds-btn {
+  min-height: 34px;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+}
+
+/* ── Detail ── */
+.cmp-back {
+  display: inline-block;
+  margin-bottom: 14px;
+  font-size: 0.82rem;
+  color: var(--ds-muted);
+  text-decoration: none;
+}
+.cmp-back:hover {
+  color: var(--ds-text);
+}
+.cmp-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1040px;
+}
+.cmp-lead {
+  margin: 0;
+  max-width: 78ch;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--ds-text);
+}
+.cmp-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 760px) {
+  .cmp-cols {
+    grid-template-columns: 1fr;
+  }
+}
+.cmp-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cmp-list li {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--ds-muted);
+}
+.cmp-take .cmp-list li::marker {
+  color: var(--ds-accent);
+}
+.cmp-gap .cmp-list li::marker {
+  color: var(--ds-warning);
+}
+.cmp-pricing {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--ds-muted);
+}
+.cmp-opps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.cmp-opps > li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.cmp-opp__rank {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--ds-accent);
+  color: var(--ds-on-accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.cmp-opp__title {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ds-text);
+}
+.cmp-opp__detail {
+  margin: 3px 0 0;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--ds-muted);
+}
