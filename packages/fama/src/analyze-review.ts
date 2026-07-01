@@ -7,9 +7,9 @@
  */
 
 import type Anthropic from "@anthropic-ai/sdk";
-import { costUsd, PER_REVIEW_MODEL, type RawUsage } from "./client.js";
-import { THEME_TOPICS } from "./taxonomy.js";
-import type { BusinessContext, Lang, Review, ReviewAnalysis, Sentiment } from "./types.js";
+import { costUsd, PER_REVIEW_MODEL, type RawUsage } from "./client";
+import { THEME_TOPICS } from "./taxonomy";
+import type { BusinessContext, Lang, Review, ReviewAnalysis, Sentiment } from "./types";
 
 const ANALYSIS_SCHEMA = {
   type: "object",

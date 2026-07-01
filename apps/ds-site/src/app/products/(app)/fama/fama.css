@@ -7,6 +7,108 @@
   max-width: 820px;
 }
 
+/* ── Live import (founders) ── */
+.wf-import {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 820px;
+  margin-bottom: 20px;
+  padding: 16px;
+  border: 1px solid var(--ws-border);
+  border-radius: 12px;
+  background: var(--ws-surface);
+}
+.wf-import__head {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.wf-import__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ws-text);
+}
+.wf-import__hint {
+  font-size: 0.78rem;
+  color: var(--ws-muted);
+}
+.wf-import__row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.wf-import__row--actions {
+  align-items: center;
+}
+.wf-import__input {
+  flex: 1;
+  min-width: 160px;
+  background: color-mix(in srgb, var(--ws-text) 4%, transparent);
+  border: 1px solid var(--ws-border);
+  border-radius: 8px;
+  padding: 9px 11px;
+  color: var(--ws-text);
+  font-size: 0.85rem;
+}
+.wf-import__csv {
+  width: 100%;
+  resize: vertical;
+  min-height: 96px;
+  background: color-mix(in srgb, var(--ws-text) 4%, transparent);
+  border: 1px solid var(--ws-border);
+  border-radius: 8px;
+  padding: 10px 11px;
+  color: var(--ws-text);
+  font-size: 0.8rem;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  line-height: 1.45;
+}
+.wf-import__input:focus-visible,
+.wf-import__csv:focus-visible {
+  outline: 2px solid var(--ws-cta, #c89245);
+  outline-offset: 1px;
+}
+.wf-import__file {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 14px;
+  border: 1px dashed var(--ws-border);
+  border-radius: 8px;
+  color: var(--ws-muted);
+  font-size: 0.82rem;
+  cursor: pointer;
+  min-height: 44px;
+}
+.wf-import__file input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.wf-import__run {
+  min-height: 44px;
+  padding: 9px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--ws-cta, #c89245);
+  background: var(--ws-cta, #c89245);
+  color: #050607;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.wf-import__run:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.wf-import__err {
+  margin: 0;
+  color: #c96868;
+  font-size: 0.82rem;
+}
+
 .wf__stats {
   display: flex;
   flex-direction: column;

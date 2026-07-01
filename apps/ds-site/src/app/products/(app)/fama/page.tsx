@@ -1,10 +1,21 @@
-import { DEMO_FAMA_REPORT } from './demo-report'
-import { FamaReportView } from './report-view'
+import { assertAdmin } from '@/app/admin/lib/assert-admin'
+import { FamaLive } from './fama-live'
 
-export default function FamaWorkspacePage() {
+export const dynamic = 'force-dynamic'
+
+export default async function FamaWorkspacePage() {
+  // Founders can run live analyses (billed to their own key); everyone else
+  // signed into the products area sees the example report.
+  let canRun = false
+  try {
+    await assertAdmin()
+    canRun = true
+  } catch {
+    canRun = false
+  }
+
   return (
     <>
-
       <div className="ws-head">
         <span className="ws-head__eyebrow">Fama · Review intelligence</span>
         <h1 className="ws-head__title">Your reviews, read</h1>
@@ -14,16 +25,7 @@ export default function FamaWorkspacePage() {
         </p>
       </div>
 
-      {/* PLACEHOLDER: example report so the surface shows what a real one looks like.
-          Swap DEMO_FAMA_REPORT for the client's live report (and drop the banner). */}
-      <div className="ws-demo-banner">
-        <span className="ws-demo-banner__tag">Example</span>
-        <span className="ws-demo-banner__text">
-          Sample report for a demo hotel, this is what yours will look like once a review source is connected.
-        </span>
-      </div>
-
-      <FamaReportView report={DEMO_FAMA_REPORT} />
+      <FamaLive canRun={canRun} />
     </>
   )
 }
