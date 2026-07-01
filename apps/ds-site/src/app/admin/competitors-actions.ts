@@ -86,15 +86,18 @@ export async function analyzeCompetitor(id: string): Promise<void> {
   } catch {
     email = null
   }
-  const apiKey = keyForEmail(email)
-  if (!apiKey) {
-    throw new Error('No Anthropic key for your account. Add yours to ADMIN_ANTHROPIC_KEYS (email=key), or set ANTHROPIC_API_KEY.')
+  // Your own credential first (stored on your admin account), then the env fallbacks.
+  const { data: keyRow } = await supabase.from('admin_api_keys').select('credential').maybeSingle()
+  const stored = typeof keyRow?.credential === 'string' ? keyRow.credential.trim() : ''
+  const credential = stored || keyForEmail(email)
+  if (!credential) {
+    throw new Error('No Anthropic credential for your account — add yours in the "Your Anthropic key" card at the top of this tab.')
   }
 
   await supabase.from('competitors').update({ status: 'analyzing' }).eq('id', id)
   refresh()
   try {
-    const { analysis } = await analyzeUrl({ apiKey, name: String(row.name), url: String(row.url) })
+    const { analysis } = await analyzeUrl({ credential, name: String(row.name), url: String(row.url) })
     await supabase
       .from('competitors')
       .update({ analysis, summary: analysis.summary ?? '', status: 'analyzed', scraped_at: new Date().toISOString() })
