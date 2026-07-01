@@ -72,6 +72,7 @@ export async function createEvent(input: {
   eventDate: string
   description?: string
   startTime?: string | null
+  endTime?: string | null
   color?: string
   assignee?: string
   meetingType?: string
@@ -85,6 +86,8 @@ export async function createEvent(input: {
       event_date: input.eventDate,
       description: clean(input.description ?? '', DESC_MAX),
       start_time: input.startTime || null,
+      // An end time without a start is meaningless — store it only alongside a start.
+      end_time: input.startTime ? input.endTime || null : null,
       color: input.color && COLORS.has(input.color) ? input.color : 'default',
       assignee: input.assignee && ASSIGNEES.has(input.assignee) ? input.assignee : '',
       meeting_type: input.meetingType && MEETING_TYPES.has(input.meetingType) ? input.meetingType : '',
@@ -117,6 +120,7 @@ export async function updateEvent(
     description?: string
     eventDate?: string
     startTime?: string | null
+    endTime?: string | null
     color?: string
     done?: boolean
     assignee?: string
@@ -131,6 +135,7 @@ export async function updateEvent(
   if (patch.description !== undefined) row.description = clean(patch.description, DESC_MAX)
   if (patch.eventDate !== undefined) row.event_date = patch.eventDate
   if (patch.startTime !== undefined) row.start_time = patch.startTime || null
+  if (patch.endTime !== undefined) row.end_time = patch.endTime || null
   if (patch.color !== undefined) row.color = COLORS.has(patch.color) ? patch.color : 'default'
   if (patch.done !== undefined) row.done = Boolean(patch.done)
   if (patch.assignee !== undefined) row.assignee = ASSIGNEES.has(patch.assignee) ? patch.assignee : ''

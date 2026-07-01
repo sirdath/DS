@@ -61,3 +61,13 @@
 .cal__who--stel { color: #5cc7a0; border-color: rgba(92, 199, 160, 0.4); background: rgba(92, 199, 160, 0.12); }
 .cal__who--both { color: #c89245; border-color: rgba(200, 146, 69, 0.4); background: rgba(200, 146, 69, 0.12); }
 .cal__who-sel { flex: 1; font: inherit; font-size: 13px; color: var(--admin-text); background: var(--admin-bg); border: 1px solid var(--admin-border); border-radius: 8px; padding: 7px 9px; cursor: pointer; }
+
+/* In-place event editing */
+.cal__editbtn { flex: none; border: 0; background: none; color: var(--admin-text-dim); cursor: pointer; font-size: 13px; min-width: 32px; min-height: 32px; }
+.cal__editbtn:hover { color: var(--admin-amber); }
+.cal__edit { display: grid; gap: 8px; padding: 10px; border: 1px solid var(--admin-border); border-radius: 10px; background: color-mix(in srgb, var(--admin-text) 3%, transparent); }
+.cal__cancelbtn { font-size: 13px; color: var(--admin-text-muted); background: none; border: 1px solid var(--admin-border); border-radius: 8px; padding: 8px 16px; cursor: pointer; }
+.cal__time:disabled { opacity: 0.45; }
+@media (pointer: coarse) {
+  .cal__editbtn, .cal__del, .cal__check { min-width: 44px; min-height: 44px; }
+}
