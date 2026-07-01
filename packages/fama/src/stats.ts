@@ -14,7 +14,7 @@ import type {
   ReviewAnalysis,
   Sentiment,
   ThemeRollup,
-} from "./types.js";
+} from "./types";
 
 /** The deterministic slice of a FamaAggregate — everything except the model's synthesis. */
 export type DeterministicStats = Pick<

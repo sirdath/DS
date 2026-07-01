@@ -9,9 +9,9 @@
  */
 
 import type Anthropic from "@anthropic-ai/sdk";
-import { costUsd, SYNTHESIS_MODEL, type RawUsage } from "./client.js";
-import type { DeterministicStats } from "./stats.js";
-import { topicLabel } from "./taxonomy.js";
+import { costUsd, SYNTHESIS_MODEL, type RawUsage } from "./client";
+import type { DeterministicStats } from "./stats";
+import { topicLabel } from "./taxonomy";
 import type {
   BusinessContext,
   Issue,
@@ -19,7 +19,7 @@ import type {
   Review,
   ReviewAnalysis,
   Strength,
-} from "./types.js";
+} from "./types";
 
 const SYNTHESIS_SCHEMA = {
   type: "object",

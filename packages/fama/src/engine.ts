@@ -8,10 +8,10 @@
  */
 
 import type Anthropic from "@anthropic-ai/sdk";
-import { analyzeReview, buildSystemPrompt } from "./analyze-review.js";
-import { getClient, PER_REVIEW_MODEL, SYNTHESIS_MODEL, type RawUsage } from "./client.js";
-import { computeStats, dateRange } from "./stats.js";
-import { synthesize } from "./synthesize.js";
+import { analyzeReview, buildSystemPrompt } from "./analyze-review";
+import { getClient, PER_REVIEW_MODEL, SYNTHESIS_MODEL, type RawUsage } from "./client";
+import { computeStats, dateRange } from "./stats";
+import { synthesize } from "./synthesize";
 import type {
   BusinessContext,
   FamaAggregate,
@@ -19,7 +19,7 @@ import type {
   FamaUsage,
   Review,
   ReviewAnalysis,
-} from "./types.js";
+} from "./types";
 
 export interface AnalyzeOptions {
   /** Explicit Anthropic client (e.g. with a custom key). Defaults to a fresh one. */

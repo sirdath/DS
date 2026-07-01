@@ -6,25 +6,25 @@
  * Primary entry point: `analyzeReviews(reviews, business, opts) → FamaReport`.
  */
 
-export { analyzeReviews } from "./engine.js";
-export type { AnalyzeOptions } from "./engine.js";
+export { analyzeReviews } from "./engine";
+export type { AnalyzeOptions } from "./engine";
 
-export { buildSystemPrompt, analyzeReview, parseAnalysis } from "./analyze-review.js";
-export type { AnalyzeResult } from "./analyze-review.js";
+export { buildSystemPrompt, analyzeReview, parseAnalysis } from "./analyze-review";
+export type { AnalyzeResult } from "./analyze-review";
 
-export { synthesize } from "./synthesize.js";
-export type { SynthesisResult } from "./synthesize.js";
+export { synthesize } from "./synthesize";
+export type { SynthesisResult } from "./synthesize";
 
-export { computeStats, dateRange } from "./stats.js";
-export type { DeterministicStats } from "./stats.js";
+export { computeStats, dateRange } from "./stats";
+export type { DeterministicStats } from "./stats";
 
-export { getClient, costUsd, PER_REVIEW_MODEL, SYNTHESIS_MODEL } from "./client.js";
-export type { RawUsage } from "./client.js";
+export { getClient, costUsd, PER_REVIEW_MODEL, SYNTHESIS_MODEL } from "./client";
+export type { RawUsage } from "./client";
 
-export { THEME_TOPICS, topicLabel } from "./taxonomy.js";
-export type { ThemeTopic } from "./taxonomy.js";
+export { THEME_TOPICS, topicLabel } from "./taxonomy";
+export type { ThemeTopic } from "./taxonomy";
 
-export { renderReport } from "./report.js";
+export { renderReport } from "./report";
 
 export type {
   Platform,
@@ -41,4 +41,4 @@ export type {
   FamaAggregate,
   FamaUsage,
   FamaReport,
-} from "./types.js";
+} from "./types";

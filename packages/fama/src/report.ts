@@ -3,8 +3,8 @@
  * (or a DS consultant) reads. Pure formatting: no model calls, no side effects.
  */
 
-import { topicLabel } from "./taxonomy.js";
-import type { FamaReport, ReviewAnalysis, ThemeRollup } from "./types.js";
+import { topicLabel } from "./taxonomy";
+import type { FamaReport, ReviewAnalysis, ThemeRollup } from "./types";
 
 const STARS = ["5", "4", "3", "2", "1"] as const;
 
