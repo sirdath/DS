@@ -15,6 +15,18 @@ const TITLE_MAX = 300
 const DESC_MAX = 2000
 const COLORS = new Set(['default', 'meeting', 'deadline', 'personal'])
 const ASSIGNEES = new Set(['', 'dath', 'stel', 'both'])
+const MEETING_TYPES = new Set(['', 'cofounders', 'shareholders', 'client', 'internal'])
+
+/** Accept only http(s) URLs (store '' otherwise) so a meeting link can't inject. */
+function safeUrl(v: unknown): string {
+  if (typeof v !== 'string' || !v.trim()) return ''
+  try {
+    const u = new URL(v.trim())
+    return u.protocol === 'http:' || u.protocol === 'https:' ? u.toString() : ''
+  } catch {
+    return ''
+  }
+}
 
 async function db() {
   await assertAdmin()
@@ -62,6 +74,8 @@ export async function createEvent(input: {
   startTime?: string | null
   color?: string
   assignee?: string
+  meetingType?: string
+  meetingLink?: string
 }): Promise<string> {
   const supabase = await db()
   const { data, error } = await supabase
@@ -73,6 +87,8 @@ export async function createEvent(input: {
       start_time: input.startTime || null,
       color: input.color && COLORS.has(input.color) ? input.color : 'default',
       assignee: input.assignee && ASSIGNEES.has(input.assignee) ? input.assignee : '',
+      meeting_type: input.meetingType && MEETING_TYPES.has(input.meetingType) ? input.meetingType : '',
+      meeting_link: safeUrl(input.meetingLink),
       created_by: await currentUserId(),
     })
     .select('id')
@@ -96,7 +112,17 @@ export async function createEvent(input: {
 
 export async function updateEvent(
   id: string,
-  patch: { title?: string; description?: string; eventDate?: string; startTime?: string | null; color?: string; done?: boolean; assignee?: string },
+  patch: {
+    title?: string
+    description?: string
+    eventDate?: string
+    startTime?: string | null
+    color?: string
+    done?: boolean
+    assignee?: string
+    meetingType?: string
+    meetingLink?: string
+  },
 ): Promise<void> {
   if (!id) throw new Error('Missing event id')
   const supabase = await db()
@@ -108,6 +134,8 @@ export async function updateEvent(
   if (patch.color !== undefined) row.color = COLORS.has(patch.color) ? patch.color : 'default'
   if (patch.done !== undefined) row.done = Boolean(patch.done)
   if (patch.assignee !== undefined) row.assignee = ASSIGNEES.has(patch.assignee) ? patch.assignee : ''
+  if (patch.meetingType !== undefined) row.meeting_type = MEETING_TYPES.has(patch.meetingType) ? patch.meetingType : ''
+  if (patch.meetingLink !== undefined) row.meeting_link = safeUrl(patch.meetingLink)
   const { error } = await supabase.from('calendar_events').update(row).eq('id', id)
   if (error) throw new Error(error.message)
   refresh()

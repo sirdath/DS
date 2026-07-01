@@ -1,0 +1,166 @@
+/* Dashboard Planning cards (Upcoming meetings + Deadlines). The cards are .ds2-card;
+   chips + progress bar come from the shared kit (.ds-chip / .ds-progress in ds-kit.css). */
+
+.plan-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 0;
+  border-top: 1px solid var(--ds2-border);
+}
+.plan-row:first-of-type {
+  border-top: 0;
+}
+.plan-row__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.plan-row__title {
+  font-size: 0.9rem;
+  color: var(--ds2-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.plan-row__title.is-done {
+  text-decoration: line-through;
+  color: var(--ds2-text-3);
+}
+.plan-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.plan-row__actions {
+  display: flex;
+  gap: 4px;
+  flex: none;
+}
+.plan-iconbtn {
+  background: none;
+  border: 0;
+  color: var(--ds2-text-3);
+  cursor: pointer;
+  font-size: 0.85rem;
+  line-height: 1;
+  padding: 6px;
+  border-radius: 6px;
+  min-height: 32px;
+  min-width: 32px;
+}
+.plan-iconbtn:hover {
+  color: var(--ds2-text);
+  background: color-mix(in srgb, var(--ds2-text) 8%, transparent);
+}
+@media (pointer: coarse) {
+  .plan-iconbtn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+.plan-join {
+  flex: none;
+  font-family: var(--ds-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--ds-accent);
+  text-decoration: none;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--ds-accent-border);
+  background: var(--ds-accent-dim);
+}
+.plan-join:hover {
+  text-decoration: underline;
+}
+
+/* ── Add / edit form ── */
+.plan-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 0;
+  border-top: 1px solid var(--ds2-border);
+}
+.plan-form__row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.plan-input,
+.plan-select {
+  flex: 1;
+  min-width: 0;
+  background: color-mix(in srgb, var(--ds2-text) 4%, transparent);
+  border: 1px solid var(--ds2-border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: var(--ds2-text);
+  font-size: 0.85rem;
+}
+.plan-input:focus-visible,
+.plan-select:focus-visible {
+  outline: 2px solid var(--ds-accent);
+  outline-offset: 1px;
+}
+.plan-kind {
+  display: inline-flex;
+  gap: 4px;
+}
+.plan-kind button {
+  font-family: var(--ds-mono);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--ds2-border);
+  background: none;
+  color: var(--ds2-text-3);
+  cursor: pointer;
+}
+.plan-kind button.is-on {
+  color: var(--ds-accent);
+  border-color: var(--ds-accent-border);
+  background: var(--ds-accent-dim);
+}
+.plan-form__actions {
+  display: flex;
+  gap: 8px;
+}
+.plan-btn {
+  font-size: 0.82rem;
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--ds-accent);
+  background: var(--ds-accent);
+  color: var(--ds-on-accent);
+  cursor: pointer;
+}
+.plan-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.plan-btn--ghost {
+  background: none;
+  color: var(--ds2-text-2);
+  border-color: var(--ds2-border);
+}
+.plan-addbtn {
+  font-family: var(--ds-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ds-accent);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 4px;
+}

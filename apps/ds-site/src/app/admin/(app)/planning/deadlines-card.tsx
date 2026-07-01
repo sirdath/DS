@@ -1,0 +1,169 @@
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { createDeadline, type DeadlineInput, deleteDeadline, updateDeadline } from '@/app/admin/planning-actions'
+import { type Deadline, countdown, metricPct } from './lib/planning'
+import './planning.css'
+
+function DeadlineForm({
+  initial,
+  submitLabel,
+  onSubmit,
+  onCancel,
+}: {
+  initial?: Deadline
+  submitLabel: string
+  onSubmit: (input: DeadlineInput) => Promise<void>
+  onCancel: () => void
+}) {
+  const [kind, setKind] = useState<'date' | 'metric'>(initial?.kind ?? 'date')
+  const [title, setTitle] = useState(initial?.title ?? '')
+  const [dueDate, setDueDate] = useState(initial?.dueDate ?? '')
+  const [current, setCurrent] = useState(initial?.metricCurrent != null ? String(initial.metricCurrent) : '')
+  const [target, setTarget] = useState(initial?.metricTarget != null ? String(initial.metricTarget) : '')
+  const [unit, setUnit] = useState(initial?.metricUnit || 'EUR')
+  const [busy, setBusy] = useState(false)
+
+  async function submit() {
+    if (!title.trim() || busy) return
+    setBusy(true)
+    try {
+      await onSubmit({ kind, title, dueDate, metricCurrent: current, metricTarget: target, metricUnit: unit })
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div className="plan-form">
+      <div className="plan-kind" role="group" aria-label="Deadline type">
+        <button type="button" className={kind === 'date' ? 'is-on' : ''} onClick={() => setKind('date')}>
+          Date
+        </button>
+        <button type="button" className={kind === 'metric' ? 'is-on' : ''} onClick={() => setKind('metric')}>
+          Metric
+        </button>
+      </div>
+      <input
+        className="plan-input"
+        placeholder="What has to happen…"
+        value={title}
+        maxLength={200}
+        onChange={(e) => setTitle(e.target.value)}
+        aria-label="Deadline title"
+      />
+      {kind === 'date' ? (
+        <div className="plan-form__row">
+          <input className="plan-input" type="date" value={dueDate ?? ''} onChange={(e) => setDueDate(e.target.value)} aria-label="Due date" />
+        </div>
+      ) : (
+        <div className="plan-form__row">
+          <input className="plan-input" type="number" inputMode="decimal" placeholder="Now" value={current} onChange={(e) => setCurrent(e.target.value)} aria-label="Current amount" />
+          <input className="plan-input" type="number" inputMode="decimal" placeholder="Target" value={target} onChange={(e) => setTarget(e.target.value)} aria-label="Target amount" />
+          <input className="plan-input" placeholder="Unit" value={unit} maxLength={12} onChange={(e) => setUnit(e.target.value)} aria-label="Unit" />
+        </div>
+      )}
+      <div className="plan-form__actions">
+        <button type="button" className="plan-btn" onClick={() => void submit()} disabled={busy}>
+          {busy ? 'Saving…' : submitLabel}
+        </button>
+        <button type="button" className="plan-btn plan-btn--ghost" onClick={onCancel} disabled={busy}>
+          Cancel
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function fmtAmount(n: number | null, unit: string): string {
+  if (n == null) return '–'
+  const v = n.toLocaleString('en-GB')
+  return unit ? `${v} ${unit}` : v
+}
+
+export function DeadlinesCard({ deadlines }: { deadlines: Deadline[] }) {
+  const router = useRouter()
+  const [adding, setAdding] = useState(false)
+  const [editing, setEditing] = useState<string | null>(null)
+
+  async function onAdd(input: DeadlineInput) {
+    await createDeadline(input)
+    setAdding(false)
+    router.refresh()
+  }
+
+  async function onEdit(id: string, input: DeadlineInput) {
+    await updateDeadline(id, {
+      kind: input.kind,
+      title: input.title,
+      dueDate: input.dueDate,
+      metricCurrent: input.metricCurrent,
+      metricTarget: input.metricTarget,
+      metricUnit: input.metricUnit,
+    })
+    setEditing(null)
+    router.refresh()
+  }
+
+  async function onDelete(id: string) {
+    if (!window.confirm('Delete this deadline?')) return
+    await deleteDeadline(id)
+    router.refresh()
+  }
+
+  return (
+    <section className="ds2-card">
+      <div className="ds2-list__head">
+        <span className="ds2-list__title">Deadlines</span>
+        {!adding ? (
+          <button type="button" className="plan-addbtn" onClick={() => setAdding(true)}>
+            + Add
+          </button>
+        ) : null}
+      </div>
+
+      {adding ? <DeadlineForm submitLabel="Add deadline" onSubmit={onAdd} onCancel={() => setAdding(false)} /> : null}
+
+      {deadlines.length === 0 && !adding ? <p className="ds2-empty">No deadlines yet. Add one to track it here.</p> : null}
+
+      {deadlines.map((d) =>
+        editing === d.id ? (
+          <DeadlineForm key={d.id} initial={d} submitLabel="Save" onSubmit={(input) => onEdit(d.id, input)} onCancel={() => setEditing(null)} />
+        ) : (
+          <div className="plan-row" key={d.id}>
+            <div className="plan-row__main">
+              <span className={`plan-row__title${d.done ? ' is-done' : ''}`} translate="no">
+                {d.title}
+              </span>
+              {d.kind === 'date' ? (
+                <span className="plan-meta">
+                  <span className={`ds-chip${countdown(d.dueDate).tone === 'soon' ? ' ds-chip--soon' : countdown(d.dueDate).tone === 'over' ? ' ds-chip--over' : ''}`}>
+                    {countdown(d.dueDate).label || 'No date'}
+                  </span>
+                </span>
+              ) : (
+                <span className="ds-progress">
+                  <span className="ds-progress__track">
+                    <span className="ds-progress__fill" style={{ width: `${metricPct(d.metricCurrent, d.metricTarget)}%` }} />
+                  </span>
+                  <span className="ds-progress__label">
+                    {fmtAmount(d.metricCurrent, d.metricUnit)} / {fmtAmount(d.metricTarget, d.metricUnit)}
+                  </span>
+                </span>
+              )}
+            </div>
+            <div className="plan-row__actions">
+              <button type="button" className="plan-iconbtn" aria-label="Edit deadline" onClick={() => setEditing(d.id)}>
+                ✎
+              </button>
+              <button type="button" className="plan-iconbtn" aria-label="Delete deadline" onClick={() => void onDelete(d.id)}>
+                ✕
+              </button>
+            </div>
+          </div>
+        ),
+      )}
+    </section>
+  )
+}
