@@ -25,7 +25,7 @@ async function main(): Promise<void> {
   for (const target of TARGETS) {
     console.log(`\n══ ${target.name} — ${target.url} ══`)
     try {
-      const { analysis, usage } = await analyzeUrl({ apiKey, name: target.name, url: target.url })
+      const { analysis, usage } = await analyzeUrl({ credential: apiKey, name: target.name, url: target.url })
       console.log(JSON.stringify(analysis, null, 2))
       console.log(`tokens: in ${usage.input_tokens} · out ${usage.output_tokens}`)
     } catch (err) {

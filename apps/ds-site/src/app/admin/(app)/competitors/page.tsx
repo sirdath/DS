@@ -1,11 +1,13 @@
+import { getCredentialStatus } from '@/app/admin/admin-key-actions'
 import { loadCompetitors } from './lib/competitors-source'
 import { CompetitorsClient } from './competitors-client'
+import { CredentialCard } from './credential-card'
 import './competitors.css'
 
 export const dynamic = 'force-dynamic'
 
 export default async function CompetitorsPage() {
-  const competitors = await loadCompetitors()
+  const [competitors, credential] = await Promise.all([loadCompetitors(), getCredentialStatus()])
   return (
     <div className="admin-container">
       <div className="ds-page-header">
@@ -16,6 +18,7 @@ export default async function CompetitorsPage() {
           they offer that we don&rsquo;t, and what we could build to close the gap.
         </p>
       </div>
+      <CredentialCard status={credential} />
       <CompetitorsClient competitors={competitors} />
     </div>
   )

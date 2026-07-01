@@ -1,6 +1,37 @@
 /* Competitors tab — layout + content only; cards, buttons, inputs and badges come
    from the shared ds-kit (.ds-*). Tokens are the kit's --ds-* (light-mode aware). */
 
+/* ── Credential card ── */
+.cmp-cred {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cmp-cred__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.cmp-cred__hint {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--ds-muted);
+  max-width: 68ch;
+}
+.cmp-cred__form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.cmp-cred__form .ds-input {
+  flex: 1;
+  min-width: 240px;
+}
+
 .cmp-add {
   display: flex;
   flex-wrap: wrap;

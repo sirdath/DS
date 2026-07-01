@@ -83,11 +83,26 @@ export interface AnalyzeResult {
   usage: Anthropic.Usage
 }
 
-/** Scrape `url`, then ask Claude for a DS2-framed competitive analysis. `apiKey` is the
- *  logged-in founder's key (their own billing); omit to fall back to the SDK's env. */
-export async function analyzeUrl(opts: { apiKey?: string; name: string; url: string }): Promise<AnalyzeResult> {
+/** Build a client from the founder's stored credential. A metered API key (sk-ant-api…)
+ *  authenticates with x-api-key; a Claude subscription OAuth token (sk-ant-oat…) uses
+ *  Bearer + the oauth beta header. Omit to fall back to the SDK's own env resolution. */
+function makeClient(credential?: string): Anthropic {
+  if (!credential) return new Anthropic()
+  if (credential.startsWith('sk-ant-oat')) {
+    return new Anthropic({
+      apiKey: null,
+      authToken: credential,
+      defaultHeaders: { 'anthropic-beta': 'oauth-2025-04-20' },
+    })
+  }
+  return new Anthropic({ apiKey: credential })
+}
+
+/** Scrape `url`, then ask Claude for a DS2-framed competitive analysis. `credential` is
+ *  the logged-in founder's own key/token (their own billing). */
+export async function analyzeUrl(opts: { credential?: string; name: string; url: string }): Promise<AnalyzeResult> {
   const content = await scrapeText(opts.url)
-  const client = opts.apiKey ? new Anthropic({ apiKey: opts.apiKey }) : new Anthropic()
+  const client = makeClient(opts.credential)
   const res = await client.messages.create({
     model: MODEL,
     max_tokens: 3000,
