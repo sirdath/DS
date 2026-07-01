@@ -1,5 +1,44 @@
-/* Dashboard Planning cards (Upcoming meetings + Deadlines). The cards are .ds2-card;
-   chips + progress bar come from the shared kit (.ds-chip / .ds-progress in ds-kit.css). */
+/* Dashboard Planning cards (Upcoming meetings + Deadlines) + the /admin/planning page.
+   The cards are .ds2-card; chips + progress bar come from the shared kit (ds-kit.css). */
+
+/* ── /admin/planning page layout ── */
+.plan-page {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 18px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .plan-page {
+    grid-template-columns: 1fr;
+  }
+}
+.plan-page__col {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+.plan-add {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.plan-add__row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.plan-add__row .plan-input,
+.plan-add__row .plan-select {
+  flex: 1;
+  min-width: 130px;
+}
+.plan-err {
+  margin: 0;
+  color: var(--ds-danger);
+  font-size: 0.82rem;
+}
 
 .plan-row {
   display: flex;

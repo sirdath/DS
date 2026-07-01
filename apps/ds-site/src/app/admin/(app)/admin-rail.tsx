@@ -20,6 +20,9 @@ const ICONS: Record<string, ReactNode> = {
   calendar: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
   ),
+  planning: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="4" width="14" height="17" rx="2" /><path d="M9 4h6v3H9z" /><path d="m8.5 12 2 2 4-4" /></svg>
+  ),
   products: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="6" cy="6" r="2.4" /><circle cx="18" cy="6" r="2.4" /><circle cx="6" cy="18" r="2.4" /><circle cx="18" cy="18" r="2.4" /></svg>
   ),
@@ -52,6 +55,7 @@ const ITEMS: Item[] = [
   { href: '/admin/funnel/leads', label: 'Funnel', icon: ICONS.funnel, match: (p) => p.startsWith('/admin/funnel') },
   { href: '/admin/projects', label: 'Projects', icon: ICONS.projects, match: (p) => p.startsWith('/admin/projects') },
   { href: '/admin/calendar', label: 'Calendar', icon: ICONS.calendar, match: (p) => p.startsWith('/admin/calendar') },
+  { href: '/admin/planning', label: 'Planning', icon: ICONS.planning, match: (p) => p.startsWith('/admin/planning') },
   { href: '/admin/notes', label: 'Notes', icon: ICONS.notes, match: (p) => p.startsWith('/admin/notes') },
   { href: '/products', label: 'Products', icon: ICONS.products, match: (p) => p.startsWith('/products') },
   { href: '/admin/competitors', label: 'Competitors', icon: ICONS.competitors, match: (p) => p.startsWith('/admin/competitors') },
