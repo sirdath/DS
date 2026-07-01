@@ -1,3 +1,4 @@
+import { loadMetricSources } from '@/app/admin/lib/metric-sources'
 import { loadEvents } from '../calendar/lib/calendar-source'
 import { loadDeadlines } from './lib/deadlines-source'
 import { DeadlinesCard } from './deadlines-card'
@@ -7,7 +8,7 @@ import './planning.css'
 export const dynamic = 'force-dynamic'
 
 export default async function PlanningPage() {
-  const [events, deadlines] = await Promise.all([loadEvents(), loadDeadlines()])
+  const [events, deadlines, sources] = await Promise.all([loadEvents(), loadDeadlines(), loadMetricSources()])
   return (
     <div className="admin-container">
       <div className="ds-page-header">
@@ -22,7 +23,7 @@ export default async function PlanningPage() {
           <PlanningApp events={events} />
         </div>
         <div className="plan-page__col">
-          <DeadlinesCard deadlines={deadlines} />
+          <DeadlinesCard deadlines={deadlines} sources={sources} />
         </div>
       </div>
     </div>

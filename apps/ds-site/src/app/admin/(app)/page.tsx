@@ -33,6 +33,13 @@ export default async function DashboardPage() {
   const totals = portfolioTotals(active)
 
   const pipelineValue = leads.reduce((sum, p) => sum + (p.estimatedValue ?? 0), 0)
+  const metricSources = {
+    collected: totals.totalCollected,
+    outstanding: totals.totalOutstanding,
+    contract: totals.totalContractValue,
+    mrr: totals.monthlyRecurringRevenue,
+    pipeline: pipelineValue,
+  }
   const topLeads = [...leads].sort((a, b) => (b.estimatedValue ?? 0) - (a.estimatedValue ?? 0)).slice(0, 5)
   const maxLead = Math.max(1, ...topLeads.map((l) => l.estimatedValue ?? 0))
 
@@ -97,8 +104,8 @@ export default async function DashboardPage() {
           {/* Upcoming meetings — booked calendar meetings with a Join link */}
           <UpcomingMeetingsCard events={events} />
 
-          {/* Deadlines — date countdowns + metric goals, editable inline */}
-          <DeadlinesCard deadlines={deadlines} />
+          {/* Deadlines — date countdowns + metric goals (live figures), editable inline */}
+          <DeadlinesCard deadlines={deadlines} sources={metricSources} />
 
           {/* Top open leads */}
           <section className="ds2-card">

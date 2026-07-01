@@ -9,6 +9,7 @@ export interface Deadline {
   metricCurrent: number | null // kind='metric'
   metricTarget: number | null
   metricUnit: string
+  metricSource: string // '' = manual; else a live figure key (collected|mrr|pipeline|…)
   sortOrder: number
   done: boolean
 }
