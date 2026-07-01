@@ -17,23 +17,30 @@ function rowToDeadline(r: Record<string, unknown>): Deadline {
     metricCurrent: toNum(r.metric_current),
     metricTarget: toNum(r.metric_target),
     metricUnit: typeof r.metric_unit === 'string' ? r.metric_unit : '',
+    metricSource: typeof r.metric_source === 'string' ? r.metric_source : '',
     sortOrder: toNum(r.sort_order) ?? 0,
     done: Boolean(r.done),
   }
 }
 
-/** All deadlines, in insert order. Returns [] gracefully if the table/DB is unavailable
- * (e.g. before the migration is applied), so the dashboard never crashes. */
+/** All deadlines, in insert order. Returns [] gracefully if the table/DB is unavailable,
+ * and degrades the select if metric_source isn't there yet (migration pending). */
+const FULL_COLS = 'id, kind, title, due_date, metric_current, metric_target, metric_unit, metric_source, sort_order, done'
+const BASE_COLS = 'id, kind, title, due_date, metric_current, metric_target, metric_unit, sort_order, done'
+
 export async function loadDeadlines(): Promise<Deadline[]> {
   try {
     const supabase = await getSupabaseServerClient()
-    const { data, error } = await supabase
-      .from('planning_deadlines')
-      .select('id, kind, title, due_date, metric_current, metric_target, metric_unit, sort_order, done')
-      .order('sort_order', { ascending: true })
-      .order('created_at', { ascending: true })
-    if (error || !data) return []
-    return (data as unknown as Record<string, unknown>[]).map(rowToDeadline)
+    const q = (cols: string) =>
+      supabase
+        .from('planning_deadlines')
+        .select(cols)
+        .order('sort_order', { ascending: true })
+        .order('created_at', { ascending: true })
+    let res = await q(FULL_COLS)
+    if (res.error) res = await q(BASE_COLS)
+    if (res.error || !res.data) return []
+    return (res.data as unknown as Record<string, unknown>[]).map(rowToDeadline)
   } catch {
     return []
   }

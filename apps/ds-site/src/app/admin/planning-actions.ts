@@ -11,8 +11,13 @@ import { assertAdmin } from './lib/assert-admin'
 import { getSessionUser, getSupabaseServerClient } from './lib/supabase-server'
 
 const KINDS = new Set(['date', 'metric'])
+const SOURCES = new Set(['', 'collected', 'mrr', 'pipeline', 'outstanding', 'contract'])
 const TITLE_MAX = 200
 const UNIT_MAX = 12
+
+function safeSource(v: unknown): string {
+  return typeof v === 'string' && SOURCES.has(v) ? v : ''
+}
 
 async function db() {
   await assertAdmin()
@@ -40,6 +45,7 @@ export interface DeadlineInput {
   metricCurrent?: number | string | null
   metricTarget?: number | string | null
   metricUnit?: string
+  metricSource?: string
 }
 
 export async function createDeadline(input: DeadlineInput): Promise<string> {
@@ -55,6 +61,7 @@ export async function createDeadline(input: DeadlineInput): Promise<string> {
       metric_current: kind === 'metric' ? num(input.metricCurrent) : null,
       metric_target: kind === 'metric' ? num(input.metricTarget) : null,
       metric_unit: kind === 'metric' ? clean(input.metricUnit ?? '', UNIT_MAX) : '',
+      metric_source: kind === 'metric' ? safeSource(input.metricSource) : '',
       created_by: user?.id ?? null,
     })
     .select('id')
@@ -73,6 +80,7 @@ export async function updateDeadline(
     metricCurrent?: number | string | null
     metricTarget?: number | string | null
     metricUnit?: string
+    metricSource?: string
     done?: boolean
   },
 ): Promise<void> {
@@ -91,10 +99,12 @@ export async function updateDeadline(
       row.metric_current = null
       row.metric_target = null
       row.metric_unit = ''
+      row.metric_source = ''
     } else {
       row.metric_current = num(patch.metricCurrent)
       row.metric_target = num(patch.metricTarget)
       row.metric_unit = clean(patch.metricUnit ?? '', UNIT_MAX)
+      row.metric_source = safeSource(patch.metricSource)
       row.due_date = null
     }
   } else {
@@ -103,6 +113,7 @@ export async function updateDeadline(
     if (patch.metricCurrent !== undefined) row.metric_current = num(patch.metricCurrent)
     if (patch.metricTarget !== undefined) row.metric_target = num(patch.metricTarget)
     if (patch.metricUnit !== undefined) row.metric_unit = clean(patch.metricUnit, UNIT_MAX)
+    if (patch.metricSource !== undefined) row.metric_source = safeSource(patch.metricSource)
   }
   const { error } = await supabase.from('planning_deadlines').update(row).eq('id', id)
   if (error) throw new Error(error.message)
