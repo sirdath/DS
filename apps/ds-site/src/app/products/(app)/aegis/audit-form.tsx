@@ -63,11 +63,57 @@ function Vital({ v }: { v: WebVital }) {
   )
 }
 
+/** Markdown work order: ranked priorities + every finding with severity + the EAA
+ *  note — ready to paste into a tracker or send to a dev. */
+function buildWorkOrder(r: AegisReport): string {
+  const lines: string[] = [
+    `# Site audit work order — ${r.final_url}`,
+    '',
+    `Audited ${r.strategy} · ${r.generated_by}`,
+    '',
+  ]
+  if (r.overall_verdict) lines.push(r.overall_verdict, '')
+  if (r.priorities.length > 0) {
+    lines.push('## Fix these first')
+    for (const p of r.priorities) lines.push(`${p.rank}. [${p.effort}] ${p.action}`, `   - Why: ${p.rationale}`)
+    lines.push('')
+  }
+  if (r.findings.length > 0) {
+    lines.push('## All findings')
+    for (const f of r.findings) {
+      lines.push(`- [${f.severity}] (${f.category}) ${f.title}${f.displayValue ? ` — ${f.displayValue}` : ''}`, `  ${f.description}`)
+    }
+  }
+  if (r.eaa_exposure_note) lines.push('', '## Accessibility exposure (EAA)', r.eaa_exposure_note)
+  return lines.join('\n')
+}
+
+function hostnameOf(url: string): string {
+  try {
+    return new URL(url).hostname
+  } catch {
+    return 'site'
+  }
+}
+
+function downloadWorkOrder(r: AegisReport) {
+  const blob = new Blob([buildWorkOrder(r)], { type: 'text/markdown;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `audit-${hostnameOf(r.final_url)}.md`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 function Report({ report: r }: { report: AegisReport }) {
   return (
     <div className="wg">
       <p className="wg__url">
         {r.final_url} · {r.strategy} · {r.generated_by}
+        <button type="button" className="wg-export" onClick={() => downloadWorkOrder(r)}>
+          Export work order ↓
+        </button>
       </p>
 
       <div className="wg-scores">

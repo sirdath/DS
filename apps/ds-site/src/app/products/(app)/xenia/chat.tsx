@@ -38,6 +38,7 @@ const EXAMPLE_TRANSCRIPT: Bubble[] = [
 export function Chat({ samples }: { samples: SampleOption[] }) {
   const [sample, setSample] = useState<string>(samples[0]?.key ?? 'taverna')
   const [state, setState] = useState<ConversationState | null>(null)
+  const [conversationId, setConversationId] = useState<string | null>(null)
   const [pendingUser, setPendingUser] = useState<string | null>(null)
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)
@@ -55,6 +56,7 @@ export function Chat({ samples }: { samples: SampleOption[] }) {
   function reset(nextSample: string) {
     setSample(nextSample)
     setState(null)
+    setConversationId(null)
     setPendingUser(null)
     setError(null)
   }
@@ -70,13 +72,19 @@ export function Chat({ samples }: { samples: SampleOption[] }) {
       const res = await fetch('/api/xenia/respond/', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ sample, state, text }),
+        body: JSON.stringify({ sample, state, text, conversationId }),
       })
-      const data = (await res.json()) as { reply?: string; state?: ConversationState; error?: string }
+      const data = (await res.json()) as {
+        reply?: string
+        state?: ConversationState
+        conversationId?: string | null
+        error?: string
+      }
       if (!res.ok || !data.state) {
         setError(data.error ?? 'Something went wrong.')
       } else {
         setState(data.state)
+        if (data.conversationId) setConversationId(data.conversationId)
       }
     } catch {
       setError('Network error, try again.')

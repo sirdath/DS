@@ -350,3 +350,25 @@
 .wg-finding-title {
   color: var(--ws-text);
 }
+
+/* Export the report as a markdown work order */
+.wg-export {
+  margin-left: 10px;
+  padding: 5px 12px;
+  min-height: 32px;
+  border-radius: 999px;
+  border: 1px solid var(--ws-border);
+  background: none;
+  color: var(--ws-muted);
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+.wg-export:hover {
+  color: var(--ws-text);
+  border-color: var(--ws-cta, #c89245);
+}
+@media (pointer: coarse) {
+  .wg-export {
+    min-height: 44px;
+  }
+}
