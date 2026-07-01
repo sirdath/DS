@@ -1,0 +1,206 @@
+/* Copilot chat — ds-kit card + tokens; only chat-specific layout lives here. */
+
+.cop-page {
+  display: flex;
+  flex-direction: column;
+}
+.cop-shell {
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - 250px);
+  min-height: 420px;
+  padding: 0;
+  overflow: hidden;
+}
+.cop-warn {
+  margin: 0;
+  padding: 10px 16px;
+  font-size: 0.82rem;
+  color: var(--ds-warning);
+  border-bottom: 1px solid var(--ds-border);
+}
+.cop-warn a {
+  color: var(--ds-accent);
+}
+
+.cop-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overscroll-behavior: contain;
+}
+
+.cop-empty {
+  margin: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.cop-empty__lead {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--ds-muted);
+}
+.cop-suggest {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+.cop-chip {
+  font-size: 0.82rem;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--ds-border-hover);
+  background: none;
+  color: var(--ds-text);
+  cursor: pointer;
+  min-height: 40px;
+}
+.cop-chip:hover {
+  border-color: var(--ds-accent-border);
+  color: var(--ds-accent);
+}
+
+.cop-msg {
+  max-width: 72ch;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.cop-msg--user {
+  align-self: flex-end;
+  background: var(--ds-accent-dim);
+  border: 1px solid var(--ds-accent-border);
+  color: var(--ds-text);
+}
+.cop-msg--ai {
+  align-self: flex-start;
+  background: color-mix(in srgb, var(--ds-text) 4%, transparent);
+  border: 1px solid var(--ds-border);
+  color: var(--ds-text);
+}
+
+.cop-tool {
+  align-self: flex-start;
+  font-family: var(--ds-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  color: var(--ds-muted);
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px dashed var(--ds-border-hover);
+}
+.cop-tool i {
+  font-style: normal;
+  color: var(--ds-success);
+}
+.cop-tool.is-fail i {
+  color: var(--ds-danger);
+}
+.cop-thinking {
+  align-self: flex-start;
+  font-size: 0.85rem;
+  color: var(--ds-muted);
+  animation: cop-pulse 1.4s ease-in-out infinite;
+}
+@keyframes cop-pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cop-thinking {
+    animation: none;
+  }
+}
+.cop-err {
+  margin: 0;
+  align-self: flex-start;
+  color: var(--ds-danger);
+  font-size: 0.85rem;
+}
+
+.cop-model {
+  align-self: flex-start;
+  font-family: var(--ds-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ds-accent);
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--ds-accent-border);
+  background: var(--ds-accent-dim);
+}
+
+.cop-tiers {
+  display: flex;
+  gap: 6px;
+  padding: 10px 16px 0;
+  border-top: 1px solid var(--ds-border);
+}
+.cop-tier {
+  font-family: var(--ds-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--ds-border);
+  background: none;
+  color: var(--ds-muted);
+  cursor: pointer;
+  min-height: 30px;
+}
+.cop-tier.is-on {
+  color: var(--ds-accent);
+  border-color: var(--ds-accent-border);
+  background: var(--ds-accent-dim);
+}
+@media (pointer: coarse) {
+  .cop-tier {
+    min-height: 44px;
+  }
+}
+
+.cop-input {
+  display: flex;
+  gap: 10px;
+  padding: 12px 16px;
+  border-top: 0;
+  padding-top: 10px;
+  align-items: flex-end;
+}
+.cop-input__field {
+  flex: 1;
+  resize: none;
+  min-height: 44px;
+  max-height: 160px;
+  background: color-mix(in srgb, var(--ds-text) 4%, transparent);
+  border: 1px solid var(--ds-border);
+  border-radius: 10px;
+  padding: 11px 12px;
+  color: var(--ds-text);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  font-family: inherit;
+}
+.cop-input__field:focus-visible {
+  outline: 2px solid var(--ds-accent);
+  outline-offset: 1px;
+}
+.cop-usage {
+  margin: 0;
+  padding: 6px 16px 12px;
+  font-family: var(--ds-mono);
+  font-size: 0.65rem;
+  color: var(--ds-dim, var(--ds-muted));
+}

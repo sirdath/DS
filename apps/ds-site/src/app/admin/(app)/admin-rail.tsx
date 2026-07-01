@@ -8,6 +8,9 @@ const ICONS: Record<string, ReactNode> = {
   dashboard: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>
   ),
+  copilot: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z" /><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z" /></svg>
+  ),
   funnel: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"><path d="M3 5h18l-7 8v6l-4 2v-8z" /></svg>
   ),
@@ -52,6 +55,7 @@ interface Item {
 
 const ITEMS: Item[] = [
   { href: '/admin', label: 'Dashboard', icon: ICONS.dashboard, match: (p) => p === '/admin' || p === '/admin/' },
+  { href: '/admin/copilot', label: 'Copilot', icon: ICONS.copilot, match: (p) => p.startsWith('/admin/copilot') },
   { href: '/admin/funnel/leads', label: 'Funnel', icon: ICONS.funnel, match: (p) => p.startsWith('/admin/funnel') },
   { href: '/admin/projects', label: 'Projects', icon: ICONS.projects, match: (p) => p.startsWith('/admin/projects') },
   { href: '/admin/calendar', label: 'Calendar', icon: ICONS.calendar, match: (p) => p.startsWith('/admin/calendar') },
