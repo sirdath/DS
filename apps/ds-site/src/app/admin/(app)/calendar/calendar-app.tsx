@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createEvent, deleteEvent, updateEvent } from '../../calendar-actions'
-import { ASSIGNEES, MEETING_TYPES, MONTHS, WEEKDAYS, type CalendarEvent, assigneeLabel, isoDate, meetingTypeLabel, monthGrid, monthLabel } from './lib/calendar'
+import { ASSIGNEES, MEETING_TYPES, MONTHS, WEEKDAYS, type CalendarEvent, assigneeLabel, isoDate, meetingTypeLabel, monthGrid, monthLabel, timeRange } from './lib/calendar'
 import './calendar.css'
 import '../planning/planning.css'
 
@@ -15,6 +15,82 @@ const COLORS = [
 ] as const
 
 const colorHex = (c: string) => COLORS.find((x) => x.key === c)?.hex ?? '#8dcbff'
+
+/** In-place editor for one event — every field the add form has, seeded from the
+ *  event, saved through updateEvent (no more delete-and-recreate to fix a typo). */
+function EventEditForm({ event: e, onDone }: { event: CalendarEvent; onDone: () => void }) {
+  const [title, setTitle] = useState(e.title)
+  const [date, setDate] = useState(e.eventDate)
+  const [start, setStart] = useState(e.startTime?.slice(0, 5) ?? '')
+  const [end, setEnd] = useState(e.endTime?.slice(0, 5) ?? '')
+  const [color, setColor] = useState(e.color)
+  const [assignee, setAssignee] = useState(e.assignee)
+  const [meetingType, setMeetingType] = useState(e.meetingType)
+  const [meetingLink, setMeetingLink] = useState(e.meetingLink)
+  const [busy, setBusy] = useState(false)
+
+  async function save() {
+    if (!title.trim() || !date || busy) return
+    setBusy(true)
+    try {
+      await updateEvent(e.id, {
+        title,
+        eventDate: date,
+        startTime: start || null,
+        endTime: start ? end || null : null,
+        color,
+        assignee,
+        meetingType: color === 'meeting' ? meetingType : '',
+        meetingLink: color === 'meeting' ? meetingLink : '',
+      })
+      onDone()
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div className="cal__edit">
+      <input className="cal__input" value={title} maxLength={300} onChange={(ev) => setTitle(ev.target.value)} aria-label="Title" />
+      <div className="cal__add-row">
+        <input className="cal__time" type="date" value={date} onChange={(ev) => setDate(ev.target.value)} aria-label="Date" />
+        <input className="cal__time" type="time" value={start} onChange={(ev) => setStart(ev.target.value)} aria-label="Start time" />
+        <input className="cal__time" type="time" value={end} onChange={(ev) => setEnd(ev.target.value)} aria-label="End time" disabled={!start} />
+      </div>
+      <div className="cal__add-row">
+        <select className="cal__color" value={color} onChange={(ev) => setColor(ev.target.value)} aria-label="Category">
+          {COLORS.map((c) => (
+            <option key={c.key} value={c.key}>{c.label}</option>
+          ))}
+        </select>
+        <select className="cal__who-sel" value={assignee} onChange={(ev) => setAssignee(ev.target.value)} aria-label="Who's responsible">
+          {ASSIGNEES.map((a) => (
+            <option key={a.key} value={a.key}>{a.key === '' ? 'Unassigned' : `For ${a.label}`}</option>
+          ))}
+        </select>
+      </div>
+      {color === 'meeting' ? (
+        <div className="cal__add-row">
+          <select className="cal__color" value={meetingType} onChange={(ev) => setMeetingType(ev.target.value)} aria-label="Meeting type">
+            <option value="">Meeting type…</option>
+            {MEETING_TYPES.map((t) => (
+              <option key={t.key} value={t.key}>{t.label}</option>
+            ))}
+          </select>
+          <input className="cal__input" type="url" placeholder="Join link…" value={meetingLink} onChange={(ev) => setMeetingLink(ev.target.value)} aria-label="Meeting link" />
+        </div>
+      ) : null}
+      <div className="cal__add-row">
+        <button type="button" className="cal__addbtn" disabled={!title.trim() || busy} onClick={() => void save()}>
+          {busy ? 'Saving…' : 'Save'}
+        </button>
+        <button type="button" className="cal__cancelbtn" onClick={onDone} disabled={busy}>
+          Cancel
+        </button>
+      </div>
+    </div>
+  )
+}
 
 export function CalendarApp({ events }: { events: CalendarEvent[] }) {
   const router = useRouter()
@@ -28,8 +104,10 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
   })
   const [selected, setSelected] = useState<string>(today)
   const [busy, setBusy] = useState(false)
+  const [editing, setEditing] = useState<string | null>(null)
   const [title, setTitle] = useState('')
   const [time, setTime] = useState('')
+  const [endTime, setEndTime] = useState('')
   const [color, setColor] = useState('default')
   const [assignee, setAssignee] = useState('')
   const [meetingType, setMeetingType] = useState('')
@@ -68,6 +146,7 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
         title,
         eventDate: selected,
         startTime: time || null,
+        endTime: time ? endTime || null : null,
         color,
         assignee,
         meetingType: color === 'meeting' ? meetingType : '',
@@ -75,6 +154,7 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
       })
       setTitle('')
       setTime('')
+      setEndTime('')
       setColor('default')
       setAssignee('')
       setMeetingType('')
@@ -141,41 +221,55 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
           <h2 className="cal__panel-title">{selectedLabel}</h2>
           <div className="cal__events">
             {selectedEvents.length === 0 ? <p className="cal__empty">Nothing scheduled.</p> : null}
-            {selectedEvents.map((e) => (
-              <div key={e.id} className={`cal__event${e.done ? ' is-done' : ''}`}>
-                <button
-                  type="button"
-                  className="cal__check"
-                  aria-label={e.done ? 'Mark not done' : 'Mark done'}
-                  onClick={() => void updateEvent(e.id, { done: !e.done }).then(() => router.refresh())}
-                >
-                  <i style={{ background: e.done ? colorHex(e.color) : 'transparent', borderColor: colorHex(e.color) }} />
-                </button>
-                <div className="cal__event-main">
-                  <span className="cal__event-title">{e.title}</span>
-                  {e.startTime || e.assignee || e.meetingType || e.meetingLink ? (
-                    <span className="cal__event-meta">
-                      {e.startTime ? <span className="cal__event-time">{e.startTime.slice(0, 5)}</span> : null}
-                      {e.meetingType ? <span className="ds-chip ds-chip--accent">{meetingTypeLabel(e.meetingType)}</span> : null}
-                      {e.assignee ? <span className={`cal__who cal__who--${e.assignee}`}>{assigneeLabel(e.assignee)}</span> : null}
-                      {e.meetingLink ? (
-                        <a className="plan-join" href={e.meetingLink} target="_blank" rel="noopener noreferrer">Join ↗</a>
-                      ) : null}
-                    </span>
-                  ) : null}
-                </div>
-                <button
-                  type="button"
-                  className="cal__del"
-                  aria-label="Delete event"
-                  onClick={() => {
-                    if (window.confirm('Delete this event?')) void deleteEvent(e.id).then(() => router.refresh())
+            {selectedEvents.map((e) =>
+              editing === e.id ? (
+                <EventEditForm
+                  key={e.id}
+                  event={e}
+                  onDone={() => {
+                    setEditing(null)
+                    router.refresh()
                   }}
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
+                />
+              ) : (
+                <div key={e.id} className={`cal__event${e.done ? ' is-done' : ''}`}>
+                  <button
+                    type="button"
+                    className="cal__check"
+                    aria-label={e.done ? 'Mark not done' : 'Mark done'}
+                    onClick={() => void updateEvent(e.id, { done: !e.done }).then(() => router.refresh())}
+                  >
+                    <i style={{ background: e.done ? colorHex(e.color) : 'transparent', borderColor: colorHex(e.color) }} />
+                  </button>
+                  <div className="cal__event-main">
+                    <span className="cal__event-title">{e.title}</span>
+                    {e.startTime || e.assignee || e.meetingType || e.meetingLink ? (
+                      <span className="cal__event-meta">
+                        {e.startTime ? <span className="cal__event-time">{timeRange(e)}</span> : null}
+                        {e.meetingType ? <span className="ds-chip ds-chip--accent">{meetingTypeLabel(e.meetingType)}</span> : null}
+                        {e.assignee ? <span className={`cal__who cal__who--${e.assignee}`}>{assigneeLabel(e.assignee)}</span> : null}
+                        {e.meetingLink ? (
+                          <a className="plan-join" href={e.meetingLink} target="_blank" rel="noopener noreferrer">Join ↗</a>
+                        ) : null}
+                      </span>
+                    ) : null}
+                  </div>
+                  <button type="button" className="cal__editbtn" aria-label="Edit event" onClick={() => setEditing(e.id)}>
+                    ✎
+                  </button>
+                  <button
+                    type="button"
+                    className="cal__del"
+                    aria-label="Delete event"
+                    onClick={() => {
+                      if (window.confirm('Delete this event?')) void deleteEvent(e.id).then(() => router.refresh())
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ),
+            )}
           </div>
 
           <div className="cal__add">
@@ -190,7 +284,8 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
               }}
             />
             <div className="cal__add-row">
-              <input className="cal__time" type="time" value={time} onChange={(e) => setTime(e.target.value)} aria-label="Time (optional)" />
+              <input className="cal__time" type="time" value={time} onChange={(e) => setTime(e.target.value)} aria-label="Start time (optional)" />
+              <input className="cal__time" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} aria-label="End time (optional)" disabled={!time} />
               <select className="cal__color" value={color} onChange={(e) => setColor(e.target.value)} aria-label="Category">
                 {COLORS.map((c) => (
                   <option key={c.key} value={c.key}>{c.label}</option>

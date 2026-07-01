@@ -8,6 +8,7 @@ function rowToEvent(r: Record<string, unknown>): CalendarEvent {
     description: typeof r.description === 'string' ? r.description : '',
     eventDate: String(r.event_date ?? ''),
     startTime: typeof r.start_time === 'string' ? r.start_time : null,
+    endTime: typeof r.end_time === 'string' ? r.end_time : null,
     color: typeof r.color === 'string' ? r.color : 'default',
     done: Boolean(r.done),
     assignee: typeof r.assignee === 'string' ? r.assignee : '',
@@ -19,9 +20,10 @@ function rowToEvent(r: Record<string, unknown>): CalendarEvent {
 /** Load all shared events (small table). Returns [] gracefully if the table/DB is
  * unavailable (e.g. before the migration is applied), so the UI never crashes. The
  * select degrades column-by-column so a pending migration never blanks the calendar. */
-const FULL_COLS = 'id, title, description, event_date, start_time, color, done, assignee, meeting_type, meeting_link'
-const WITH_ASSIGNEE = 'id, title, description, event_date, start_time, color, done, assignee'
-const BASE_COLS = 'id, title, description, event_date, start_time, color, done'
+const FULL_COLS =
+  'id, title, description, event_date, start_time, end_time, color, done, assignee, meeting_type, meeting_link'
+const WITH_ASSIGNEE = 'id, title, description, event_date, start_time, end_time, color, done, assignee'
+const BASE_COLS = 'id, title, description, event_date, start_time, end_time, color, done'
 
 export async function loadEvents(): Promise<CalendarEvent[]> {
   try {

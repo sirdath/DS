@@ -4,11 +4,19 @@ export interface CalendarEvent {
   description: string
   eventDate: string // YYYY-MM-DD
   startTime: string | null // HH:MM[:SS] or null (all-day)
+  endTime: string | null // HH:MM[:SS] or null (open-ended)
   color: string
   done: boolean
   assignee: string // '' | 'dath' | 'stel' | 'both'
   meetingType: string // '' | cofounders | shareholders | client | internal ('' = not a meeting)
   meetingLink: string // placeholder join URL
+}
+
+/** "14:30" or "14:30–15:00" for an event's time range. */
+export function timeRange(e: Pick<CalendarEvent, 'startTime' | 'endTime'>): string {
+  if (!e.startTime) return ''
+  const start = e.startTime.slice(0, 5)
+  return e.endTime ? `${start}–${e.endTime.slice(0, 5)}` : start
 }
 
 export const ASSIGNEES = [
