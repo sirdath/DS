@@ -293,3 +293,62 @@
   color: var(--ds-muted);
   font-size: 0.9rem;
 }
+
+/* ── Chip (compact contextual label: countdown, meeting type) ────────────── */
+.ds-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--ds-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--ds-border-hover);
+  color: var(--ds-muted);
+  white-space: nowrap;
+}
+.ds-chip--accent {
+  color: var(--ds-accent);
+  border-color: var(--ds-accent-border);
+  background: var(--ds-accent-dim);
+}
+.ds-chip--soon {
+  color: var(--ds-warning);
+  border-color: color-mix(in srgb, var(--ds-warning) 40%, transparent);
+  background: color-mix(in srgb, var(--ds-warning) 12%, transparent);
+}
+.ds-chip--over {
+  color: var(--ds-danger);
+  border-color: color-mix(in srgb, var(--ds-danger) 40%, transparent);
+  background: color-mix(in srgb, var(--ds-danger) 12%, transparent);
+}
+
+/* ── Progress bar (metric goal: current / target) ────────────────────────── */
+.ds-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ds-progress__track {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--ds-border-hover);
+  overflow: hidden;
+}
+.ds-progress__fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--ds-accent);
+  transition: width var(--ds-dur, 0.18s) var(--ds-ease, ease);
+}
+.ds-progress__label {
+  font-family: var(--ds-mono);
+  font-size: 0.68rem;
+  color: var(--ds-muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}

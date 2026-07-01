@@ -47,8 +47,10 @@ three columns (migration `20260701130000_calendar_meeting_fields.sql`), all
 | column | type | meaning |
 |---|---|---|
 | `meeting_type` | `text not null default ''` | app-validated set: `'' \| cofounders \| shareholders \| client \| internal`. `''` = not a meeting. |
-| `team` | `text not null default ''` | free-text team label (e.g. "Strategy"), generic for resale. Distinct from `assignee`. |
 | `meeting_link` | `text not null default ''` | placeholder join URL. |
+
+**"Which team" reuses the existing `assignee`** (`dath / stel / both`) per the locked decision, so
+there is **no** new `team` column.
 
 No new trigger/policy/grant: inherited `is_admin()` RLS already covers the table.
 
@@ -130,15 +132,11 @@ it in `normalize()`, keeping type/team out of the Google path.
 - **Idempotency** — both migrations use `add column if not exists` / `create table if not
   exists` / drop-before-create / `insert … where not exists`, since they are applied by hand.
 
-## Open decisions (need your call — recommendations first)
+## Decisions (locked 2026-07-01)
 
-1. **Meeting types** — default set `{Cofounders team, Top shareholders, Client, Internal}`.
-   Keep `client` a flat tag for v1 (link to a project later), or link a `project_id` now?
-   *Recommend: flat tag for v1.*
-2. **`team`** — a new free-text field (resale-generic), or reuse the `dath/stel/both` assignee?
-   *Recommend: free-text field (the spec says "which team", distinct from the person assignee).*
-3. **Where to edit** — a dedicated **Planning** rail tab (`/admin/planning`, full CRUD), or
-   inline editing on the dashboard Deadlines card + meetings in the Calendar tab?
-   *Recommend: inline for v1 (edit where you see it), add a Planning tab as a fast-follow.*
-4. **Metric goals** — edited manually, or auto-populate `metric_current` from pipeline data
-   (`portfolioTotals`) already on the dashboard? *Recommend: manual for v1, wire auto later.*
+1. **Meeting types** = `{Cofounders team, Top shareholders, Client, Internal}`. `client` is a
+   **flat tag** for v1 (no `project_id` link yet).
+2. **Team** = reuse the existing `assignee` (`dath / stel / both`). **No new `team` column.**
+3. **Editing** = **inline** on the dashboard Deadlines card + meetings in the Calendar tab.
+   No Planning rail tab for v1.
+4. **Metric goals** = edited **manually** in v1 (auto-pull from pipeline is a later wiring).

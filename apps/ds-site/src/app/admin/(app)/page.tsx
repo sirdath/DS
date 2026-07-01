@@ -7,6 +7,10 @@ import { CalendarCard } from './calendar/calendar-card'
 import { loadEvents } from './calendar/lib/calendar-source'
 import { SiteActivityCard } from './site-activity-card'
 import { loadSiteActivity } from '@/app/admin/lib/site-activity'
+import { UpcomingMeetingsCard } from './upcoming-meetings-card'
+import { DeadlinesCard } from './planning/deadlines-card'
+import { loadDeadlines } from './planning/lib/deadlines-source'
+import './planning/planning.css'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,11 +22,12 @@ const SEARCH_ICON = (
 
 export default async function DashboardPage() {
   const ds = getDataSource()
-  const [all, name, events, activity] = await Promise.all([
+  const [all, name, events, activity, deadlines] = await Promise.all([
     ds.listProjects(),
     getAdminDisplayName(),
     loadEvents(),
     loadSiteActivity(),
+    loadDeadlines(),
   ])
   const { leads, active } = partitionProjects(all)
   const totals = portfolioTotals(active)
@@ -88,6 +93,12 @@ export default async function DashboardPage() {
 
           {/* Live site traffic — today vs yesterday, links to full analytics */}
           <SiteActivityCard activity={activity} />
+
+          {/* Upcoming meetings — booked calendar meetings with a Join link */}
+          <UpcomingMeetingsCard events={events} />
+
+          {/* Deadlines — date countdowns + metric goals, editable inline */}
+          <DeadlinesCard deadlines={deadlines} />
 
           {/* Top open leads */}
           <section className="ds2-card">

@@ -3,8 +3,9 @@
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createEvent, deleteEvent, updateEvent } from '../../calendar-actions'
-import { ASSIGNEES, MONTHS, WEEKDAYS, type CalendarEvent, assigneeLabel, isoDate, monthGrid, monthLabel } from './lib/calendar'
+import { ASSIGNEES, MEETING_TYPES, MONTHS, WEEKDAYS, type CalendarEvent, assigneeLabel, isoDate, meetingTypeLabel, monthGrid, monthLabel } from './lib/calendar'
 import './calendar.css'
+import '../planning/planning.css'
 
 const COLORS = [
   { key: 'default', label: 'General', hex: '#8dcbff' },
@@ -31,6 +32,8 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
   const [time, setTime] = useState('')
   const [color, setColor] = useState('default')
   const [assignee, setAssignee] = useState('')
+  const [meetingType, setMeetingType] = useState('')
+  const [meetingLink, setMeetingLink] = useState('')
 
   const byDate = useMemo(() => {
     const map = new Map<string, CalendarEvent[]>()
@@ -61,11 +64,21 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
     if (!title.trim() || busy) return
     setBusy(true)
     try {
-      await createEvent({ title, eventDate: selected, startTime: time || null, color, assignee })
+      await createEvent({
+        title,
+        eventDate: selected,
+        startTime: time || null,
+        color,
+        assignee,
+        meetingType: color === 'meeting' ? meetingType : '',
+        meetingLink: color === 'meeting' ? meetingLink : '',
+      })
       setTitle('')
       setTime('')
       setColor('default')
       setAssignee('')
+      setMeetingType('')
+      setMeetingLink('')
       router.refresh()
     } finally {
       setBusy(false)
@@ -140,10 +153,14 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
                 </button>
                 <div className="cal__event-main">
                   <span className="cal__event-title">{e.title}</span>
-                  {e.startTime || e.assignee ? (
+                  {e.startTime || e.assignee || e.meetingType || e.meetingLink ? (
                     <span className="cal__event-meta">
                       {e.startTime ? <span className="cal__event-time">{e.startTime.slice(0, 5)}</span> : null}
+                      {e.meetingType ? <span className="ds-chip ds-chip--accent">{meetingTypeLabel(e.meetingType)}</span> : null}
                       {e.assignee ? <span className={`cal__who cal__who--${e.assignee}`}>{assigneeLabel(e.assignee)}</span> : null}
+                      {e.meetingLink ? (
+                        <a className="plan-join" href={e.meetingLink} target="_blank" rel="noopener noreferrer">Join ↗</a>
+                      ) : null}
                     </span>
                   ) : null}
                 </div>
@@ -180,6 +197,26 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
                 ))}
               </select>
             </div>
+            {color === 'meeting' ? (
+              <>
+                <div className="cal__add-row">
+                  <select className="cal__color" value={meetingType} onChange={(e) => setMeetingType(e.target.value)} aria-label="Meeting type">
+                    <option value="">Meeting type…</option>
+                    {MEETING_TYPES.map((t) => (
+                      <option key={t.key} value={t.key}>{t.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <input
+                  className="cal__input"
+                  type="url"
+                  placeholder="Join link (optional)…"
+                  value={meetingLink}
+                  onChange={(e) => setMeetingLink(e.target.value)}
+                  aria-label="Meeting link"
+                />
+              </>
+            ) : null}
             <div className="cal__add-row">
               <select className="cal__who-sel" value={assignee} onChange={(e) => setAssignee(e.target.value)} aria-label="Who's responsible">
                 {ASSIGNEES.map((a) => (

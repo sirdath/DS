@@ -11,11 +11,15 @@ function rowToEvent(r: Record<string, unknown>): CalendarEvent {
     color: typeof r.color === 'string' ? r.color : 'default',
     done: Boolean(r.done),
     assignee: typeof r.assignee === 'string' ? r.assignee : '',
+    meetingType: typeof r.meeting_type === 'string' ? r.meeting_type : '',
+    meetingLink: typeof r.meeting_link === 'string' ? r.meeting_link : '',
   }
 }
 
 /** Load all shared events (small table). Returns [] gracefully if the table/DB is
- * unavailable (e.g. before the migration is applied), so the UI never crashes. */
+ * unavailable (e.g. before the migration is applied), so the UI never crashes. The
+ * select degrades column-by-column so a pending migration never blanks the calendar. */
+const FULL_COLS = 'id, title, description, event_date, start_time, color, done, assignee, meeting_type, meeting_link'
 const WITH_ASSIGNEE = 'id, title, description, event_date, start_time, color, done, assignee'
 const BASE_COLS = 'id, title, description, event_date, start_time, color, done'
 
@@ -28,9 +32,9 @@ export async function loadEvents(): Promise<CalendarEvent[]> {
         .select(cols)
         .order('event_date', { ascending: true })
         .order('start_time', { ascending: true, nullsFirst: true })
-    let res = await q(WITH_ASSIGNEE)
-    // The assignee column may not exist yet (migration pending) — load without it so
-    // existing events still show; rowToEvent defaults assignee to ''.
+    // Try the full set; fall back if the meeting columns (or assignee) aren't there yet.
+    let res = await q(FULL_COLS)
+    if (res.error) res = await q(WITH_ASSIGNEE)
     if (res.error) res = await q(BASE_COLS)
     if (res.error || !res.data) return []
     // A non-literal select string defeats supabase's column-type inference, so data is
