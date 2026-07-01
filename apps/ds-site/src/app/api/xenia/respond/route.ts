@@ -18,6 +18,7 @@ import {
 } from '@ds/xenia'
 import { NextResponse } from 'next/server'
 import { getSessionUser } from '../../../admin/lib/supabase-server'
+import { persistTurn } from './persist'
 
 export const runtime = 'nodejs'
 
@@ -64,15 +65,18 @@ interface RequestBody {
   sample?: unknown
   state?: unknown
   text?: unknown
+  conversationId?: unknown
 }
 
 export async function POST(request: Request): Promise<Response> {
   if (!sameOrigin(request)) return NextResponse.json({ error: 'Bad origin.' }, { status: 403 })
   if (rateLimited(clientIp(request))) return NextResponse.json({ error: 'Too many messages, slow down.' }, { status: 429 })
 
+  let userId: string | null = null
   if (hasSupabaseEnv()) {
     const user = await getSessionUser()
     if (!user) return NextResponse.json({ error: 'Please sign in.' }, { status: 401 })
+    userId = user.id
   } else if (process.env.NODE_ENV === 'production') {
     return NextResponse.json({ error: 'Workspace is not configured.' }, { status: 503 })
   }
@@ -97,10 +101,24 @@ export async function POST(request: Request): Promise<Response> {
 
   const business = getSample(sample)
   const state = isConversationState(body.state) ? body.state : createConversation(business)
+  const priorConversationId = typeof body.conversationId === 'string' ? body.conversationId : null
 
   try {
     const result = await respond(business, state, text, { store: new InMemoryStore() })
-    return NextResponse.json({ reply: result.reply, state: result.state, status: result.state.status })
+    // Durable per-tenant record (xenia_* tables). Best-effort: never fails the reply,
+    // and quietly no-ops until the workspace migration is applied.
+    let conversationId: string | null = priorConversationId
+    if (userId) {
+      conversationId = await persistTurn({
+        userId,
+        conversationId: priorConversationId,
+        prevStatus: state.status,
+        state: result.state,
+        userText: text,
+        reply: result.reply,
+      })
+    }
+    return NextResponse.json({ reply: result.reply, state: result.state, status: result.state.status, conversationId })
   } catch {
     // Never surface internals or message content.
     return NextResponse.json({ error: 'Xenia could not respond just now.' }, { status: 502 })
