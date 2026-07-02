@@ -8,9 +8,9 @@ import './blog.css'
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: 'Blog — DS2, Digital Solutions Consulting',
+  title: 'Blog · DS2, Digital Solutions Consulting',
   description:
-    'Practical, honest articles on websites, applied AI and running a business online — from a senior team in Athens and London.',
+    'Practical, honest articles on websites, applied AI and running a business online, from a senior team in Athens and London.',
   alternates: { canonical: `${SITE_URL}/blog` },
 }
 
@@ -26,13 +26,13 @@ export default async function BlogIndexPage() {
               Notes that hold up<em> in practice</em>
             </h2>
             <p className="section-sub">
-              What things really cost, what creates risk, and what we would do differently — for websites, applied AI
+              What things really cost, what creates risk, and what we would do differently, for websites, applied AI
               and running a business online. In Greek and English.
             </p>
           </div>
 
           {articles.length === 0 ? (
-            <p className="blog-empty">Nothing published yet — the first articles are on their way.</p>
+            <p className="blog-empty">Nothing published yet, the first articles are on their way.</p>
           ) : (
             <div className="blog-list">
               {articles.map((a) => (

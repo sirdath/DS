@@ -460,7 +460,7 @@ const en: Dict = {
         id: "stelios",
         eyebrow: "Consulting & Strategy · Athens",
         title: "Stelios",
-        body: "Studied in the Netherlands, then consulting at PwC in Athens. He brings business structure, operating discipline and a clear read of the Greek market.",
+        body: "Studied in the Netherlands, then consulting at a Big 4 firm in Athens. He brings business structure, operating discipline and a clear read of the Greek market.",
       },
       {
         id: "ds2",
@@ -915,7 +915,7 @@ const el: Dict = {
         id: "stelios",
         eyebrow: "Συμβουλευτική & Στρατηγική · Αθήνα",
         title: "Στέλιος",
-        body: "Σπούδασε στην Ολλανδία και συνέχισε στη συμβουλευτική, στην PwC στην Αθήνα. Φέρνει επιχειρηματική δομή, πειθαρχία στη λειτουργία και καθαρή ανάγνωση της ελληνικής αγοράς.",
+        body: "Σπούδασε στην Ολλανδία και συνέχισε στη συμβουλευτική, σε μία από τις Big 4 στην Αθήνα. Φέρνει επιχειρηματική δομή, πειθαρχία στη λειτουργία και καθαρή ανάγνωση της ελληνικής αγοράς.",
       },
       {
         id: "ds2",
