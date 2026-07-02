@@ -68,6 +68,11 @@ export function convertWall(date: string, time: string | null, fromTz: string, t
   return utcToZonedWall(zonedWallToUtc(date, time.slice(0, 5), fromTz), toTz)
 }
 
+/** The current wall time in `tz` — drives the live "now" line. */
+export function nowWall(tz: string): WallTime {
+  return utcToZonedWall(new Date(), tz)
+}
+
 /** Viewing-zone helpers around the canonical storage zone. */
 export function toCanonical(date: string, time: string | null, viewTz: string): WallTime {
   return convertWall(date, time, viewTz, CANONICAL_TZ)
