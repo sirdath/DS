@@ -70,31 +70,25 @@ export default function HeroVideo() {
     }
 
     // Play the intro (the DS2 logo reveal) at this fraction of full speed so the
-    // logo lingers, then resume full speed once the camera leaves it.
+    // logo lingers, then resume full speed once the camera leaves it. Driven by the
+    // video clock (timeupdate) rather than a per-frame rAF loop, so nothing runs on
+    // the main thread between video frames.
     const LOGO_RATE = 0.55;
     let started = false;
-    let raf = 0;
-    const tick = () => {
-      if (caption) {
-        const scale = (v.duration || cfg.ref) / cfg.ref;
-        const t = v.currentTime;
-        const logoEnd = cfg.captionTo * scale;
-        const wantRate = t < logoEnd ? LOGO_RATE : 1;
-        if (v.playbackRate !== wantRate) v.playbackRate = wantRate;
-        caption.classList.toggle(
-          "is-shown",
-          t >= cfg.captionFrom * scale && t < logoEnd
-        );
-      }
-      raf = requestAnimationFrame(tick);
+    const sync = () => {
+      if (!caption) return;
+      const scale = (v.duration || cfg.ref) / cfg.ref;
+      const t = v.currentTime;
+      const logoEnd = cfg.captionTo * scale;
+      const wantRate = t < logoEnd ? LOGO_RATE : 1;
+      if (v.playbackRate !== wantRate) v.playbackRate = wantRate;
+      caption.classList.toggle("is-shown", t >= cfg.captionFrom * scale && t < logoEnd);
     };
     const runLoop = () => {
-      if (!raf) raf = requestAnimationFrame(tick);
+      v.addEventListener("timeupdate", sync);
+      sync();
     };
-    const stopLoop = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = 0;
-    };
+    const stopLoop = () => v.removeEventListener("timeupdate", sync);
 
     const start = () => {
       if (started) return;
