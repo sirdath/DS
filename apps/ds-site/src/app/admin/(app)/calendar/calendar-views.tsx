@@ -6,8 +6,9 @@
  * converted to the viewing timezone — so rendering never does tz math.
  */
 
-import { Fragment, type ReactNode } from 'react'
+import { Fragment, type ReactNode, useEffect, useState } from 'react'
 import { MONTHS, WEEKDAYS, type CalendarEvent, type DayCell, assigneeLabel, meetingTypeLabel } from './lib/calendar'
+import { nowWall } from './lib/tz'
 
 export interface DisplayEvent extends CalendarEvent {
   dispDate: string // YYYY-MM-DD in the viewing tz
@@ -180,15 +181,29 @@ export function TimeGridView({
   selected,
   onSelect,
   mode,
+  tz,
   onEventClick,
 }: CommonProps & {
   days: string[] // ISO dates, 1 (day view) or 7 (week view)
   byDate: Map<string, DisplayEvent[]>
   today: string
   selected: string
+  tz: string
   onSelect: (d: string) => void
 }) {
   const hours = Array.from({ length: HOUR_END - HOUR_START }, (_, i) => HOUR_START + i)
+
+  // Live "now" marker in the VIEWING timezone — refreshes every 30s, so switching
+  // the tz select visibly moves the line (that's the point: you can see the zone).
+  const [now, setNow] = useState(() => nowWall(tz))
+  useEffect(() => {
+    setNow(nowWall(tz))
+    const t = window.setInterval(() => setNow(nowWall(tz)), 30_000)
+    return () => window.clearInterval(t)
+  }, [tz])
+  const nowMins = mins(now.time)
+  const nowVisible = nowMins >= HOUR_START * 60 && nowMins <= HOUR_END * 60
+  const nowTop = (nowMins - HOUR_START * 60) * PX_PER_MIN
   return (
     <div className={`calv-grid${days.length === 1 ? ' is-day' : ''}`}>
       <div className="calv-grid__head">
@@ -227,12 +242,22 @@ export function TimeGridView({
               {h}:00
             </span>
           ))}
+          {nowVisible && days.includes(now.date) ? (
+            <span className="calv-now__label" style={{ top: nowTop }}>
+              {now.time}
+            </span>
+          ) : null}
         </div>
         {days.map((d) => (
           <div key={d} className={`calv-grid__col${d === today ? ' is-today' : ''}`}>
             {hours.map((h) => (
               <span key={h} className="calv-grid__line" style={{ top: (h - HOUR_START) * 60 * PX_PER_MIN }} />
             ))}
+            {nowVisible && d === now.date ? (
+              <span className="calv-now" style={{ top: nowTop }} aria-hidden>
+                <i />
+              </span>
+            ) : null}
             {(byDate.get(d) ?? [])
               .filter((e) => e.dispStart)
               .map((e) => (

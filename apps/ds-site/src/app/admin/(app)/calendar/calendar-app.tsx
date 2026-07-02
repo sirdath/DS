@@ -234,6 +234,7 @@ export function CalendarApp({ events, deadlinesPanel }: { events: CalendarEvent[
               selected={selected}
               onSelect={selectDate}
               mode={colorMode}
+              tz={tz}
               onEventClick={onEventClick}
             />
           )}
@@ -380,7 +381,7 @@ export function CalendarApp({ events, deadlinesPanel }: { events: CalendarEvent[
             {tz !== CANONICAL_TZ ? <p className="cal__tzhint">Times entered in {tz.split('/')[1] ?? tz}; stored as Athens time.</p> : null}
           </div>
 
-          {deadlinesPanel}
+          {deadlinesPanel ? <div className="cal__deadlines">{deadlinesPanel}</div> : null}
         </aside>
       </div>
     </div>

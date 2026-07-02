@@ -144,3 +144,20 @@
   .cal__viewbtn, .cal__colorbtn, .cal__tz { min-height: 44px; }
 }
 .cal__formerr { margin: 0; font-size: 12px; color: #ff8d8d; }
+
+/* ── Live "now" line (drawn in the viewing timezone) ── */
+.calv-now { position: absolute; left: 0; right: 0; height: 0; border-top: 2px solid var(--admin-amber); z-index: 3; pointer-events: none; }
+.calv-now i { position: absolute; left: -4px; top: -5px; width: 8px; height: 8px; border-radius: 999px; background: var(--admin-amber); }
+.calv-now__label { position: absolute; right: 4px; transform: translateY(-50%); font-family: var(--admin-mono); font-size: 9px; font-weight: 700; color: var(--admin-on-accent); background: var(--admin-amber); padding: 1px 5px; border-radius: 999px; z-index: 3; }
+
+/* ── Deadlines panel inside the calendar aside: clear separation + narrow-fit ── */
+.cal__deadlines { margin-top: 22px; padding-top: 4px; }
+.cal__deadlines .ds2-card { padding: 16px; border-radius: 14px; }
+.cal__deadlines .plan-row { gap: 8px; }
+.cal__deadlines .plan-row__actions { gap: 2px; }
+.cal__deadlines .plan-iconbtn { min-width: 26px; min-height: 26px; padding: 4px; font-size: 0.78rem; }
+.cal__deadlines .plan-form__row .plan-input { min-width: 90px; }
+.cal__deadlines .ds-progress__label { min-width: 0; }
+@media (pointer: coarse) {
+  .cal__deadlines .plan-iconbtn { min-width: 44px; min-height: 44px; }
+}
