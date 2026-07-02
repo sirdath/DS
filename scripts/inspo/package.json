@@ -1,0 +1,16 @@
+{
+  "name": "@ds/inspo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "DS2 inspiration-fetch CLI — licensed stock (Openverse/Unsplash/Pexels) + private Pinterest reference via your logged-in browser.",
+  "bin": {
+    "inspo": "./inspo.mjs"
+  },
+  "scripts": {
+    "inspo": "node ./inspo.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  }
+}

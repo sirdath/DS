@@ -40,6 +40,11 @@ pnpm-debug.log*
 assets/motion-sequences/generated/
 apps/*/public/research/*/scrape-cache/
 
+# inspo CLI output — working caches, not repo assets.
+# Pinterest lane is third-party copyrighted reference: never commit it.
+assets/motion-inspiration/pinterest/
+assets/inspiration/
+
 # Blender experimental work (heavy binaries, not deliverable)
 assets/BLENDER3DANIMATION/
 **/cache_fluid*/
