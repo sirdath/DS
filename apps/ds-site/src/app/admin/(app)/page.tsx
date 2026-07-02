@@ -95,20 +95,23 @@ export default async function DashboardPage() {
         </div>
 
         <div className="ds2-col">
-          {/* Shared calendar — opens the full view */}
+          {/* Shared calendar — opens the full view; stretches to match the hero column */}
           <CalendarCard events={events} />
+        </div>
+      </div>
 
-          {/* Live site traffic — today vs yesterday, links to full analytics */}
-          <SiteActivityCard activity={activity} />
+      {/* Planning band — meetings and deadlines get equal billing, side by side */}
+      <div className="ds2-band">
+        <UpcomingMeetingsCard events={events} />
+        <DeadlinesCard deadlines={deadlines} sources={metricSources} />
+      </div>
 
-          {/* Upcoming meetings — booked calendar meetings with a Join link */}
-          <UpcomingMeetingsCard events={events} />
+      {/* Signals band — live traffic and the pipeline's best leads */}
+      <div className="ds2-band">
+        <SiteActivityCard activity={activity} />
 
-          {/* Deadlines — date countdowns + metric goals (live figures), editable inline */}
-          <DeadlinesCard deadlines={deadlines} sources={metricSources} />
-
-          {/* Top open leads */}
-          <section className="ds2-card">
+        {/* Top open leads */}
+        <section className="ds2-card">
             <div className="ds2-list__head">
               <span className="ds2-list__title">Top open leads</span>
               <Link href="/admin/projects" className="ds2-list__all">View all →</Link>
@@ -126,8 +129,7 @@ export default async function DashboardPage() {
                 </div>
               ))
             )}
-          </section>
-        </div>
+        </section>
       </div>
     </div>
   )
