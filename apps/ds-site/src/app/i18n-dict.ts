@@ -39,7 +39,7 @@ type Four<T> = [T, T, T, T];
 type Three<T> = [T, T, T];
 
 export interface Dict {
-  nav: { portfolio: string; about: string; tools: string };
+  nav: { portfolio: string; about: string; tools: string; blog: string };
   cta: { send: string };
   poweredBy: string;
   a11y: { home: string; openMenu: string; closeMenu: string; language: string; loading: string; logo: string; background: string };
@@ -223,7 +223,7 @@ export interface Dict {
 }
 
 const en: Dict = {
-  nav: { portfolio: "Projects", about: "About", tools: "Tools" },
+  nav: { portfolio: "Projects", about: "About", tools: "Tools", blog: "Blog" },
   cta: { send: "Send a message" },
   poweredBy: "Powered by",
   a11y: { home: "DS2, home", openMenu: "Open menu", closeMenu: "Close menu", language: "Language", loading: "DS2 loading", logo: "DS2 logo", background: "Background" },
@@ -678,7 +678,7 @@ const en: Dict = {
 };
 
 const el: Dict = {
-  nav: { portfolio: "Έργα", about: "Σχετικά", tools: "Εργαλεία" },
+  nav: { portfolio: "Έργα", about: "Σχετικά", tools: "Εργαλεία", blog: "Άρθρα" },
   cta: { send: "Στείλτε μήνυμα" },
   poweredBy: "Χτισμένο με",
   a11y: { home: "DS2, αρχική", openMenu: "Άνοιγμα μενού", closeMenu: "Κλείσιμο μενού", language: "Γλώσσα", loading: "DS2, φόρτωση", logo: "Λογότυπο DS2", background: "Υπόβαθρο" },
