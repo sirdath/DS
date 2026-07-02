@@ -41,15 +41,22 @@ export function ImportPanel() {
       return
     }
 
-    // Run the first cycle so the chase list + queue populate immediately.
+    // Run the first cycle so the chase list + queue populate immediately. A cycle
+    // failure must not read as a clean import — surface it as a warning.
     setState({ kind: 'working', label: 'Scoring & scheduling…' })
-    await fetch('/api/plutus/cycle', { method: 'POST' }).catch(() => undefined)
+    const warnings = data.warnings ?? []
+    try {
+      const cycleRes = await fetch('/api/plutus/cycle', { method: 'POST' })
+      if (!cycleRes.ok) warnings.push('Imported, but the first scoring cycle failed — open the queue and run it again.')
+    } catch {
+      warnings.push('Imported, but the first scoring cycle failed — open the queue and run it again.')
+    }
 
     setState({
       kind: 'done',
       invoices: data.invoices ?? 0,
       customers: data.customers ?? 0,
-      warnings: data.warnings ?? [],
+      warnings,
     })
     router.refresh()
   }

@@ -199,6 +199,13 @@ function Report({ report: r }: { report: AegisReport }) {
           </ul>
         </section>
       ) : null}
+
+      {r.usage.usd > 0 ? (
+        <p className="ws-costline">
+          This audit: ~${r.usage.usd.toFixed(3)} · {Math.round((r.usage.input_tokens + r.usage.output_tokens) / 1000)}k
+          tokens{r.usage.cache_read_tokens > 0 ? ` · ${Math.round((r.usage.cache_read_tokens / Math.max(1, r.usage.input_tokens + r.usage.cache_read_tokens)) * 100)}% cached` : ''}
+        </p>
+      ) : null}
     </div>
   )
 }
