@@ -1,0 +1,82 @@
+/* Articles tab — list + editor on top of the ds-kit primitives. */
+
+.art-new {
+  display: grid;
+  grid-template-columns: 2fr 0.8fr 1fr 1.4fr auto;
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 16px;
+}
+.art-new__btn { min-height: 44px; white-space: nowrap; }
+
+.art-err { color: var(--ds-danger); font-size: 0.88rem; margin: 0 0 12px; }
+.art-notice { color: var(--ds-muted); font-size: 0.88rem; margin: 0 0 12px; }
+
+.art-layout {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.art-list { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.art-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius);
+  padding: 12px 14px;
+  cursor: pointer;
+  min-height: 44px;
+  touch-action: manipulation;
+  transition: border-color 0.15s ease;
+}
+.art-row:hover,
+.art-row:focus-visible { border-color: var(--ds-accent); }
+.art-row.is-active { border-color: var(--ds-accent); }
+.art-row__title { font-weight: 600; font-size: 0.92rem; line-height: 1.35; }
+.art-row__meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.art-row__topic { font-size: 0.75rem; color: var(--ds-muted); }
+
+.art-editor { min-width: 0; }
+.art-editor--empty { display: grid; place-items: center; min-height: 220px; }
+.art-editor__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.art-editor__flow { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.art-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.art-grid__wide { grid-column: 1 / -1; }
+.art-body {
+  min-height: 420px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.84rem;
+  line-height: 1.6;
+}
+
+.art-editor__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+@media (max-width: 1100px) {
+  .art-new { grid-template-columns: 1fr 1fr; }
+  .art-new__btn { grid-column: 1 / -1; }
+  .art-layout { grid-template-columns: 1fr; }
+}

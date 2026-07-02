@@ -178,11 +178,11 @@ export default async function LeadsPage({ searchParams }: PageProps) {
               <span>Showing {firstRow.toLocaleString()}–{lastRow.toLocaleString()} of {total.toLocaleString()}</span>
               <span className="admin-leads-pagenav">
                 {page > 1
-                  ? <Link href={pageHref(page - 1)} className="admin-filter-link">← Prev</Link>
+                  ? <Link href={pageHref(page - 1)} className="admin-filter-link" aria-label="Previous page">← Prev</Link>
                   : <span className="admin-filter-link is-disabled">← Prev</span>}
                 <span className="dim">page {page} / {pageCount}</span>
                 {page < pageCount
-                  ? <Link href={pageHref(page + 1)} className="admin-filter-link">Next →</Link>
+                  ? <Link href={pageHref(page + 1)} className="admin-filter-link" aria-label="Next page">Next →</Link>
                   : <span className="admin-filter-link is-disabled">Next →</span>}
               </span>
             </div>

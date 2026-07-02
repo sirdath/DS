@@ -17,6 +17,9 @@ const ICONS: Record<string, ReactNode> = {
   projects: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"><path d="m12 3 9 5-9 5-9-5z" /><path d="m3 13 9 5 9-5" /></svg>
   ),
+  articles: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" /></svg>
+  ),
   notes: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5" /><path d="M9 13h6M9 17h6" /></svg>
   ),
@@ -60,6 +63,7 @@ const ITEMS: Item[] = [
   { href: '/admin/projects', label: 'Projects', icon: ICONS.projects, match: (p) => p.startsWith('/admin/projects') },
   { href: '/admin/calendar', label: 'Calendar', icon: ICONS.calendar, match: (p) => p.startsWith('/admin/calendar') },
   { href: '/admin/planning', label: 'Planning', icon: ICONS.planning, match: (p) => p.startsWith('/admin/planning') },
+  { href: '/admin/articles', label: 'Articles', icon: ICONS.articles, match: (p) => p.startsWith('/admin/articles') },
   { href: '/admin/notes', label: 'Notes', icon: ICONS.notes, match: (p) => p.startsWith('/admin/notes') },
   { href: '/products', label: 'Products', icon: ICONS.products, match: (p) => p.startsWith('/products') },
   { href: '/admin/competitors', label: 'Competitors', icon: ICONS.competitors, match: (p) => p.startsWith('/admin/competitors') },

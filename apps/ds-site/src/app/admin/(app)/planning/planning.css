@@ -95,6 +95,10 @@
   color: var(--ds2-text);
   background: color-mix(in srgb, var(--ds2-text) 8%, transparent);
 }
+.plan-iconbtn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
 @media (pointer: coarse) {
   .plan-iconbtn {
     min-height: 44px;

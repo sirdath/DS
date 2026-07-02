@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createDeadline, type DeadlineInput, deleteDeadline, updateDeadline } from '@/app/admin/planning-actions'
+import { createDeadline, type DeadlineInput, deleteDeadline, reorderDeadline, updateDeadline } from '@/app/admin/planning-actions'
 import { type Deadline, countdown, metricPct } from './lib/planning'
 import { METRIC_SOURCE_OPTIONS, type MetricSources, metricSourceLabel, resolveDeadlineCurrent } from './lib/metric-source'
 import './planning.css'
@@ -144,6 +144,11 @@ export function DeadlinesCard({ deadlines, sources }: { deadlines: Deadline[]; s
     router.refresh()
   }
 
+  async function onMove(id: string, direction: 'up' | 'down') {
+    await reorderDeadline(id, direction)
+    router.refresh()
+  }
+
   return (
     <section className="ds2-card">
       <div className="ds2-list__head">
@@ -159,7 +164,7 @@ export function DeadlinesCard({ deadlines, sources }: { deadlines: Deadline[]; s
 
       {deadlines.length === 0 && !adding ? <p className="ds2-empty">No deadlines yet. Add one to track it here.</p> : null}
 
-      {deadlines.map((d) => {
+      {deadlines.map((d, i) => {
         if (editing === d.id) {
           return <DeadlineForm key={d.id} initial={d} sources={sources} submitLabel="Save" onSubmit={(input) => onEdit(d.id, input)} onCancel={() => setEditing(null)} />
         }
@@ -194,6 +199,18 @@ export function DeadlinesCard({ deadlines, sources }: { deadlines: Deadline[]; s
               )}
             </div>
             <div className="plan-row__actions">
+              <button type="button" className="plan-iconbtn" aria-label="Move up" disabled={i === 0} onClick={() => void onMove(d.id, 'up')}>
+                ↑
+              </button>
+              <button
+                type="button"
+                className="plan-iconbtn"
+                aria-label="Move down"
+                disabled={i === deadlines.length - 1}
+                onClick={() => void onMove(d.id, 'down')}
+              >
+                ↓
+              </button>
               <button type="button" className="plan-iconbtn" aria-label="Edit deadline" onClick={() => setEditing(d.id)}>
                 ✎
               </button>

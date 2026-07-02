@@ -127,3 +127,30 @@ export async function deleteDeadline(id: string): Promise<void> {
   if (error) throw new Error(error.message)
   refresh()
 }
+
+/** Move a deadline one step up or down. Rewrites sort_order for the whole list
+ *  (tiny table) so it also normalises the all-zeros default on first use. */
+export async function reorderDeadline(id: string, direction: 'up' | 'down'): Promise<void> {
+  if (!id) throw new Error('Missing deadline id')
+  const supabase = await db()
+  const { data, error } = await supabase
+    .from('planning_deadlines')
+    .select('id')
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: true })
+  if (error || !data) throw new Error(error?.message ?? 'Could not load deadlines')
+  const ids = data.map((r) => String(r.id))
+  const from = ids.indexOf(id)
+  if (from === -1) throw new Error('Deadline not found')
+  const to = direction === 'up' ? from - 1 : from + 1
+  if (to < 0 || to >= ids.length) return
+  const moved = ids[from]
+  const other = ids[to]
+  if (moved === undefined || other === undefined) return
+  ids[from] = other
+  ids[to] = moved
+  for (let i = 0; i < ids.length; i++) {
+    await supabase.from('planning_deadlines').update({ sort_order: i }).eq('id', ids[i])
+  }
+  refresh()
+}
