@@ -693,3 +693,12 @@ a.ws-card:focus-visible .ws-card__open {
     mask-image: linear-gradient(90deg, #000 86%, transparent);
   }
 }
+
+/* Cost transparency line — every AI-powered tool shows what a run cost. */
+.ws-costline {
+  margin: 4px 0 0;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: var(--ws-muted);
+}

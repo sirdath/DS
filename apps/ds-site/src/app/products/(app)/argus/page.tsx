@@ -178,6 +178,16 @@ export default async function ArgusWorkspacePage() {
             </table>
           </div>
         </section>
+
+        {briefing.usage.usd > 0 ? (
+          <p className="ws-costline">
+            This briefing: ~${briefing.usage.usd.toFixed(3)} ·{' '}
+            {Math.round((briefing.usage.input_tokens + briefing.usage.output_tokens) / 1000)}k tokens
+            {briefing.usage.cache_read_tokens > 0
+              ? ` · ${Math.round((briefing.usage.cache_read_tokens / Math.max(1, briefing.usage.input_tokens + briefing.usage.cache_read_tokens)) * 100)}% cached`
+              : ''}
+          </p>
+        ) : null}
       </div>
     </>
   )
