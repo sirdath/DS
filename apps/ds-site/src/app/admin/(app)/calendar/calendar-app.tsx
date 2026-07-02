@@ -1,110 +1,58 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createEvent, deleteEvent, updateEvent } from '../../calendar-actions'
-import { ASSIGNEES, MEETING_TYPES, MONTHS, WEEKDAYS, type CalendarEvent, assigneeLabel, isoDate, meetingTypeLabel, monthGrid, monthLabel, timeRange } from './lib/calendar'
+import { ASSIGNEES, MEETING_TYPES, MONTHS, type CalendarEvent, assigneeLabel, isoDate, meetingTypeLabel, monthGrid, monthLabel } from './lib/calendar'
+import { CANONICAL_TZ, TIMEZONES, fromCanonical, toCanonical } from './lib/tz'
+import { AgendaView, type ColorMode, type DisplayEvent, Linkified, MonthView, TimeGridView, displayRange } from './calendar-views'
+import { EventEditForm } from './event-edit-form'
 import './calendar.css'
 import '../planning/planning.css'
 
 const COLORS = [
-  { key: 'default', label: 'General', hex: '#8dcbff' },
-  { key: 'meeting', label: 'Meeting', hex: '#43a47a' },
-  { key: 'deadline', label: 'Deadline', hex: '#c96868' },
-  { key: 'personal', label: 'Personal', hex: '#c89245' },
+  { key: 'default', label: 'General' },
+  { key: 'meeting', label: 'Meeting' },
+  { key: 'deadline', label: 'Deadline' },
+  { key: 'personal', label: 'Personal' },
 ] as const
 
-const colorHex = (c: string) => COLORS.find((x) => x.key === c)?.hex ?? '#8dcbff'
+type View = 'month' | 'week' | 'day' | 'agenda'
+const VIEWS: { key: View; label: string }[] = [
+  { key: 'month', label: 'Month' },
+  { key: 'week', label: 'Week' },
+  { key: 'day', label: 'Day' },
+  { key: 'agenda', label: 'Agenda' },
+]
 
-/** In-place editor for one event — every field the add form has, seeded from the
- *  event, saved through updateEvent (no more delete-and-recreate to fix a typo). */
-function EventEditForm({ event: e, onDone }: { event: CalendarEvent; onDone: () => void }) {
-  const [title, setTitle] = useState(e.title)
-  const [date, setDate] = useState(e.eventDate)
-  const [start, setStart] = useState(e.startTime?.slice(0, 5) ?? '')
-  const [end, setEnd] = useState(e.endTime?.slice(0, 5) ?? '')
-  const [color, setColor] = useState(e.color)
-  const [assignee, setAssignee] = useState(e.assignee)
-  const [meetingType, setMeetingType] = useState(e.meetingType)
-  const [meetingLink, setMeetingLink] = useState(e.meetingLink)
-  const [busy, setBusy] = useState(false)
-
-  async function save() {
-    if (!title.trim() || !date || busy) return
-    setBusy(true)
-    try {
-      await updateEvent(e.id, {
-        title,
-        eventDate: date,
-        startTime: start || null,
-        endTime: start ? end || null : null,
-        color,
-        assignee,
-        meetingType: color === 'meeting' ? meetingType : '',
-        meetingLink: color === 'meeting' ? meetingLink : '',
-      })
-      onDone()
-    } finally {
-      setBusy(false)
-    }
-  }
-
-  return (
-    <div className="cal__edit">
-      <input className="cal__input" value={title} maxLength={300} onChange={(ev) => setTitle(ev.target.value)} aria-label="Title" />
-      <div className="cal__add-row">
-        <input className="cal__time" type="date" value={date} onChange={(ev) => setDate(ev.target.value)} aria-label="Date" />
-        <input className="cal__time" type="time" value={start} onChange={(ev) => setStart(ev.target.value)} aria-label="Start time" />
-        <input className="cal__time" type="time" value={end} onChange={(ev) => setEnd(ev.target.value)} aria-label="End time" disabled={!start} />
-      </div>
-      <div className="cal__add-row">
-        <select className="cal__color" value={color} onChange={(ev) => setColor(ev.target.value)} aria-label="Category">
-          {COLORS.map((c) => (
-            <option key={c.key} value={c.key}>{c.label}</option>
-          ))}
-        </select>
-        <select className="cal__who-sel" value={assignee} onChange={(ev) => setAssignee(ev.target.value)} aria-label="Who's responsible">
-          {ASSIGNEES.map((a) => (
-            <option key={a.key} value={a.key}>{a.key === '' ? 'Unassigned' : `For ${a.label}`}</option>
-          ))}
-        </select>
-      </div>
-      {color === 'meeting' ? (
-        <div className="cal__add-row">
-          <select className="cal__color" value={meetingType} onChange={(ev) => setMeetingType(ev.target.value)} aria-label="Meeting type">
-            <option value="">Meeting type…</option>
-            {MEETING_TYPES.map((t) => (
-              <option key={t.key} value={t.key}>{t.label}</option>
-            ))}
-          </select>
-          <input className="cal__input" type="url" placeholder="Join link…" value={meetingLink} onChange={(ev) => setMeetingLink(ev.target.value)} aria-label="Meeting link" />
-        </div>
-      ) : null}
-      <div className="cal__add-row">
-        <button type="button" className="cal__addbtn" disabled={!title.trim() || busy} onClick={() => void save()}>
-          {busy ? 'Saving…' : 'Save'}
-        </button>
-        <button type="button" className="cal__cancelbtn" onClick={onDone} disabled={busy}>
-          Cancel
-        </button>
-      </div>
-    </div>
-  )
+/** The 7 ISO dates (Mon-first) of the week containing `anchor`. */
+function weekOf(anchor: string): string[] {
+  const d = new Date(`${anchor}T12:00:00`)
+  const monday = new Date(d)
+  monday.setDate(d.getDate() - ((d.getDay() + 6) % 7))
+  return Array.from({ length: 7 }, (_, i) => {
+    const day = new Date(monday)
+    day.setDate(monday.getDate() + i)
+    return isoDate(day.getFullYear(), day.getMonth(), day.getDate())
+  })
 }
 
-export function CalendarApp({ events }: { events: CalendarEvent[] }) {
+export function CalendarApp({ events, deadlinesPanel }: { events: CalendarEvent[]; deadlinesPanel?: React.ReactNode }) {
   const router = useRouter()
   const today = useMemo(() => {
     const d = new Date()
     return isoDate(d.getFullYear(), d.getMonth(), d.getDate())
   }, [])
-  const [view, setView] = useState(() => {
+  const [view, setView] = useState<View>('month')
+  const [tz, setTz] = useState<string>(CANONICAL_TZ)
+  const [colorMode, setColorMode] = useState<ColorMode>('category')
+  const [monthView, setMonthView] = useState(() => {
     const d = new Date()
     return { y: d.getFullYear(), m: d.getMonth() }
   })
   const [selected, setSelected] = useState<string>(today)
-  const [busy, setBusy] = useState(false)
   const [editing, setEditing] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
   const [title, setTitle] = useState('')
   const [time, setTime] = useState('')
   const [endTime, setEndTime] = useState('')
@@ -112,41 +60,102 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
   const [assignee, setAssignee] = useState('')
   const [meetingType, setMeetingType] = useState('')
   const [meetingLink, setMeetingLink] = useState('')
+  const [note, setNote] = useState('')
+  const [addErr, setAddErr] = useState<string | null>(null)
 
+  // Restore the founder's view preferences.
+  useEffect(() => {
+    const v = window.localStorage.getItem('ds-cal-view') as View | null
+    if (v && VIEWS.some((x) => x.key === v)) setView(v)
+    const z = window.localStorage.getItem('ds-cal-tz')
+    if (z && TIMEZONES.some((x) => x.key === z)) setTz(z)
+    const c = window.localStorage.getItem('ds-cal-colors')
+    if (c === 'person' || c === 'category') setColorMode(c)
+  }, [])
+  function pickView(v: View) {
+    setView(v)
+    window.localStorage.setItem('ds-cal-view', v)
+  }
+  function pickTz(z: string) {
+    setTz(z)
+    window.localStorage.setItem('ds-cal-tz', z)
+  }
+  function toggleColors() {
+    setColorMode((m) => {
+      const next = m === 'category' ? 'person' : 'category'
+      window.localStorage.setItem('ds-cal-colors', next)
+      return next
+    })
+  }
+
+  // Convert every event's wall time into the viewing timezone once.
+  const displayEvents: DisplayEvent[] = useMemo(
+    () =>
+      events.map((e) => {
+        const w = fromCanonical(e.eventDate, e.startTime, tz)
+        const end = e.startTime && e.endTime ? fromCanonical(e.eventDate, e.endTime, tz).time : null
+        return { ...e, dispDate: e.startTime ? w.date : e.eventDate, dispStart: e.startTime ? w.time : null, dispEnd: end }
+      }),
+    [events, tz],
+  )
   const byDate = useMemo(() => {
-    const map = new Map<string, CalendarEvent[]>()
-    for (const e of events) {
-      const list = map.get(e.eventDate) ?? []
+    const map = new Map<string, DisplayEvent[]>()
+    for (const e of displayEvents) {
+      const list = map.get(e.dispDate) ?? []
       list.push(e)
-      map.set(e.eventDate, list)
+      map.set(e.dispDate, list)
     }
+    for (const list of map.values()) list.sort((a, b) => (a.dispStart ?? '').localeCompare(b.dispStart ?? ''))
     return map
-  }, [events])
+  }, [displayEvents])
 
-  const grid = useMemo(() => monthGrid(view.y, view.m), [view])
+  const weeks = useMemo(() => monthGrid(monthView.y, monthView.m), [monthView])
+  const weekDays = useMemo(() => weekOf(selected), [selected])
   const selectedEvents = byDate.get(selected) ?? []
 
-  function shiftMonth(delta: number) {
-    setView((v) => {
-      const d = new Date(v.y, v.m + delta, 1)
-      return { y: d.getFullYear(), m: d.getMonth() }
-    })
+  function shiftPeriod(delta: number) {
+    if (view === 'month') {
+      setMonthView((v) => {
+        const d = new Date(v.y, v.m + delta, 1)
+        return { y: d.getFullYear(), m: d.getMonth() }
+      })
+      return
+    }
+    const step = view === 'week' ? 7 * delta : delta
+    const d = new Date(`${selected}T12:00:00`)
+    d.setDate(d.getDate() + step)
+    const next = isoDate(d.getFullYear(), d.getMonth(), d.getDate())
+    setSelected(next)
+    setMonthView({ y: d.getFullYear(), m: d.getMonth() })
   }
   function goToday() {
     const d = new Date()
-    setView({ y: d.getFullYear(), m: d.getMonth() })
+    setMonthView({ y: d.getFullYear(), m: d.getMonth() })
     setSelected(today)
+  }
+  function selectDate(d: string) {
+    setSelected(d)
+    const dt = new Date(`${d}T12:00:00`)
+    setMonthView({ y: dt.getFullYear(), m: dt.getMonth() })
   }
 
   async function add() {
     if (!title.trim() || busy) return
+    if (time && endTime && endTime <= time) {
+      setAddErr('End must be after the start. For overnight events, leave the end time empty.')
+      return
+    }
+    setAddErr(null)
     setBusy(true)
     try {
+      const canonical = toCanonical(selected, time || null, tz)
+      const canonicalEnd = time && endTime ? toCanonical(selected, endTime, tz).time : ''
       await createEvent({
         title,
-        eventDate: selected,
-        startTime: time || null,
-        endTime: time ? endTime || null : null,
+        eventDate: time ? canonical.date : selected,
+        startTime: canonical.time || null,
+        endTime: canonicalEnd || null,
+        description: note,
         color,
         assignee,
         meetingType: color === 'meeting' ? meetingType : '',
@@ -159,66 +168,84 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
       setAssignee('')
       setMeetingType('')
       setMeetingLink('')
+      setNote('')
       router.refresh()
     } finally {
       setBusy(false)
     }
   }
 
-  const selectedLabel = useMemo(() => {
+  const periodLabel = useMemo(() => {
+    if (view === 'month') return monthLabel(monthView.y, monthView.m)
+    if (view === 'agenda') return 'Coming up'
     const [y, m, d] = selected.split('-').map(Number)
-    return `${d} ${MONTHS[(m ?? 1) - 1] ?? ''} ${y}`
-  }, [selected])
+    if (view === 'day') return `${d} ${MONTHS[(m ?? 1) - 1] ?? ''} ${y}`
+    const first = weekDays[0] ?? selected
+    const last = weekDays[6] ?? selected
+    return `${Number(first.slice(8))} ${(MONTHS[Number(first.slice(5, 7)) - 1] ?? '').slice(0, 3)} – ${Number(last.slice(8))} ${(MONTHS[Number(last.slice(5, 7)) - 1] ?? '').slice(0, 3)}`
+  }, [view, monthView, selected, weekDays])
+
+  const onEventClick = (id: string) => setEditing(id)
+  const editingEvent = editing ? displayEvents.find((e) => e.id === editing) : null
 
   return (
     <div className="admin-container cal">
       <div className="admin-page-header">
         <p className="admin-page-eyebrow">DS2 · Calendar</p>
         <h1 className="admin-page-title">What we have to do</h1>
-        <p className="admin-page-sub">Shared between Dath and Stel, you both see and edit the same events.</p>
+        <p className="admin-page-sub">Shared between Dath and Stel, you both see and edit the same events and deadlines.</p>
+      </div>
+
+      <div className="cal__toolbar">
+        <div className="cal__views" role="group" aria-label="Calendar view">
+          {VIEWS.map((v) => (
+            <button key={v.key} type="button" className={`cal__viewbtn${view === v.key ? ' is-on' : ''}`} aria-pressed={view === v.key} onClick={() => pickView(v.key)}>
+              {v.label}
+            </button>
+          ))}
+        </div>
+        <div className="cal__nav">
+          <button type="button" onClick={() => shiftPeriod(-1)} aria-label="Previous" disabled={view === 'agenda'}>‹</button>
+          <span className="cal__month">{periodLabel}</span>
+          <button type="button" onClick={() => shiftPeriod(1)} aria-label="Next" disabled={view === 'agenda'}>›</button>
+        </div>
+        <button type="button" className="cal__today" onClick={goToday}>Today</button>
+        <button type="button" className="cal__colorbtn" onClick={toggleColors} title="Toggle event colours">
+          {colorMode === 'category' ? 'Colours: category' : 'Colours: person'}
+        </button>
+        <select className="cal__tz" value={tz} onChange={(e) => pickTz(e.target.value)} aria-label="Timezone">
+          {TIMEZONES.map((z) => (
+            <option key={z.key} value={z.key}>{z.label}</option>
+          ))}
+        </select>
       </div>
 
       <div className="cal__layout">
         <section className="cal__cal">
-          <div className="cal__bar">
-            <div className="cal__nav">
-              <button type="button" onClick={() => shiftMonth(-1)} aria-label="Previous month">‹</button>
-              <span className="cal__month">{monthLabel(view.y, view.m)}</span>
-              <button type="button" onClick={() => shiftMonth(1)} aria-label="Next month">›</button>
-            </div>
-            <button type="button" className="cal__today" onClick={goToday}>Today</button>
-          </div>
-          <div className="cal__weekdays">
-            {WEEKDAYS.map((w) => (
-              <span key={w}>{w}</span>
-            ))}
-          </div>
-          <div className="cal__grid">
-            {grid.flat().map((cell) => {
-              const evs = byDate.get(cell.date) ?? []
-              const isToday = cell.date === today
-              const isSel = cell.date === selected
-              return (
-                <button
-                  type="button"
-                  key={cell.date}
-                  className={`cal__day${cell.inMonth ? '' : ' is-out'}${isToday ? ' is-today' : ''}${isSel ? ' is-sel' : ''}`}
-                  onClick={() => setSelected(cell.date)}
-                >
-                  <span className="cal__daynum">{cell.day}</span>
-                  <span className="cal__dots">
-                    {evs.slice(0, 4).map((e) => (
-                      <i key={e.id} className={e.done ? 'is-done' : ''} style={{ background: colorHex(e.color) }} />
-                    ))}
-                  </span>
-                </button>
-              )
-            })}
-          </div>
+          {view === 'month' ? (
+            <MonthView weeks={weeks} byDate={byDate} today={today} selected={selected} onSelect={selectDate} mode={colorMode} onEventClick={onEventClick} />
+          ) : view === 'agenda' ? (
+            <AgendaView events={displayEvents} today={today} mode={colorMode} onEventClick={onEventClick} />
+          ) : (
+            <TimeGridView
+              days={view === 'week' ? weekDays : [selected]}
+              byDate={byDate}
+              today={today}
+              selected={selected}
+              onSelect={selectDate}
+              mode={colorMode}
+              onEventClick={onEventClick}
+            />
+          )}
         </section>
 
         <aside className="cal__panel">
-          <h2 className="cal__panel-title">{selectedLabel}</h2>
+          <h2 className="cal__panel-title">
+            {(() => {
+              const [y, m, d] = selected.split('-').map(Number)
+              return `${d} ${MONTHS[(m ?? 1) - 1] ?? ''} ${y}`
+            })()}
+          </h2>
           <div className="cal__events">
             {selectedEvents.length === 0 ? <p className="cal__empty">Nothing scheduled.</p> : null}
             {selectedEvents.map((e) =>
@@ -226,6 +253,7 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
                 <EventEditForm
                   key={e.id}
                   event={e}
+                  tz={tz}
                   onDone={() => {
                     setEditing(null)
                     router.refresh()
@@ -239,18 +267,23 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
                     aria-label={e.done ? 'Mark not done' : 'Mark done'}
                     onClick={() => void updateEvent(e.id, { done: !e.done }).then(() => router.refresh())}
                   >
-                    <i style={{ background: e.done ? colorHex(e.color) : 'transparent', borderColor: colorHex(e.color) }} />
+                    <i style={{ borderColor: 'var(--admin-text-dim)', background: e.done ? 'var(--admin-text-dim)' : 'transparent' }} />
                   </button>
                   <div className="cal__event-main">
                     <span className="cal__event-title">{e.title}</span>
-                    {e.startTime || e.assignee || e.meetingType || e.meetingLink ? (
+                    {e.dispStart || e.assignee || e.meetingType || e.meetingLink ? (
                       <span className="cal__event-meta">
-                        {e.startTime ? <span className="cal__event-time">{timeRange(e)}</span> : null}
+                        {e.dispStart ? <span className="cal__event-time">{displayRange(e)}</span> : null}
                         {e.meetingType ? <span className="ds-chip ds-chip--accent">{meetingTypeLabel(e.meetingType)}</span> : null}
                         {e.assignee ? <span className={`cal__who cal__who--${e.assignee}`}>{assigneeLabel(e.assignee)}</span> : null}
                         {e.meetingLink ? (
                           <a className="plan-join" href={e.meetingLink} target="_blank" rel="noopener noreferrer">Join ↗</a>
                         ) : null}
+                      </span>
+                    ) : null}
+                    {e.description ? (
+                      <span className="cal__event-note">
+                        <Linkified text={e.description} />
                       </span>
                     ) : null}
                   </div>
@@ -270,6 +303,16 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
                 </div>
               ),
             )}
+            {editingEvent && !selectedEvents.some((e) => e.id === editing) ? (
+              <EventEditForm
+                event={editingEvent}
+                tz={tz}
+                onDone={() => {
+                  setEditing(null)
+                  router.refresh()
+                }}
+              />
+            ) : null}
           </div>
 
           <div className="cal__add">
@@ -312,6 +355,15 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
                 />
               </>
             ) : null}
+            <textarea
+              className="cal__input cal__note"
+              placeholder="Notes (optional) — call link, agenda…"
+              value={note}
+              maxLength={2000}
+              rows={2}
+              onChange={(e) => setNote(e.target.value)}
+              aria-label="Event notes"
+            />
             <div className="cal__add-row">
               <select className="cal__who-sel" value={assignee} onChange={(e) => setAssignee(e.target.value)} aria-label="Who's responsible">
                 {ASSIGNEES.map((a) => (
@@ -320,7 +372,15 @@ export function CalendarApp({ events }: { events: CalendarEvent[] }) {
               </select>
               <button type="button" className="cal__addbtn" disabled={!title.trim() || busy} onClick={() => void add()}>Add</button>
             </div>
+            {addErr ? (
+              <p className="cal__formerr" role="alert">
+                {addErr}
+              </p>
+            ) : null}
+            {tz !== CANONICAL_TZ ? <p className="cal__tzhint">Times entered in {tz.split('/')[1] ?? tz}; stored as Athens time.</p> : null}
           </div>
+
+          {deadlinesPanel}
         </aside>
       </div>
     </div>

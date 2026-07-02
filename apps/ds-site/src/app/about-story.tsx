@@ -20,7 +20,7 @@ const FOUNDERS: Record<string, { img: string; logos: FounderLogo[] }> = {
   stelios: {
     img: "/founders/athens.png",
     logos: [
-      { label: "PwC", img: "/founders/logos/pwc.png", bg: "light" },
+      { label: "Big 4" },
       { label: "Netherlands" },
     ],
   },

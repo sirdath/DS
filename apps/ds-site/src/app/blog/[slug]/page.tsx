@@ -18,14 +18,14 @@ export const revalidate = 3600
 const CTA = {
   en: {
     eyebrow: 'A note from us',
-    body: 'Thinking about something like this for your business? We work best when we can be honest early — even if that means challenging the initial idea. Tell us what you are planning and we will say what creates risk, what it should cost, and what we would do differently.',
+    body: 'Thinking about something like this for your business? We work best when we can be honest early, even if that means challenging the initial idea. Tell us what you are planning and we will say what creates risk, what it should cost, and what we would do differently.',
     button: 'Talk to us',
     related: 'Related articles',
     back: 'All articles',
   },
   el: {
     eyebrow: 'Ένα σημείωμα από εμάς',
-    body: 'Σκέφτεστε κάτι αντίστοιχο για την επιχείρησή σας; Δουλεύουμε καλύτερα όταν μπορούμε να είμαστε ειλικρινείς από νωρίς — ακόμα κι αν αυτό σημαίνει να αμφισβητήσουμε την αρχική ιδέα. Πείτε μας τι σχεδιάζετε και θα σας πούμε τι δημιουργεί ρίσκο, τι πρέπει να κοστίζει και τι θα κάναμε διαφορετικά.',
+    body: 'Σκέφτεστε κάτι αντίστοιχο για την επιχείρησή σας; Δουλεύουμε καλύτερα όταν μπορούμε να είμαστε ειλικρινείς από νωρίς, ακόμα κι αν αυτό σημαίνει να αμφισβητήσουμε την αρχική ιδέα. Πείτε μας τι σχεδιάζετε και θα σας πούμε τι δημιουργεί ρίσκο, τι πρέπει να κοστίζει και τι θα κάναμε διαφορετικά.',
     button: 'Μιλήστε μας',
     related: 'Σχετικά άρθρα',
     back: 'Όλα τα άρθρα',
@@ -39,8 +39,8 @@ interface Params {
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params
   const article = await getPublishedArticle(slug)
-  if (!article) return { title: 'Article not found — DS2' }
-  const title = `${article.title} — DS2`
+  if (!article) return { title: 'Article not found · DS2' }
+  const title = `${article.title} · DS2`
   return {
     title,
     description: article.description,
