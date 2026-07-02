@@ -2146,8 +2146,11 @@
 .ds2-action { display: inline-flex; align-items: center; gap: 6px; background: var(--ds2-ice); color: var(--ds2-on-accent); font-weight: 500; font-size: 13px; text-decoration: none; padding: 10px 18px; border-radius: 999px; transition: filter 0.2s var(--ds2-ease), transform 0.2s var(--ds2-ease); }
 .ds2-action:hover { filter: brightness(1.08); transform: translateY(-1px); }
 
-.ds2-grid { display: grid; grid-template-columns: 1.55fr 1fr; gap: 20px; align-items: start; }
+.ds2-grid { display: grid; grid-template-columns: 1.55fr 1fr; gap: 20px; align-items: stretch; }
 .ds2-col { display: grid; gap: 20px; min-width: 0; }
+/* Symmetric card bands below the hero row — pairs of equal-width cards. */
+.ds2-band { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch; margin-top: 20px; min-width: 0; }
+.ds2-band > * { min-width: 0; }
 .ds2-card { background: var(--ds2-surface); border: 1px solid var(--ds2-border); border-radius: 18px; padding: 22px; position: relative; overflow: hidden; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04); }
 .ds2-card__eyebrow { font-family: var(--admin-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ds2-text-3); }
 
@@ -2204,7 +2207,7 @@
 .ds2-act__delta.is-down { color: #c96868; }
 .ds2-act__7 { font-size: 11.5px; color: var(--ds2-text-3); font-variant-numeric: tabular-nums; }
 
-@media (max-width: 920px) { .ds2-grid { grid-template-columns: 1fr; } }
+@media (max-width: 920px) { .ds2-grid, .ds2-band { grid-template-columns: 1fr; } }
 @media (max-width: 560px) {
   /* Stack the header so the greeting, action button + search never collide:
      greeting on its own row, then the action, then a full-width search. */
