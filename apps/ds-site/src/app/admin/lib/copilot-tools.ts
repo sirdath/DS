@@ -19,10 +19,27 @@ import { loadDeadlines } from '../(app)/planning/lib/deadlines-source'
 import { resolveDeadlineCurrent } from '../(app)/planning/lib/metric-source'
 import { loadCompetitors } from '../(app)/competitors/lib/competitors-source'
 import { loadNotesData } from '../(app)/notes/lib/notes-source'
+import { loadAllArticles } from '../(app)/articles/lib/articles-source'
+import type { ArticleLang, ArticleStatus } from '../(app)/articles/types'
 import { createEvent, deleteEvent, updateEvent } from '../calendar-actions'
 import { createDeadline, deleteDeadline, updateDeadline } from '../planning-actions'
-import { createNote, updateNote } from '../notes-actions'
+import {
+  createNote,
+  createFolder,
+  deleteFolder,
+  deleteNote,
+  moveNote,
+  renameFolder,
+  togglePin,
+  updateNote,
+} from '../notes-actions'
+import { createArticle, deleteArticle, draftArticle, setArticleStatus, updateArticle } from '../articles-actions'
+import { deleteLead, promoteLeadToProject, setLeadFlag, setLeadStatus, updateLeadContact } from '../leads-actions'
+import { deleteBrief, markContacted } from '../outreach-actions'
+import { LEAD_STATUSES } from '../lib/leads-types'
 import type { Project } from '../types'
+
+const ARTICLE_STATUSES: readonly ArticleStatus[] = ['draft', 'review', 'published']
 
 interface ToolDef {
   name: string
@@ -215,6 +232,160 @@ export const COPILOT_TOOLS: ToolDef[] = [
       required: ['title', 'body'],
     },
   },
+  {
+    name: 'delete_note',
+    description: 'Delete a note permanently. Only call after the user has confirmed the deletion in this conversation.',
+    input_schema: { type: 'object', properties: { id: str('Note id') }, required: ['id'] },
+  },
+  {
+    name: 'create_folder',
+    description: 'Create a notes folder, optionally nested under a parent folder id from list_notes. Call when the user asks to organise notes into a folder.',
+    input_schema: {
+      type: 'object',
+      properties: { name: str('Folder name'), parentId: str('Parent folder id, omit for top level') },
+      required: ['name'],
+    },
+  },
+  {
+    name: 'rename_folder',
+    description: 'Rename a notes folder.',
+    input_schema: { type: 'object', properties: { id: str('Folder id'), name: str('New name') }, required: ['id', 'name'] },
+  },
+  {
+    name: 'delete_folder',
+    description: 'Delete a notes folder permanently. Notes inside are preserved (moved to no folder), child folders are deleted too. Only call after the user has confirmed the deletion in this conversation.',
+    input_schema: { type: 'object', properties: { id: str('Folder id') }, required: ['id'] },
+  },
+  {
+    name: 'move_note',
+    description: 'Move a note into a folder (or to the root). Call when the user asks to re-organise a note.',
+    input_schema: {
+      type: 'object',
+      properties: { id: str('Note id'), folderId: str('Target folder id, omit or empty for root') },
+      required: ['id'],
+    },
+  },
+  {
+    name: 'pin_note',
+    description: 'Pin or unpin a note. Call when the user asks to pin/unpin a note.',
+    input_schema: { type: 'object', properties: { id: str('Note id'), pinned: bool('true to pin, false to unpin') }, required: ['id', 'pinned'] },
+  },
+  {
+    name: 'list_articles',
+    description: 'List blog articles compactly (title, slug, lang, status, dates). Call for blog/SEO questions or to find an article id before editing.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        status: str(`Optional status filter: ${ARTICLE_STATUSES.join(' | ')}`),
+        lang: str('Optional language filter: el | en'),
+      },
+    },
+  },
+  {
+    name: 'get_article',
+    description: "Read one article's full detail including its markdown body, by id.",
+    input_schema: { type: 'object', properties: { id: str('Article id') }, required: ['id'] },
+  },
+  {
+    name: 'create_article',
+    description: 'Create a new article shell (title, language, topic) with an auto-generated slug, status draft. Call when the user asks to start a new blog post. Follow up with draft_article to write the body.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        title: str('Working title'),
+        lang: str('el | en'),
+        topic: str('Short topic brief guiding the draft'),
+      },
+      required: ['title', 'lang', 'topic'],
+    },
+  },
+  {
+    name: 'update_article',
+    description: 'Replace an article\'s title, slug, language, description, topic and/or body. Call get_article first. This is a full replace of these fields — pass the current value for any field not being changed.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        id: str('Article id'),
+        title: str('Title'),
+        slug: str('Lowercase-hyphenated slug'),
+        lang: str('el | en'),
+        description: str('Meta description'),
+        topic: str('Topic brief'),
+        bodyMd: str('Markdown body'),
+      },
+      required: ['id', 'title', 'slug', 'lang', 'description', 'topic', 'bodyMd'],
+    },
+  },
+  {
+    name: 'set_article_status',
+    description: `Move an article between statuses: ${ARTICLE_STATUSES.join(' | ')}. Call when the user asks to publish, send to review or revert to draft.`,
+    input_schema: {
+      type: 'object',
+      properties: { id: str('Article id'), status: str(ARTICLE_STATUSES.join(' | ')) },
+      required: ['id', 'status'],
+    },
+  },
+  {
+    name: 'draft_article',
+    description: 'AI-write a first draft for an article targeting a search keyword (fills body + meta description, moves status to review). Call when the user asks to draft/write a blog post for a keyword. Requires the founder\'s own Anthropic credential to be set up.',
+    input_schema: {
+      type: 'object',
+      properties: { id: str('Article id'), keyword: str('Target search keyword the draft should answer') },
+      required: ['id', 'keyword'],
+    },
+  },
+  {
+    name: 'delete_article',
+    description: 'Delete an article permanently. Only call after the user has confirmed the deletion in this conversation.',
+    input_schema: { type: 'object', properties: { id: str('Article id') }, required: ['id'] },
+  },
+  {
+    name: 'set_lead_status',
+    description: `Change a marketing lead's funnel status: ${LEAD_STATUSES.join(' | ')}. Call when the user reports progress on a lead.`,
+    input_schema: {
+      type: 'object',
+      properties: { id: str('Lead id'), status: str(LEAD_STATUSES.join(' | ')) },
+      required: ['id', 'status'],
+    },
+  },
+  {
+    name: 'set_lead_flag',
+    description: 'Set a lead\'s verified or contacted flag. Call when the user says a lead was verified or contacted.',
+    input_schema: {
+      type: 'object',
+      properties: { id: str('Lead id'), field: str('verified | contacted'), value: bool('true / false') },
+      required: ['id', 'field', 'value'],
+    },
+  },
+  {
+    name: 'update_lead_contact',
+    description: 'Update a lead\'s phone, email and/or notes. Only include fields being changed.',
+    input_schema: {
+      type: 'object',
+      properties: { id: str('Lead id'), phone: str('Phone number'), email: str('Email'), notes: str('Notes') },
+      required: ['id'],
+    },
+  },
+  {
+    name: 'delete_lead',
+    description: 'Delete a marketing lead permanently. Only call after the user has confirmed the deletion in this conversation.',
+    input_schema: { type: 'object', properties: { id: str('Lead id') }, required: ['id'] },
+  },
+  {
+    name: 'promote_lead',
+    description: 'Promote a marketing lead into an active project/lead in the pipeline. Call when the user says to move a lead into the funnel proper.',
+    input_schema: { type: 'object', properties: { id: str('Lead id') }, required: ['id'] },
+  },
+  {
+    name: 'mark_contacted',
+    description: 'Mark a lead as contacted from the outreach surface (sets contacted=true, status=contacted). Call when the user says they reached out to a lead.',
+    input_schema: { type: 'object', properties: { leadId: str('Lead id') }, required: ['leadId'] },
+  },
+  {
+    name: 'delete_outreach_brief',
+    description: 'Delete an outreach brief permanently. Only call after the user has confirmed the deletion in this conversation.',
+    input_schema: { type: 'object', properties: { briefId: str('Outreach brief id') }, required: ['briefId'] },
+  },
 ]
 
 export const TOOL_LABELS: Record<string, string> = {
@@ -237,7 +408,40 @@ export const TOOL_LABELS: Record<string, string> = {
   list_notes: 'Listing notes',
   get_note: 'Reading a note',
   create_note: 'Creating a note',
+  delete_note: 'Deleting a note',
+  create_folder: 'Creating a folder',
+  rename_folder: 'Renaming a folder',
+  delete_folder: 'Deleting a folder',
+  move_note: 'Moving a note',
+  pin_note: 'Pinning a note',
+  list_articles: 'Listing articles',
+  get_article: 'Reading an article',
+  create_article: 'Creating an article',
+  update_article: 'Updating an article',
+  set_article_status: 'Changing article status',
+  draft_article: 'Drafting an article',
+  delete_article: 'Deleting an article',
+  set_lead_status: 'Updating a lead status',
+  set_lead_flag: 'Updating a lead flag',
+  update_lead_contact: 'Updating lead contact info',
+  delete_lead: 'Deleting a lead',
+  promote_lead: 'Promoting a lead',
+  mark_contacted: 'Marking a lead contacted',
+  delete_outreach_brief: 'Deleting an outreach brief',
 }
+
+/** Tools that delete, mark-lost, or otherwise perform hard-to-reverse writes.
+ *  The route should require explicit confirmation before executing these. */
+export const DESTRUCTIVE_TOOLS = new Set<string>([
+  'mark_lead_lost',
+  'delete_event',
+  'delete_deadline',
+  'delete_note',
+  'delete_folder',
+  'delete_article',
+  'delete_lead',
+  'delete_outreach_brief',
+])
 
 const compactProject = (p: Project) => ({
   id: p.id,
@@ -257,6 +461,16 @@ const compactProject = (p: Project) => ({
 const asStr = (v: unknown): string | undefined => (typeof v === 'string' ? v : undefined)
 const asNum = (v: unknown): number | undefined => (typeof v === 'number' && Number.isFinite(v) ? v : undefined)
 const asBool = (v: unknown): boolean | undefined => (typeof v === 'boolean' ? v : undefined)
+
+const compactArticle = (a: { id: string; slug: string; lang: ArticleLang; title: string; status: ArticleStatus; publishedAt: string | null; updatedAt: string }) => ({
+  id: a.id,
+  slug: a.slug,
+  lang: a.lang,
+  title: a.title,
+  status: a.status,
+  publishedAt: a.publishedAt,
+  updatedAt: a.updatedAt,
+})
 
 async function snapshot(): Promise<Record<string, unknown>> {
   const ds = getDataSource()
@@ -442,6 +656,116 @@ export async function runCopilotTool(name: string, input: Record<string, unknown
       await updateNote(id, { title: asStr(input.title) ?? '', body: asStr(input.body) ?? '' })
       return JSON.stringify({ ok: true, id })
     }
+    case 'delete_note':
+      await deleteNote(asStr(input.id) ?? '')
+      return JSON.stringify({ ok: true })
+    case 'create_folder': {
+      const name = asStr(input.name) ?? ''
+      if (!name) throw new Error('Missing folder name')
+      const id = await createFolder(name, asStr(input.parentId) ?? null)
+      return JSON.stringify({ ok: true, id })
+    }
+    case 'rename_folder': {
+      const name = asStr(input.name) ?? ''
+      if (!name) throw new Error('Missing new name')
+      await renameFolder(asStr(input.id) ?? '', name)
+      return JSON.stringify({ ok: true })
+    }
+    case 'delete_folder':
+      await deleteFolder(asStr(input.id) ?? '')
+      return JSON.stringify({ ok: true })
+    case 'move_note':
+      await moveNote(asStr(input.id) ?? '', asStr(input.folderId) || null)
+      return JSON.stringify({ ok: true })
+    case 'pin_note': {
+      const pinned = asBool(input.pinned)
+      if (pinned === undefined) throw new Error('Missing pinned flag')
+      await togglePin(asStr(input.id) ?? '', pinned)
+      return JSON.stringify({ ok: true })
+    }
+    case 'list_articles': {
+      const all = await loadAllArticles()
+      const status = asStr(input.status)
+      const lang = asStr(input.lang)
+      const rows = all.filter((a) => (!status || a.status === status) && (!lang || a.lang === lang))
+      return JSON.stringify(rows.map(compactArticle))
+    }
+    case 'get_article': {
+      const all = await loadAllArticles()
+      const article = all.find((a) => a.id === asStr(input.id))
+      if (!article) throw new Error('Article not found')
+      return JSON.stringify(article)
+    }
+    case 'create_article': {
+      const title = asStr(input.title) ?? ''
+      const lang = asStr(input.lang)
+      if (lang !== 'el' && lang !== 'en') throw new Error('lang must be "el" or "en"')
+      const article = await createArticle({ title, lang, topic: asStr(input.topic) ?? '' })
+      return JSON.stringify(compactArticle(article))
+    }
+    case 'update_article': {
+      const lang = asStr(input.lang)
+      if (lang !== 'el' && lang !== 'en') throw new Error('lang must be "el" or "en"')
+      await updateArticle(asStr(input.id) ?? '', {
+        title: asStr(input.title) ?? '',
+        slug: asStr(input.slug) ?? '',
+        lang,
+        description: asStr(input.description) ?? '',
+        topic: asStr(input.topic) ?? '',
+        bodyMd: asStr(input.bodyMd) ?? '',
+      })
+      return JSON.stringify({ ok: true })
+    }
+    case 'set_article_status': {
+      const status = asStr(input.status)
+      if (!status || !(ARTICLE_STATUSES as readonly string[]).includes(status)) throw new Error(`Invalid status "${status}"`)
+      await setArticleStatus(asStr(input.id) ?? '', status as ArticleStatus)
+      return JSON.stringify({ ok: true })
+    }
+    case 'draft_article': {
+      const keyword = asStr(input.keyword) ?? ''
+      if (!keyword) throw new Error('Missing target keyword')
+      const draft = await draftArticle(asStr(input.id) ?? '', keyword)
+      return JSON.stringify({ ok: true, ...draft })
+    }
+    case 'delete_article':
+      await deleteArticle(asStr(input.id) ?? '')
+      return JSON.stringify({ ok: true })
+    case 'set_lead_status': {
+      const status = asStr(input.status) ?? ''
+      if (!(LEAD_STATUSES as readonly string[]).includes(status)) throw new Error(`Invalid status "${status}"`)
+      await setLeadStatus(asStr(input.id) ?? '', status)
+      return JSON.stringify({ ok: true })
+    }
+    case 'set_lead_flag': {
+      const field = asStr(input.field)
+      if (field !== 'verified' && field !== 'contacted') throw new Error('field must be "verified" or "contacted"')
+      const value = asBool(input.value)
+      if (value === undefined) throw new Error('Missing value')
+      await setLeadFlag(asStr(input.id) ?? '', field, value)
+      return JSON.stringify({ ok: true })
+    }
+    case 'update_lead_contact': {
+      const patch: { phone?: string; email?: string; notes?: string } = {}
+      if (asStr(input.phone) !== undefined) patch.phone = asStr(input.phone)
+      if (asStr(input.email) !== undefined) patch.email = asStr(input.email)
+      if (asStr(input.notes) !== undefined) patch.notes = asStr(input.notes)
+      if (Object.keys(patch).length === 0) throw new Error('No fields to update')
+      await updateLeadContact(asStr(input.id) ?? '', patch)
+      return JSON.stringify({ ok: true })
+    }
+    case 'delete_lead':
+      await deleteLead(asStr(input.id) ?? '')
+      return JSON.stringify({ ok: true })
+    case 'promote_lead':
+      await promoteLeadToProject(asStr(input.id) ?? '')
+      return JSON.stringify({ ok: true })
+    case 'mark_contacted':
+      await markContacted(asStr(input.leadId) ?? '')
+      return JSON.stringify({ ok: true })
+    case 'delete_outreach_brief':
+      await deleteBrief(asStr(input.briefId) ?? '')
+      return JSON.stringify({ ok: true })
     default:
       throw new Error(`Unknown tool: ${name}`)
   }
