@@ -39,13 +39,15 @@ type Four<T> = [T, T, T, T];
 type Three<T> = [T, T, T];
 
 export interface Dict {
-  nav: { portfolio: string; about: string; tools: string; blog: string };
+  nav: { portfolio: string; about: string; tools: string; blog: string; services: string };
   cta: { send: string };
   poweredBy: string;
   a11y: { home: string; openMenu: string; closeMenu: string; language: string; loading: string; logo: string; background: string };
   hero: {
     tag1: string;
     tag2: string;
+    heroTitle: string;
+    heroTitleEm: string;
     sub: string;
     what: string;
     tags: string[];
@@ -104,6 +106,16 @@ export interface Dict {
     f2Title: string;
     f2Desc: string;
     f2Loc: string;
+  };
+  how: {
+    eyebrow: string;
+    title: string;
+    titleEm: string;
+    sub: string;
+    beats: Four<{ n: string; title: string; body: string }>;
+    sig1: string;
+    sig2: string;
+    sig3: string;
   };
   contact: {
     eyebrow: string;
@@ -223,13 +235,15 @@ export interface Dict {
 }
 
 const en: Dict = {
-  nav: { portfolio: "Projects", about: "About", tools: "Tools", blog: "Blog" },
+  nav: { portfolio: "Projects", about: "About", tools: "Tools", blog: "Blog", services: "Services" },
   cta: { send: "Send a message" },
   poweredBy: "Powered by",
   a11y: { home: "DS2, home", openMenu: "Open menu", closeMenu: "Close menu", language: "Language", loading: "DS2 loading", logo: "DS2 logo", background: "Background" },
   hero: {
     tag1: "Digital Solutions",
     tag2: "consulting",
+    heroTitle: "Digital solutions, built and ",
+    heroTitleEm: "owned end to end.",
     sub: "A senior team for strategy, engineering, and applied AI. We work best when we can be honest early, even if that means challenging the initial idea.",
     what: "What we do",
     tags: ["AI Automation", "Website Development", "AI Integration", "Data & Predictions"],
@@ -371,6 +385,21 @@ const en: Dict = {
     f2Title: "Head of Engineering & Data.",
     f2Desc: "Architecture, data and ML, technical delivery. The person who decides whether what we're proposing will still be standing in three years, and says so before we ship it.",
     f2Loc: "London",
+  },
+  how: {
+    eyebrow: "How we work",
+    title: "Challenge-first,",
+    titleEm: "transparent delivery.",
+    sub: "The same four beats run through every engagement. It's how we protect the work, and you, before a single line is written.",
+    beats: [
+      { n: "01", title: "Diagnose and challenge", body: "We assess what's working, what isn't, and what we'd do differently, even against the brief you arrived with." },
+      { n: "02", title: "Say what creates risk", body: "Never “this is wrong.” Always “this creates risk because…” Protective framing, not judgment." },
+      { n: "03", title: "Alternatives with reasoning", body: "Every critique comes with a constructive alternative and its trade-offs, so you can choose with the full picture." },
+      { n: "04", title: "Decision pause", body: "“You don't need to decide now. Take the time, we're happy to proceed either way.”" },
+    ],
+    sig1: "We work best when we can be honest early, even if that means challenging the initial idea.",
+    sig2: "Projects end; responsibility doesn't.",
+    sig3: "We don't certify your organisation, we take responsibility for what we build.",
   },
   contact: {
     eyebrow: "Contact",
@@ -678,13 +707,15 @@ const en: Dict = {
 };
 
 const el: Dict = {
-  nav: { portfolio: "Έργα", about: "Σχετικά", tools: "Εργαλεία", blog: "Άρθρα" },
+  nav: { portfolio: "Έργα", about: "Σχετικά", tools: "Εργαλεία", blog: "Άρθρα", services: "Υπηρεσίες" },
   cta: { send: "Στείλτε μήνυμα" },
   poweredBy: "Χτισμένο με",
   a11y: { home: "DS2, αρχική", openMenu: "Άνοιγμα μενού", closeMenu: "Κλείσιμο μενού", language: "Γλώσσα", loading: "DS2, φόρτωση", logo: "Λογότυπο DS2", background: "Υπόβαθρο" },
   hero: {
     tag1: "Ψηφιακές Λύσεις",
     tag2: "συμβουλευτική",
+    heroTitle: "Ψηφιακές λύσεις, χτισμένες και ",
+    heroTitleEm: "υποστηριγμένες ως το τέλος.",
     sub: "Μια έμπειρη ομάδα για στρατηγική, μηχανική και εφαρμοσμένη ΤΝ. Δουλεύουμε καλύτερα όταν μπορούμε να είμαστε ειλικρινείς από νωρίς, ακόμη κι αν αυτό σημαίνει να αμφισβητήσουμε την αρχική ιδέα.",
     what: "Τι κάνουμε",
     tags: ["Αυτοματισμοί ΤΝ", "Κατασκευή Ιστοσελίδων", "Ενσωμάτωση ΤΝ", "Δεδομένα & Προβλέψεις"],
@@ -826,6 +857,21 @@ const el: Dict = {
     f2Title: "Επικεφαλής Μηχανικής & Δεδομένων.",
     f2Desc: "Αρχιτεκτονική, δεδομένα και ML, τεχνική παράδοση. Αυτός που κρίνει αν αυτό που προτείνουμε θα στέκεται ακόμη σε τρία χρόνια, και το λέει πριν το παραδώσουμε.",
     f2Loc: "Λονδίνο",
+  },
+  how: {
+    eyebrow: "Πώς δουλεύουμε",
+    title: "Πρώτα η πρόκληση,",
+    titleEm: "διαφανής παράδοση.",
+    sub: "Οι ίδιοι τέσσερις ρυθμοί διατρέχουν κάθε συνεργασία. Έτσι προστατεύουμε τη δουλειά, κι εσάς, πριν γραφτεί μία γραμμή.",
+    beats: [
+      { n: "01", title: "Διάγνωση και πρόκληση", body: "Αξιολογούμε τι δουλεύει, τι όχι, και τι θα κάναμε διαφορετικά, ακόμη κι ενάντια στο brief που φέρατε." },
+      { n: "02", title: "Λέμε πού δημιουργείται ρίσκο", body: "Ποτέ «αυτό είναι λάθος». Πάντα «αυτό δημιουργεί ρίσκο επειδή…». Προστατευτικά, όχι επικριτικά." },
+      { n: "03", title: "Εναλλακτικές με σκεπτικό", body: "Κάθε κριτική συνοδεύεται από μια εποικοδομητική εναλλακτική και τους συμβιβασμούς της, ώστε να επιλέξετε με πλήρη εικόνα." },
+      { n: "04", title: "Παύση απόφασης", body: "«Δεν χρειάζεται να αποφασίσετε τώρα. Με την ησυχία σας, είμαστε χαρούμενοι να προχωρήσουμε όπως προτιμάτε.»" },
+    ],
+    sig1: "Δουλεύουμε καλύτερα όταν μπορούμε να είμαστε ειλικρινείς από νωρίς, ακόμη κι αν αυτό σημαίνει να αμφισβητήσουμε την αρχική ιδέα.",
+    sig2: "Τα έργα τελειώνουν· η ευθύνη όχι.",
+    sig3: "Δεν πιστοποιούμε τον οργανισμό σας, αναλαμβάνουμε την ευθύνη για ό,τι φτιάχνουμε.",
   },
   contact: {
     eyebrow: "Επικοινωνία",
