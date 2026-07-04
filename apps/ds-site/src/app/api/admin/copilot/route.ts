@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { assertAdmin } from "../../../admin/lib/assert-admin";
 import { getFounderCredential, makeAnthropicClient } from "../../../admin/lib/founder-credential";
-import { COPILOT_TOOLS, TOOL_LABELS, runCopilotTool } from "../../../admin/lib/copilot-tools";
+import { COPILOT_TOOLS, TOOL_LABELS, DESTRUCTIVE_TOOLS, runCopilotTool } from "../../../admin/lib/copilot-tools";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -104,6 +104,32 @@ function systemPrompt(): string {
   ].join("\n");
 }
 
+/** A short, human-readable line for a destructive-action confirm card. Falls back
+ *  to the salient id/title field so the founder sees exactly what's affected. */
+function summarizeAction(name: string, input: Record<string, unknown>): string {
+  const pick = (...keys: string[]): string => {
+    for (const k of keys) {
+      const v = input[k];
+      if (typeof v === "string" && v.trim()) return v.trim();
+      if (Array.isArray(v) && v.length) return `${v.length} item${v.length === 1 ? "" : "s"}`;
+    }
+    return "";
+  };
+  const verbs: Record<string, string> = {
+    delete_event: "Delete calendar event",
+    delete_deadline: "Delete deadline",
+    delete_note: "Delete note",
+    delete_folder: "Delete folder",
+    delete_article: "Delete article",
+    delete_lead: "Delete lead",
+    delete_outreach_brief: "Delete outreach brief",
+    mark_lead_lost: "Mark lead as lost",
+  };
+  const head = verbs[name] ?? (TOOL_LABELS[name] ?? name);
+  const detail = pick("title", "name", "keyword", "id", "ids");
+  return detail ? `${head}: ${detail}` : head;
+}
+
 interface TurnRequest {
   history?: unknown;
   message?: unknown;
@@ -192,8 +218,32 @@ export async function POST(req: Request): Promise<Response> {
 
           const toolUses = final.content.filter((b): b is Anthropic.ToolUseBlock => b.type === "tool_use");
           const results: Anthropic.ToolResultBlockParam[] = [];
+          let paused = false;
           for (const tu of toolUses) {
-            emit({ t: "tool", name: tu.name, label: TOOL_LABELS[tu.name] ?? tu.name });
+            const label = TOOL_LABELS[tu.name] ?? tu.name;
+            // Destructive actions are gated: don't run them here. Surface a confirm
+            // card to the founder; the client executes it via /api/admin/copilot/act
+            // only if they approve. We hand the model a "paused" tool_result so the
+            // tool_use/tool_result pairing stays valid, then end the turn.
+            if (DESTRUCTIVE_TOOLS.has(tu.name)) {
+              paused = true;
+              emit({
+                t: "confirm",
+                id: tu.id,
+                name: tu.name,
+                label,
+                summary: summarizeAction(tu.name, (tu.input ?? {}) as Record<string, unknown>),
+                input: tu.input ?? {},
+              });
+              results.push({
+                type: "tool_result",
+                tool_use_id: tu.id,
+                content:
+                  "Paused — awaiting the founder's confirmation in the UI. Do not retry or take any further action on this item; it is applied only if they confirm. Stop and wait.",
+              });
+              continue;
+            }
+            emit({ t: "tool", name: tu.name, label });
             try {
               const out = await runCopilotTool(tu.name, (tu.input ?? {}) as Record<string, unknown>);
               results.push({ type: "tool_result", tool_use_id: tu.id, content: out });
@@ -207,6 +257,9 @@ export async function POST(req: Request): Promise<Response> {
           const resultMsg: Msg = { role: "user", content: results };
           newMessages.push(resultMsg);
           messages.push(resultMsg);
+
+          // A confirmation is pending — stop the loop and let the founder decide.
+          if (paused) break;
 
           if (iter === MAX_ITERATIONS - 1) {
             emit({ t: "error", message: "Stopped after too many steps — ask me to continue if the task is not finished." });

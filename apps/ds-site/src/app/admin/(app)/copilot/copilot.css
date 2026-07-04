@@ -1,5 +1,12 @@
 /* Copilot chat — ds-kit card + tokens; only chat-specific layout lives here. */
 
+/* Houdini angle for the smooth conic rotation on the composer ring/glow. */
+@property --cop-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
 .cop-page {
   display: flex;
   flex-direction: column;
@@ -11,6 +18,108 @@
   min-height: 420px;
   padding: 0;
   overflow: hidden;
+  position: relative;
+  isolation: isolate;
+  --cop-glass: rgba(255, 255, 255, 0.06);
+  --cop-glass-bd: rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius-lg);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 18px 44px -28px rgba(0, 0, 0, 0.6);
+  /* Immersive "command deck" — a crafted oklch mesh. Dark by default; the
+     light variant below keeps it in sync with the admin theme. */
+  background:
+    radial-gradient(70% 60% at 16% 0%, oklch(0.46 0.19 268 / 0.75), transparent 60%),
+    radial-gradient(60% 55% at 96% 12%, oklch(0.52 0.2 322 / 0.55), transparent 60%),
+    radial-gradient(80% 65% at 82% 108%, oklch(0.56 0.14 190 / 0.45), transparent 62%),
+    radial-gradient(130% 100% at 50% -12%, #0b1030, #070a18 52%, #05070e 100%);
+}
+/* Ambient layers (drifting light + grain) sit behind the content. */
+.cop-ambient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: inherit;
+}
+.cop-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(72px);
+}
+.cop-blob--1 {
+  width: 460px;
+  height: 460px;
+  left: -140px;
+  top: -150px;
+  background: radial-gradient(circle, oklch(0.5 0.2 266 / 0.5), transparent 62%);
+  animation: cop-drift1 20s ease-in-out infinite;
+}
+.cop-blob--2 {
+  width: 420px;
+  height: 420px;
+  right: -150px;
+  top: 10px;
+  background: radial-gradient(circle, oklch(0.55 0.2 322 / 0.45), transparent 62%);
+  animation: cop-drift2 24s ease-in-out infinite;
+}
+.cop-blob--3 {
+  width: 400px;
+  height: 400px;
+  right: 60px;
+  bottom: -180px;
+  background: radial-gradient(circle, oklch(0.6 0.13 188 / 0.38), transparent 60%);
+  animation: cop-drift1 28s ease-in-out infinite reverse;
+}
+.cop-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* Everything readable sits above the ambient field. */
+.cop-warn,
+.cop-scroll,
+.cop-tiers,
+.cop-input,
+.cop-usage {
+  position: relative;
+  z-index: 1;
+}
+/* Light admin theme → a soft pastel mesh, same glass sphere, so it flips cleanly. */
+:root[data-theme='light'] .cop-shell {
+  background:
+    radial-gradient(70% 60% at 16% 0%, oklch(0.9 0.06 268 / 0.9), transparent 62%),
+    radial-gradient(60% 55% at 96% 12%, oklch(0.9 0.06 322 / 0.8), transparent 62%),
+    radial-gradient(80% 65% at 82% 108%, oklch(0.92 0.05 190 / 0.7), transparent 64%),
+    radial-gradient(130% 100% at 50% -12%, #eef1f8, #f4f6fb 60%, #f7f9fc 100%);
+}
+:root[data-theme='light'] .cop-shell {
+  --cop-glass: rgba(17, 20, 25, 0.05);
+  --cop-glass-bd: rgba(17, 20, 25, 0.12);
+}
+:root[data-theme='light'] .cop-grain {
+  opacity: 0.03;
+  mix-blend-mode: multiply;
+}
+@keyframes cop-drift1 {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(50px, 42px);
+  }
+}
+@keyframes cop-drift2 {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-42px, 36px);
+  }
 }
 .cop-warn {
   margin: 0;
@@ -38,11 +147,119 @@
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+}
+/* ── Glass sphere — the copilot's "presence" ────────────────────────────── */
+.cop-sphere {
+  position: relative;
+  width: 128px;
+  height: 128px;
+}
+.cop-sphere__bloom {
+  position: absolute;
+  inset: -34%;
+  border-radius: 50%;
+  z-index: 0;
+  background: radial-gradient(circle, oklch(0.6 0.2 280 / 0.5), transparent 62%);
+  filter: blur(28px);
+  animation: cop-breathe 5s ease-in-out infinite;
+}
+.cop-sphere__ball {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  z-index: 1;
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 34%),
+    radial-gradient(circle at 72% 80%, rgba(4, 6, 24, 0.8), transparent 54%),
+    radial-gradient(circle at 50% 50%, rgba(24, 28, 68, 0.55), rgba(6, 8, 26, 0.8));
+  box-shadow:
+    inset 0 3px 10px rgba(255, 255, 255, 0.55),
+    inset 0 -22px 34px rgba(5, 6, 26, 0.75),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 26px 60px -14px oklch(0.55 0.22 285 / 0.7);
+}
+.cop-sphere__iri {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  mix-blend-mode: screen;
+  filter: blur(2px) saturate(1.4);
+  background:
+    radial-gradient(circle at 24% 32%, #ff5c95, transparent 24%),
+    radial-gradient(circle at 80% 34%, #00f0cc, transparent 24%),
+    radial-gradient(circle at 64% 74%, #ffcf5c, transparent 22%),
+    radial-gradient(circle at 30% 76%, #a25cff, transparent 24%),
+    radial-gradient(circle at 54% 52%, #5c7bff, transparent 44%);
+  background-size: 200% 200%;
+  animation: cop-drift 8s ease-in-out infinite;
+}
+.cop-sphere__rim {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  z-index: 2;
+  mix-blend-mode: screen;
+  background: radial-gradient(circle at 50% 8%, rgba(180, 205, 255, 0.6), transparent 12%);
+}
+.cop-sphere__spec {
+  position: absolute;
+  top: 15%;
+  left: 25%;
+  width: 24%;
+  height: 18%;
+  border-radius: 50%;
+  z-index: 2;
+  background: radial-gradient(circle at 45% 45%, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0) 62%);
+}
+.cop-sphere__spec2 {
+  position: absolute;
+  bottom: 18%;
+  right: 24%;
+  width: 12%;
+  height: 9%;
+  border-radius: 50%;
+  z-index: 2;
+  background: radial-gradient(circle, rgba(170, 215, 255, 0.85), transparent 68%);
+  filter: blur(1px);
+}
+@keyframes cop-drift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 .cop-empty__lead {
-  margin: 0;
-  font-size: 1.05rem;
+  margin: 4px 0 0;
+  font-size: 1.3rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--ds-text);
+}
+.cop-empty__lead b {
+  font-weight: 600;
+  background: linear-gradient(90deg, #8dcbff, #a970ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+:root[data-theme='light'] .cop-empty__lead b {
+  background: linear-gradient(90deg, #2f6fb0, #7d4fd0);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.cop-empty__status {
+  margin: 8px 0 0;
+  font-family: var(--ds-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: var(--ds-muted);
 }
 .cop-suggest {
@@ -50,20 +267,25 @@
   flex-wrap: wrap;
   gap: 8px;
   justify-content: center;
+  max-width: 440px;
 }
 .cop-chip {
   font-size: 0.82rem;
-  padding: 8px 14px;
+  padding: 9px 14px;
   border-radius: 999px;
-  border: 1px solid var(--ds-border-hover);
-  background: none;
+  border: 1px solid var(--cop-glass-bd);
+  background: var(--cop-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: var(--ds-text);
   cursor: pointer;
   min-height: 40px;
+  transition: border-color 0.25s var(--ds-ease), color 0.25s var(--ds-ease), transform 0.25s var(--ds-ease);
 }
 .cop-chip:hover {
   border-color: var(--ds-accent-border);
   color: var(--ds-accent);
+  transform: translateY(-1px);
 }
 
 .cop-msg {
@@ -82,43 +304,160 @@
   color: var(--ds-text);
 }
 .cop-msg--ai {
-  align-self: flex-start;
-  background: color-mix(in srgb, var(--ds-text) 4%, transparent);
-  border: 1px solid var(--ds-border);
+  align-self: stretch;
+  max-width: none;
+  padding: 2px 0;
+  background: none;
+  border: 0;
   color: var(--ds-text);
+  display: flex;
+  gap: 11px;
+}
+.cop-msg--ai .cop-msg__body {
+  flex: 1;
+  min-width: 0;
+  padding-top: 1px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+/* Radiant presence dot beside assistant turns + the thinking row. */
+.cop-avatar {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: conic-gradient(from var(--cop-angle), #8dcbff, #6f7bff, #a970ff, #ff74b8, #ffc46b, #63e6c8, #8dcbff);
+  box-shadow: 0 0 12px -1px color-mix(in srgb, #6f7bff 55%, transparent);
+  animation: cop-spin 6s linear infinite;
 }
 
-.cop-tool {
+/* ── Live action card — the copilot "doing" a tool ──────────────────────── */
+.cop-action {
   align-self: flex-start;
-  font-family: var(--ds-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.05em;
-  color: var(--ds-muted);
-  padding: 3px 10px;
-  border-radius: 999px;
-  border: 1px dashed var(--ds-border-hover);
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 260px;
+  max-width: 74%;
+  padding: 9px 12px;
+  border-radius: 12px;
+  background: var(--cop-glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--cop-glass-bd);
+  position: relative;
+  overflow: hidden;
 }
-.cop-tool i {
-  font-style: normal;
+.cop-action__ic {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-size: 0.85rem;
+  background: var(--ds-accent-dim);
+  border: 1px solid var(--ds-accent-border);
+  color: var(--ds-accent);
+}
+.cop-action__t {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.8rem;
+  color: var(--ds-text);
+  line-height: 1.3;
+}
+.cop-action__t small {
+  display: block;
+  font-family: var(--ds-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.03em;
+  color: var(--ds-dim, var(--ds-muted));
+  margin-top: 1px;
+}
+.cop-action__s {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  font-size: 0.9rem;
+}
+.cop-action__s .ok {
   color: var(--ds-success);
 }
-.cop-tool.is-fail i {
+.cop-action__s .fail {
   color: var(--ds-danger);
 }
+.cop-spinner {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--ds-accent-dim);
+  border-top-color: var(--ds-accent);
+  animation: cop-rotate 0.7s linear infinite;
+}
+/* running: a sweep of light along the bottom edge — the card feels alive */
+.cop-action.is-run::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, var(--ds-accent), transparent);
+  animation: cop-sweep 1.3s linear infinite;
+}
+
+/* ── Thinking shimmer ───────────────────────────────────────────────────── */
 .cop-thinking {
   align-self: flex-start;
-  font-size: 0.85rem;
-  color: var(--ds-muted);
-  animation: cop-pulse 1.4s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 0.86rem;
 }
-@keyframes cop-pulse {
-  50% {
-    opacity: 0.45;
+.cop-thinking .cop-avatar {
+  width: 16px;
+  height: 16px;
+}
+.cop-thinking span {
+  background: linear-gradient(90deg, var(--ds-dim, var(--ds-muted)), var(--ds-text), var(--ds-dim, var(--ds-muted)));
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: cop-shimmer 1.8s linear infinite;
+}
+
+@keyframes cop-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes cop-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+@keyframes cop-shimmer {
+  to {
+    background-position: -200% 0;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .cop-thinking {
+  .cop-avatar,
+  .cop-orb,
+  .cop-spinner,
+  .cop-action.is-run::after,
+  .cop-thinking span {
     animation: none;
+  }
+  .cop-thinking span {
+    color: var(--ds-muted);
   }
 }
 .cop-err {
@@ -139,6 +478,94 @@
   border-radius: 999px;
   border: 1px solid var(--ds-accent-border);
   background: var(--ds-accent-dim);
+}
+
+/* ── Confirm card — destructive action awaiting the founder's ok ─────────── */
+.cop-confirm {
+  align-self: flex-start;
+  max-width: 74%;
+  min-width: 300px;
+  border-radius: 14px;
+  background: var(--cop-glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--cop-glass-bd);
+  position: relative;
+  overflow: hidden;
+}
+/* radiant spine — reads as "the AI is holding this, waiting on you" */
+.cop-confirm::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: conic-gradient(from var(--cop-angle), #8dcbff, #6f7bff, #a970ff, #ff74b8, #ffc46b, #63e6c8, #8dcbff);
+  animation: cop-spin 6s linear infinite;
+}
+.cop-confirm__in {
+  padding: 13px 15px 13px 17px;
+}
+.cop-confirm__eyebrow {
+  font-family: var(--ds-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ds-muted);
+  margin-bottom: 6px;
+}
+.cop-confirm__text {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ds-text);
+  margin-bottom: 12px;
+}
+.cop-confirm__btns {
+  display: flex;
+  gap: 8px;
+}
+.cop-confirm__btns button {
+  border-radius: 9px;
+  padding: 8px 15px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  border: 1px solid transparent;
+  min-height: 38px;
+}
+.cop-confirm__go {
+  background: var(--ds-danger);
+  color: #fff;
+}
+.cop-confirm__go:hover {
+  filter: brightness(1.08);
+}
+.cop-confirm__keep {
+  background: transparent;
+  border-color: var(--ds-border-hover);
+  color: var(--ds-text);
+}
+.cop-confirm__keep:hover {
+  border-color: var(--ds-text);
+}
+/* resolved states collapse the buttons into a status line */
+.cop-confirm__done {
+  font-size: 0.8rem;
+  color: var(--ds-success);
+}
+.cop-confirm__cancelled {
+  font-size: 0.8rem;
+  color: var(--ds-muted);
+}
+.cop-confirm__err {
+  font-size: 0.8rem;
+  color: var(--ds-danger);
+}
+.cop-confirm.is-resolved::before {
+  animation: none;
+  opacity: 0.5;
 }
 
 .cop-tiers {
@@ -173,29 +600,119 @@
 
 .cop-input {
   display: flex;
-  gap: 10px;
   padding: 12px 16px;
-  border-top: 0;
   padding-top: 10px;
-  align-items: flex-end;
 }
-.cop-input__field {
+
+/* ── Radiant "living AI" composer ────────────────────────────────────────────
+   A colourful conic gradient orbits the input as a 1.5px border ring, echoed by
+   a soft blurred bloom behind it. The bar surface + text ride the admin tokens,
+   so it flips cleanly with light/dark and never changes on its own; only the
+   spectrum ring is theme-independent (dimmed a touch in light mode). */
+.cop-composer {
+  --cop-spectrum: #8dcbff, #6f7bff, #a970ff, #ff74b8, #ffc46b, #63e6c8, #8dcbff;
+  --cop-glow: 0.5;
+  --cop-ring-a: 1;
+  --cop-spin: 7s;
+  position: relative;
+  flex: 1;
+  border-radius: 14px;
+  isolation: isolate;
+}
+/* soft radiant bloom */
+.cop-composer::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: inherit;
+  background: conic-gradient(from var(--cop-angle), var(--cop-spectrum));
+  filter: blur(15px);
+  opacity: calc(var(--cop-glow) * 0.5);
+  z-index: -1;
+  animation: cop-spin var(--cop-spin) linear infinite, cop-breathe 4.5s ease-in-out infinite;
+}
+/* animated gradient border ring (masked to the edge only) */
+.cop-composer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(from var(--cop-angle), var(--cop-spectrum));
+  opacity: var(--cop-ring-a);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: cop-spin var(--cop-spin) linear infinite;
+  z-index: 1;
+  pointer-events: none;
+}
+.cop-composer__inner {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  background: var(--ds-bg);
+  border-radius: inherit;
+  padding: 9px 9px 9px 13px;
+}
+.cop-composer__field {
   flex: 1;
   resize: none;
-  min-height: 44px;
+  min-height: 26px;
   max-height: 160px;
-  background: color-mix(in srgb, var(--ds-text) 4%, transparent);
-  border: 1px solid var(--ds-border);
-  border-radius: 10px;
-  padding: 11px 12px;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  padding: 7px 0;
   color: var(--ds-text);
   font-size: 0.9rem;
-  line-height: 1.4;
+  line-height: 1.45;
   font-family: inherit;
 }
-.cop-input__field:focus-visible {
-  outline: 2px solid var(--ds-accent);
-  outline-offset: 1px;
+.cop-composer__field::placeholder {
+  color: var(--ds-muted);
+}
+.cop-composer .cop-send {
+  align-self: stretch;
+}
+/* brighten + quicken while focused or thinking — it feels alive */
+.cop-composer:focus-within,
+.cop-composer.is-busy {
+  --cop-ring-a: 1;
+  --cop-spin: 3.6s;
+}
+.cop-composer.is-busy {
+  --cop-glow: 0.75;
+}
+
+/* Light mode: same ring, softer bloom so it reads as premium, not neon. */
+:root[data-theme='light'] .cop-composer {
+  --cop-glow: 0.32;
+  --cop-ring-a: 0.82;
+}
+
+@keyframes cop-spin {
+  to {
+    --cop-angle: 360deg;
+  }
+}
+@keyframes cop-breathe {
+  0%,
+  100% {
+    transform: scale(0.985);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cop-composer::before,
+  .cop-composer::after {
+    animation: none;
+  }
 }
 .cop-usage {
   margin: 0;
