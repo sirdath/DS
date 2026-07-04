@@ -210,23 +210,27 @@ export function CopilotApp({ credentialSet }: { credentialSet: boolean }) {
       </div>
 
       <form className="cop-input" onSubmit={onSubmit}>
-        <textarea
-          className="cop-input__field"
-          placeholder="Ask, or tell it what to change…"
-          value={input}
-          rows={1}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault()
-              void send(input)
-            }
-          }}
-          aria-label="Message the copilot"
-        />
-        <button className="ds-btn ds-btn--primary" type="submit" disabled={busy}>
-          {busy ? 'Working…' : 'Send'}
-        </button>
+        <div className={`cop-composer${busy ? ' is-busy' : ''}`}>
+          <div className="cop-composer__inner">
+            <textarea
+              className="cop-composer__field"
+              placeholder="Ask, or tell it what to change…"
+              value={input}
+              rows={1}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  void send(input)
+                }
+              }}
+              aria-label="Message the copilot"
+            />
+            <button className="ds-btn ds-btn--primary cop-send" type="submit" disabled={busy}>
+              {busy ? 'Working…' : 'Send'}
+            </button>
+          </div>
+        </div>
       </form>
       {usage.outputTokens > 0 ? (
         <p className="cop-usage">

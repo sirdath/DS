@@ -1,5 +1,12 @@
 /* Copilot chat — ds-kit card + tokens; only chat-specific layout lives here. */
 
+/* Houdini angle for the smooth conic rotation on the composer ring/glow. */
+@property --cop-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
 .cop-page {
   display: flex;
   flex-direction: column;
@@ -173,29 +180,119 @@
 
 .cop-input {
   display: flex;
-  gap: 10px;
   padding: 12px 16px;
-  border-top: 0;
   padding-top: 10px;
-  align-items: flex-end;
 }
-.cop-input__field {
+
+/* ── Radiant "living AI" composer ────────────────────────────────────────────
+   A colourful conic gradient orbits the input as a 1.5px border ring, echoed by
+   a soft blurred bloom behind it. The bar surface + text ride the admin tokens,
+   so it flips cleanly with light/dark and never changes on its own; only the
+   spectrum ring is theme-independent (dimmed a touch in light mode). */
+.cop-composer {
+  --cop-spectrum: #8dcbff, #6f7bff, #a970ff, #ff74b8, #ffc46b, #63e6c8, #8dcbff;
+  --cop-glow: 0.5;
+  --cop-ring-a: 1;
+  --cop-spin: 7s;
+  position: relative;
+  flex: 1;
+  border-radius: 14px;
+  isolation: isolate;
+}
+/* soft radiant bloom */
+.cop-composer::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: inherit;
+  background: conic-gradient(from var(--cop-angle), var(--cop-spectrum));
+  filter: blur(15px);
+  opacity: calc(var(--cop-glow) * 0.5);
+  z-index: -1;
+  animation: cop-spin var(--cop-spin) linear infinite, cop-breathe 4.5s ease-in-out infinite;
+}
+/* animated gradient border ring (masked to the edge only) */
+.cop-composer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(from var(--cop-angle), var(--cop-spectrum));
+  opacity: var(--cop-ring-a);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: cop-spin var(--cop-spin) linear infinite;
+  z-index: 1;
+  pointer-events: none;
+}
+.cop-composer__inner {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  background: var(--ds-bg);
+  border-radius: inherit;
+  padding: 9px 9px 9px 13px;
+}
+.cop-composer__field {
   flex: 1;
   resize: none;
-  min-height: 44px;
+  min-height: 26px;
   max-height: 160px;
-  background: color-mix(in srgb, var(--ds-text) 4%, transparent);
-  border: 1px solid var(--ds-border);
-  border-radius: 10px;
-  padding: 11px 12px;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  padding: 7px 0;
   color: var(--ds-text);
   font-size: 0.9rem;
-  line-height: 1.4;
+  line-height: 1.45;
   font-family: inherit;
 }
-.cop-input__field:focus-visible {
-  outline: 2px solid var(--ds-accent);
-  outline-offset: 1px;
+.cop-composer__field::placeholder {
+  color: var(--ds-muted);
+}
+.cop-composer .cop-send {
+  align-self: stretch;
+}
+/* brighten + quicken while focused or thinking — it feels alive */
+.cop-composer:focus-within,
+.cop-composer.is-busy {
+  --cop-ring-a: 1;
+  --cop-spin: 3.6s;
+}
+.cop-composer.is-busy {
+  --cop-glow: 0.75;
+}
+
+/* Light mode: same ring, softer bloom so it reads as premium, not neon. */
+:root[data-theme='light'] .cop-composer {
+  --cop-glow: 0.32;
+  --cop-ring-a: 0.82;
+}
+
+@keyframes cop-spin {
+  to {
+    --cop-angle: 360deg;
+  }
+}
+@keyframes cop-breathe {
+  0%,
+  100% {
+    transform: scale(0.985);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cop-composer::before,
+  .cop-composer::after {
+    animation: none;
+  }
 }
 .cop-usage {
   margin: 0;
