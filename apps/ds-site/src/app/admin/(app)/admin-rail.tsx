@@ -54,21 +54,26 @@ interface Item {
   label: string
   icon: ReactNode
   match: (p: string) => boolean
+  ownerOnly?: boolean
 }
 
+// ownerOnly items are hidden from employees (who can reach only the scoped
+// dashboard). The middleware enforces this server-side too — the nav just
+// avoids showing links that would bounce.
 const ITEMS: Item[] = [
   { href: '/admin', label: 'Dashboard', icon: ICONS.dashboard, match: (p) => p === '/admin' || p === '/admin/' },
-  { href: '/admin/copilot', label: 'Copilot', icon: ICONS.copilot, match: (p) => p.startsWith('/admin/copilot') },
-  { href: '/admin/funnel/leads', label: 'Funnel', icon: ICONS.funnel, match: (p) => p.startsWith('/admin/funnel') },
-  { href: '/admin/projects', label: 'Projects', icon: ICONS.projects, match: (p) => p.startsWith('/admin/projects') },
-  { href: '/admin/calendar', label: 'Calendar', icon: ICONS.calendar, match: (p) => p.startsWith('/admin/calendar') || p.startsWith('/admin/planning') },
-  { href: '/admin/articles', label: 'Articles', icon: ICONS.articles, match: (p) => p.startsWith('/admin/articles') },
-  { href: '/admin/notes', label: 'Notes', icon: ICONS.notes, match: (p) => p.startsWith('/admin/notes') },
-  { href: '/products', label: 'Products', icon: ICONS.products, match: (p) => p.startsWith('/products') },
-  { href: '/admin/competitors', label: 'Competitors', icon: ICONS.competitors, match: (p) => p.startsWith('/admin/competitors') },
+  { href: '/admin/copilot', label: 'Copilot', icon: ICONS.copilot, match: (p) => p.startsWith('/admin/copilot'), ownerOnly: true },
+  { href: '/admin/funnel/leads', label: 'Funnel', icon: ICONS.funnel, match: (p) => p.startsWith('/admin/funnel'), ownerOnly: true },
+  { href: '/admin/projects', label: 'Projects', icon: ICONS.projects, match: (p) => p.startsWith('/admin/projects'), ownerOnly: true },
+  { href: '/admin/calendar', label: 'Calendar', icon: ICONS.calendar, match: (p) => p.startsWith('/admin/calendar') || p.startsWith('/admin/planning'), ownerOnly: true },
+  { href: '/admin/articles', label: 'Articles', icon: ICONS.articles, match: (p) => p.startsWith('/admin/articles'), ownerOnly: true },
+  { href: '/admin/notes', label: 'Notes', icon: ICONS.notes, match: (p) => p.startsWith('/admin/notes'), ownerOnly: true },
+  { href: '/products', label: 'Products', icon: ICONS.products, match: (p) => p.startsWith('/products'), ownerOnly: true },
+  { href: '/admin/competitors', label: 'Competitors', icon: ICONS.competitors, match: (p) => p.startsWith('/admin/competitors'), ownerOnly: true },
 ]
 
-export function AdminRail() {
+export function AdminRail({ role = 'owner' }: { role?: 'owner' | 'employee' }) {
+  const items = role === 'owner' ? ITEMS : ITEMS.filter((it) => !it.ownerOnly)
   const path = usePathname() ?? ''
   const [collapsed, setCollapsed] = useState(false)
   useEffect(() => {
@@ -101,7 +106,7 @@ export function AdminRail() {
         <span className="admin-rail__brandname">Admin</span>
       </Link>
       <div className="admin-rail__nav">
-        {ITEMS.map((it) => {
+        {items.map((it) => {
           const on = it.match(path)
           return (
             <Link
