@@ -22,6 +22,14 @@ type ChatItem =
     }
   | { kind: 'error'; text: string }
 
+/** Time-of-day greeting for the empty state (client-local). */
+function greeting(): string {
+  const h = new Date().getHours()
+  if (h < 12) return 'Good morning.'
+  if (h < 18) return 'Good afternoon.'
+  return 'Good evening.'
+}
+
 /** A small glyph per action family for the live action cards. */
 function actionIcon(name: string): string {
   if (name.startsWith('delete_') || name === 'mark_lead_lost') return '⊘'
@@ -62,6 +70,8 @@ export function CopilotApp({ credentialSet }: { credentialSet: boolean }) {
   const [usage, setUsage] = useState<Usage>({ inputTokens: 0, outputTokens: 0, usd: 0 })
   const historyRef = useRef<unknown[]>([])
   const scrollRef = useRef<HTMLDivElement>(null)
+  const [hello, setHello] = useState('Hello.')
+  useEffect(() => setHello(greeting()), [])
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight })
@@ -216,7 +226,14 @@ export function CopilotApp({ credentialSet }: { credentialSet: boolean }) {
   }
 
   return (
-    <div className="cop-shell ds-card">
+    <div className="cop-shell">
+      <div className="cop-ambient" aria-hidden>
+        <span className="cop-blob cop-blob--1" />
+        <span className="cop-blob cop-blob--2" />
+        <span className="cop-blob cop-blob--3" />
+        <span className="cop-grain" />
+      </div>
+
       {!credentialSet ? (
         <p className="cop-warn" role="alert">
           No Anthropic key on your account — the copilot will use the shared fallback if one is set. Add your own in{' '}
@@ -227,8 +244,19 @@ export function CopilotApp({ credentialSet }: { credentialSet: boolean }) {
       <div className="cop-scroll" ref={scrollRef}>
         {items.length === 0 ? (
           <div className="cop-empty">
-            <div className="cop-orb" aria-hidden />
-            <p className="cop-empty__lead">What should we look at?</p>
+            <div className="cop-sphere" aria-hidden>
+              <div className="cop-sphere__bloom" />
+              <div className="cop-sphere__ball">
+                <div className="cop-sphere__iri" />
+              </div>
+              <div className="cop-sphere__rim" />
+              <div className="cop-sphere__spec" />
+              <div className="cop-sphere__spec2" />
+            </div>
+            <p className="cop-empty__lead">
+              {hello} <b>What should we look at?</b>
+            </p>
+            <p className="cop-empty__status">Workspace synced · ready</p>
             <div className="cop-suggest">
               {SUGGESTIONS.map((s) => (
                 <button key={s} type="button" className="cop-chip" onClick={() => void send(s)}>
