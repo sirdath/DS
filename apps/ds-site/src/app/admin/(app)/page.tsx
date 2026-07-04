@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { getDataSource } from '@/app/admin/lib/get-data-source'
 import { portfolioTotals, partitionProjects } from '@/app/admin/lib/derive'
 import { getAdminDisplayName } from '@/app/admin/lib/get-admin-display-name'
+import { getCurrentRole, getCurrentEmail } from '@/app/admin/lib/roles'
+import { EmployeeDashboard } from './employee-dashboard'
 import { CountUp } from '@/app/admin/count-up'
 import { CalendarCard } from './calendar/calendar-card'
 import { loadEvents } from './calendar/lib/calendar-source'
@@ -21,6 +23,14 @@ const SEARCH_ICON = (
 )
 
 export default async function DashboardPage() {
+  // Employees get the scoped view (their projects + shared notes only); the
+  // middleware also keeps them off every other admin route.
+  const role = await getCurrentRole()
+  if (role === 'employee') {
+    const [email, empName] = await Promise.all([getCurrentEmail(), getAdminDisplayName()])
+    return <EmployeeDashboard email={email} name={empName} />
+  }
+
   const ds = getDataSource()
   const [all, name, events, activity, deadlines] = await Promise.all([
     ds.listProjects(),

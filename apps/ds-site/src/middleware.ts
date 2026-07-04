@@ -49,6 +49,26 @@ function isAdminEmail(email: string | undefined): boolean {
   return allowed.includes(email.trim().toLowerCase())
 }
 
+// Employees (STAFF_EMAILS) get a least-privilege scoped view. Mirrors
+// isStaffEmail() from roles.ts (edge context — no server-only import).
+function isStaffEmail(email: string | undefined): boolean {
+  if (!email) return false
+  const raw = process.env.STAFF_EMAILS ?? ''
+  if (!raw.trim()) return false
+  return raw
+    .split(',')
+    .map(e => e.trim().toLowerCase())
+    .filter(Boolean)
+    .includes(email.trim().toLowerCase())
+}
+
+// The only admin paths an employee may reach: their scoped dashboard + sign-out.
+// Everything else under /admin is owner-only (default-deny). Widen deliberately
+// as scoped pages (calendar, notes, copilot) are built.
+function employeeMayAccess(normalizedPath: string): boolean {
+  return normalizedPath === '/admin' || normalizedPath.startsWith('/admin/logout')
+}
+
 // ── Main middleware ───────────────────────────────────────────────────────────
 
 export async function middleware(request: NextRequest) {
@@ -245,15 +265,23 @@ export async function middleware(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser()
 
-    if (!user || !isAdminEmail(user.email)) {
-      // Redirect to /admin/login/ (with trailing slash) so trailingSlash:true
-      // does not incur an extra 308 hop before the exempt check fires.
-      const loginUrl = new URL('/admin/login/', request.url)
-      loginUrl.searchParams.set('redirect', pathname)
-      return NextResponse.redirect(loginUrl)
+    // Owners see everything. Employees get the scoped dashboard only — any other
+    // /admin path is bounced to /admin (default-deny). Anyone else → login.
+    if (user && isAdminEmail(user.email)) {
+      return response
+    }
+    if (user && isStaffEmail(user.email)) {
+      if (!employeeMayAccess(normalizedPath)) {
+        return NextResponse.redirect(new URL('/admin/', request.url))
+      }
+      return response
     }
 
-    return response
+    // Redirect to /admin/login/ (with trailing slash) so trailingSlash:true
+    // does not incur an extra 308 hop before the exempt check fires.
+    const loginUrl = new URL('/admin/login/', request.url)
+    loginUrl.searchParams.set('redirect', pathname)
+    return NextResponse.redirect(loginUrl)
   }
 
   // ── Branch 3: Workspace gate (logged-in tools dashboard) ──────────────────
