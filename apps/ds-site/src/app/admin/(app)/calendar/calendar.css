@@ -150,9 +150,12 @@
 .calv-now i { position: absolute; left: -4px; top: -5px; width: 8px; height: 8px; border-radius: 999px; background: var(--admin-amber); }
 .calv-now__label { position: absolute; right: 4px; transform: translateY(-50%); font-family: var(--admin-mono); font-size: 9px; font-weight: 700; color: var(--admin-on-accent); background: var(--admin-amber); padding: 1px 5px; border-radius: 999px; z-index: 3; }
 
-/* ── Deadlines panel inside the calendar aside: clear separation + narrow-fit ── */
-.cal__deadlines { margin-top: 22px; padding-top: 4px; }
-.cal__deadlines .ds2-card { padding: 16px; border-radius: 14px; }
+/* ── Deadlines section inside the calendar aside ──
+   De-card it so it reads as a section of the one panel (a top divider, not a
+   second framed box floating inside the first). The panel then stays a single
+   clean box that closes around all its content. + narrow-fit tweaks below. */
+.cal__deadlines { margin-top: 16px; border-top: 1px solid var(--admin-border); padding-top: 14px; }
+.cal__deadlines .ds2-card { padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; overflow: visible; }
 .cal__deadlines .plan-row { gap: 8px; }
 .cal__deadlines .plan-row__actions { gap: 2px; }
 .cal__deadlines .plan-iconbtn { min-width: 26px; min-height: 26px; padding: 4px; font-size: 0.78rem; }
