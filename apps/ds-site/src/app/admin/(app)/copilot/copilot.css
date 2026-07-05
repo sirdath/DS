@@ -151,89 +151,60 @@
   gap: 16px;
   padding: 20px;
 }
-/* ── Glass sphere — the copilot's "presence" ────────────────────────────── */
-.cop-sphere {
-  position: relative;
-  width: 128px;
-  height: 128px;
+/* ── Living waveform — the copilot's "presence" ─────────────────────────────
+   Seven breathing spectrum bars; reads as "listening". The same mark, mini,
+   sits beside assistant turns and the thinking row (where it pulses faster). */
+.cop-wave {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 56px;
 }
-.cop-sphere__bloom {
-  position: absolute;
-  inset: -34%;
-  border-radius: 50%;
-  z-index: 0;
-  background: radial-gradient(circle, oklch(0.6 0.2 280 / 0.5), transparent 62%);
-  filter: blur(28px);
-  animation: cop-breathe 5s ease-in-out infinite;
+.cop-wave i {
+  width: 6px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #8dcbff, #a970ff);
+  box-shadow: 0 0 10px rgba(141, 203, 255, 0.35);
+  animation: cop-wv 1.6s ease-in-out infinite;
+  transform-origin: center;
 }
-.cop-sphere__ball {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  overflow: hidden;
-  z-index: 1;
-  background:
-    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 34%),
-    radial-gradient(circle at 72% 80%, rgba(4, 6, 24, 0.8), transparent 54%),
-    radial-gradient(circle at 50% 50%, rgba(24, 28, 68, 0.55), rgba(6, 8, 26, 0.8));
-  box-shadow:
-    inset 0 3px 10px rgba(255, 255, 255, 0.55),
-    inset 0 -22px 34px rgba(5, 6, 26, 0.75),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
-    0 26px 60px -14px oklch(0.55 0.22 285 / 0.7);
+.cop-wave i:nth-child(1) { height: 16px; animation-delay: 0s; }
+.cop-wave i:nth-child(2) { height: 30px; animation-delay: 0.15s; background: linear-gradient(180deg, #6f7bff, #a970ff); }
+.cop-wave i:nth-child(3) { height: 46px; animation-delay: 0.3s; background: linear-gradient(180deg, #a970ff, #ff74b8); }
+.cop-wave i:nth-child(4) { height: 34px; animation-delay: 0.45s; background: linear-gradient(180deg, #ff74b8, #ffc46b); }
+.cop-wave i:nth-child(5) { height: 48px; animation-delay: 0.6s; background: linear-gradient(180deg, #ffc46b, #63e6c8); }
+.cop-wave i:nth-child(6) { height: 26px; animation-delay: 0.75s; background: linear-gradient(180deg, #63e6c8, #8dcbff); }
+.cop-wave i:nth-child(7) { height: 14px; animation-delay: 0.9s; }
+/* mini variant — avatar beside assistant turns / thinking */
+.cop-wave--mini {
+  gap: 2.5px;
+  height: 20px;
+  flex: none;
+  padding-top: 2px;
 }
-.cop-sphere__iri {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  mix-blend-mode: screen;
-  filter: blur(2px) saturate(1.4);
-  background:
-    radial-gradient(circle at 24% 32%, #ff5c95, transparent 24%),
-    radial-gradient(circle at 80% 34%, #00f0cc, transparent 24%),
-    radial-gradient(circle at 64% 74%, #ffcf5c, transparent 22%),
-    radial-gradient(circle at 30% 76%, #a25cff, transparent 24%),
-    radial-gradient(circle at 54% 52%, #5c7bff, transparent 44%);
-  background-size: 200% 200%;
-  animation: cop-drift 8s ease-in-out infinite;
+.cop-wave--mini i {
+  width: 3px;
+  box-shadow: 0 0 6px rgba(141, 203, 255, 0.3);
 }
-.cop-sphere__rim {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  z-index: 2;
-  mix-blend-mode: screen;
-  background: radial-gradient(circle at 50% 8%, rgba(180, 205, 255, 0.6), transparent 12%);
-}
-.cop-sphere__spec {
-  position: absolute;
-  top: 15%;
-  left: 25%;
-  width: 24%;
-  height: 18%;
-  border-radius: 50%;
-  z-index: 2;
-  background: radial-gradient(circle at 45% 45%, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0) 62%);
-}
-.cop-sphere__spec2 {
-  position: absolute;
-  bottom: 18%;
-  right: 24%;
-  width: 12%;
-  height: 9%;
-  border-radius: 50%;
-  z-index: 2;
-  background: radial-gradient(circle, rgba(170, 215, 255, 0.85), transparent 68%);
-  filter: blur(1px);
-}
-@keyframes cop-drift {
+.cop-wave--mini i:nth-child(1) { height: 8px; }
+.cop-wave--mini i:nth-child(2) { height: 15px; }
+.cop-wave--mini i:nth-child(3) { height: 19px; }
+.cop-wave--mini i:nth-child(4) { height: 13px; }
+.cop-wave--mini i:nth-child(5) { height: 7px; }
+@keyframes cop-wv {
   0%,
   100% {
-    background-position: 0% 50%;
+    transform: scaleY(0.55);
+    opacity: 0.7;
   }
   50% {
-    background-position: 100% 50%;
+    transform: scaleY(1.15);
+    opacity: 1;
   }
+}
+:root[data-theme='light'] .cop-wave i {
+  filter: saturate(0.92);
+  box-shadow: 0 0 8px rgba(23, 59, 103, 0.12);
 }
 .cop-empty__lead {
   margin: 4px 0 0;
@@ -320,16 +291,7 @@
   white-space: pre-wrap;
   word-break: break-word;
 }
-/* Radiant presence dot beside assistant turns + the thinking row. */
-.cop-avatar {
-  flex: none;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: conic-gradient(from var(--cop-angle), #8dcbff, #6f7bff, #a970ff, #ff74b8, #ffc46b, #63e6c8, #8dcbff);
-  box-shadow: 0 0 12px -1px color-mix(in srgb, #6f7bff 55%, transparent);
-  animation: cop-spin 6s linear infinite;
-}
+/* (Assistant turns + the thinking row use .cop-wave--mini as their mark.) */
 
 /* ── Live action card — the copilot "doing" a tool ──────────────────────── */
 .cop-action {
@@ -417,9 +379,9 @@
   gap: 9px;
   font-size: 0.86rem;
 }
-.cop-thinking .cop-avatar {
-  width: 16px;
-  height: 16px;
+/* while thinking, the mini waveform pulses faster — "it's listening" */
+.cop-thinking .cop-wave--mini i {
+  animation-duration: 0.9s;
 }
 .cop-thinking span {
   background: linear-gradient(90deg, var(--ds-dim, var(--ds-muted)), var(--ds-text), var(--ds-dim, var(--ds-muted)));
@@ -449,8 +411,7 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .cop-avatar,
-  .cop-orb,
+  .cop-wave i,
   .cop-spinner,
   .cop-action.is-run::after,
   .cop-thinking span {

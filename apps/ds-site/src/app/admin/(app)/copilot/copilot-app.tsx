@@ -22,6 +22,17 @@ type ChatItem =
     }
   | { kind: 'error'; text: string }
 
+/** The copilot's living-waveform mark: 7 breathing spectrum bars (5 when mini). */
+function Wave({ mini = false }: { mini?: boolean }) {
+  return (
+    <span className={`cop-wave${mini ? ' cop-wave--mini' : ''}`} aria-hidden>
+      {Array.from({ length: mini ? 5 : 7 }, (_, i) => (
+        <i key={i} />
+      ))}
+    </span>
+  )
+}
+
 /** Time-of-day greeting for the empty state (client-local). */
 function greeting(): string {
   const h = new Date().getHours()
@@ -244,15 +255,7 @@ export function CopilotApp({ credentialSet }: { credentialSet: boolean }) {
       <div className="cop-scroll" ref={scrollRef}>
         {items.length === 0 ? (
           <div className="cop-empty">
-            <div className="cop-sphere" aria-hidden>
-              <div className="cop-sphere__bloom" />
-              <div className="cop-sphere__ball">
-                <div className="cop-sphere__iri" />
-              </div>
-              <div className="cop-sphere__rim" />
-              <div className="cop-sphere__spec" />
-              <div className="cop-sphere__spec2" />
-            </div>
+            <Wave />
             <p className="cop-empty__lead">
               {hello} <b>What should we look at?</b>
             </p>
@@ -277,7 +280,7 @@ export function CopilotApp({ credentialSet }: { credentialSet: boolean }) {
             if (item.kind === 'assistant') {
               return (
                 <div className="cop-msg--ai" key={i}>
-                  <span className="cop-avatar" aria-hidden />
+                  <Wave mini />
                   <div className="cop-msg__body">{item.text}</div>
                 </div>
               )
@@ -350,7 +353,7 @@ export function CopilotApp({ credentialSet }: { credentialSet: boolean }) {
         )}
         {busy && items.length > 0 && items[items.length - 1]?.kind !== 'assistant' ? (
           <div className="cop-thinking">
-            <span className="cop-avatar" aria-hidden />
+            <Wave mini />
             <span>Thinking…</span>
           </div>
         ) : null}
