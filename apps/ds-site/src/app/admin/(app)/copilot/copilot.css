@@ -682,3 +682,43 @@
   font-size: 0.65rem;
   color: var(--ds-dim, var(--ds-muted));
 }
+
+/* ── Widget variant — CopilotApp inside the floating launcher panel ─────────
+   Fills the panel (which supplies the frame) and scales the empty state down a
+   touch for the narrower column. Everything else (deck, waveform, action cards,
+   confirm gate, composer) is inherited from the page copilot unchanged. */
+.cop-shell--widget {
+  height: 100%;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.cop-shell--widget .cop-scroll {
+  padding: 14px;
+}
+.cop-shell--widget .cop-wave {
+  height: 40px;
+}
+.cop-shell--widget .cop-wave i {
+  width: 5px;
+}
+.cop-shell--widget .cop-empty {
+  gap: 12px;
+  padding: 10px;
+}
+.cop-shell--widget .cop-empty__lead {
+  font-size: 1.05rem;
+}
+.cop-shell--widget .cop-suggest {
+  max-width: 300px;
+}
+.cop-shell--widget .cop-tiers {
+  padding: 8px 12px 0;
+}
+.cop-shell--widget .cop-input {
+  padding: 10px 12px;
+}
+.cop-shell--widget .cop-usage {
+  padding: 4px 12px 10px;
+}

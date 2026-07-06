@@ -73,7 +73,13 @@ const SUGGESTIONS = [
   'Which deadlines are at risk?',
 ]
 
-export function CopilotApp({ credentialSet }: { credentialSet: boolean }) {
+export function CopilotApp({
+  credentialSet,
+  variant = 'page',
+}: {
+  credentialSet: boolean
+  variant?: 'page' | 'widget'
+}) {
   const [items, setItems] = useState<ChatItem[]>([])
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)
@@ -237,7 +243,7 @@ export function CopilotApp({ credentialSet }: { credentialSet: boolean }) {
   }
 
   return (
-    <div className="cop-shell">
+    <div className={`cop-shell${variant === 'widget' ? ' cop-shell--widget' : ''}`}>
       <div className="cop-ambient" aria-hidden>
         <span className="cop-blob cop-blob--1" />
         <span className="cop-blob cop-blob--2" />
