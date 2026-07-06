@@ -14,7 +14,8 @@
 //   DS2_BRAIN_TOKEN   must match BRAIN_BRIDGE_TOKEN set in Vercel (required)
 //   DS2_BRAIN_AUTHOR  who to attribute saved facts to, e.g. "dath" (optional)
 
-const BRAIN_URL = process.env.DS2_BRAIN_URL || "https://www.ds2-consulting.com/api/admin/brain";
+// Trailing slash: the app runs trailingSlash:true, so the slashless path 308-redirects.
+const BRAIN_URL = process.env.DS2_BRAIN_URL || "https://www.ds2-consulting.com/api/admin/brain/";
 const TOKEN = process.env.DS2_BRAIN_TOKEN || "";
 const AUTHOR = process.env.DS2_BRAIN_AUTHOR || "";
 const SERVER_INFO = { name: "ds2-brain", version: "1.0.0" };

@@ -63,11 +63,14 @@ Restart Claude Code. You should see the `ds2-brain` tools available.
 With the token exported, you can smoke-test the bridge directly:
 
 ```bash
-curl -s https://www.ds2-consulting.com/api/admin/brain \
+curl -s https://www.ds2-consulting.com/api/admin/brain/ \
   -H "authorization: Bearer $DS2_BRAIN_TOKEN" \
   -H "content-type: application/json" \
   -d '{"action":"list","limit":5}'
 ```
+
+(Note the trailing slash — the site runs `trailingSlash:true`, so the slashless
+path returns a 308 redirect.)
 
 A `200` with a `{"facts":[...]}` body means the bridge is live. `401` means the
 token doesn't match; `503` means `BRAIN_BRIDGE_TOKEN` isn't set on the server yet.
