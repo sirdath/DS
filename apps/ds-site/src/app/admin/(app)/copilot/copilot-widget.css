@@ -1,0 +1,144 @@
+/* Floating copilot widget — launcher + panel. Anchored bottom-left, clear of the
+   212px admin rail. Uses admin tokens so it rides the light/dark theme. */
+.cop-wgt {
+  position: fixed;
+  left: 232px; /* 212px rail + 20px gap */
+  bottom: 20px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+@media (max-width: 860px) {
+  /* rail becomes a top bar → bottom-left of the viewport is clear */
+  .cop-wgt {
+    left: 16px;
+    bottom: 16px;
+  }
+}
+
+/* ── Launcher ── */
+.cop-wgt__fab {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 0;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 50% 32%, #1b2233, #0a0d16);
+  box-shadow: 0 10px 26px -8px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  transition: transform 0.25s var(--ds2-ease, cubic-bezier(0.32, 0.72, 0, 1));
+}
+/* spinning spectrum ring — this is the copilot's mark */
+.cop-wgt__fab::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  padding: 2px;
+  background: conic-gradient(from var(--cop-angle), #8dcbff, #6f7bff, #a970ff, #ff74b8, #ffc46b, #63e6c8, #8dcbff);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: cop-spin 7s linear infinite;
+}
+.cop-wgt__fab:hover {
+  transform: translateY(-2px);
+}
+.cop-wgt__fab .cop-wave--mini {
+  height: 22px;
+}
+.cop-wgt__chev {
+  width: 20px;
+  height: 20px;
+  color: #cfd8ea;
+}
+
+/* ── Panel ── */
+.cop-wgt__panel {
+  width: 400px;
+  max-width: calc(100vw - 40px);
+  height: min(620px, 76vh);
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  box-shadow: 0 30px 70px -24px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  transform-origin: bottom left;
+  animation: cop-wgt-in 0.28s var(--ds2-ease, cubic-bezier(0.32, 0.72, 0, 1));
+}
+@keyframes cop-wgt-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+}
+.cop-wgt__bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--admin-border);
+  background: var(--admin-surface);
+  z-index: 3;
+}
+.cop-wgt__title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--admin-text);
+}
+.cop-wgt__tools {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.cop-wgt__iconbtn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 0;
+  background: none;
+  color: var(--admin-text-muted);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.cop-wgt__iconbtn svg {
+  width: 16px;
+  height: 16px;
+}
+.cop-wgt__iconbtn:hover {
+  color: var(--admin-text);
+  background: color-mix(in srgb, var(--admin-text) 8%, transparent);
+}
+.cop-wgt__body {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+@media (max-width: 480px) {
+  .cop-wgt__panel {
+    width: calc(100vw - 32px);
+    height: 72vh;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cop-wgt__fab::before {
+    animation: none;
+  }
+  .cop-wgt__panel {
+    animation: none;
+  }
+}
