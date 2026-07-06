@@ -45,6 +45,7 @@ export function CopilotWidget({ credentialSet }: { credentialSet: boolean }) {
 
   return (
     <div className="cop-wgt">
+      {open ? <button type="button" className="cop-wgt__scrim" aria-label="Close copilot" onClick={() => setOpen(false)} /> : null}
       {open ? (
         <div className="cop-wgt__panel" role="dialog" aria-label="Copilot">
           <div className="cop-wgt__bar">

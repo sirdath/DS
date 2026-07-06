@@ -21,8 +21,8 @@
 /* ── Launcher ── */
 .cop-wgt__fab {
   position: relative;
-  width: 54px;
-  height: 54px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   border: 0;
   cursor: pointer;
@@ -30,7 +30,9 @@
   place-items: center;
   background: radial-gradient(circle at 50% 32%, #1b2233, #0a0d16);
   box-shadow: 0 10px 26px -8px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08);
-  transition: transform 0.25s var(--ds2-ease, cubic-bezier(0.32, 0.72, 0, 1));
+  /* springy press/hover */
+  transition: transform 0.42s cubic-bezier(0.22, 1.2, 0.36, 1), box-shadow 0.3s ease;
+  z-index: 3;
 }
 /* spinning spectrum ring — this is the copilot's mark */
 .cop-wgt__fab::before {
@@ -45,12 +47,49 @@
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: exclude;
   animation: cop-spin 7s linear infinite;
+  z-index: 1;
+}
+/* breathing colored halo — the launcher feels alive even at rest */
+.cop-wgt__fab::after {
+  content: '';
+  position: absolute;
+  inset: -9px;
+  border-radius: 50%;
+  z-index: -1;
+  background: conic-gradient(from var(--cop-angle), #8dcbff, #6f7bff, #a970ff, #ff74b8, #ffc46b, #63e6c8, #8dcbff);
+  filter: blur(15px);
+  opacity: 0.45;
+  animation: cop-spin 7s linear infinite, cop-wgt-pulse 3.6s ease-in-out infinite;
 }
 .cop-wgt__fab:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 16px 34px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+.cop-wgt__fab:hover::after {
+  opacity: 0.85;
+}
+/* bars quicken on hover — the mark reacts to you */
+.cop-wgt__fab:hover .cop-wave i {
+  animation-duration: 0.85s;
+}
+.cop-wgt__fab:active {
+  transform: translateY(-1px) scale(0.95);
 }
 .cop-wgt__fab .cop-wave--mini {
   height: 22px;
+  position: relative;
+  z-index: 2;
+}
+@keyframes cop-wgt-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.94);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.08);
+  }
 }
 .cop-wgt__chev {
   width: 20px;
@@ -71,12 +110,51 @@
   border: 1px solid var(--admin-border);
   box-shadow: 0 30px 70px -24px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
   transform-origin: bottom left;
-  animation: cop-wgt-in 0.28s var(--ds2-ease, cubic-bezier(0.32, 0.72, 0, 1));
+  animation: cop-wgt-in 0.44s cubic-bezier(0.22, 1.2, 0.36, 1);
+  position: relative;
+  z-index: 2;
 }
+/* springs out of the launcher corner with a soft overshoot */
 @keyframes cop-wgt-in {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.85);
+  }
+  55% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.015);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+/* faint scrim — pops the panel + gives click-outside-to-close */
+.cop-wgt__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  border: 0;
+  cursor: default;
+  background: radial-gradient(120% 90% at 30% 100%, rgba(4, 6, 16, 0.28), rgba(4, 6, 16, 0.12));
+  animation: cop-wgt-fade 0.3s ease;
+}
+@keyframes cop-wgt-fade {
   from {
     opacity: 0;
-    transform: translateY(12px) scale(0.98);
+  }
+}
+/* the empty-state elements rise in, staggered, after the panel lands */
+.cop-shell--widget .cop-empty > * {
+  animation: cop-wgt-rise 0.5s cubic-bezier(0.32, 0.72, 0, 1) backwards;
+}
+.cop-shell--widget .cop-empty > *:nth-child(1) { animation-delay: 0.12s; }
+.cop-shell--widget .cop-empty > *:nth-child(2) { animation-delay: 0.19s; }
+.cop-shell--widget .cop-empty > *:nth-child(3) { animation-delay: 0.26s; }
+.cop-shell--widget .cop-empty > *:nth-child(4) { animation-delay: 0.33s; }
+@keyframes cop-wgt-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
 }
 .cop-wgt__bar {
@@ -135,10 +213,11 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .cop-wgt__fab::before {
-    animation: none;
-  }
-  .cop-wgt__panel {
+  .cop-wgt__fab::before,
+  .cop-wgt__fab::after,
+  .cop-wgt__panel,
+  .cop-wgt__scrim,
+  .cop-shell--widget .cop-empty > * {
     animation: none;
   }
 }
