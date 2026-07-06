@@ -7,6 +7,15 @@
       "args": ["--mcp-only"]
     },
 
+    "ds2-brain": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["tools/ds2-brain-mcp/brain-mcp.mjs"],
+      "env": {
+        "DS2_BRAIN_TOKEN": "${DS2_BRAIN_TOKEN}"
+      }
+    },
+
     "chrome-devtools": {
       "command": "npx",
       "args": ["-y", "chrome-devtools-mcp@latest"]

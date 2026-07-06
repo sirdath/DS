@@ -17,7 +17,10 @@
 // Trailing slash: the app runs trailingSlash:true, so the slashless path 308-redirects.
 const BRAIN_URL = process.env.DS2_BRAIN_URL || "https://www.ds2-consulting.com/api/admin/brain/";
 const TOKEN = process.env.DS2_BRAIN_TOKEN || "";
-const AUTHOR = process.env.DS2_BRAIN_AUTHOR || "";
+// Ignore an unexpanded "${DS2_BRAIN_AUTHOR}" (env var not set) so it never
+// becomes a literal author string.
+const rawAuthor = process.env.DS2_BRAIN_AUTHOR || "";
+const AUTHOR = rawAuthor.startsWith("${") ? "" : rawAuthor;
 const SERVER_INFO = { name: "ds2-brain", version: "1.0.0" };
 
 const TOOLS = [

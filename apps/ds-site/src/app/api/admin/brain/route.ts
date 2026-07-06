@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createHash, timingSafeEqual } from "node:crypto";
 import { rememberFact, recallFacts, listFacts, forgetFact } from "@/app/admin/lib/brain";
 
 // The brain bridge — lets LOCAL Claude Code agents (on the founders' laptops)
@@ -12,11 +13,19 @@ export const dynamic = "force-dynamic";
 
 const BRIDGE_TOKEN = process.env.BRAIN_BRIDGE_TOKEN;
 
+// Constant-time compare (SHA-256 both sides → fixed length → timingSafeEqual) so a
+// wrong token can't be recovered byte-by-byte via response-timing.
+function tokensMatch(a: string, b: string): boolean {
+  const ha = createHash("sha256").update(a).digest();
+  const hb = createHash("sha256").update(b).digest();
+  return timingSafeEqual(ha, hb);
+}
+
 function authorized(req: Request): boolean {
   if (!BRIDGE_TOKEN) return false; // never run unguarded
   const bearer = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
   const token = bearer || new URL(req.url).searchParams.get("token");
-  return !!token && token === BRIDGE_TOKEN;
+  return !!token && tokensMatch(token, BRIDGE_TOKEN);
 }
 
 const asStr = (v: unknown): string | undefined => (typeof v === "string" ? v : undefined);
