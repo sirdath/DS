@@ -10,7 +10,7 @@ export const maxDuration = 300;
  * The admin copilot: an agentic loop over the workspace tools (projects,
  * calendar, deadlines, notes, competitors) that ROUTES between model tiers —
  * Haiku for quick lookups/single actions, Opus for everyday multi-step work,
- * Fable for deep reasoning. "auto" (default) picks the tier per message with a
+ * Opus (high effort) for deep reasoning. "auto" (default) picks the tier per message with a
  * tiny Haiku classification call; the founder can pin a tier from the UI.
  * Streams NDJSON events:
  *   {t:"model",tier,label} {t:"delta",text} {t:"tool",name,label}
@@ -23,10 +23,13 @@ export const maxDuration = 300;
 const MAX_ITERATIONS = 12;
 
 // $/MTok: in, cache-read (0.1x), cache-write (1.25x), out.
+// Deep no longer uses Fable — the founders' credential has no Fable entitlement,
+// so a Fable call hangs/fails. Deep is Opus 4.8 with harder reasoning effort
+// (see turnParams). Restore Fable here once a Fable-enabled credential is used.
 const TIERS = {
   quick: { model: "claude-haiku-4-5", label: "Haiku", price: { in: 1, cr: 0.1, cw: 1.25, out: 5 } },
   smart: { model: "claude-opus-4-8", label: "Opus", price: { in: 5, cr: 0.5, cw: 6.25, out: 25 } },
-  deep: { model: "claude-fable-5", label: "Fable", price: { in: 10, cr: 1, cw: 12.5, out: 50 } },
+  deep: { model: "claude-opus-4-8", label: "Opus·deep", price: { in: 5, cr: 0.5, cw: 6.25, out: 25 } },
 } as const;
 type Tier = keyof typeof TIERS;
 
@@ -72,7 +75,7 @@ async function pickTier(client: Anthropic, message: string): Promise<TierPick> {
 }
 
 /** Per-tier request params. Haiku: no thinking, no effort (unsupported). Opus:
- *  adaptive thinking + medium effort. Fable: thinking always on (param omitted). */
+ *  adaptive thinking; medium effort for smart, high for deep. */
 function turnParams(tier: Tier, systemText: string, messages: Msg[]): Anthropic.MessageStreamParams {
   const base: Record<string, unknown> = {
     model: TIERS[tier].model,
@@ -85,7 +88,9 @@ function turnParams(tier: Tier, systemText: string, messages: Msg[]): Anthropic.
     base.thinking = { type: "adaptive" };
     base.output_config = { effort: "medium" };
   } else if (tier === "deep") {
-    base.output_config = { effort: "medium" };
+    // Opus 4.8 with adaptive thinking + high effort = genuine deep reasoning.
+    base.thinking = { type: "adaptive" };
+    base.output_config = { effort: "high" };
   }
   return base as unknown as Anthropic.MessageStreamParams;
 }

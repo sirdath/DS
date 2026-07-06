@@ -63,7 +63,7 @@ const TIER_OPTIONS: { key: TierChoice; label: string; hint: string }[] = [
   { key: 'auto', label: 'Auto', hint: 'Routes each message to the right model' },
   { key: 'quick', label: 'Quick', hint: 'Haiku — lookups and small actions' },
   { key: 'smart', label: 'Smart', hint: 'Opus — everyday multi-step work' },
-  { key: 'deep', label: 'Deep', hint: 'Fable — analysis and strategy' },
+  { key: 'deep', label: 'Deep', hint: 'Opus, deep reasoning — analysis and strategy' },
 ]
 
 const SUGGESTIONS = [
