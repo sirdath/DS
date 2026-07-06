@@ -1,0 +1,13 @@
+{
+  "name": "ds2-brain-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Stdio MCP shim that gives local Claude Code agents the shared DS2 pgvector brain (over the HTTPS bridge).",
+  "bin": {
+    "ds2-brain-mcp": "./brain-mcp.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

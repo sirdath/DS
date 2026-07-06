@@ -14,6 +14,7 @@ import { partitionProjects, portfolioTotals } from './derive'
 import { getAdminDisplayName } from './get-admin-display-name'
 import { loadSiteActivity } from './site-activity'
 import { computeMetricSources } from './metric-sources'
+import { rememberFact, recallFacts, listFacts, forgetFact } from './brain'
 import { loadEvents } from '../(app)/calendar/lib/calendar-source'
 import { loadDeadlines } from '../(app)/planning/lib/deadlines-source'
 import { resolveDeadlineCurrent } from '../(app)/planning/lib/metric-source'
@@ -386,9 +387,47 @@ export const COPILOT_TOOLS: ToolDef[] = [
     description: 'Delete an outreach brief permanently. Only call after the user has confirmed the deletion in this conversation.',
     input_schema: { type: 'object', properties: { briefId: str('Outreach brief id') }, required: ['briefId'] },
   },
+  {
+    name: 'recall',
+    description:
+      'Search the shared DS2 brain for durable facts relevant to a topic (client preferences, past decisions, who-owns-what, pricing/policy rules). Call at the START of answering whenever prior knowledge about a client, person or decision would help — the brain persists across every conversation, so this is how you "already know" things.',
+    input_schema: {
+      type: 'object',
+      properties: { query: str('What to look up, e.g. "MegaGym contact preference" or "our pricing rules"') },
+      required: ['query'],
+    },
+  },
+  {
+    name: 'remember',
+    description:
+      'Save a durable fact to the shared DS2 brain so it persists across every future conversation with either founder. Use for lasting truths: client preferences, decisions made, who owns what, pricing/policy rules. Do NOT save transient chatter, one-off task details, or anything already stored.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        content: str('The fact, stated plainly and self-contained, e.g. "MegaGym\'s owner prefers WhatsApp over email."'),
+        kind: str('Optional: fact | preference | decision | person | client | rule (default fact)'),
+        tags: { type: 'array', items: { type: 'string' }, description: 'Optional short tags, e.g. ["megagym","contact"]' },
+      },
+      required: ['content'],
+    },
+  },
+  {
+    name: 'list_memories',
+    description: 'List recent facts stored in the shared DS2 brain. Call to review what is remembered, or to find an id before forgetting one.',
+    input_schema: { type: 'object', properties: {} },
+  },
+  {
+    name: 'forget_memory',
+    description: 'Delete a fact from the shared DS2 brain by id (get the id from list_memories). Only after the founder confirms.',
+    input_schema: { type: 'object', properties: { id: str('Fact id from list_memories') }, required: ['id'] },
+  },
 ]
 
 export const TOOL_LABELS: Record<string, string> = {
+  recall: 'Recalling from memory',
+  remember: 'Saving to memory',
+  list_memories: 'Reviewing memory',
+  forget_memory: 'Forgetting a memory',
   get_workspace_snapshot: 'Reading the workspace',
   list_projects: 'Listing projects',
   get_project: 'Reading a project',
@@ -441,6 +480,7 @@ export const DESTRUCTIVE_TOOLS = new Set<string>([
   'delete_article',
   'delete_lead',
   'delete_outreach_brief',
+  'forget_memory',
 ])
 
 const compactProject = (p: Project) => ({
@@ -765,6 +805,25 @@ export async function runCopilotTool(name: string, input: Record<string, unknown
       return JSON.stringify({ ok: true })
     case 'delete_outreach_brief':
       await deleteBrief(asStr(input.briefId) ?? '')
+      return JSON.stringify({ ok: true })
+    case 'recall': {
+      const facts = await recallFacts(asStr(input.query) ?? '', 6)
+      return JSON.stringify(facts.map((f) => ({ id: f.id, content: f.content, kind: f.kind })))
+    }
+    case 'remember': {
+      const content = asStr(input.content) ?? ''
+      if (!content.trim()) throw new Error('Nothing to remember')
+      const tags = Array.isArray(input.tags) ? (input.tags as unknown[]).map((t) => String(t)) : []
+      const createdBy = await getAdminDisplayName().catch(() => '')
+      const saved = await rememberFact({ content, kind: asStr(input.kind) ?? 'fact', tags, source: 'copilot', createdBy })
+      return saved ? JSON.stringify({ ok: true, id: saved.id }) : JSON.stringify({ ok: false, note: 'No memory store configured' })
+    }
+    case 'list_memories': {
+      const facts = await listFacts(60)
+      return JSON.stringify(facts.map((f) => ({ id: f.id, content: f.content, kind: f.kind, tags: f.tags })))
+    }
+    case 'forget_memory':
+      await forgetFact(asStr(input.id) ?? '')
       return JSON.stringify({ ok: true })
     default:
       throw new Error(`Unknown tool: ${name}`)
