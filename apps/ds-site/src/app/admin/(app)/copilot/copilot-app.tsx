@@ -76,9 +76,13 @@ const SUGGESTIONS = [
 export function CopilotApp({
   credentialSet,
   variant = 'page',
+  conversationId,
+  onConversationId,
 }: {
   credentialSet: boolean
   variant?: 'page' | 'widget'
+  conversationId?: string
+  onConversationId?: (id: string) => void
 }) {
   const [items, setItems] = useState<ChatItem[]>([])
   const [input, setInput] = useState('')
@@ -89,6 +93,59 @@ export function CopilotApp({
   const scrollRef = useRef<HTMLDivElement>(null)
   const [hello, setHello] = useState('Hello.')
   useEffect(() => setHello(greeting()), [])
+
+  // ── Episodic memory: this thread's persisted id + save plumbing ──
+  const convIdRef = useRef<string | null>(conversationId ?? null)
+
+  /** Ensure this thread has a persisted id (created lazily on first send). */
+  function ensureConvId(): string {
+    if (!convIdRef.current) {
+      convIdRef.current =
+        typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.round(Math.random() * 1e9)}`
+      onConversationId?.(convIdRef.current)
+    }
+    return convIdRef.current
+  }
+
+  // Load a prior conversation on mount (from ?c= on the page, or the widget).
+  useEffect(() => {
+    const id = conversationId
+    if (!id) return
+    convIdRef.current = id
+    let cancelled = false
+    ;(async () => {
+      try {
+        const res = await fetch(`/api/admin/copilot/conversations/${id}`)
+        if (!res.ok) return
+        const data = (await res.json()) as {
+          conversation?: { items?: ChatItem[]; history?: unknown[]; usage?: Usage }
+        }
+        const c = data.conversation
+        if (cancelled || !c) return
+        historyRef.current = Array.isArray(c.history) ? c.history : []
+        setItems(Array.isArray(c.items) ? c.items : [])
+        if (c.usage) setUsage(c.usage)
+      } catch {
+        /* offline / no persistence — start fresh */
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [conversationId])
+
+  // Auto-save when a turn finishes (busy → false with content).
+  useEffect(() => {
+    if (busy) return
+    if (items.length === 0 || !convIdRef.current) return
+    const firstUser = items.find((it) => it.kind === 'user')
+    const title = firstUser && firstUser.kind === 'user' ? firstUser.text.slice(0, 60).trim() : 'New chat'
+    void fetch('/api/admin/copilot/conversations', {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ id: convIdRef.current, title, items, history: historyRef.current, usage }),
+    }).catch(() => {})
+  }, [busy])
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight })
@@ -107,6 +164,7 @@ export function CopilotApp({
   async function send(text: string) {
     const message = text.trim()
     if (!message || busy) return
+    ensureConvId()
     setBusy(true)
     setInput('')
     setItems((cur) => [...cur, { kind: 'user', text: message }])
