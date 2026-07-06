@@ -1,11 +1,11 @@
 import { getCredentialStatus } from '@/app/admin/admin-key-actions'
-import { CopilotApp } from './copilot-app'
+import { CopilotWorkspace } from './copilot-workspace'
 import './copilot.css'
 
 export const dynamic = 'force-dynamic'
 
-export default async function CopilotPage() {
-  const credential = await getCredentialStatus()
+export default async function CopilotPage({ searchParams }: { searchParams: Promise<{ c?: string }> }) {
+  const [credential, sp] = await Promise.all([getCredentialStatus(), searchParams])
   return (
     <div className="admin-container cop-page">
       <div className="ds-page-header">
@@ -17,7 +17,7 @@ export default async function CopilotPage() {
           reasoning — and acts through the same actions the tabs use.
         </p>
       </div>
-      <CopilotApp credentialSet={credential.set} />
+      <CopilotWorkspace credentialSet={credential.set} initialId={sp?.c} />
     </div>
   )
 }

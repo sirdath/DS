@@ -29,6 +29,8 @@ function WaveMark() {
  */
 export function CopilotWidget({ credentialSet }: { credentialSet: boolean }) {
   const [open, setOpen] = useState(false)
+  const [convId, setConvId] = useState<string | null>(null)
+  const [seed, setSeed] = useState(0) // bump to start a fresh thread in place
   const pathname = usePathname() ?? ''
 
   useEffect(() => {
@@ -54,8 +56,22 @@ export function CopilotWidget({ credentialSet }: { credentialSet: boolean }) {
               Copilot
             </span>
             <div className="cop-wgt__tools">
+              <button
+                type="button"
+                className="cop-wgt__iconbtn"
+                onClick={() => {
+                  setConvId(null)
+                  setSeed((s) => s + 1)
+                }}
+                aria-label="New chat"
+                title="New chat"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+              </button>
               <Link
-                href="/admin/copilot"
+                href={convId ? `/admin/copilot?c=${convId}` : '/admin/copilot'}
                 className="cop-wgt__iconbtn"
                 aria-label="Open the full copilot page"
                 title="Open full page"
@@ -80,7 +96,13 @@ export function CopilotWidget({ credentialSet }: { credentialSet: boolean }) {
             </div>
           </div>
           <div className="cop-wgt__body">
-            <CopilotApp credentialSet={credentialSet} variant="widget" />
+            <CopilotApp
+              key={seed}
+              credentialSet={credentialSet}
+              variant="widget"
+              conversationId={convId ?? undefined}
+              onConversationId={setConvId}
+            />
           </div>
         </div>
       ) : null}
