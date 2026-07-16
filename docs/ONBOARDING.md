@@ -2,9 +2,13 @@
 
 For Stelios (and any future contributor). Work through this in order. Should take 2–4 hours total.
 
+> **Working on ds2-consulting.com specifically?** Read
+> **[WEBSITE-GUIDE.md](WEBSITE-GUIDE.md)** — directory map, the rules, how it deploys,
+> and the one branch you must never merge.
+
 ## 0. Get access
 
-- [ ] GitHub collaborator access to [daththeanalyst/DS](https://github.com/daththeanalyst/DS)
+- [ ] GitHub collaborator access to [sirdath/DS](https://github.com/sirdath/DS)
 - [ ] Anthropic API key (shared billing)
 - [ ] Supabase org access (for client projects)
 - [ ] Vercel team access (once we have one, Phase 2)
@@ -26,7 +30,7 @@ cwebp -version
 avifenc --help   # from libavif
 
 # Clone
-git clone git@github.com:daththeanalyst/DS.git
+git clone https://github.com/sirdath/DS.git
 cd DS
 cp .env.example .env.local    # fill in keys you've been given
 pnpm install
