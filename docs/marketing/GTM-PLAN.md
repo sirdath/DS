@@ -123,6 +123,13 @@ the Brand Upgrade proof — it IS the class of artifact a Brand Upgrade client b
 Its six mockups double as the industry mockup kit. Website hero + LinkedIn + the
 first 90 seconds of every pitch. Don't block launch on it.
 
+**The rebuild showpiece** ([REBUILDS-SHOWPIECE.md](REBUILDS-SHOWPIECE.md)): the
+fictional tragic site ("Achilleon Gym", Kallithea) rebuilt to premium in a 3-week
+gated timeline — the proof asset that sells "the build" and visualizes what the
+check-up finds. Master asset `/rebuilds` (3–4 days), then presenter mode, one-pager,
+social cut, and industry variants that let outreach link a fictional mirror instead
+of critiquing the prospect's own site.
+
 ## The 15-minute discovery demo (the conversion moment)
 
 Pre-call, day before (15 min): lead-finder brief + Aegis run on their site + pick ONE
