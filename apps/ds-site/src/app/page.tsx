@@ -405,12 +405,11 @@ export default function HomePage() {
           <div className="nav-right">
             <ul className="nav-links">
               <li><Link className="nav-roll" href="/about"><span data-text={t.nav.about}>{t.nav.about}</span></Link></li>
-              <li><Link className="nav-roll" href="/tools"><span data-text={t.nav.tools}>{t.nav.tools}</span></Link></li>
               <li><Link className="nav-roll" href="/portfolio"><span data-text={t.nav.portfolio}>{t.nav.portfolio}</span></Link></li>
             </ul>
             <LangToggle />
             <span className="nav-merge">
-              <ContactCTA size="sm" label={t.cta.send} onOpen={() => openChat()} />
+              <ContactCTA size="sm" label={t.cta.send} onOpen={() => openChat(t.hero.book.draft)} />
             </span>
             <MobileMenu onContact={() => openChat()} />
           </div>

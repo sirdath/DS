@@ -30,24 +30,18 @@ export default function PortalJourney() {
 
       const mm = gsap.matchMedia();
 
-      // Scroll-scrub the film frame-by-frame — desktop AND mobile. The all-intra
-      // encode plus a forced full buffer (below) make seeking render every frame
-      // even on phones, so finger-scrubbing the Athens→London journey works
-      // everywhere and fills the whole screen.
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
+      // Scroll-scrub the film frame-by-frame — desktop only. On phones the pin
+      // fought finger-scrolling and stuttered on mid-range devices, so mobile
+      // gets a static, normally-scrolling version of the same two copy beats
+      // (see the max-width:768px portal block in globals.css).
+      mm.add("(prefers-reduced-motion: no-preference) and (min-width: 769px)", () => {
         const copy1 = section.querySelector<HTMLElement>(".portal__copy--1");
         const copy2 = section.querySelector<HTMLElement>(".portal__copy--2");
         if (!copy1 || !copy2) return;
         gsap.set(copy2, { autoAlpha: 0, yPercent: 26 });
 
-        // On phones, use the portrait-framed cut so the full-screen film keeps the
-        // Athens→London landmarks centred (a landscape cover-crop would clip them).
-        if (window.matchMedia("(max-width: 768px)").matches) {
-          video.src = "/portals/journey-mobile.mp4?v=2";
-        }
-
-        // Pull the whole clip into the buffer so seeking renders frames on mobile
-        // (phones barely preload; a muted play→pause kick forces the download).
+        // Pull the whole clip into the buffer so seeking renders every frame
+        // (a muted play→pause kick forces the download).
         video.preload = "auto";
         const kick = video.play();
         if (kick) kick.then(() => video.pause()).catch(() => video.pause());
@@ -119,7 +113,7 @@ export default function PortalJourney() {
           src="/portals/journey.mp4?v=3"
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
           poster="/portals/journey-poster.jpg?v=3"
         />
       </div>

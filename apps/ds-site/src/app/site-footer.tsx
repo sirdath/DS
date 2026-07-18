@@ -25,6 +25,7 @@ export default function SiteFooter({ onContact }: { onContact: () => void }) {
           <Link className="sf-link" href="/about">{t.footer.about}</Link>
           <Link className="sf-link" href="/tools">{t.footer.tools}</Link>
           <Link className="sf-link" href="/portfolio">{t.footer.portfolio}</Link>
+          <Link className="sf-link" href="/blog">{t.nav.blog}</Link>
         </nav>
 
         <div className="sf-col sf-reach">

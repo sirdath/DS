@@ -825,12 +825,24 @@ h2.section-title em { font-style: normal; color: var(--silver); }
   .portal--video { height: auto; min-height: 100vh; }
   .portal--video .portal__copy--2 { display: none; }
 }
-/* Mobile keeps the scroll-scrub full-screen (the copy stays centred, overlaid on
-   the film). portal-journey.tsx swaps in a portrait journey-mobile.mp4 on phones
-   so the Athens→London landmarks are framed for a tall screen (a landscape cover
-   crop would clip them). */
+/* Phones: no scroll-jacking — the pinned scrub fought finger-scrolling and
+   stuttered on mid-range devices. Both copy beats read as a plain, normally
+   scrolling narrative over the dark section (same treatment as reduced motion;
+   portal-journey.tsx restricts the scrub to min-width: 769px). */
 @media (max-width: 768px) {
-  .portal--video .portal__video { object-fit: cover; object-position: 50% 50%; }
+  .portal--video {
+    height: auto; overflow: visible;
+    display: flex; flex-direction: column; align-items: center; gap: clamp(40px, 7vh, 72px);
+    padding: clamp(64px, 9vh, 110px) 24px;
+  }
+  .portal--video .portal__video-wrap,
+  .portal--video .portal__cue { display: none; }
+  .portal--video .portal__copy {
+    position: relative; inset: auto; left: auto; top: auto; transform: none;
+    opacity: 1; visibility: visible;
+  }
+  .portal--video .portal__copy--2 { opacity: 1; display: block; }
+  .portal--video .portal__copy::before { display: none; }
 }
 /* Soften both ends: the gateway fades up out of the dark Featured section at the
    top, and the scene melts back into ink at the bottom so it dissolves into the

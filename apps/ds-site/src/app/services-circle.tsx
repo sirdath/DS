@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { useT } from "./i18n";
+import { useT, useLang } from "./i18n";
 
 /** Category icon (viewBox 0 0 40 40). One per buyable category. */
 function CatIcon({ k }: { k: string }) {
@@ -38,6 +38,7 @@ function CatIcon({ k }: { k: string }) {
  *  hover, so it never triggers by accident, and the cards never disappear. */
 export default function ServicesCircle({ onContact }: { onContact?: () => void }) {
   const t = useT();
+  const { lang } = useLang();
   const ref = useRef<HTMLElement>(null);
   const cats = t.services.cats;
 
@@ -102,7 +103,7 @@ export default function ServicesCircle({ onContact }: { onContact?: () => void }
       <div className="svc__inner wrap">
         <div className="svc__head">
           <div className="eyebrow">{t.services.eyebrow}</div>
-          <h2 className="section-title svc__title">
+          <h2 key={lang} className="section-title svc__title">
             {t.services.title} <em>{t.services.titleEm}</em>
           </h2>
           <p className="svc__sub">{t.services.sub}</p>
