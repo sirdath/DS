@@ -53,7 +53,7 @@ body {
   background: var(--black);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  overflow-x: clip;
   letter-spacing: -0.012em;
 }
 ::selection { background: color-mix(in srgb, var(--accent) 20%, transparent); color: #191A22; }

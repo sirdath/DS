@@ -1,21 +1,14 @@
 ﻿"use client";
-/* eslint-disable react/no-unescaped-entities */
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import ContactPanel, { ContactCTA } from "./contact-panel";
 import { useT, useLang, LangToggle } from "./i18n";
-import PoweredBy from "./powered-by";
 import { DS2Mark } from "./ds2-mark";
 import HeroVideo from "./hero-video";
 import Preloader from "./preloader";
 import SiteFooter from "./site-footer";
-import ServicesCircle from "./services-circle";
-import PortalJourney from "./portal-journey";
 import { MobileMenu } from "./mobile-menu";
-
-// Landing-page teaser for the DS2 tools — parked until the section earns its
-// place visually. Flip to true to bring it back.
-const SHOW_TOOLS_TEASER = false;
+import HomeStory from "./home-story";
 
 export default function HomePage() {
   const [chatOpen, setChatOpen] = useState(false);
@@ -457,88 +450,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── Services — scroll-driven circle ─── */}
-      <ServicesCircle onContact={() => openChat()} />
-
-      {/* ─── Decision intelligence tools (for larger organisations) ───
-          Temporarily hidden (Jun 2026): Dimitris wants the section redesigned
-          before it ships on the landing page. /tools itself stays live. */}
-      {SHOW_TOOLS_TEASER && (
-      <section className="section ttease" id="tools" data-surface="ink">
-        <div className="wrap">
-          <div className="section-head">
-            <div className="eyebrow">{t.toolsTeaser.eyebrow}</div>
-            <h2 key={`tt-${lang}`} className="section-title">{t.toolsTeaser.title}<em>{t.toolsTeaser.titleEm}</em></h2>
-            <p className="section-sub">{t.toolsTeaser.sub}</p>
-          </div>
-          <div className="ttease__grid">
-            {t.tools.items.map((tool) => (
-              <a key={tool.slug} className="ttease__card" href={`/tools/${tool.slug}`}>
-                <span className="ttease__bg" aria-hidden="true">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={`/tools/posters/${tool.slug}.webp`} alt="" loading="lazy" />
-                </span>
-                <span className="ttease__in">
-                  <span className="ttease__head">
-                    <span className="ttease__name">{tool.name}</span>
-                    <span className="ttease__role">{tool.role}</span>
-                  </span>
-                  <span className="ttease__benefit">{tool.benefit}</span>
-                  <span className="ttease__stats">
-                    {tool.stats.slice(0, 2).map((st) => (
-                      <span className="ttease__stat" key={st.label}>
-                        <strong>{st.value}</strong> {st.label}
-                      </span>
-                    ))}
-                  </span>
-                </span>
-              </a>
-            ))}
-          </div>
-          <div className="feat-cta">
-            <Link href="/tools" className="feat-viewall">{t.toolsTeaser.cta} &#8594;</Link>
-          </div>
-        </div>
-      </section>
-      )}
-
-      {/* â”€â”€â”€ Powered by â€” the stack we build on (between Services & Featured) â”€â”€â”€â”€ */}
-      <PoweredBy />
-
-      {/* â”€â”€â”€ Featured work â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <section className="section" id="featured" data-surface="ink aurora" data-tint="color-mix(in oklab, var(--hue-2) 18%, transparent)">
-        <div className="wrap">
-          <div className="section-head">
-            <div className="eyebrow">{t.featured.eyebrow}</div>
-            <h2 key={lang} className="section-title">{t.featured.title}<em>{t.featured.titleEm}</em></h2>
-            <p className="section-sub">{t.featured.sub}</p>
-          </div>
-          <div className="feat-list">
-            {t.featured.items.map((it) => (
-              <a key={it.url} className="feat-row" href={it.url} target="_blank" rel="noopener noreferrer">
-                <span className="feat-row__main">
-                  <span className="feat-row__name">{it.name}</span>
-                  <span className="feat-row__tag">{it.tag}</span>
-                </span>
-                <span className="feat-thumb" aria-hidden="true">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={`/portfolio/${it.img}.png`} alt="" loading="lazy" />
-                </span>
-                <span className="feat-row__arrow" aria-hidden="true">&#8599;</span>
-              </a>
-            ))}
-          </div>
-          <div className="feat-cta">
-            <a href="/portfolio" className="feat-viewall">{t.featured.viewAll} &#8594;</a>
-          </div>
-        </div>
-      </section>
-
-      {/* â”€â”€â”€ Thesis â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <PortalJourney />
-
-      {/* Engagement modes (consulting-only / build-only / end-to-end) were folded
-          into the Services copy — clients pick one of three buyable categories. */}
+      <HomeStory />
 
       {/* â”€â”€â”€ Founders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {/* Founders / team section now lives on the About page. */}
