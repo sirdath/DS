@@ -450,7 +450,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <HomeStory />
+      <HomeStory onContact={() => openChat()} />
 
       {/* â”€â”€â”€ Founders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {/* Founders / team section now lives on the About page. */}

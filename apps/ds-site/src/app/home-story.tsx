@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
 import { useLang } from "./i18n";
+import ServicesCircle from "./services-circle";
 import "./home-story.css";
 
 type GoalKey = "customers" | "time" | "idea";
@@ -156,7 +157,7 @@ const copy = {
   },
 } as const;
 
-export default function HomeStory() {
+export default function HomeStory({ onContact }: { onContact?: () => void }) {
   const { lang } = useLang();
   const c = copy[lang];
   const [goal, setGoal] = useState<GoalKey>("customers");
@@ -314,6 +315,8 @@ export default function HomeStory() {
           ))}
         </div>
       </section>
+
+      <ServicesCircle onContact={onContact} />
 
       <section className="template-lab" aria-labelledby="template-title">
         <header className="story-heading">
