@@ -132,7 +132,14 @@ export default function AssistantPage() {
     localStorage.removeItem(STORAGE);
   };
 
-  const spokenText = step ? `${step.title}. ${step.help}` : `${c.ui.reviewTitle}. ${c.ui.reviewHelp}`;
+  const voiceKey = isReview
+    ? "review"
+    : step?.id === "goal"
+      ? "goal"
+      : step && ["services", "diagnosis", "outcomes", "details"].includes(step.id)
+        ? `${goalKey}-${step.id}`
+        : step?.id || "goal";
+  const voiceSrc = `/audio/arya/${lang}/${voiceKey}.mp3`;
 
   return (
     <main className="assistant-shell">
@@ -147,7 +154,7 @@ export default function AssistantPage() {
       </header>
 
       <section className="assistant-stage">
-        <AryaGuide key={`${lang}-${screen}-${replay}`} text={spokenText} help={step?.help || c.ui.reviewHelp} lang={lang} enabled={voiceOn} onReplay={() => setReplay((value) => value + 1)} />
+        <AryaGuide key={`${lang}-${screen}-${replay}`} voiceSrc={voiceSrc} help={step?.help || c.ui.reviewHelp} lang={lang} enabled={voiceOn} onReplay={() => setReplay((value) => value + 1)} />
 
         <div className="assistant-screen" key={`${lang}-${screen}`}>
           {step && <div className={`assistant-question assistant-question--${step.type}`}>
@@ -198,9 +205,10 @@ export default function AssistantPage() {
   );
 }
 
-function AryaGuide({ text, help, lang, enabled, onReplay }: { text: string; help: string; lang: "en" | "el"; enabled: boolean; onReplay: () => void }) {
+function AryaGuide({ voiceSrc, help, lang, enabled, onReplay }: { voiceSrc: string; help: string; lang: "en" | "el"; enabled: boolean; onReplay: () => void }) {
   const mountRef = useRef<HTMLDivElement>(null);
   const orbRef = useRef<AryaOrbHandle | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -209,32 +217,30 @@ function AryaGuide({ text, help, lang, enabled, onReplay }: { text: string; help
   }, []);
 
   useEffect(() => {
-    if (!enabled || typeof window === "undefined" || !("speechSynthesis" in window)) {
-      window.speechSynthesis?.cancel();
+    audioRef.current?.pause();
+    audioRef.current = null;
+    if (!enabled || typeof window === "undefined") {
       orbRef.current?.setState("idle");
       return;
     }
+    const audio = new Audio(voiceSrc);
+    audio.preload = "auto";
+    audioRef.current = audio;
+    audio.onplay = () => orbRef.current?.setState("speaking");
+    audio.onended = () => orbRef.current?.setState("idle");
+    audio.onerror = () => orbRef.current?.setState("idle");
     const timer = window.setTimeout(() => {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      const chooseVoice = () => {
-        const voices = window.speechSynthesis.getVoices();
-        utterance.voice = lang === "el"
-          ? voices.find((voice) => voice.lang.toLowerCase().startsWith("el")) || null
-          : voices.find((voice) => /aria/i.test(voice.name)) || voices.find((voice) => /sonia|jenny/i.test(voice.name)) || voices.find((voice) => voice.lang.toLowerCase().startsWith("en")) || null;
-        utterance.lang = lang === "el" ? "el-GR" : "en-US";
-        utterance.rate = 0.96;
-        utterance.pitch = 1.02;
-        utterance.onstart = () => orbRef.current?.setState("speaking");
-        utterance.onend = () => orbRef.current?.setState("idle");
-        utterance.onerror = () => orbRef.current?.setState("idle");
-        window.speechSynthesis.speak(utterance);
-      };
-      if (window.speechSynthesis.getVoices().length) chooseVoice();
-      else window.speechSynthesis.addEventListener("voiceschanged", chooseVoice, { once: true });
-    }, 520);
-    return () => { window.clearTimeout(timer); window.speechSynthesis.cancel(); };
-  }, [enabled, lang, text]);
+      void audio.play().catch(() => orbRef.current?.setState("idle"));
+    }, 360);
+    return () => {
+      window.clearTimeout(timer);
+      audio.pause();
+      audio.removeAttribute("src");
+      audio.load();
+      if (audioRef.current === audio) audioRef.current = null;
+      orbRef.current?.setState("idle");
+    };
+  }, [enabled, voiceSrc]);
 
   return <aside className="arya-guide">
     <button type="button" className="arya-orb" onClick={onReplay} aria-label={lang === "el" ? "Επανάληψη ερώτησης" : "Repeat Arya’s question"}><span ref={mountRef} /></button>
