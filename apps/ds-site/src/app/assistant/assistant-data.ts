@@ -48,7 +48,7 @@ export const assistantCopy = {
     goal: {
       id: "goal", eyebrow: "01 · Start here", title: "How can we help you?", help: "Choose the result that would make the biggest difference right now.", summaryLabel: "Primary goal", type: "single", autoAdvance: true,
       options: [
-        { value: "customers", label: "Win more customers", note: "Trust, visibility, sales and bookings" },
+        { value: "customers", label: "Win more customers / clients", note: "Trust, visibility, sales and bookings" },
         { value: "time", label: "Give my team time back", note: "Automation, AI and fewer repetitive tasks" },
         { value: "product", label: "Build a new idea", note: "A product, platform or custom system" },
         { value: "clarity", label: "See the business clearly", note: "Data, reporting, forecasts and decisions" },
@@ -180,11 +180,9 @@ export const assistantCopy = {
       contact: { id: "contact", eyebrow: "10 · The next step", title: "Where should we continue the conversation?", help: "We will use these details only to reply to this brief.", summaryLabel: "Contact", type: "fields", fields: [
         { id: "name", label: "Your name", type: "text", required: true },
         { id: "email", label: "Email", type: "email", required: true },
-        { id: "phone", label: "Phone / WhatsApp", type: "tel" },
-        { id: "channel", label: "Preferred reply", type: "select", options: ["Email", "Phone", "WhatsApp", "Telegram", "No preference"] },
       ] },
     },
-    ui: { progress: "Your DS2 brief", step: "Step", complete: "complete", remaining: "remaining", back: "Back", next: "Continue", review: "Review brief", send: "Open email with brief", reset: "Start again", close: "Back to DS2", selected: "selected", required: "Required", optional: "Optional", choose: "Choose one", reviewEyebrow: "Your DS2 brief", reviewTitle: "Here is the shape of the opportunity.", reviewHelp: "Review what we understood. Nothing leaves this browser until you choose to open the email.", error: "Choose an answer before continuing.", sliderHint: "Drag or use the arrow keys" },
+    ui: { progress: "Your DS2 brief", step: "Step", complete: "complete", remaining: "remaining", back: "Back", next: "Continue", review: "Review brief", send: "Send", reset: "Start again", close: "Back to DS2", selected: "selected", required: "Required", optional: "Optional", choose: "Choose one", reviewEyebrow: "Your DS2 brief", reviewTitle: "Here is the shape of the opportunity.", reviewHelp: "Review what we understood before sending your brief.", error: "Choose an answer before continuing.", sliderHint: "Drag or use the arrow keys" },
   },
   el: {
     goal: {
@@ -258,9 +256,9 @@ export const assistantCopy = {
       timing: { id: "timing", eyebrow: "07 · Ο ρυθμός", title: "Πότε θα ήταν χρήσιμο να είναι live;", help: "Δεν υπάρχει λάθος ταχύτητα. Επιλέξτε το ρεαλιστικό.", summaryLabel: "Ιδανικό timing", type: "slider", slider: { min: 0, max: 4, defaultValue: 1, values: ["Διερεύνηση — χωρίς deadline", "Μέσα σε 3–6 μήνες", "Μέσα σε 1–3 μήνες", "Μέσα σε έναν μήνα", "Όσο πιο σύντομα γίνεται υπεύθυνα"], labels: ["Διερεύνηση", "Αυτό το εξάμηνο", "Αυτό το τρίμηνο", "Αυτόν τον μήνα", "Έτοιμοι τώρα"], scene: "timing" } },
       budget: { id: "budget", eyebrow: "08 · Η επένδυση", title: "Ποιο εύρος επένδυσης νιώθετε άνετο;", help: "Καθορίζει το πρώτο χρήσιμο scope. Δεν είναι προσφορά ή δέσμευση.", summaryLabel: "Εύρος επένδυσης", type: "slider", slider: { min: 0, max: 5, defaultValue: 0, values: ["Δεν είμαι σίγουρος/η", "Κάτω από €5.000", "€5.000–€15.000", "€15.000–€30.000", "€30.000–€60.000", "€60.000+"], labels: ["Ας το ορίσουμε", "Εστιασμένη αρχή", "Πλήρες build", "Φιλόδοξο build", "Μεγάλο σύστημα", "Στρατηγική πλατφόρμα"], scene: "budget" } },
       contact: { id: "contact", eyebrow: "10 · Το επόμενο βήμα", title: "Πού να συνεχίσουμε τη συζήτηση;", help: "Θα χρησιμοποιήσουμε τα στοιχεία μόνο για να απαντήσουμε σε αυτό το brief.", summaryLabel: "Επικοινωνία", type: "fields", fields: [
-        { id: "name", label: "Το όνομά σας", type: "text", required: true }, { id: "email", label: "Email", type: "email", required: true }, { id: "phone", label: "Τηλέφωνο / WhatsApp", type: "tel" }, { id: "channel", label: "Προτιμώμενη απάντηση", type: "select", options: ["Email", "Τηλέφωνο", "WhatsApp", "Telegram", "Χωρίς προτίμηση"] },
+        { id: "name", label: "Το όνομά σας", type: "text", required: true }, { id: "email", label: "Email", type: "email", required: true },
       ] },
     },
-    ui: { progress: "Το DS2 brief σας", step: "Βήμα", complete: "ολοκληρώθηκε", remaining: "απομένει", back: "Πίσω", next: "Συνέχεια", review: "Έλεγχος brief", send: "Άνοιγμα email με brief", reset: "Από την αρχή", close: "Πίσω στη DS2", selected: "επιλεγμένα", required: "Υποχρεωτικό", optional: "Προαιρετικό", choose: "Επιλέξτε", reviewEyebrow: "Το DS2 brief σας", reviewTitle: "Αυτή είναι η μορφή της ευκαιρίας.", reviewHelp: "Ελέγξτε τι καταλάβαμε. Τίποτα δεν φεύγει από τον browser μέχρι να ανοίξετε το email.", error: "Επιλέξτε μια απάντηση για να συνεχίσετε.", sliderHint: "Σύρετε ή χρησιμοποιήστε τα βελάκια" },
+    ui: { progress: "Το DS2 brief σας", step: "Βήμα", complete: "ολοκληρώθηκε", remaining: "απομένει", back: "Πίσω", next: "Συνέχεια", review: "Έλεγχος brief", send: "Αποστολή", reset: "Από την αρχή", close: "Πίσω στη DS2", selected: "επιλεγμένα", required: "Υποχρεωτικό", optional: "Προαιρετικό", choose: "Επιλέξτε", reviewEyebrow: "Το DS2 brief σας", reviewTitle: "Αυτή είναι η μορφή της ευκαιρίας.", reviewHelp: "Ελέγξτε τι καταλάβαμε πριν στείλετε το brief.", error: "Επιλέξτε μια απάντηση για να συνεχίσετε.", sliderHint: "Σύρετε ή χρησιμοποιήστε τα βελάκια" },
   },
 } as const;

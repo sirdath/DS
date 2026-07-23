@@ -11,6 +11,33 @@ import "./assistant.css";
 type Answers = Record<string, string | string[]>;
 const EMAIL = "ds2consulting.contact@gmail.com";
 const STORAGE = "ds2-project-brief-v2";
+const DETAILS_LIMIT = 1500;
+
+type ValidationCue = "one" | "two" | "three" | "required" | "email";
+
+interface SpeechRecognitionEventLike extends Event {
+  results: {
+    length: number;
+    [index: number]: {
+      isFinal: boolean;
+      [index: number]: { transcript: string };
+    };
+  };
+}
+
+interface SpeechRecognitionLike {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start: () => void;
+  stop: () => void;
+  abort: () => void;
+  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
+  onend: (() => void) | null;
+  onerror: (() => void) | null;
+}
+
+type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
 
 const SERVICE_DIAGNOSIS_PRIORITY: Record<GoalKey, Record<string, string[]>> = {
   customers: {
@@ -112,6 +139,7 @@ export default function AssistantPage() {
   const [replay, setReplay] = useState(0);
   const [furthestScreen, setFurthestScreen] = useState(0);
   const [progressDrag, setProgressDrag] = useState(0);
+  const [validationCue, setValidationCue] = useState<{ type: ValidationCue; nonce: number } | null>(null);
   const progressDragStart = useRef<number | null>(null);
   const suppressProgressClick = useRef(false);
 
@@ -174,10 +202,17 @@ export default function AssistantPage() {
 
   useEffect(() => { localStorage.setItem(STORAGE, JSON.stringify(answers)); }, [answers]);
   useEffect(() => { localStorage.setItem(`${STORAGE}-voice`, voiceOn ? "on" : "off"); }, [voiceOn]);
-  useEffect(() => setError(""), [screen, lang]);
+  useEffect(() => {
+    setError("");
+    setValidationCue(null);
+  }, [screen, lang]);
   useEffect(() => { if (screen > steps.length) setScreen(steps.length); }, [screen, steps.length]);
 
-  const setAnswer = (id: string, value: string | string[]) => setAnswers((current) => ({ ...current, [id]: value }));
+  const setAnswer = (id: string, value: string | string[]) => {
+    setError("");
+    setValidationCue(null);
+    setAnswers((current) => ({ ...current, [id]: value }));
+  };
 
   const moveTo = useCallback((nextScreen: number) => {
     const destination = Math.max(0, Math.min(steps.length, nextScreen));
@@ -198,6 +233,8 @@ export default function AssistantPage() {
   };
 
   const chooseOption = (currentStep: AssistantStep, option: AssistantOption) => {
+    setError("");
+    setValidationCue(null);
     const values = valueList(answers[currentStep.id]);
     if (currentStep.type === "single") {
       const changed = answers[currentStep.id] !== option.value;
@@ -231,19 +268,29 @@ export default function AssistantPage() {
     setAnswer(currentStep.id, nextValues);
   };
 
-  const validate = () => {
-    if (!step || step.optional || step.type === "slider") return true;
-    if (["multi", "single", "limit"].includes(step.type) && !valueList(answers[step.id]).length) return false;
-    if (step.fields) {
-      if (step.fields.some((field) => field.required && !String(answers[field.id] || "").trim())) return false;
-      if (step.id === "contact" && !/^\S+@\S+\.\S+$/.test(String(answers.email || ""))) return false;
+  const validationIssue = (): ValidationCue | null => {
+    if (!step || step.optional || step.type === "slider") return null;
+    if (["multi", "single", "limit"].includes(step.type) && !valueList(answers[step.id]).length) {
+      if ((step.limit || 1) >= 3) return "three";
+      if ((step.limit || 1) === 2) return "two";
+      return "one";
     }
-    return true;
+    if (step.fields) {
+      if (step.fields.some((field) => field.required && !String(answers[field.id] || "").trim())) return "required";
+      if (step.id === "contact" && !/^\S+@\S+\.\S+$/.test(String(answers.email || ""))) return "email";
+    }
+    return null;
   };
 
   const next = () => {
-    if (!validate()) return setError(c.ui.error);
+    const issue = validationIssue();
+    if (issue) {
+      setError(c.ui.error);
+      setValidationCue({ type: issue, nonce: Date.now() });
+      return;
+    }
     setError("");
+    setValidationCue(null);
     moveTo(screen + 1);
   };
 
@@ -270,6 +317,7 @@ export default function AssistantPage() {
         ? `${goalKey}-${step.id}`
         : step?.id || "goal";
   const voiceSrc = `/audio/arya/${lang}/${voiceKey}.mp3`;
+  const validationVoiceSrc = validationCue ? `/audio/arya/${lang}/validation-${validationCue.type}.mp3` : undefined;
 
   return (
     <main className="assistant-shell">
@@ -323,15 +371,14 @@ export default function AssistantPage() {
 
       <section className="assistant-stage">
         <div className="assistant-screen" key={`${lang}-${screen}`}>
-          {step && <div className={`assistant-question assistant-question--${step.type}`}>
+          {step && <div className={`assistant-question assistant-question--${step.type} assistant-question--${step.id}`}>
             <header>
               <p>{step.eyebrow}</p>
-              {step.context && <span className="assistant-context"><i />{step.context}</span>}
               <h1>{step.title}</h1>
               <span className="assistant-help">{step.help}</span>
             </header>
 
-            <AryaGuide key={`${lang}-${screen}-${replay}`} voiceSrc={voiceSrc} lang={lang} enabled={voiceOn} onReplay={() => setReplay((value) => value + 1)} />
+            <AryaGuide key={`${lang}-${screen}-${replay}`} voiceSrc={voiceSrc} cueSrc={validationVoiceSrc} cueNonce={validationCue?.nonce} lang={lang} enabled={voiceOn} onReplay={() => setReplay((value) => value + 1)} />
 
             {step.options && <div className="assistant-options">
               {step.options.map((option, index) => {
@@ -348,7 +395,7 @@ export default function AssistantPage() {
 
             {step.slider && <SliderQuestion step={step} value={Number(answers[step.id] ?? step.slider.defaultValue)} onChange={(value) => setAnswer(step.id, String(value))} hint={c.ui.sliderHint} />}
 
-            {step.type === "textarea" && <label className="assistant-textarea"><span>{lang === "el" ? "Προαιρετικό" : "Optional — a few sentences are enough"}</span><textarea value={String(answers.details || "")} onChange={(event) => setAnswer("details", event.target.value)} placeholder={step.placeholder} /></label>}
+            {step.type === "textarea" && <DetailsInput lang={lang} value={String(answers.details || "")} onChange={(value) => setAnswer("details", value)} placeholder={step.placeholder || ""} />}
 
             {step.type === "limit" && <p className="assistant-count"><span>{valueList(answers[step.id]).length}</span> / {step.limit} {c.ui.selected}</p>}
           </div>}
@@ -358,15 +405,14 @@ export default function AssistantPage() {
             <AryaGuide key={`${lang}-${screen}-${replay}`} voiceSrc={voiceSrc} lang={lang} enabled={voiceOn} onReplay={() => setReplay((value) => value + 1)} />
             <div className="assistant-review__grid">{summary.map(([label, value], index) => <article key={label}><span>{String(index + 1).padStart(2, "0")}</span><button type="button" onClick={() => moveTo(index)}>{lang === "el" ? "Αλλαγή" : "Edit"}</button><h2>{label}</h2><p>{value}</p></article>)}</div>
           </div>}
-
-          {error && <p className="assistant-error" role="alert">{error}</p>}
         </div>
       </section>
 
+      {error && <p className="assistant-error" role="alert">{error}</p>}
       <footer className="assistant-controls">
-        <button type="button" onClick={() => moveTo(screen - 1)} disabled={screen === 0}><span>←</span>{c.ui.back}</button>
-        {!isReview && <button type="button" className="assistant-next" onClick={next}>{screen === steps.length - 1 ? c.ui.review : c.ui.next}<span>→</span></button>}
-        {isReview && <div className="assistant-finish"><button type="button" onClick={reset}>{c.ui.reset}</button><button type="button" className="assistant-next" onClick={send}>{c.ui.send}<span>↗</span></button></div>}
+        <button type="button" className="assistant-arrow assistant-arrow--back" onClick={() => moveTo(screen - 1)} disabled={screen === 0} aria-label={c.ui.back} title={c.ui.back}><span aria-hidden="true">←</span></button>
+        {!isReview && <button type="button" className="assistant-arrow assistant-next" onClick={next} aria-label={screen === steps.length - 1 ? c.ui.review : c.ui.next} title={screen === steps.length - 1 ? c.ui.review : c.ui.next}><span aria-hidden="true">→</span></button>}
+        {isReview && <div className="assistant-finish"><button type="button" onClick={reset}>{c.ui.reset}</button><button type="button" className="assistant-next" onClick={send}>{c.ui.send}</button></div>}
       </footer>
     </main>
   );
@@ -380,6 +426,7 @@ const CHOICE_ICON_KINDS: Record<string, ChoiceIconKind> = {
   booking: "calendar", bookings: "calendar", mobile: "phone",
   automation: "flow", disconnected: "flow", pipeline: "flow",
   receptionist: "chat", chatbot: "chat", enquiries: "chat", "always-on": "chat",
+  conversion: "target", leads: "chat",
   agents: "people", crm: "people", scale: "people",
   dashboard: "chart", reporting: "chart", forecast: "chart", marketing: "chart", performance: "chart", future: "chart",
   trust: "heart", loyalty: "heart", experience: "heart",
@@ -407,14 +454,28 @@ function ChoiceIcon({ value, fallbackIndex }: { value: string; fallbackIndex: nu
       {kind === "chart" && <><path {...common} className="icon-main" d="M8 31V20M16 31V12M24 31V17M32 31V8" /><path {...common} className="icon-accent" d="m7 15 8-6 8 3 9-7" /></>}
       {kind === "people" && <><circle {...common} className="icon-main" cx="16" cy="14" r="5" /><path {...common} className="icon-main" d="M7 31c0-6 3.8-10 9-10s9 4 9 10" /><circle {...common} className="icon-accent" cx="28" cy="16" r="3.5" /><path {...common} className="icon-accent" d="M25 23c5-1 8 2 8 7" /></>}
       {kind === "heart" && <path {...common} className="icon-main icon-heart" d="M20 32S7 25 7 15.5C7 10 14 7 20 13c6-6 13-3 13 2.5C33 25 20 32 20 32Z" />}
-      {kind === "rocket" && <><path {...common} className="icon-main icon-rocket" d="M16 25c-4-1-7 1-8 6 5-1 7-4 6-8m10 1c1 4-1 7-6 8 1-5 4-7 8-6M15 24C13 15 20 8 31 7c-1 11-8 18-17 16Z" /><circle {...common} className="icon-accent" cx="24" cy="14" r="2.5" /></>}
+      {kind === "rocket" && <><g className="icon-rocket"><path {...common} className="icon-main" d="M16.5 25.5 14 32l6.5-2.5M14.5 23.5 8 21l2.5 6.5M14.7 25.3c1.2-7.7 6.8-14 16.8-17.3-.4 10.5-6.6 16-14.2 17.8l-2.6-.5Z" /><circle {...common} className="icon-accent" cx="24.5" cy="15" r="3" /><path {...common} className="icon-flame" d="M14.5 27.5c-3 .5-5 2-6 5 3-.5 5-1.8 6.8-4.7" /></g></>}
       {kind === "target" && <><circle {...common} className="icon-main" cx="20" cy="20" r="12" /><circle {...common} className="icon-accent" cx="20" cy="20" r="6" /><circle className="icon-dot" cx="20" cy="20" r="2" /></>}
       {kind === "spark" && <><path {...common} className="icon-main icon-spark" d="M20 5c1 8 5 12 13 13-8 1-12 5-13 13-1-8-5-12-13-13 8-1 12-5 13-13Z" /><path {...common} className="icon-accent" d="M31 6c.4 3 2 4.6 5 5-3 .4-4.6 2-5 5-.4-3-2-4.6-5-5 3-.4 4.6-2 5-5Z" /></>}
     </svg>
   </span>;
 }
 
-function AryaGuide({ voiceSrc, lang, enabled, onReplay }: { voiceSrc: string; lang: "en" | "el"; enabled: boolean; onReplay: () => void }) {
+function AryaGuide({
+  voiceSrc,
+  cueSrc,
+  cueNonce,
+  lang,
+  enabled,
+  onReplay,
+}: {
+  voiceSrc: string;
+  cueSrc?: string;
+  cueNonce?: number;
+  lang: "en" | "el";
+  enabled: boolean;
+  onReplay: () => void;
+}) {
   const mountRef = useRef<HTMLDivElement>(null);
   const orbRef = useRef<AryaOrbHandle | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -451,6 +512,21 @@ function AryaGuide({ voiceSrc, lang, enabled, onReplay }: { voiceSrc: string; la
     };
   }, [enabled, voiceSrc]);
 
+  useEffect(() => {
+    if (!enabled || !cueSrc || !cueNonce || typeof window === "undefined") return;
+    audioRef.current?.pause();
+    const audio = new Audio(cueSrc);
+    audioRef.current = audio;
+    audio.onplay = () => orbRef.current?.setState("speaking");
+    audio.onended = () => orbRef.current?.setState("idle");
+    audio.onerror = () => orbRef.current?.setState("idle");
+    void audio.play().catch(() => orbRef.current?.setState("idle"));
+    return () => {
+      audio.pause();
+      if (audioRef.current === audio) audioRef.current = null;
+    };
+  }, [cueNonce, cueSrc, enabled]);
+
   return <aside className="arya-guide">
     <button type="button" className="arya-orb" onClick={onReplay} aria-label={lang === "el" ? "Επανάληψη ερώτησης" : "Repeat Arya’s question"} title={lang === "el" ? "Πατήστε για να ακούσετε την Arya" : "Click to hear Arya"}><span ref={mountRef} /></button>
   </aside>;
@@ -467,28 +543,91 @@ function SliderQuestion({ step, value, onChange, hint }: { step: AssistantStep; 
       <div className="assistant-slider__reading"><span>{slider.labels[value]}</span><strong>{slider.values[value]}</strong></div>
     </div>
     <label><span>{hint}</span><input type="range" min={slider.min} max={slider.max} step="1" value={value} onChange={(event) => onChange(Number(event.target.value))} aria-valuetext={slider.values[value]} /></label>
-    <div className="assistant-slider__ticks" style={{ gridTemplateColumns: `repeat(${slider.values.length}, 1fr)` }}>{slider.values.map((_, index) => <button type="button" key={index} className={index === value ? "is-active" : ""} onClick={() => onChange(index)} aria-label={slider.values[index]}><i /><span>{index === 0 || index === slider.max ? slider.labels[index] : ""}</span></button>)}</div>
+    <div className="assistant-slider__ticks" style={{ gridTemplateColumns: `repeat(${slider.values.length}, 1fr)` }}>{slider.values.map((_, index) => <button type="button" key={index} className={`${index === value ? "is-active" : ""}${index < value ? " is-passed" : ""}`} onClick={() => onChange(index)} aria-label={slider.values[index]}><i /><span>{slider.labels[index]}</span></button>)}</div>
   </div>;
 }
 
 function TeamScene({ value }: { value: number }) {
-  const active = [1, 4, 8, 13, 18][value] || 1;
-  return <div className="scene-team" aria-hidden="true"><div className="scene-team__room"><i /><i /><i /></div><div className="scene-team__people">{Array.from({ length: 18 }, (_, index) => <span className={index < active ? "is-active" : ""} key={index}><i /></span>)}</div></div>;
+  const active = [1, 3, 6, 10, 15][value] || 1;
+  return <div className="scene-team" data-level={value} aria-hidden="true">
+    <div className="scene-team__room"><i /><i /><i /><b /></div>
+    <div className="scene-team__table" />
+    <div className="scene-team__people">{Array.from({ length: 15 }, (_, index) => <span className={index < active ? "is-active" : ""} style={{ "--person": index } as CSSProperties} key={index}><i /></span>)}</div>
+  </div>;
 }
 
 function BudgetScene({ value }: { value: number }) {
-  return <div className="scene-budget" aria-hidden="true">{Array.from({ length: 6 }, (_, stack) => <div className={stack <= value ? "is-active" : ""} key={stack}>{Array.from({ length: stack + 1 }, (_, coin) => <i key={coin}>€</i>)}</div>)}</div>;
+  return <div className="scene-budget" data-level={value} aria-hidden="true">
+    <div className={`scene-budget__unknown${value === 0 ? " is-active" : ""}`}><span>?</span></div>
+    <div className="scene-budget__stacks">{Array.from({ length: 5 }, (_, stack) => <div className={stack < value ? "is-active" : ""} style={{ "--stack": stack } as CSSProperties} key={stack}>{Array.from({ length: stack + 2 }, (_, coin) => <i style={{ "--coin": coin } as CSSProperties} key={coin}>€</i>)}</div>)}</div>
+  </div>;
 }
 
 function TimingScene({ value, max }: { value: number; max: number }) {
   const progress = value / max;
-  return <div className="scene-timing" style={{ "--pace": progress } as CSSProperties} aria-hidden="true"><div className="scene-timing__line">{Array.from({ length: 5 }, (_, index) => <i className={index <= value ? "is-active" : ""} key={index} />)}</div><span>➤</span><b /></div>;
+  return <div className="scene-timing" style={{ "--pace": progress } as CSSProperties} data-level={value} aria-hidden="true">
+    <div className="scene-timing__orbit"><i /><i /><i /></div>
+    <div className="scene-timing__line">{Array.from({ length: 5 }, (_, index) => <i className={`${index === value ? "is-active" : ""}${index < value ? " is-passed" : ""}`} key={index}><b /></i>)}</div>
+    <span className="scene-timing__comet"><i /></span>
+  </div>;
 }
 
 function Field({ field, value, onChange, ui }: { field: AssistantField; value: string; onChange: (value: string) => void; ui: { required: string; optional: string; choose: string } }) {
-  return <label><span>{field.label}<small>{field.required ? ui.required : ui.optional}</small></span>
+  return <label><span>{field.label}{field.required && <b className="assistant-required" aria-hidden="true">*</b>}<small>{field.required ? ui.required : ui.optional}</small></span>
     {field.type === "select"
       ? <select value={value} onChange={(event) => onChange(event.target.value)}><option value="">{ui.choose}</option>{field.options?.map((option) => <option key={option}>{option}</option>)}</select>
       : <input type={field.type} value={value} onChange={(event) => onChange(event.target.value)} autoComplete={field.id === "email" ? "email" : field.id === "name" ? "name" : "off"} />}
+  </label>;
+}
+
+function DetailsInput({ lang, value, onChange, placeholder }: { lang: "en" | "el"; value: string; onChange: (value: string) => void; placeholder: string }) {
+  const [listening, setListening] = useState(false);
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
+  const browserWindow = typeof window === "undefined"
+    ? undefined
+    : window as typeof window & { SpeechRecognition?: SpeechRecognitionConstructor; webkitSpeechRecognition?: SpeechRecognitionConstructor };
+  const supported = Boolean(browserWindow?.SpeechRecognition || browserWindow?.webkitSpeechRecognition);
+
+  useEffect(() => () => recognitionRef.current?.abort(), []);
+
+  const toggleDictation = () => {
+    if (listening) {
+      recognitionRef.current?.stop();
+      setListening(false);
+      return;
+    }
+    const Recognition = browserWindow?.SpeechRecognition || browserWindow?.webkitSpeechRecognition;
+    if (!Recognition) return;
+    const recognition = new Recognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = lang === "el" ? "el-GR" : "en-US";
+    const startingValue = value.trim();
+    recognition.onresult = (event) => {
+      let transcript = "";
+      for (let index = 0; index < event.results.length; index += 1) {
+        const result = event.results[index];
+        const phrase = result?.[0]?.transcript;
+        if (phrase) transcript += phrase;
+      }
+      onChange(`${startingValue}${startingValue && transcript ? " " : ""}${transcript}`.slice(0, DETAILS_LIMIT));
+    };
+    recognition.onend = () => setListening(false);
+    recognition.onerror = () => setListening(false);
+    recognitionRef.current = recognition;
+    recognition.start();
+    setListening(true);
+  };
+
+  return <label className="assistant-textarea">
+    <span className="assistant-textarea__meta">
+      <span>{lang === "el" ? "Προαιρετικό — γράψτε ή μιλήστε ελεύθερα" : "Optional — type or speak freely"}</span>
+      <span>{value.length} / {DETAILS_LIMIT}</span>
+    </span>
+    <textarea maxLength={DETAILS_LIMIT} value={value} onChange={(event) => onChange(event.target.value)} placeholder={placeholder} />
+    <button type="button" className={`assistant-dictate${listening ? " is-listening" : ""}`} onClick={toggleDictation} disabled={!supported} title={!supported ? (lang === "el" ? "Η υπαγόρευση δεν υποστηρίζεται σε αυτόν τον browser" : "Dictation is not supported in this browser") : undefined}>
+      <span aria-hidden="true"><i /></span>
+      {listening ? (lang === "el" ? "Ακούω…" : "Listening…") : (lang === "el" ? "Υπαγόρευση" : "Talk instead")}
+    </button>
   </label>;
 }
