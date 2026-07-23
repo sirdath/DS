@@ -110,6 +110,10 @@ export default function AssistantPage() {
   const [error, setError] = useState("");
   const [voiceOn, setVoiceOn] = useState(true);
   const [replay, setReplay] = useState(0);
+  const [furthestScreen, setFurthestScreen] = useState(0);
+  const [progressDrag, setProgressDrag] = useState(0);
+  const progressDragStart = useRef<number | null>(null);
+  const suppressProgressClick = useRef(false);
 
   const goalKey = (String(answers.goal || "customers") as GoalKey);
   const branch = c.branches[goalKey] || c.branches.customers;
@@ -134,15 +138,19 @@ export default function AssistantPage() {
       DIAGNOSIS_OUTCOME_PRIORITY[goalKey][selectedDiagnosis],
       outcomeContext,
     );
+    const numbered = (step: AssistantStep, number: string, labelEn: string, labelEl: string): AssistantStep => ({
+      ...step,
+      eyebrow: `${number} · ${lang === "el" ? labelEl : labelEn}`,
+    });
     return [
       c.goal as AssistantStep,
       branch.services as AssistantStep,
       diagnosis,
       outcomes,
-      c.common.business as AssistantStep,
-      c.common.team as AssistantStep,
-      c.common.timing as AssistantStep,
-      c.common.budget as AssistantStep,
+      numbered(c.common.team as AssistantStep, "05", "The people", "Οι άνθρωποι"),
+      numbered(c.common.timing as AssistantStep, "06", "The pace", "Ο ρυθμός"),
+      numbered(c.common.budget as AssistantStep, "07", "The investment", "Η επένδυση"),
+      numbered(c.common.business as AssistantStep, "08", "Your business", "Η επιχείρηση"),
       {
         id: "details", eyebrow: lang === "el" ? "09 · Με δικά σας λόγια" : "09 · In your words",
         title: branch.detailsTitle, help: branch.detailsHelp, summaryLabel: lang === "el" ? "Επιπλέον context" : "Additional context",
@@ -155,8 +163,9 @@ export default function AssistantPage() {
   const isReview = screen >= steps.length;
   const step = isReview ? null : steps[screen];
   const visibleStep = isReview ? steps.length : screen + 1;
-  const percent = isReview ? 100 : Math.round((visibleStep / steps.length) * 100);
-  const remaining = Math.max(0, steps.length - visibleStep);
+  const completedThrough = isReview ? steps.length : Math.min(steps.length, Math.max(visibleStep, furthestScreen + 1));
+  const percent = Math.round((completedThrough / steps.length) * 100);
+  const remaining = Math.max(0, steps.length - completedThrough);
 
   useEffect(() => {
     try { setAnswers(JSON.parse(localStorage.getItem(STORAGE) || "{}")); } catch { /* clean start */ }
@@ -171,25 +180,55 @@ export default function AssistantPage() {
   const setAnswer = (id: string, value: string | string[]) => setAnswers((current) => ({ ...current, [id]: value }));
 
   const moveTo = useCallback((nextScreen: number) => {
-    setScreen(Math.max(0, Math.min(steps.length, nextScreen)));
+    const destination = Math.max(0, Math.min(steps.length, nextScreen));
+    setFurthestScreen((current) => Math.max(current, destination));
+    setScreen(destination);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [steps.length]);
+
+  const finishProgressDrag = (clientX: number) => {
+    if (progressDragStart.current === null) return;
+    const distance = clientX - progressDragStart.current;
+    progressDragStart.current = null;
+    setProgressDrag(0);
+    suppressProgressClick.current = Math.abs(distance) >= 28;
+    if (!suppressProgressClick.current) return;
+    if (distance > 0 && screen > 0) moveTo(screen - 1);
+    if (distance < 0 && screen < furthestScreen) moveTo(screen + 1);
+  };
 
   const chooseOption = (currentStep: AssistantStep, option: AssistantOption) => {
     const values = valueList(answers[currentStep.id]);
     if (currentStep.type === "single") {
+      const changed = answers[currentStep.id] !== option.value;
+      if (changed && currentStep.id === "goal") setFurthestScreen(0);
+      if (changed && currentStep.id === "diagnosis" && furthestScreen > screen) setFurthestScreen(screen);
       setAnswers((current) => {
-        if (currentStep.id !== "goal" || current.goal === option.value) return { ...current, [currentStep.id]: option.value };
         const clean: Answers = { ...current, [currentStep.id]: option.value };
-        ["services", "diagnosis", "outcomes", "details"].forEach((key) => delete clean[key]);
+        if (currentStep.id === "goal" && current.goal !== option.value) {
+          ["services", "diagnosis", "outcomes", "details"].forEach((key) => delete clean[key]);
+        }
+        if (currentStep.id === "diagnosis" && current.diagnosis !== option.value) delete clean.outcomes;
         return clean;
       });
-      if (currentStep.autoAdvance) window.setTimeout(() => moveTo(screen + 1), 420);
       return;
     }
-    if (values.includes(option.value)) return setAnswer(currentStep.id, values.filter((item) => item !== option.value));
-    if (currentStep.type === "limit" && values.length >= (currentStep.limit || 3)) return;
-    setAnswer(currentStep.id, [...values, option.value]);
+    const nextValues = values.includes(option.value)
+      ? values.filter((item) => item !== option.value)
+      : [...values, option.value];
+    if (!values.includes(option.value) && currentStep.type === "limit" && values.length >= (currentStep.limit || 3)) return;
+    if (currentStep.id === "services" && furthestScreen > screen) {
+      setFurthestScreen(screen);
+      setAnswers((current) => {
+        const clean: Answers = { ...current, services: nextValues };
+        delete clean.diagnosis;
+        delete clean.outcomes;
+        return clean;
+      });
+      return;
+    }
+    if (values.includes(option.value)) return setAnswer(currentStep.id, nextValues);
+    setAnswer(currentStep.id, nextValues);
   };
 
   const validate = () => {
@@ -219,6 +258,7 @@ export default function AssistantPage() {
   const reset = () => {
     setAnswers({});
     setScreen(0);
+    setFurthestScreen(0);
     localStorage.removeItem(STORAGE);
   };
 
@@ -238,14 +278,50 @@ export default function AssistantPage() {
         <Link href="/" className="assistant-brand" aria-label={c.ui.close}><img src="/logos/ds2-white.png" alt="DS2" /></Link>
         <div className="assistant-progress" aria-label={`${c.ui.progress}: ${percent}%`}>
           <div className="assistant-progress__copy"><span>{c.ui.step} {visibleStep} / {steps.length}</span><strong>{percent}% {c.ui.complete}</strong><small>{remaining} {c.ui.remaining}</small></div>
-          <div className="assistant-progress__track"><b style={{ width: `${percent}%` }} />{steps.map((item, index) => <i key={item.id} className={index < visibleStep || isReview ? "is-done" : ""} />)}</div>
+          <div
+            className={`assistant-progress__track${progressDragStart.current !== null ? " is-dragging" : ""}`}
+            style={{ "--progress-drag": `${progressDrag}px` } as CSSProperties}
+            onPointerDown={(event) => {
+              progressDragStart.current = event.clientX;
+              suppressProgressClick.current = false;
+            }}
+            onPointerMove={(event) => {
+              if (progressDragStart.current === null) return;
+              setProgressDrag(Math.max(-48, Math.min(48, event.clientX - progressDragStart.current)));
+            }}
+            onPointerUp={(event) => finishProgressDrag(event.clientX)}
+            onPointerCancel={() => {
+              progressDragStart.current = null;
+              setProgressDrag(0);
+            }}
+          >
+            <b style={{ width: `${percent}%` }} />
+            {steps.map((item, index) => {
+              const isCurrent = !isReview && index === screen;
+              const isVisited = isReview || index <= furthestScreen;
+              const canVisit = isVisited && !isCurrent;
+              return <button
+                type="button"
+                key={`${item.id}-${index}`}
+                className={`${isVisited ? "is-done" : "is-locked"}${isCurrent ? " is-current" : ""}`}
+                disabled={!canVisit}
+                aria-label={`${c.ui.step} ${index + 1}: ${item.title}`}
+                title={canVisit ? item.title : undefined}
+                onClick={() => {
+                  if (suppressProgressClick.current) {
+                    suppressProgressClick.current = false;
+                    return;
+                  }
+                  if (canVisit) moveTo(index);
+                }}
+              />;
+            })}
+          </div>
         </div>
         <div className="assistant-nav__actions"><button type="button" className={`assistant-voice${voiceOn ? " is-on" : ""}`} onClick={() => setVoiceOn((current) => !current)} aria-pressed={voiceOn}><span aria-hidden="true">{voiceOn ? "◖))" : "◖×"}</span>{voiceOn ? "Arya on" : "Arya off"}</button><LangToggle /></div>
       </header>
 
       <section className="assistant-stage">
-        <AryaGuide key={`${lang}-${screen}-${replay}`} voiceSrc={voiceSrc} help={step?.help || c.ui.reviewHelp} lang={lang} enabled={voiceOn} onReplay={() => setReplay((value) => value + 1)} />
-
         <div className="assistant-screen" key={`${lang}-${screen}`}>
           {step && <div className={`assistant-question assistant-question--${step.type}`}>
             <header>
@@ -254,6 +330,8 @@ export default function AssistantPage() {
               <h1>{step.title}</h1>
               <span className="assistant-help">{step.help}</span>
             </header>
+
+            <AryaGuide key={`${lang}-${screen}-${replay}`} voiceSrc={voiceSrc} lang={lang} enabled={voiceOn} onReplay={() => setReplay((value) => value + 1)} />
 
             {step.options && <div className="assistant-options">
               {step.options.map((option, index) => {
@@ -277,6 +355,7 @@ export default function AssistantPage() {
 
           {isReview && <div className="assistant-review">
             <header><p>{c.ui.reviewEyebrow}</p><h1>{c.ui.reviewTitle}</h1><span>{c.ui.reviewHelp}</span></header>
+            <AryaGuide key={`${lang}-${screen}-${replay}`} voiceSrc={voiceSrc} lang={lang} enabled={voiceOn} onReplay={() => setReplay((value) => value + 1)} />
             <div className="assistant-review__grid">{summary.map(([label, value], index) => <article key={label}><span>{String(index + 1).padStart(2, "0")}</span><button type="button" onClick={() => moveTo(index)}>{lang === "el" ? "Αλλαγή" : "Edit"}</button><h2>{label}</h2><p>{value}</p></article>)}</div>
           </div>}
 
@@ -286,9 +365,7 @@ export default function AssistantPage() {
 
       <footer className="assistant-controls">
         <button type="button" onClick={() => moveTo(screen - 1)} disabled={screen === 0}><span>←</span>{c.ui.back}</button>
-        <span>{step?.eyebrow || c.ui.reviewEyebrow}</span>
-        {!isReview && !step?.autoAdvance && <button type="button" className="assistant-next" onClick={next}>{screen === steps.length - 1 ? c.ui.review : c.ui.next}<span>→</span></button>}
-        {!isReview && step?.autoAdvance && <span className="assistant-autocue">{lang === "el" ? "Επιλέξτε για συνέχεια" : "Choose to continue"}</span>}
+        {!isReview && <button type="button" className="assistant-next" onClick={next}>{screen === steps.length - 1 ? c.ui.review : c.ui.next}<span>→</span></button>}
         {isReview && <div className="assistant-finish"><button type="button" onClick={reset}>{c.ui.reset}</button><button type="button" className="assistant-next" onClick={send}>{c.ui.send}<span>↗</span></button></div>}
       </footer>
     </main>
@@ -337,7 +414,7 @@ function ChoiceIcon({ value, fallbackIndex }: { value: string; fallbackIndex: nu
   </span>;
 }
 
-function AryaGuide({ voiceSrc, help, lang, enabled, onReplay }: { voiceSrc: string; help: string; lang: "en" | "el"; enabled: boolean; onReplay: () => void }) {
+function AryaGuide({ voiceSrc, lang, enabled, onReplay }: { voiceSrc: string; lang: "en" | "el"; enabled: boolean; onReplay: () => void }) {
   const mountRef = useRef<HTMLDivElement>(null);
   const orbRef = useRef<AryaOrbHandle | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -375,8 +452,7 @@ function AryaGuide({ voiceSrc, help, lang, enabled, onReplay }: { voiceSrc: stri
   }, [enabled, voiceSrc]);
 
   return <aside className="arya-guide">
-    <button type="button" className="arya-orb" onClick={onReplay} aria-label={lang === "el" ? "Επανάληψη ερώτησης" : "Repeat Arya’s question"}><span ref={mountRef} /></button>
-    <div className="arya-bubble"><div><i /><strong>Arya</strong><small>DS2 assistant</small></div><p>{help}</p><button type="button" onClick={onReplay}>{lang === "el" ? "Ξανά" : "Hear again"}<span aria-hidden="true">◖))</span></button></div>
+    <button type="button" className="arya-orb" onClick={onReplay} aria-label={lang === "el" ? "Επανάληψη ερώτησης" : "Repeat Arya’s question"} title={lang === "el" ? "Πατήστε για να ακούσετε την Arya" : "Click to hear Arya"}><span ref={mountRef} /></button>
   </aside>;
 }
 
