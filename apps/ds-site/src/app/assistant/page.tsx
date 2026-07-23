@@ -410,7 +410,7 @@ export default function AssistantPage() {
 
       {error && <p className="assistant-error" role="alert">{error}</p>}
       <footer className="assistant-controls">
-        <button type="button" className="assistant-arrow assistant-arrow--back" onClick={() => moveTo(screen - 1)} disabled={screen === 0} aria-label={c.ui.back} title={c.ui.back}><span aria-hidden="true">←</span></button>
+        {screen > 0 && <button type="button" className="assistant-arrow assistant-arrow--back" onClick={() => moveTo(screen - 1)} aria-label={c.ui.back} title={c.ui.back}><span aria-hidden="true">←</span></button>}
         {!isReview && <button type="button" className="assistant-arrow assistant-next" onClick={next} aria-label={screen === steps.length - 1 ? c.ui.review : c.ui.next} title={screen === steps.length - 1 ? c.ui.review : c.ui.next}><span aria-hidden="true">→</span></button>}
         {isReview && <div className="assistant-finish"><button type="button" onClick={reset}>{c.ui.reset}</button><button type="button" className="assistant-next" onClick={send}>{c.ui.send}</button></div>}
       </footer>
