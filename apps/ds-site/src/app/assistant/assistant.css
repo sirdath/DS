@@ -285,6 +285,14 @@
   border-radius: 50%;
 }
 .assistant-controls > .assistant-arrow span { font-size: 18px; line-height: 1; }
+.assistant-controls > .assistant-arrow.assistant-arrow--back {
+  display: grid;
+  justify-content: center;
+  gap: 0;
+}
+.assistant-controls {
+  border-top: 0 !important;
+}
 .assistant-controls > .assistant-next {
   width: 48px;
   min-width: 48px;
