@@ -68,6 +68,8 @@ export default function PageChrome({ children }: { children: ReactNode }) {
             <ul className="nav-links">
               <li><Link className="nav-roll" href="/about"><span data-text={t.nav.about}>{t.nav.about}</span></Link></li>
               <li><Link className="nav-roll" href="/portfolio"><span data-text={t.nav.portfolio}>{t.nav.portfolio}</span></Link></li>
+              <li><Link className="nav-roll" href="/tools"><span data-text={t.nav.tools}>{t.nav.tools}</span></Link></li>
+              <li><Link className="nav-roll" href="/blog"><span data-text={t.nav.blog}>{t.nav.blog}</span></Link></li>
             </ul>
             <LangToggle />
             <ContactCTA size="sm" label={t.cta.send} onOpen={() => openContact(t.hero.book.draft)} />

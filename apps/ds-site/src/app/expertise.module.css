@@ -1,0 +1,204 @@
+/* Our expertise — a scrolling credibility strip (where the team comes from) +
+   the team blurb and two founder cards. Placeholder text-wordmarks + photo
+   slots, swap for real logos/photos before launch. */
+
+.expertise {
+  position: relative;
+  overflow: hidden;
+  background: #08090a;
+  color: #f4f3f0;
+  padding: clamp(72px, 10vh, 140px) 0;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+}
+.head {
+  max-width: 1240px;
+  margin: 0 auto clamp(30px, 4vh, 46px);
+  padding: 0 clamp(20px, 5vw, 80px);
+}
+.eyebrow {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: #8dcbff;
+}
+.title {
+  margin: 16px 0 0;
+  font-size: clamp(28px, 3.8vw, 48px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.03;
+}
+.title em {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  color: #8dcbff;
+}
+
+/* scrolling logo marquee */
+.marquee {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 10px 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+.track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  gap: clamp(38px, 5vw, 84px);
+  animation: marquee 34s linear infinite;
+  will-change: transform;
+}
+.marquee:hover .track {
+  animation-play-state: paused;
+}
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(38px, 5vw, 84px);
+  white-space: nowrap;
+}
+.logo span {
+  font-size: clamp(16px, 1.7vw, 22px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: rgba(230, 232, 235, 0.58);
+  filter: grayscale(1);
+  transition: color 0.3s ease;
+}
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(141, 203, 255, 0.5);
+  flex: none;
+}
+/* real logo files sit in a clean white chip so mixed backgrounds
+   (UCL purple, Intelmatix black, others white) read as one wall */
+.logoImg {
+  height: clamp(52px, 5.5vw, 66px);
+  width: auto;
+  max-width: 210px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 12px;
+  padding: 9px 18px;
+  box-sizing: border-box;
+  opacity: 0.92;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.marquee:hover .logoImg {
+  opacity: 1;
+}
+
+/* team */
+.team {
+  position: relative;
+  max-width: 1240px;
+  margin: clamp(48px, 7vh, 82px) auto 0;
+  padding: 0 clamp(20px, 5vw, 80px);
+}
+.blurb {
+  font-size: clamp(20px, 2.4vw, 30px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.32;
+  max-width: 780px;
+  text-wrap: balance;
+}
+.blurb em {
+  color: #8dcbff;
+  font-style: normal;
+}
+.founders {
+  margin-top: clamp(30px, 5vh, 52px);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(18px, 2.4vw, 32px);
+}
+.founder {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 2vw, 24px);
+  padding: clamp(18px, 2vw, 24px);
+  background: linear-gradient(180deg, #16181c 0%, #101114 100%);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+}
+.avatar {
+  position: relative;
+  flex: none;
+  width: clamp(88px, 9vw, 108px);
+  height: clamp(88px, 9vw, 108px);
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(150deg, #232935 0%, #0e1013 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(141, 203, 255, 0.45);
+}
+.avatar svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.fmeta {
+  min-width: 0;
+}
+.frole {
+  font-size: clamp(17px, 1.8vw, 21px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #f4f3f0;
+  line-height: 1.1;
+}
+.fcity {
+  margin-top: 5px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: #8dcbff;
+  text-transform: uppercase;
+}
+.fbg {
+  margin-top: 8px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: #8f8d87;
+  line-height: 1.5;
+}
+.based {
+  margin-top: clamp(26px, 3.5vh, 40px);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: #6d6b66;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-100% / 3));
+  }
+}
+
+@media (max-width: 720px) {
+  .founders {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}

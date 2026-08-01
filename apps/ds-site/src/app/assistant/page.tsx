@@ -248,6 +248,9 @@ export default function AssistantPage() {
         if (currentStep.id === "diagnosis" && current.diagnosis !== option.value) delete clean.outcomes;
         return clean;
       });
+      // Single-select auto-advances — one tap moves the brief forward, so it
+      // feels effortless to start and keep going. (Back arrow still lets you change.)
+      window.setTimeout(() => moveTo(screen + 1), 300);
       return;
     }
     const nextValues = values.includes(option.value)

@@ -36,6 +36,8 @@ export function MobileMenu({ onContact }: { onContact: () => void }) {
     { href: "/", label: t.footer.home },
     { href: "/about", label: t.nav.about },
     { href: "/portfolio", label: t.nav.portfolio },
+    { href: "/tools", label: t.nav.tools },
+    { href: "/blog", label: t.nav.blog },
   ];
 
   const sheet = (

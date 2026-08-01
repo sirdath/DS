@@ -11,14 +11,14 @@ type Page = { id: string; eyebrow: string; title: string; body: string };
 type FounderLogo = { label: string; img?: string; bg?: "light" | "dark" };
 const FOUNDERS: Record<string, { img: string; logos: FounderLogo[] }> = {
   dimitris: {
-    img: "/founders/london.png",
+    img: "/founders/london.webp",
     logos: [
       { label: "UCL" },
       { label: "Intelmatix", img: "/founders/logos/intelmatix.jpg", bg: "dark" },
     ],
   },
   stelios: {
-    img: "/founders/athens.png",
+    img: "/founders/athens.webp",
     logos: [
       { label: "Big 4" },
       { label: "Netherlands" },

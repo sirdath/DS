@@ -1,0 +1,136 @@
+/* Textura-style work grid: large imagery-forward cards, slash-separated
+   category tags, quiet hover zoom + reveal. Dark, minimal, high contrast. */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(24px, 3.4vw, 56px) clamp(20px, 2.6vw, 40px);
+  width: 100%;
+}
+.card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+}
+.shot {
+  position: relative;
+  aspect-ratio: 16 / 11;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #0e1013;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  transform: scale(1.001);
+  transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.5s ease;
+  filter: saturate(0.96) brightness(0.94);
+}
+.card:hover .shot img,
+.card:focus-visible .shot img {
+  transform: scale(1.06);
+  filter: saturate(1.05) brightness(1);
+}
+/* a thin index badge + a reveal arrow, textura-like */
+.num {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: rgba(244, 243, 240, 0.86);
+  background: rgba(8, 9, 10, 0.5);
+  padding: 4px 8px;
+  border-radius: 20px;
+  backdrop-filter: blur(3px);
+}
+.open {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 9, 10, 0.5);
+  color: #f4f3f0;
+  font-size: 15px;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s ease;
+}
+.card:hover .open,
+.card:focus-visible .open {
+  opacity: 1;
+  transform: translateY(0);
+}
+.card:hover .open {
+  background: #8dcbff;
+  color: #08090a;
+}
+.meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 16px 2px 0;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.name {
+  font-size: clamp(20px, 2vw, 27px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: #f4f3f0;
+  transition: color 0.25s ease;
+}
+.card:hover .name {
+  color: #8dcbff;
+}
+.tags {
+  flex: none;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: #8f8d87;
+  text-align: right;
+  white-space: nowrap;
+}
+.year {
+  margin-left: 10px;
+  color: #5f5e59;
+}
+
+@media (max-width: 720px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .meta {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .tags {
+    text-align: left;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shot img,
+  .open,
+  .name {
+    transition: none;
+  }
+  .card:hover .shot img {
+    transform: none;
+  }
+}

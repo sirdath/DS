@@ -106,11 +106,51 @@ function voiceEnvelope(time: number) {
   return Math.min(1, syllable * phrase * 1.6);
 }
 
+/** Cheap probe: does this browser/GPU actually hand back a WebGL context?
+ *  Lets us skip THREE entirely (it console.errors on a failed context) when it
+ *  would fail — GPU disabled, sandboxed, or a transient GPU-process crash. */
+function webglAvailable(): boolean {
+  if (typeof window === "undefined" || !window.WebGLRenderingContext) return false;
+  try {
+    const canvas = document.createElement("canvas");
+    const gl = (canvas.getContext("webgl2") || canvas.getContext("webgl")) as WebGLRenderingContext | null;
+    if (!gl) return false;
+    gl.getExtension("WEBGL_lose_context")?.loseContext();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Static CSS orb shown when WebGL is unavailable or the visitor prefers reduced
+ *  motion. Same iridescent palette as the shader; no render loop, no crash. */
+function createFallbackOrb(container: HTMLElement): AryaOrbHandle {
+  const el = document.createElement("div");
+  el.setAttribute("aria-hidden", "true");
+  el.style.cssText =
+    "width:100%;height:100%;border-radius:50%;" +
+    "background:radial-gradient(circle at 38% 30%,rgba(233,223,255,.96),rgba(168,150,255,.92) 30%,rgba(125,163,255,.86) 56%,rgba(120,120,205,.72) 78%,rgba(72,68,132,.58));" +
+    "box-shadow:0 0 22px 3px rgba(150,160,255,.32),inset 0 0 16px rgba(255,255,255,.22);";
+  container.appendChild(el);
+  return { setState() {}, destroy() { el.remove(); } };
+}
+
 export function createAryaOrb(container: HTMLElement): AryaOrbHandle {
+  // Decorative 3D must never crash the brief. If WebGL is blocked/unavailable or
+  // the visitor prefers reduced motion, fall back to a calm static orb.
+  const reduceMotion =
+    typeof window !== "undefined" && !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  if (reduceMotion || !webglAvailable()) return createFallbackOrb(container);
+
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
   camera.position.set(0, 0, 4.4);
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  let renderer: THREE.WebGLRenderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  } catch {
+    return createFallbackOrb(container);
+  }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.domElement.style.cssText = "display:block;width:100%;height:100%";
   container.appendChild(renderer.domElement);

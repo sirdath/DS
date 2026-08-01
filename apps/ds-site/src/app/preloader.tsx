@@ -11,8 +11,8 @@ export default function Preloader() {
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const minMs = reduce ? 500 : 2000; // let the DS2 draw + fill complete
-    const maxMs = 9000; // hard cap so a slow/failed video never hangs the screen
+    const minMs = reduce ? 300 : 700; // fast — the DS2 mark flashes in, no video to wait on
+    const maxMs = 1600; // hard cap
     const start = performance.now();
     const timers: number[] = [];
     let done = false;
@@ -32,7 +32,7 @@ export default function Preloader() {
       done = true;
       unlockScroll();
       // Signal the hero film to start from frame 0 exactly as we reveal the site.
-      window.__ds2Loaded = true;
+      (window as Window & { __ds2Loaded?: boolean }).__ds2Loaded = true;
       window.dispatchEvent(new Event("ds2:loaded"));
       setOut(true);
       timers.push(window.setTimeout(() => setGone(true), 850)); // unmount after fade
@@ -47,7 +47,8 @@ export default function Preloader() {
         timers.push(window.setTimeout(maybeReveal, minMs - elapsed + 20));
         return;
       }
-      if (window.__ds2VideoReady || elapsed >= maxMs) reveal();
+      // No hero video to wait on any more — reveal as soon as the minimum has passed.
+      reveal();
     };
 
     window.addEventListener("ds2:videoready", maybeReveal);

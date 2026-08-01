@@ -548,6 +548,11 @@ h2.section-title em { font-style: normal; color: var(--silver); }
   align-items: center; justify-content: center; padding: 120px 24px 80px; text-align: center;
   position: relative;
 }
+/* The native Core hero is full-bleed and owns its own height — strip the section
+   chrome so it sits edge to edge with no letterboxing. */
+.hero.hero--core {
+  padding: 0; min-height: 0; display: block; text-align: left;
+}
 .hero-logo-wrap {
   position: relative;
   display: inline-block;
@@ -1201,8 +1206,8 @@ h2.section-title em { font-style: normal; color: var(--silver); }
 }
 .founder-half:hover .photo { filter: grayscale(0.15) brightness(0.65) contrast(1.05); transform: scale(1.04); }
 /* City skyline = base layer (Athens for Dimitris, London for Stelios). */
-.founder-half.left .photo  { background-image: url('/founders/athens.png'); }
-.founder-half.right .photo { background-image: url('/founders/london.png'); }
+.founder-half.left .photo  { background-image: url('/founders/athens.webp'); }
+.founder-half.right .photo { background-image: url('/founders/london.webp'); }
 /* Founder portrait = screen-blended overlay → "this person, this city" double-exposure.
    Placeholder silhouettes for now; drop real dark-bg/cut-out portraits at
    /founders/dimitris.jpg + /founders/stelios.jpg and swap the two URLs below. */
@@ -1234,7 +1239,7 @@ h2.section-title em { font-style: normal; color: var(--silver); }
     /* solid ink at the very top so the portal's dark bottom dissolves straight in,
        then the landscape surfaces, with a top-weighted scrim for legibility */
     linear-gradient(180deg, var(--ink-bg) 0%, color-mix(in srgb, var(--ink-bg) 74%, transparent) 15%, rgba(11,13,14,0.5) 42%, rgba(11,13,14,0.58) 66%, rgba(11,13,14,0.93) 100%),
-    url('/contact-section-bg.png') !important;
+    url('/contact-section-bg.webp') !important;
   background-size: cover !important;
   background-position: center center !important;
   background-repeat: no-repeat !important;
@@ -2430,11 +2435,11 @@ footer { border-color: var(--hairline) !important; }
   fill: rgba(244,245,247,0);
   stroke: #f4f5f7; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round;
   stroke-dasharray: 1; stroke-dashoffset: 1;
-  animation: ds2-draw 1.55s cubic-bezier(0.65,0,0.35,1) forwards, ds2-fill 0.55s ease forwards;
+  animation: ds2-draw 0.4s cubic-bezier(0.65,0,0.35,1) forwards, ds2-fill 0.18s ease forwards;
 }
-.preloader__mark path:nth-child(1) { animation-delay: 0s, 1.45s; }
-.preloader__mark path:nth-child(2) { animation-delay: 0.2s, 1.65s; }
-.preloader__mark path:nth-child(3) { animation-delay: 0.4s, 1.85s; }
+.preloader__mark path:nth-child(1) { animation-delay: 0s, 0.32s; }
+.preloader__mark path:nth-child(2) { animation-delay: 0.05s, 0.37s; }
+.preloader__mark path:nth-child(3) { animation-delay: 0.1s, 0.42s; }
 @keyframes ds2-draw { to { stroke-dashoffset: 0; } }
 @keyframes ds2-fill { to { fill: rgba(244,245,247,1); } }
 @media (prefers-reduced-motion: reduce) {
@@ -3226,3 +3231,12 @@ body[data-logo="laser"] .laser-beam {
   /* without the scrub there is no pinned journey — no cue needed either */
   .portal__cue { display: none; }
 }
+
+/* ── PERF: static/fast mode — kill continuous decorative motion (was compositing a
+   full-viewport 96px-blur layer every frame). Delete this block to restore. ── */
+.ds-atmosphere::before,
+.ds-atmosphere::after { animation: none !important; }
+.hero-aura::before { animation: none !important; }
+/* Kill backdrop-blur — re-composited every scroll frame (the remaining scroll cost).
+   Glass panels fall back to their (mostly opaque) background colour. */
+*, *::before, *::after { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }

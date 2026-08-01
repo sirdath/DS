@@ -5,6 +5,10 @@ import ContactPanel, { ContactCTA } from "./contact-panel";
 import { useT, useLang, LangToggle } from "./i18n";
 import { DS2Mark } from "./ds2-mark";
 import HeroVideo from "./hero-video";
+import SelectedWork from "./selected-work";
+import ToolsPantheon from "./tools-pantheon";
+import QuoteSection from "./quote-section";
+import Expertise from "./expertise";
 import Preloader from "./preloader";
 import SiteFooter from "./site-footer";
 import { MobileMenu } from "./mobile-menu";
@@ -37,6 +41,11 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
+    // PERF: the heavy scroll stack — Lenis smooth-scroll + GSAP ScrollTrigger + the
+    // per-frame scrub + magnetic buttons — is disabled. It ran a rAF loop every frame
+    // (via gsap.ticker with lagSmoothing off) even when idle, pinning the frame budget.
+    // Native scroll only now. Set window.__ds2_enable_motion = true to restore it.
+    if (!("__ds2_enable_motion" in window)) return;
     let cancelled = false;
     const disposers: Array<() => void> = [];
     const typeAbort = { aborted: false };
@@ -399,6 +408,8 @@ export default function HomePage() {
             <ul className="nav-links">
               <li><Link className="nav-roll" href="/about"><span data-text={t.nav.about}>{t.nav.about}</span></Link></li>
               <li><Link className="nav-roll" href="/portfolio"><span data-text={t.nav.portfolio}>{t.nav.portfolio}</span></Link></li>
+              <li><Link className="nav-roll" href="/tools"><span data-text={t.nav.tools}>{t.nav.tools}</span></Link></li>
+              <li><Link className="nav-roll" href="/blog"><span data-text={t.nav.blog}>{t.nav.blog}</span></Link></li>
             </ul>
             <LangToggle />
             <span className="nav-merge">
@@ -412,45 +423,27 @@ export default function HomePage() {
       <a id="top" />
 
       {/* â”€â”€â”€ Hero â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <section className="hero hero--glass" data-tint="color-mix(in oklab, var(--accent) 26%, transparent)">
+      <section className="hero hero--glass hero--core" data-tint="color-mix(in oklab, var(--accent) 26%, transparent)">
         <HeroVideo />
-        <div className="hero-glass__caption" aria-hidden="true">
-          <div className="tagline">
-            <span className="tagline-1">{t.hero.tag1}</span>
-            <span className="tagline-2">{t.hero.tag2}</span>
-          </div>
-        </div>
-
-        {/* Top-left: what we build */}
-        <ul className="hero-tags" aria-label={t.hero.what}>
-          {t.hero.tags.map((tag) => (
-            <li key={tag}>
-              <span className="hero-tags__slash" aria-hidden="true">/</span>
-              {tag}
-            </li>
-          ))}
-        </ul>
-
-        {/* Bottom-right: book a call (opens the Telegram contact panel) */}
-        <div className="hero-book">
-          <div className="hero-book__avatar" aria-hidden="true">
-            <DS2Mark />
-          </div>
-          <div className="hero-book__body">
-            <div className="hero-book__title">{t.hero.book.title}</div>
-            <button
-              type="button"
-              className="hero-book__cta"
-              onClick={() => openChat(t.hero.book.draft)}
-            >
-              {t.hero.book.cta}
-              <span className="hero-book__arrow" aria-hidden="true">→</span>
-            </button>
-          </div>
-        </div>
+        {/* The Core hero (iframe above) carries its own wordmark, tagline, service
+            coverflow and CTA, so the old glass caption / hero-tags / hero-book
+            overlays are hidden for this in-context preview. */}
       </section>
 
-      <HomeStory />
+      {/* â”€â”€â”€ Selected work â€” real shipped projects + labelled concepts â”€â”€â”€ */}
+      <SelectedWork />
+
+      {/* â”€â”€â”€ The pantheon â€” hover-preview of the seven tools â”€â”€â”€ */}
+      <ToolsPantheon />
+
+      {/* â”€â”€â”€ DS2 statement quote â”€â”€â”€ */}
+      <QuoteSection />
+
+      {/* â”€â”€â”€ Our expertise â€” credibility strip + team â”€â”€â”€ */}
+      <Expertise />
+
+      {/* â”€â”€ Other sections set aside while we rebuild from a clean base. â”€â”€ */}
+      {/* <HomeStory /> */}
 
       {/* â”€â”€â”€ Founders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {/* Founders / team section now lives on the About page. */}
@@ -501,7 +494,15 @@ export default function HomePage() {
                   <span id="compose-status">{t.contact.statusDrafting}</span>
                 </div>
                 <div className="compose-actions">
-                  <ContactCTA size="sm" label={t.cta.send} onOpen={() => openChat()} />
+                  <Link href="/assistant" className="cta cta--sm">
+                    {lang === "el" ? "Ξεκινήστε το brief" : "Start your brief"}
+                    <span className="cta__icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M22 2 11 13" />
+                        <path d="M22 2 15 22l-4-9-9-4 20-7Z" />
+                      </svg>
+                    </span>
+                  </Link>
                 </div>
               </div>
             </div>

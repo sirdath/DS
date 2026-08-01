@@ -1,8 +1,8 @@
 .projects-page { --p-space: #050607; --p-panel: #111419; --p-text: #f7f9fb; --p-muted: #aeb4bd; --p-ice: #8dcbff; --p-line: rgba(255,255,255,.16); position: relative; z-index: 2; color: var(--p-text); background: var(--p-space); }
 .projects-hero { position: relative; min-height: 100svh; padding: 120px clamp(20px, 5vw, 80px) 62px; display: flex; align-items: flex-end; overflow: hidden; }
 .projects-hero__image, .projects-hero__shade { position: absolute; inset: 0; }
-.projects-hero__image img { width: 100%; height: 100%; object-fit: cover; object-position: top center; filter: grayscale(.85) contrast(1.08) brightness(.62); transform: scale(1.03); animation: projects-hero-in 1.5s cubic-bezier(.32,.72,0,1) both; }
-.projects-hero__shade { background: linear-gradient(180deg, rgba(5,6,7,.18), rgba(5,6,7,.2) 42%, #050607 100%); }
+.projects-hero__image img { width: 100%; height: 100%; object-fit: cover; object-position: 82% center; filter: saturate(1) brightness(.5) blur(22px); transform: scale(1.22); animation: projects-hero-in 1.5s cubic-bezier(.32,.72,0,1) both; }
+.projects-hero__shade { background: linear-gradient(180deg, rgba(5,6,7,.5) 0%, rgba(5,6,7,.62) 45%, #050607 100%); }
 .projects-hero__copy { position: relative; z-index: 2; width: min(1280px,100%); margin: 0 auto; }
 .projects-hero__copy > p, .projects-row__number, .projects-row__type, .projects-row__year { font: 10px/1.4 "IBM Plex Mono",Consolas,monospace; letter-spacing: .11em; text-transform: uppercase; color: var(--p-muted); }
 .projects-hero h1 { max-width: 1040px; margin: 24px 0 48px; font-size: clamp(58px,9vw,142px); font-weight: 300; line-height: .9; letter-spacing: -.065em; text-wrap: balance; }

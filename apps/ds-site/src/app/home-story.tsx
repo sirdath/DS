@@ -70,8 +70,8 @@ const copy = {
       intro: "Choose a direction, then move across the preview. The useful part is not the template — it is how quickly the right experience can become tangible.",
       explore: "Explore the experience",
       items: {
-        atelier: { name: "Atelier", type: "Fashion commerce", body: "A premium shop direction built around discovery, trust and a frictionless path to purchase.", image: "/templates/atelier.png", notes: ["Brand story", "Product discovery", "Clear purchase path"] },
-        padel: { name: "Padel City", type: "Booking experience", body: "A booking-first direction that turns availability, payment and repeat visits into one clear journey.", image: "/templates/padel.png", notes: ["Live availability", "Fast booking", "Customer retention"] },
+        atelier: { name: "Atelier", type: "Fashion commerce", body: "A premium shop direction built around discovery, trust and a frictionless path to purchase.", image: "/templates/atelier.webp", notes: ["Brand story", "Product discovery", "Clear purchase path"] },
+        padel: { name: "Padel City", type: "Booking experience", body: "A booking-first direction that turns availability, payment and repeat visits into one clear journey.", image: "/templates/padel.webp", notes: ["Live availability", "Fast booking", "Customer retention"] },
       },
     },
     work: {
@@ -81,8 +81,8 @@ const copy = {
       all: "See all projects",
       open: "Open project",
       items: [
-        { name: "GlobalTeamPlans", tag: "Website · SEO · Lead generation", year: "2026", image: "/portfolio/globalteamplans.png", href: "https://globalteamplans.com" },
-        { name: "dataportfolio.co.uk", tag: "SaaS · Product · Platform", year: "2026", image: "/portfolio/dataportfolio.png", href: "https://dataportfolio.co.uk" },
+        { name: "GlobalTeamPlans", tag: "Website · SEO · Lead generation", year: "2026", image: "/portfolio/globalteamplans.webp", href: "https://globalteamplans.com" },
+        { name: "dataportfolio.co.uk", tag: "SaaS · Product · Platform", year: "2026", image: "/portfolio/dataportfolio.webp", href: "https://dataportfolio.co.uk" },
       ],
     },
     delivery: {
@@ -134,15 +134,15 @@ const copy = {
       intro: "Επιλέξτε μια κατεύθυνση και κινηθείτε πάνω στην προεπισκόπηση. Η αξία δεν είναι το template — είναι το πόσο γρήγορα η σωστή εμπειρία γίνεται χειροπιαστή.",
       explore: "Εξερευνήστε την εμπειρία",
       items: {
-        atelier: { name: "Atelier", type: "Fashion commerce", body: "Μια premium κατεύθυνση e-shop γύρω από την ανακάλυψη, την εμπιστοσύνη και την εύκολη αγορά.", image: "/templates/atelier.png", notes: ["Ιστορία brand", "Ανακάλυψη προϊόντων", "Καθαρή αγορά"] },
-        padel: { name: "Padel City", type: "Εμπειρία κρατήσεων", body: "Μια κατεύθυνση όπου διαθεσιμότητα, πληρωμή και επαναλαμβανόμενες επισκέψεις γίνονται μία ξεκάθαρη διαδρομή.", image: "/templates/padel.png", notes: ["Live διαθεσιμότητα", "Γρήγορη κράτηση", "Διατήρηση πελατών"] },
+        atelier: { name: "Atelier", type: "Fashion commerce", body: "Μια premium κατεύθυνση e-shop γύρω από την ανακάλυψη, την εμπιστοσύνη και την εύκολη αγορά.", image: "/templates/atelier.webp", notes: ["Ιστορία brand", "Ανακάλυψη προϊόντων", "Καθαρή αγορά"] },
+        padel: { name: "Padel City", type: "Εμπειρία κρατήσεων", body: "Μια κατεύθυνση όπου διαθεσιμότητα, πληρωμή και επαναλαμβανόμενες επισκέψεις γίνονται μία ξεκάθαρη διαδρομή.", image: "/templates/padel.webp", notes: ["Live διαθεσιμότητα", "Γρήγορη κράτηση", "Διατήρηση πελατών"] },
       },
     },
     work: {
       eyebrow: "Επιλεγμένα έργα", title: "Πραγματική δουλειά. Ορατή με ένα πέρασμα.", intro: "Δύο επιχειρήσεις, δύο πολύ διαφορετικές ανάγκες και καμία έτοιμη απάντηση.", all: "Δείτε όλα τα έργα", open: "Άνοιγμα έργου",
       items: [
-        { name: "GlobalTeamPlans", tag: "Ιστοσελίδα · SEO · Lead generation", year: "2026", image: "/portfolio/globalteamplans.png", href: "https://globalteamplans.com" },
-        { name: "dataportfolio.co.uk", tag: "SaaS · Προϊόν · Πλατφόρμα", year: "2026", image: "/portfolio/dataportfolio.png", href: "https://dataportfolio.co.uk" },
+        { name: "GlobalTeamPlans", tag: "Ιστοσελίδα · SEO · Lead generation", year: "2026", image: "/portfolio/globalteamplans.webp", href: "https://globalteamplans.com" },
+        { name: "dataportfolio.co.uk", tag: "SaaS · Προϊόν · Πλατφόρμα", year: "2026", image: "/portfolio/dataportfolio.webp", href: "https://dataportfolio.co.uk" },
       ],
     },
     delivery: {
@@ -184,6 +184,8 @@ export default function HomeStory() {
       if (!frame) frame = requestAnimationFrame(update);
     };
     update();
+    // PERF: skip the per-scroll journey-progress updates (rAF + layout read each frame).
+    if (!("__ds2_enable_motion" in window)) return;
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     return () => {
@@ -226,6 +228,9 @@ export default function HomeStory() {
     };
 
     update();
+    // PERF: skip per-scroll value-card stacking (getComputedStyle + getBoundingClientRect
+    // per card each frame = layout thrash).
+    if (!("__ds2_enable_motion" in window)) return;
     window.addEventListener("scroll", onViewportChange, { passive: true });
     window.addEventListener("resize", onViewportChange);
     return () => {
