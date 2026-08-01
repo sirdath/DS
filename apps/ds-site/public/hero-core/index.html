@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#08090a;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:#e8e6e1;text-decoration:none}
+a:hover{color:#8DCBFF}
+@keyframes ds2-sheen{0%{transform:translateX(-130px) skewX(-18deg)}55%,100%{transform:translateX(470px) skewX(-18deg)}}
+[data-card]{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:background .32s ease,box-shadow .35s ease,border-color .3s ease}
+[data-nav]{transition:background .18s ease,border-color .18s ease,transform .18s cubic-bezier(.2,.8,.2,1),color .18s ease}
+[data-nav]:hover{background:rgba(141,203,255,.16)!important;border-color:rgba(141,203,255,.5)!important;color:#8DCBFF!important;transform:translateY(-2px)}
+@media (pointer:coarse){[data-nav]{display:none!important}}
+</style>
+</helmet>
+
+<div ref="{{ fitRef }}" data-screen-label="hero" style="position:relative;width:100%;height:100vh;overflow:hidden;background:#08090a;display:flex;align-items:center;justify-content:center">
+<div ref="{{ stageFitRef }}" style="width:1440px;height:900px;flex:none;transform-origin:50% 50%">
+
+<div ref="{{ rootRef }}" onPointerMove="{{ onPtr }}" style="position:relative;width:1440px;height:900px;background:#08090a;overflow:hidden">
+
+  <div ref="{{ bgRef }}" style="position:absolute;left:-70px;top:-70px;width:1580px;height:1040px;perspective:900px">
+    <sc-for list="{{ bgHexes }}" as="b" hint-placeholder-count="40">
+      <div data-hex="1" style="{{ b.style }}"></div>
+    </sc-for>
+  </div>
+  <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,9,10,.94) 0%,rgba(8,9,10,.42) 34%,rgba(8,9,10,.72) 62%,rgba(8,9,10,.97) 100%);pointer-events:none"></div>
+  <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,9,10,.9) 0%,rgba(8,9,10,0) 22%,rgba(8,9,10,0) 78%,rgba(8,9,10,.9) 100%);pointer-events:none"></div>
+
+  <div style="position:relative;z-index:6;padding:44px 56px 0;display:flex;align-items:center;justify-content:space-between;height:34px;display:none">
+    <span style="font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#57554f">// ATHENS · LONDON</span>
+    <div style="display:flex;align-items:center;gap:30px;font:400 13px/1 'Inter',sans-serif;color:#7c7a75">
+      <a href="#about" style="color:#7c7a75" style-hover="color:#8DCBFF">About</a>
+      <a href="#tools" style="color:#7c7a75" style-hover="color:#8DCBFF">Tools</a>
+      <a href="#projects" style="color:#7c7a75" style-hover="color:#8DCBFF">Projects</a>
+      <span style="font:500 11px/1 'IBM Plex Mono',monospace;color:#e8e6e1;letter-spacing:.06em">EN<span style="color:#4e4c48">/ΕΛ</span></span>
+    </div>
+  </div>
+
+  <div style="position:relative;z-index:6;margin-top:34px;display:flex;flex-direction:column;align-items:center">
+    <img src="uploads/ds2-wordmark-outline-white.png" alt="DS2" style="width:474px;height:auto;display:block;opacity:.96">
+    <h1 style="margin:26px 0 0;font-weight:600;font-size:48px;line-height:.98;letter-spacing:-.038em;color:#f4f3f0;text-align:center">Digital Solutions <span style="font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-weight:400;font-size:52px;letter-spacing:-.015em;color:#8DCBFF">consulting</span></h1>
+    <div style="margin:16px 0 0;font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#8DCBFF">// TWELVE THINGS WE BUILD — DRAG TO LOOK AROUND</div>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;top:442px;height:400px;perspective:1250px;perspective-origin:50% 50%;z-index:5">
+    <div ref="{{ ringRef }}" tabindex="0" onPointerDown="{{ onDown }}" onPointerMove="{{ onDrag }}" onPointerUp="{{ onUp }}" onPointerLeave="{{ onUp }}" onKeyDown="{{ onKey }}" style="position:absolute;left:50%;top:28px;width:0;height:0;transform-style:preserve-3d;outline:0;cursor:grab">
+      <sc-for list="{{ cards }}" as="c" hint-placeholder-count="5">
+        <div data-card="1" data-i="{{ c.i }}" onClick="{{ c.click }}" style="{{ c.style }}">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span data-cnum="1" style="font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#6d6b66">{{ c.num }}</span>
+            <span data-cgroup="1" style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;color:#6d6b66;border:1px solid rgba(255,255,255,.16);padding:4px 6px">{{ c.group }}</span>
+          </div>
+          <div data-cbig="1" style="position:relative;flex:1;margin:14px 0 15px;min-height:0;overflow:hidden;background:linear-gradient(160deg,#1a1d22 0%,#0e1013 100%);border:1px solid rgba(255,255,255,.16)">
+            <img data-cimg="1" src="{{ c.img }}" alt="{{ c.name }} example" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block">
+            <span data-cbigt="1" style="position:absolute;left:8px;bottom:7px;font:500 8px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(244,243,240,.72);background:rgba(8,9,10,.55);padding:3px 6px;border-radius:3px;pointer-events:none">EXAMPLE</span>
+            <button data-cview="1" onClick="{{ c.view }}" aria-label="See {{ c.name }} examples" style="position:absolute;top:8px;right:8px;z-index:3;display:inline-flex;align-items:center;gap:6px;background:rgba(8,9,10,.62);border:1px solid rgba(255,255,255,.22);color:#f4f3f0;font:600 8.5px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;padding:6px 8px;border-radius:7px;cursor:pointer;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)">SEE EXAMPLES <span style="font-size:11px">⤢</span></button>
+          </div>
+          <div data-cname="1" style="font-weight:600;font-size:25px;line-height:1.06;letter-spacing:-.028em;color:#f4f3f0">{{ c.name }}</div>
+          <div data-cblurb="1" style="margin-top:10px;font:400 13.5px/1.45 'Inter',sans-serif;color:#8f8d87;opacity:0;transition:opacity .28s ease">{{ c.blurb }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:0;top:442px;width:250px;height:400px;z-index:6;background:linear-gradient(90deg,#08090a 0%,rgba(8,9,10,.92) 34%,rgba(8,9,10,0) 100%);pointer-events:none"></div>
+  <div style="position:absolute;right:0;top:442px;width:250px;height:400px;z-index:6;background:linear-gradient(270deg,#08090a 0%,rgba(8,9,10,.92) 34%,rgba(8,9,10,0) 100%);pointer-events:none"></div>
+
+  <button data-nav="prev" onClick="{{ onPrev }}" aria-label="Previous service" style="position:absolute;left:38px;top:596px;z-index:8;width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.16);color:#e8e6e1;font:400 24px/1 'Inter',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0 4px 3px 0">‹</button>
+  <button data-nav="next" onClick="{{ onNext }}" aria-label="Next service" style="position:absolute;right:38px;top:596px;z-index:8;width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.16);color:#e8e6e1;font:400 24px/1 'Inter',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0 0 3px 4px">›</button>
+
+  <div ref="{{ modalRef }}" data-modal="1" style="position:absolute;inset:0;z-index:20;background:rgba(5,7,10,.8);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);display:none;align-items:center;justify-content:center">
+    <div style="position:relative;width:780px;max-width:92%;background:#0e1116;border:1px solid rgba(255,255,255,.14);border-radius:20px;overflow:hidden;box-shadow:0 70px 130px -30px rgba(0,0,0,.96)">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:17px 22px;border-bottom:1px solid rgba(255,255,255,.08)">
+        <div style="display:flex;align-items:center;gap:13px">
+          <span data-mgroup="1" style="font:600 9px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;color:#8DCBFF;border:1px solid rgba(141,203,255,.42);padding:5px 8px;border-radius:5px">BUILD</span>
+          <span data-mname="1" style="font:600 21px/1 'Inter',sans-serif;letter-spacing:-.02em;color:#f4f3f0">Web shops</span>
+        </div>
+        <button data-close="1" aria-label="Close preview" style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#e8e6e1;font:400 15px/1 'Inter',sans-serif;cursor:pointer">✕</button>
+      </div>
+      <div style="position:relative;height:392px;background:linear-gradient(160deg,#1a1d22,#0e1013);overflow:hidden">
+        <img data-mimg="1" src="uploads/ex-04.png" alt="example" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block">
+      </div>
+      <div style="display:flex;gap:9px;padding:12px 22px 0">
+        <div style="flex:1;height:72px;border:1px solid rgba(255,255,255,.1);border-radius:8px;overflow:hidden;background:#12151a"><img data-mthumb="1" src="uploads/ex-04.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:0% 50%;display:block"></div>
+        <div style="flex:1;height:72px;border:1px solid rgba(255,255,255,.1);border-radius:8px;overflow:hidden;background:#12151a"><img data-mthumb="1" src="uploads/ex-04.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block"></div>
+        <div style="flex:1;height:72px;border:1px solid rgba(255,255,255,.1);border-radius:8px;overflow:hidden;background:#12151a"><img data-mthumb="1" src="uploads/ex-04.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:100% 50%;display:block"></div>
+      </div>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:22px;padding:16px 22px 20px">
+        <div style="min-width:0;max-width:470px">
+          <div data-mwhat="1" style="font:400 14.5px/1.55 'Inter',sans-serif;color:#c2c8d0">A working example, built the way we would build yours.</div>
+          <div style="margin-top:13px;display:flex;align-items:center;gap:10px">
+            <span style="font:600 9px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;color:#7c818c">TYPICAL RANGE</span>
+            <span data-mrange="1" style="font:600 16px/1 'Inter',sans-serif;color:#8DCBFF">€4,000 – €15,000</span>
+          </div>
+        </div>
+        <a href="/assistant" target="_parent" style="flex:none;display:inline-flex;align-items:center;gap:12px;background:#8DCBFF;color:#08090a;padding:14px 20px;border-radius:12px;font:600 14px/1 'Inter',sans-serif;white-space:nowrap;box-shadow:0 16px 34px -12px rgba(141,203,255,.7)">Start this project <span style="font-family:'IBM Plex Mono',monospace">→</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:56px;right:56px;bottom:40px;z-index:7;display:flex;align-items:flex-end;justify-content:space-between">
+    <div>
+      <div style="display:flex;align-items:baseline;gap:12px">
+        <span ref="{{ counterRef }}" style="font:500 13px/1 'IBM Plex Mono',monospace;color:#8DCBFF;letter-spacing:.08em">04 / 12</span>
+      </div>
+      <div style="margin-top:12px;width:220px;height:2px;background:rgba(255,255,255,.12)"><div ref="{{ barRef }}" style="height:2px;width:33%;background:#8DCBFF;transition:width .3s cubic-bezier(.2,.8,.2,1)"></div></div>
+    </div>
+    <a href="/assistant" target="_parent" style="position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:22px;height:66px;padding:0 14px 0 26px;border-radius:16px;white-space:nowrap;background:linear-gradient(90deg,#f4f3f0 0%,#f4f3f0 50%,#8DCBFF 50%,#8DCBFF 100%);background-size:200% 100%;background-position:0% 0;color:#08090a;box-shadow:0 20px 40px -14px rgba(141,203,255,.75),inset 0 0 0 1px rgba(255,255,255,.5);transition:background-position .52s cubic-bezier(.2,.8,.2,1),transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s ease" style-hover="background-position:100% 0;transform:translateY(-5px);box-shadow:0 34px 64px -16px rgba(141,203,255,1),inset 0 0 0 1px rgba(255,255,255,.5)">
+      <span style="position:absolute;top:-14px;bottom:-14px;width:52px;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.5),rgba(255,255,255,0));animation:ds2-sheen 4.2s ease-in-out infinite;pointer-events:none"></span>
+      <span style="position:relative;display:flex;flex-direction:column;gap:6px">
+        <span style="font:600 16px/1 'Inter',sans-serif;letter-spacing:-.014em">Tell us what you need</span>
+        <span style="font:600 9px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;opacity:.72">2 MINUTES · NO CALL · SAME-DAY REPLY</span>
+      </span>
+      <span style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:36px;height:42px;background:#08090a;color:#f4f3f0;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);font:500 15px/1 'IBM Plex Mono',monospace">→</span>
+    </a>
+  </div>
+</div>
+
+</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;autoRotate&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behaviour&quot;}}">
+class Component extends DCLogic {
+  SERVICES = [
+    { n: 'Websites',           g: 'BUILD',   b: 'Your public face, rebuilt to convert.', w: 'A fast, on-brand marketing site that turns visitors into enquiries, and that you can update yourself.', r: '€2,500 – €7,000' },
+    { n: 'Web apps',           g: 'BUILD',   b: 'Logged-in products that hold up at scale.', w: 'A product behind a login, with accounts, dashboards and real data, built to stay fast as you grow.', r: '€8,000 – €30,000' },
+    { n: 'SaaS products',      g: 'BUILD',   b: 'Subscription software, end to end.', w: 'Subscription software from sign-up to billing, plus the infrastructure and admin behind it.', r: '€15,000 – €60,000+' },
+    { n: 'Web shops',          g: 'BUILD',   b: 'Storefronts that actually check out.', w: 'An online store that actually sells: catalogue, cart, payments and order management, ready for real traffic.', r: '€4,000 – €15,000' },
+    { n: 'Platforms',          g: 'BUILD',   b: 'Multi-sided systems with real users.', w: 'A system that connects different kinds of users, with the accounts, permissions and rails between them.', r: '€20,000 – €80,000+' },
+    { n: 'Automation',         g: 'REWIRE',  b: 'The work behind the work, put on rails.', w: 'The repetitive jobs your team does by hand, put on rails so they just happen, reliably.', r: '€3,000 – €15,000' },
+    { n: 'AI agents',          g: 'REWIRE',  b: 'Staff that never sleeps and never forgets.', w: 'An AI worker that handles a real task on its own, day and night: answering, sorting, drafting, following up.', r: '€6,000 – €25,000' },
+    { n: 'AI integration',     g: 'REWIRE',  b: 'Your existing stack, made to think.', w: 'Your current tools and data wired into AI, so the stack you already use starts thinking for you.', r: '€4,000 – €20,000' },
+    { n: 'Data & predictions', g: 'REWIRE',  b: 'Decisions before the quarter closes.', w: 'Dashboards and forecasts built from your own numbers, so you decide before the quarter closes.', r: '€5,000 – €25,000' },
+    { n: 'CRM systems',        g: 'BESPOKE', b: 'Your pipeline, in exactly your shape.', w: 'Your sales pipeline in exactly your shape: contacts, deals and follow-ups that fit how you actually work.', r: '€5,000 – €20,000' },
+    { n: 'Marketplaces',       g: 'BESPOKE', b: 'Supply, demand and the rails between.', w: 'Two sides of a market and the transactions between them, with trust, payments and payouts built in.', r: '€25,000 – €90,000+' },
+    { n: 'Booking systems',    g: 'BESPOKE', b: 'Calendars that never double-book.', w: 'Availability, calendars and payments that never double-book, for appointments, classes or rentals.', r: '€4,000 – €18,000' }
+  ];
+
+  HEX = 'polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%)';
+  CARD_W = 258; CARD_H = 292; CARD_GAP = 198;
+
+  fitRef = React.createRef();
+  stageFitRef = React.createRef();
+  rootRef = React.createRef();
+  bgRef = React.createRef();
+  ringRef = React.createRef();
+  counterRef = React.createRef();
+  barRef = React.createRef();
+
+  modalRef = React.createRef();
+  ptr = { x: 0.5, y: 0.5 };
+  cur = 3; target = 3; shown = -1;
+  dragging = false; dragX = 0; dragStart = 0;
+
+  componentDidMount() {
+    this.onResize = () => { this.fit(); this.step(); };
+    window.addEventListener('resize', this.onResize);
+    /* onClick bindings only attach to an sc-for item's ROOT element, so the
+       per-card "See examples" button + the modal controls are wired by
+       delegation instead. */
+    this.onDelegatedClick = (e) => {
+      const t = e.target;
+      if (!t || !t.closest) return;
+      const view = t.closest('[data-cview]');
+      if (view) { const card = view.closest('[data-card]'); if (card && card.dataset.i != null) this.openWin(parseInt(card.dataset.i, 10)); return; }
+      if (t.closest('[data-close]')) { this.winClose(); return; }
+      const modal = this.modalRef.current || document.querySelector('[data-modal]');
+      if (modal && t === modal) this.winClose();
+    };
+    document.addEventListener('click', this.onDelegatedClick);
+    /* Frames are suspended in a hidden document, so a slow interval keeps the
+       arc correct even where requestAnimationFrame never fires. */
+    this.poll = setInterval(() => { this.fit(); this.step(); }, 100);
+    this.raf = requestAnimationFrame(this.tick);
+    this.fit();
+    this.step();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize);
+    if (this.onDelegatedClick) document.removeEventListener('click', this.onDelegatedClick);
+    if (this.poll) clearInterval(this.poll);
+    if (this.raf) cancelAnimationFrame(this.raf);
+  }
+
+  tick = () => {
+    this.raf = requestAnimationFrame(this.tick);
+    this.step();
+  };
+
+  /* Art-directed at 1440x900 and scaled to the viewport rather than reflowed,
+     so the card arc keeps its geometry at every window size. */
+  fit() {
+    const outer = this.fitRef.current, inner = this.stageFitRef.current;
+    if (!outer || !inner) return;
+    const s = Math.min(outer.clientWidth / 1440, outer.clientHeight / 900);
+    if (s > 0 && s !== this._s) {
+      this._s = s;
+      inner.style.transform = 'scale(' + s.toFixed(4) + ')';
+    }
+  }
+
+  clamp(v) { return Math.max(0, Math.min(this.SERVICES.length - 1, v)); }
+
+  onPtr = (e) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    this.ptr.x = (e.clientX - r.left) / r.width;
+    this.ptr.y = (e.clientY - r.top) / r.height;
+  };
+  onDown = (e) => {
+    /* A pointerdown that lands on the card's "See examples" button must NOT start
+       a drag (and must not preventDefault, or the button's click is swallowed). */
+    if (e.target && e.target.closest && e.target.closest('[data-cview]')) return;
+    if (e.preventDefault) e.preventDefault();
+    this.dragging = true; this.dragX = e.clientX; this.dragStart = this.target;
+    if (e.currentTarget.setPointerCapture) { try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {} }
+  };
+  onDrag = (e) => {
+    if (!this.dragging) return;
+    /* Divide by the live scale so a drag tracks the cursor 1:1 on screen
+       rather than in unscaled design pixels. */
+    const s = this._s || 1;
+    this.target = this.clamp(this.dragStart - (e.clientX - this.dragX) / (130 * s));
+  };
+  onUp = () => {
+    if (!this.dragging) return;
+    this.dragging = false;
+    this.target = this.clamp(Math.round(this.target));
+  };
+  onKey = (e) => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); this.target = this.clamp(Math.round(this.target) + 1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); this.target = this.clamp(Math.round(this.target) - 1); }
+  };
+  onPrev = () => { this.target = this.clamp(Math.round(this.target) - 1); };
+  onNext = () => { this.target = this.clamp(Math.round(this.target) + 1); };
+  openWin = (i) => {
+    const m = this.modalRef.current || document.querySelector('[data-modal]'); if (!m) return;
+    const s = this.SERVICES[i];
+    const img = 'uploads/ex-' + String(i + 1).padStart(2, '0') + '.png';
+    const set = (sel, val) => { const el = m.querySelector(sel); if (el) el.textContent = val; };
+    set('[data-mgroup]', s.g);
+    set('[data-mname]', s.n);
+    set('[data-mwhat]', s.w);
+    set('[data-mrange]', s.r);
+    const im = m.querySelector('[data-mimg]'); if (im) im.src = img;
+    m.querySelectorAll('[data-mthumb]').forEach(t => { t.src = img; });
+    m.style.display = 'flex';
+  };
+  winClose = () => { const m = this.modalRef.current; if (m) m.style.display = 'none'; };
+  winStop = (e) => { if (e && e.stopPropagation) e.stopPropagation(); };
+
+  /* The card arc and the parallax field together are ~250 clip-path elements
+     inside a scaled subtree, so rewriting transforms every frame re-rasterises
+     the whole thing and pegs the main thread. Nothing moves unless the arc is
+     still settling or the pointer actually moved, so idle frames cost nothing. */
+  needsWork() {
+    if (this._first == null) return true;
+    if (this.dragging) return true;
+    if (this.props.autoRotate) return true;
+    if (Math.abs(this.target - this.cur) > 0.0004) return true;
+    if (Math.abs(this.ptr.x - this._px) > 0.0015) return true;
+    if (Math.abs(this.ptr.y - this._py) > 0.0015) return true;
+    return false;
+  }
+
+  step() {
+    const ring = this.ringRef.current;
+    if (!ring) return;
+    if (!this.needsWork()) return;
+    this._first = 1;
+    this._px = this.ptr.x;
+    this._py = this.ptr.y;
+    /* A ref can survive a remount pointing at a detached node, so re-query
+       whenever the cached list is stale. */
+    if (!this.cards || !this.cards.length || !this.cards[0].isConnected) {
+      this.cards = Array.prototype.slice.call(ring.querySelectorAll('[data-card]'));
+      this.cards.forEach(el => {
+        el._num = el.querySelector('[data-cnum]');
+        el._grp = el.querySelector('[data-cgroup]');
+        el._name = el.querySelector('[data-cname]');
+        el._blurb = el.querySelector('[data-cblurb]');
+        el._big = el.querySelector('[data-cbig]');
+        el._bigT = el.querySelector('[data-cbigt]');
+      });
+      if (!this.cards.length) return;
+    }
+
+    if (this.props.autoRotate && !this.dragging) {
+      this.target += 0.0022;
+      if (this.target > this.SERVICES.length - 1) this.target = 0;
+    }
+    this.cur += (this.target - this.cur) * 0.11;
+
+    for (let i = 0; i < this.cards.length; i++) {
+      const el = this.cards[i];
+      const rel = i - this.cur;
+      const a = Math.abs(rel);
+      const near = Math.max(0, 1 - a);
+      const sc = Math.max(0.72, 1 - a * 0.07);
+      el.style.transform =
+        'translateX(' + (rel * this.CARD_GAP).toFixed(1) + 'px) ' +
+        'translateY(' + (Math.pow(a, 1.4) * 20).toFixed(1) + 'px) ' +
+        'translateZ(' + (-a * 60).toFixed(1) + 'px) ' +
+        'rotateY(' + (rel * -14).toFixed(2) + 'deg) ' +
+        'scale(' + sc.toFixed(3) + ')';
+      el.style.opacity = a > 3.6 ? 0 : Math.max(0.68, 1 - a * 0.085).toFixed(3);
+      el.style.zIndex = String(100 - Math.round(a * 8));
+      const lit = near > 0.5;
+      el.style.background = lit
+        ? 'linear-gradient(165deg,#B8E0FF 0%,#4A9AE8 100%)'
+        : 'linear-gradient(165deg,#2c3037 0%,#16191f 100%)';
+      el.style.borderColor = lit ? 'rgba(255,255,255,.34)' : 'rgba(255,255,255,.2)';
+      el.style.boxShadow = lit ? '0 24px 48px -18px rgba(0,0,0,.9)' : '0 16px 32px -20px rgba(0,0,0,.8)';
+      if (el._name) el._name.style.color = lit ? '#0b0c0d' : '#f4f3f0';
+      if (el._num) el._num.style.color = lit ? 'rgba(11,12,13,.62)' : '#6d6b66';
+      if (el._grp) {
+        el._grp.style.color = lit ? 'rgba(11,12,13,.7)' : '#6d6b66';
+        el._grp.style.borderColor = lit ? 'rgba(11,12,13,.28)' : 'rgba(255,255,255,.16)';
+      }
+      if (el._blurb) {
+        el._blurb.style.opacity = near > 0.72 ? 1 : 0;
+        el._blurb.style.color = lit ? 'rgba(11,12,13,.72)' : '#8f8d87';
+      }
+      if (el._big) {
+        el._big.style.background = lit
+          ? 'repeating-linear-gradient(135deg,rgba(11,12,13,.14) 0 8px,rgba(11,12,13,0) 8px 16px)'
+          : 'repeating-linear-gradient(135deg,rgba(255,255,255,.07) 0 8px,rgba(255,255,255,0) 8px 16px)';
+        el._big.style.borderColor = lit ? 'rgba(11,12,13,.3)' : 'rgba(255,255,255,.16)';
+      }
+      if (el._bigT) el._bigT.style.color = lit ? 'rgba(11,12,13,.6)' : 'rgba(244,243,240,.5)';
+    }
+
+    const idx = Math.round(this.cur);
+    if (idx !== this.shown) {
+      this.shown = idx;
+      if (this.counterRef.current) this.counterRef.current.textContent = String(idx + 1).padStart(2, '0') + ' / 12';
+      if (this.barRef.current) this.barRef.current.style.width = (((idx + 1) / 12) * 100).toFixed(1) + '%';
+    }
+
+    /* Hover-reactive field: the hexes nearest the cursor lift out in 3D
+       (translateZ + scale + Ice-blue glow), the rest stay flat. Replaces the
+       old whole-field parallax drift. */
+    const bg = this.bgRef.current;
+    if (bg) {
+      if (!this._hexEls || !this._hexEls.length || !this._hexEls[0].isConnected) {
+        this._hexEls = Array.prototype.slice.call(bg.querySelectorAll('[data-hex]'));
+        this._hexC = this._hexEls.map(el => ({ x: parseFloat(el.style.left) + 43, y: parseFloat(el.style.top) + 50 }));
+      }
+      const cx = this.ptr.x * 1440 + 70, cy = this.ptr.y * 900 + 70, R = 135;
+      for (let k = 0; k < this._hexEls.length; k++) {
+        const el = this._hexEls[k], c = this._hexC[k];
+        const dx = c.x - cx, dy = c.y - cy, d = Math.sqrt(dx * dx + dy * dy);
+        if (d < R) {
+          const t = 1 - d / R;
+          el.style.transform = 'translateZ(' + (t * t * 115).toFixed(1) + 'px) scale(' + (1 + t * 0.55).toFixed(3) + ')';
+          el.style.zIndex = String(40 + Math.round(t * 60));
+          el.style.filter = 'brightness(' + (1 + t * 1.8).toFixed(2) + ')';
+          el.style.boxShadow = t > 0.12 ? '0 14px 40px -6px rgba(141,203,255,' + (t * 0.95).toFixed(2) + ')' : 'none';
+          el._pop = 1;
+        } else if (el._pop) {
+          el.style.transform = 'translateZ(0) scale(1)';
+          el.style.zIndex = '';
+          el.style.filter = '';
+          el.style.boxShadow = 'none';
+          el._pop = 0;
+        }
+      }
+    }
+  }
+
+  renderVals() {
+    if (!this._bg) {
+      const W = 92, H = 106, VS = 79, COLS = 18, ROWS = 14;
+      const out = [];
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          const i = r * COLS + c;
+          const h = ((i * 2654435761) % 1000) / 1000;
+          const st = {
+            position: 'absolute',
+            left: (c * W + (r % 2 ? W / 2 : 0)) + 'px', top: (r * VS) + 'px',
+            width: (W - 6) + 'px', height: (H - 6) + 'px',
+            clipPath: this.HEX, WebkitClipPath: this.HEX,
+            backfaceVisibility: 'hidden',
+            transition: 'transform .28s cubic-bezier(.2,.8,.2,1),filter .28s ease,box-shadow .28s ease'
+          };
+          if (h > 0.93) { st.background = 'linear-gradient(160deg,#B8E0FF 0%,#2E7FD6 100%)'; st.boxShadow = '0 6px 0 rgba(0,0,0,.5)'; }
+          else if (h > 0.86) { st.background = 'linear-gradient(160deg,#2a2c30 0%,#14161a 100%)'; st.borderTop = '2px solid #8DCBFF'; }
+          else if (h > 0.62) { st.background = 'linear-gradient(160deg,#22242a 0%,#101216 100%)'; }
+          else if (h > 0.34) { st.background = 'linear-gradient(160deg,#191b20 0%,#0c0e12 100%)'; }
+          else { st.background = '#0d0f13'; }
+          out.push({ key: 'b' + i, style: st });
+        }
+      }
+      this._bg = out;
+    }
+
+    const cards = this.SERVICES.map((s, i) => ({
+      key: 'c' + i, i: i, num: String(i + 1).padStart(2, '0'),
+      name: s.n, group: s.g, blurb: s.b, tag: s.n.toUpperCase(),
+      img: 'uploads/ex-' + String(i + 1).padStart(2, '0') + '.png',
+      style: {
+        position: 'absolute', left: (-this.CARD_W / 2) + 'px', top: '0px',
+        width: this.CARD_W + 'px', height: this.CARD_H + 'px',
+        padding: '22px 22px 24px', display: 'flex', flexDirection: 'column',
+        background: 'linear-gradient(165deg,#2c3037 0%,#16191f 100%)',
+        border: '1px solid rgba(255,255,255,.2)',
+        clipPath: 'polygon(0 0,100% 0,100% 86%,calc(100% - 30px) 100%,0 100%)',
+        transformOrigin: '50% 50%', willChange: 'transform,opacity',
+        transform: 'translateX(' + ((i - 3) * this.CARD_GAP) + 'px)',
+        cursor: 'grab'
+      },
+      click: () => { this.target = i; },
+      view: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.openWin(i); }
+    }));
+
+    return {
+      fitRef: this.fitRef, stageFitRef: this.stageFitRef, rootRef: this.rootRef,
+      bgRef: this.bgRef, ringRef: this.ringRef,
+      counterRef: this.counterRef, barRef: this.barRef,
+      onPtr: this.onPtr, onDown: this.onDown, onDrag: this.onDrag, onUp: this.onUp, onKey: this.onKey,
+      onPrev: this.onPrev, onNext: this.onNext,
+      modalRef: this.modalRef, winClose: this.winClose, winStop: this.winStop,
+      bgHexes: this._bg, cards: cards
+    };
+  }
+}
+
+</script>
+</body>
+</html>
