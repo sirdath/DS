@@ -28,6 +28,13 @@ export function ToolIcon({ slug }: { slug: string }) {
           <circle cx="20" cy="11" r="2.4" />
         </svg>
       );
+    case "data-extraction": // a scan frame over data rows
+      return (
+        <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 6H8a2 2 0 0 0-2 2v4M28 6h4a2 2 0 0 1 2 2v4M12 34H8a2 2 0 0 1-2-2v-4M28 34h4a2 2 0 0 0 2-2v-4" />
+          <path d="M13 16h14M13 20h14M13 24h9" opacity="0.85" />
+        </svg>
+      );
     default: // ai-receptionist — a chat bubble with a calendar tick
       return (
         <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
@@ -41,7 +48,17 @@ export function ToolIcon({ slug }: { slug: string }) {
 
 /** Asset manifests — add a slug when its file lands (keeps pages free of 404s).
  *  Posters: /tools/posters/{slug}.webp · Videos: /tools/videos/{slug}.mp4 */
-const HAS_POSTER = new Set<string>(["competitor-watch", "review-intelligence", "site-selection", "ai-receptionist"]);
+const HAS_POSTER = new Set<string>([
+  "competitor-watch",
+  "review-intelligence",
+  "site-selection",
+  "ai-receptionist",
+  "collections",
+  "site-audit",
+  "ai-memory",
+  "newsletters",
+  "data-extraction",
+]);
 const HAS_VIDEO = new Set<string>([]);
 
 /** The tool's media slot, two modes:
