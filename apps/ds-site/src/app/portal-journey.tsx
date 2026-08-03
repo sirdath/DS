@@ -110,7 +110,7 @@ export default function PortalJourney() {
         <video
           ref={videoRef}
           className="portal__video"
-          src="/portals/journey.mp4?v=3"
+          src="/portals/journey.opt.mp4"
           muted
           playsInline
           preload="metadata"

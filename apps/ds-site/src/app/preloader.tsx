@@ -2,17 +2,40 @@
 import { useEffect, useState } from "react";
 
 /** Entry preloader: the DS2 wordmark draws itself (SVG stroke), fills in, then
- *  the blank screen fades to reveal the site. Stays until the draw finishes AND
- *  the page has loaded. Honours prefers-reduced-motion (shows the mark, brief
- *  hold, fade). Lives in the root layout so it plays on a fresh entry only. */
+ *  the curtain fades to reveal the site with the hero film starting from frame 0.
+ *  Holds until the draw finishes AND the hero film has buffered (ds2:videoready,
+ *  dispatched by hero-video.tsx) — capped so a slow network never means staring
+ *  at black. Plays once per browser session: returning to the homepage from
+ *  another page skips straight to the site. Honours prefers-reduced-motion. */
+const SESSION_KEY = "ds2:preloader-shown";
+
 export default function Preloader() {
+  // Once per session: if the curtain already played, don't mount it at all.
+  const [gone, setGone] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return !!sessionStorage.getItem(SESSION_KEY);
+    } catch {
+      return false; // storage unavailable — just play the curtain
+    }
+  });
   const [out, setOut] = useState(false);
-  const [gone, setGone] = useState(false);
 
   useEffect(() => {
+    if (gone) {
+      // Curtain skipped — still release the hero film (it waits for ds2:loaded).
+      // The flag covers HeroVideo mounting after us; the event covers before.
+      if (!window.__ds2Loaded) {
+        window.__ds2Loaded = true;
+        window.dispatchEvent(new Event("ds2:loaded"));
+      }
+      return;
+    }
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const minMs = reduce ? 300 : 700; // fast — the DS2 mark flashes in, no video to wait on
-    const maxMs = 1600; // hard cap
+    // The wordmark draw+fill genuinely takes ~600ms (globals.css ds2-draw/ds2-fill)
+    // — the floor lets it finish; it is not padding.
+    const minMs = reduce ? 300 : 700;
+    const maxMs = 1600; // hard cap: never hold the curtain longer than this
     const start = performance.now();
     const timers: number[] = [];
     let done = false;
@@ -31,15 +54,21 @@ export default function Preloader() {
       if (done) return;
       done = true;
       unlockScroll();
+      try {
+        sessionStorage.setItem(SESSION_KEY, "1");
+      } catch {
+        /* ignore */
+      }
       // Signal the hero film to start from frame 0 exactly as we reveal the site.
-      (window as Window & { __ds2Loaded?: boolean }).__ds2Loaded = true;
+      window.__ds2Loaded = true;
       window.dispatchEvent(new Event("ds2:loaded"));
       setOut(true);
-      timers.push(window.setTimeout(() => setGone(true), 850)); // unmount after fade
+      timers.push(window.setTimeout(() => setGone(true), 320)); // unmount after fade
     };
 
-    // Reveal only once the draw has finished AND the hero video has buffered
-    // (or we hit the safety cap).
+    // Reveal once the draw has finished AND the hero film can play. A page
+    // without the hero film never sets __ds2VideoReady — detect its absence and
+    // fall back to the draw-only wait so we don't sit on the cap.
     const maybeReveal = () => {
       if (done) return;
       const elapsed = performance.now() - start;
@@ -47,7 +76,8 @@ export default function Preloader() {
         timers.push(window.setTimeout(maybeReveal, minMs - elapsed + 20));
         return;
       }
-      // No hero video to wait on any more — reveal as soon as the minimum has passed.
+      const heroFilm = document.querySelector("video.hero-glass__video");
+      if (heroFilm && !window.__ds2VideoReady) return; // ds2:videoready or the cap will re-call us
       reveal();
     };
 
@@ -60,7 +90,7 @@ export default function Preloader() {
       timers.forEach((t) => window.clearTimeout(t));
       unlockScroll();
     };
-  }, []);
+  }, [gone]);
 
   if (gone) return null;
 

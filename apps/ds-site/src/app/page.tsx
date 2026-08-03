@@ -423,11 +423,16 @@ export default function HomePage() {
       <a id="top" />
 
       {/* â”€â”€â”€ Hero â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <section className="hero hero--glass hero--core" data-tint="color-mix(in oklab, var(--accent) 26%, transparent)">
+      <section className="hero hero--glass" data-tint="color-mix(in oklab, var(--accent) 26%, transparent)">
+        {/* The DS2 film: poster paints instantly, WebM streams in behind the
+            preloader, which holds its curtain for ds2:videoready (capped). */}
         <HeroVideo />
-        {/* The Core hero (iframe above) carries its own wordmark, tagline, service
-            coverflow and CTA, so the old glass caption / hero-tags / hero-book
-            overlays are hidden for this in-context preview. */}
+        <div className="hero-glass__caption" aria-hidden="true">
+          <div className="tagline">
+            <span className="tagline-1">{t.hero.tag1}</span>
+            <span className="tagline-2">{t.hero.tag2}</span>
+          </div>
+        </div>
       </section>
 
       {/* â”€â”€â”€ Selected work â€” real shipped projects + labelled concepts â”€â”€â”€ */}
