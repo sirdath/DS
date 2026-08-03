@@ -576,7 +576,18 @@ function TimingScene({ value, max }: { value: number; max: number }) {
 }
 
 function Field({ field, value, onChange, ui }: { field: AssistantField; value: string; onChange: (value: string) => void; ui: { required: string; optional: string; choose: string } }) {
-  return <label><span>{field.label}{field.required && <b className="assistant-required" aria-hidden="true">*</b>}<small>{field.required ? ui.required : ui.optional}</small></span>
+  // A filled required field switches from the pulsing "Required" pill to a
+  // settled tick, so the form visibly tells you what is still outstanding.
+  const filled = Boolean(String(value || "").trim());
+  return <label className={field.required ? (filled ? "is-required is-filled" : "is-required") : "is-optional"}>
+    <span>
+      {field.label}
+      {field.required
+        ? <small className="assistant-req" data-filled={filled ? "1" : undefined}>
+            <i aria-hidden="true" />{filled ? "✓" : ui.required}
+          </small>
+        : <small className="assistant-opt">{ui.optional}</small>}
+    </span>
     {field.type === "select"
       ? <select value={value} onChange={(event) => onChange(event.target.value)}><option value="">{ui.choose}</option>{field.options?.map((option) => <option key={option}>{option}</option>)}</select>
       : <input type={field.type} value={value} onChange={(event) => onChange(event.target.value)} autoComplete={field.id === "email" ? "email" : field.id === "name" ? "name" : "off"} />}
