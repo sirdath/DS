@@ -1,7 +1,6 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element */
-import Link from "next/link";
 import { useLang } from "./i18n";
 import s from "./selected-work.module.css";
 
@@ -90,8 +89,6 @@ const COPY = {
     concept: "Template",
     visit: "Visit ↗",
     preview: "Preview ↗",
-    coda: "Have a project in mind?",
-    codaCta: "How can we help?",
   },
   el: {
     eyebrow: "Πρόσφατα έργα",
@@ -99,8 +96,6 @@ const COPY = {
     concept: "Template",
     visit: "Επίσκεψη ↗",
     preview: "Προεπισκόπηση ↗",
-    coda: "Έχετε ένα έργο στο μυαλό σας;",
-    codaCta: "Πώς μπορούμε να βοηθήσουμε;",
   },
 } as const;
 
@@ -162,12 +157,6 @@ export default function SelectedWork() {
         })}
       </div>
 
-      <div className={s.coda}>
-        <div className={s.codaText}>{c.coda}</div>
-        <Link className={s.codaCta} href="/assistant">
-          {c.codaCta} <span aria-hidden="true">→</span>
-        </Link>
-      </div>
     </section>
   );
 }

@@ -12,7 +12,8 @@ const LOGOS = [
   { slug: "henley", name: "Henley Business School" },
   { slug: "ucl", name: "UCL" },
   { slug: "groningen", name: "Hanze UAS Groningen" },
-  { slug: "pwc", name: "PwC" },
+  // PwC hidden for now — re-add this line to bring it back (the asset is still
+  // in public/logos/institutions/pwc.png).
   { slug: "intelmatix", name: "INTELMATIX" },
   { slug: "school", name: "St Catherine's" },
 ];

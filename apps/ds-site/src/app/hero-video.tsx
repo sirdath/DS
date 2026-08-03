@@ -134,6 +134,9 @@ export default function HeroVideo() {
           window.setTimeout(applySeek, 100);
         } else {
           v.pause(); // a seek can nudge playback back on in some browsers
+          // Held frame gets a very slow drift so the sky keeps breathing without
+          // replaying the film — a GPU-composited transform, no decode cost.
+          v.classList.add("is-drifting");
         }
       };
       applySeek();
