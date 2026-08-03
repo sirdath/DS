@@ -121,11 +121,14 @@ export default function HeroVideo() {
       runLoop();
     };
 
+    let onScreen = true;
     const io = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-        if (!entry || !started) return;
-        if (entry.isIntersecting) {
+        if (!entry) return;
+        onScreen = entry.isIntersecting;
+        if (!started) return;
+        if (onScreen && !document.hidden) {
           v.play().catch(() => {});
           runLoop();
         } else {
@@ -137,12 +140,27 @@ export default function HeroVideo() {
     );
     io.observe(v);
 
+    // A background tab shouldn't keep decoding 1080p — browsers throttle rAF but
+    // not necessarily video decode, and this is a loop that never ends.
+    const onVisibility = () => {
+      if (!started) return;
+      if (document.hidden) {
+        v.pause();
+        stopLoop();
+      } else if (onScreen) {
+        v.play().catch(() => {});
+        runLoop();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
     if (window.__ds2Loaded) start();
     else window.addEventListener("ds2:loaded", start, { once: true });
 
     return () => {
       io.disconnect();
       stopLoop();
+      document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("ds2:loaded", start);
     };
   }, []);

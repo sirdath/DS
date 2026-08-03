@@ -2427,9 +2427,11 @@ footer { border-color: var(--hairline) !important; }
   position: fixed; inset: 0; z-index: 9999;
   display: grid; place-items: center;
   background: #0b0b0c;
-  /* 0.3s: quick dissolve into the hero film starting — the old 0.85s left a
-     lingering half-opaque scrim that read as "slow" (measured, not vibes) */
-  opacity: 1; transition: opacity 0.3s ease-out;
+  /* 0.85s cross-dissolve into the film starting from frame 0 — the original
+     cinematic reveal. It only ever read as "slow" because the handshake was
+     broken and it used to uncover a still-loading video; now the film is
+     buffered before the curtain moves. */
+  opacity: 1; transition: opacity 0.85s ease;
 }
 .preloader--out { opacity: 0; pointer-events: none; }
 .preloader__mark { width: min(56vw, 460px); height: auto; overflow: visible; }

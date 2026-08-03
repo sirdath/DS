@@ -5,32 +5,12 @@ import { useEffect, useState } from "react";
  *  the curtain fades to reveal the site with the hero film starting from frame 0.
  *  Holds until the draw finishes AND the hero film has buffered (ds2:videoready,
  *  dispatched by hero-video.tsx) — capped so a slow network never means staring
- *  at black. Plays once per browser session: returning to the homepage from
- *  another page skips straight to the site. Honours prefers-reduced-motion. */
-const SESSION_KEY = "ds2:preloader-shown";
-
+ *  at black. Honours prefers-reduced-motion. */
 export default function Preloader() {
-  // Once per session: if the curtain already played, don't mount it at all.
-  const [gone, setGone] = useState(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      return !!sessionStorage.getItem(SESSION_KEY);
-    } catch {
-      return false; // storage unavailable — just play the curtain
-    }
-  });
   const [out, setOut] = useState(false);
+  const [gone, setGone] = useState(false);
 
   useEffect(() => {
-    if (gone) {
-      // Curtain skipped — still release the hero film (it waits for ds2:loaded).
-      // The flag covers HeroVideo mounting after us; the event covers before.
-      if (!window.__ds2Loaded) {
-        window.__ds2Loaded = true;
-        window.dispatchEvent(new Event("ds2:loaded"));
-      }
-      return;
-    }
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     // The wordmark draw+fill genuinely takes ~600ms (globals.css ds2-draw/ds2-fill)
     // — the floor lets it finish; it is not padding.
@@ -54,16 +34,11 @@ export default function Preloader() {
       if (done) return;
       done = true;
       unlockScroll();
-      try {
-        sessionStorage.setItem(SESSION_KEY, "1");
-      } catch {
-        /* ignore */
-      }
       // Signal the hero film to start from frame 0 exactly as we reveal the site.
       window.__ds2Loaded = true;
       window.dispatchEvent(new Event("ds2:loaded"));
       setOut(true);
-      timers.push(window.setTimeout(() => setGone(true), 320)); // unmount after fade
+      timers.push(window.setTimeout(() => setGone(true), 850)); // unmount after fade
     };
 
     // Reveal once the draw has finished AND the hero film can play. A page
@@ -90,7 +65,7 @@ export default function Preloader() {
       timers.forEach((t) => window.clearTimeout(t));
       unlockScroll();
     };
-  }, [gone]);
+  }, []);
 
   if (gone) return null;
 

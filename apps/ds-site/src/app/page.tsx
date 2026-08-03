@@ -433,6 +433,34 @@ export default function HomePage() {
             <span className="tagline-2">{t.hero.tag2}</span>
           </div>
         </div>
+
+        {/* Top-left: what we build */}
+        <ul className="hero-tags" aria-label={t.hero.what}>
+          {t.hero.tags.map((tag) => (
+            <li key={tag}>
+              <span className="hero-tags__slash" aria-hidden="true">/</span>
+              {tag}
+            </li>
+          ))}
+        </ul>
+
+        {/* Bottom-right: book a call (opens the Telegram contact panel) */}
+        <div className="hero-book">
+          <div className="hero-book__avatar" aria-hidden="true">
+            <DS2Mark />
+          </div>
+          <div className="hero-book__body">
+            <div className="hero-book__title">{t.hero.book.title}</div>
+            <button
+              type="button"
+              className="hero-book__cta"
+              onClick={() => openChat(t.hero.book.draft)}
+            >
+              {t.hero.book.cta}
+              <span className="hero-book__arrow" aria-hidden="true">→</span>
+            </button>
+          </div>
+        </div>
       </section>
 
       {/* â”€â”€â”€ Selected work â€” real shipped projects + labelled concepts â”€â”€â”€ */}
