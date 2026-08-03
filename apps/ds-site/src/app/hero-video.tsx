@@ -22,6 +22,10 @@ const DESKTOP = {
   poster: "/hero/hero-poster.webp",
   captionFrom: 0.03,
   captionTo: 1.07,
+  /** Frame the film settles on when it ends: the DS2 logo fully formed with the
+   *  "Digital Solutions / consulting" tagline up. Sits inside the caption window
+   *  so the tagline stays on screen. */
+  hold: 0.62,
   ref: 5.714,
 };
 const MOBILE = {
@@ -31,6 +35,7 @@ const MOBILE = {
   poster: "/hero/hero-poster-mobile.webp",
   captionFrom: 0.03,
   captionTo: 1.0,
+  hold: 0.58,
   ref: 5.38,
 };
 
@@ -86,6 +91,7 @@ export default function HeroVideo() {
     // logo lingers, then resume full speed once the camera leaves it.
     const LOGO_RATE = 0.55;
     let started = false;
+    let settled = false; // film has finished and is holding the brand frame
     let raf = 0;
     const tick = () => {
       if (caption) {
@@ -101,6 +107,23 @@ export default function HeroVideo() {
       }
       raf = requestAnimationFrame(tick);
     };
+
+    // The film plays once and settles on the DS2 logo + tagline rather than
+    // hard-cutting back to frame 0 forever. A perpetual loop both looked abrupt
+    // at the seam and kept a 1080p decode running for the whole visit.
+    const onEnded = () => {
+      const scale = (v.duration || cfg.ref) / cfg.ref;
+      settled = true;
+      try {
+        v.currentTime = cfg.hold * scale;
+      } catch {
+        /* not seekable — leave it on the last frame */
+      }
+      v.pause();
+      stopLoop();
+      caption?.classList.add("is-shown"); // hold the tagline with the logo
+    };
+    v.addEventListener("ended", onEnded);
     const runLoop = () => {
       if (!raf) raf = requestAnimationFrame(tick);
     };
@@ -122,16 +145,19 @@ export default function HeroVideo() {
     };
 
     let onScreen = true;
+    const resume = () => {
+      if (!started || settled) return; // once settled, the brand frame stays put
+      v.play().catch(() => {});
+      runLoop();
+    };
     const io = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
         if (!entry) return;
         onScreen = entry.isIntersecting;
         if (!started) return;
-        if (onScreen && !document.hidden) {
-          v.play().catch(() => {});
-          runLoop();
-        } else {
+        if (onScreen && !document.hidden) resume();
+        else {
           v.pause();
           stopLoop();
         }
@@ -140,17 +166,13 @@ export default function HeroVideo() {
     );
     io.observe(v);
 
-    // A background tab shouldn't keep decoding 1080p — browsers throttle rAF but
-    // not necessarily video decode, and this is a loop that never ends.
+    // A background tab shouldn't keep decoding 1080p.
     const onVisibility = () => {
       if (!started) return;
       if (document.hidden) {
         v.pause();
         stopLoop();
-      } else if (onScreen) {
-        v.play().catch(() => {});
-        runLoop();
-      }
+      } else if (onScreen) resume();
     };
     document.addEventListener("visibilitychange", onVisibility);
 
@@ -160,6 +182,7 @@ export default function HeroVideo() {
     return () => {
       io.disconnect();
       stopLoop();
+      v.removeEventListener("ended", onEnded);
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("ds2:loaded", start);
     };
@@ -169,11 +192,11 @@ export default function HeroVideo() {
     <div className="hero-glass">
       {/* poster is set in the effect (per-orientation) — a JSX poster would make
           mobile download the desktop image too before the effect swaps it */}
+      {/* no `loop`: the film plays once and settles on the logo frame (see onEnded) */}
       <video
         ref={ref}
         className="hero-glass__video"
         muted
-        loop
         playsInline
         preload="auto"
         aria-hidden="true"
