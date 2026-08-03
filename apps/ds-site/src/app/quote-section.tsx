@@ -33,7 +33,6 @@ export default function QuoteSection() {
         <DS2Mark />
       </div>
       <div className={s.inner}>
-        <DS2Mark className={s.mark} />
         <blockquote className={s.text}>
           <span className={`${s.word} ${s.qmark}`} style={{ transitionDelay: "0.1s" }}>{"“"}</span>
           {WORDS.map((w, i) => (
@@ -46,10 +45,6 @@ export default function QuoteSection() {
           </span>
           <span className={`${s.word} ${s.qmark} ${s.qclose}`} style={{ transitionDelay: `${0.16 + (WORDS.length + 1) * 0.06}s` }}>{"”"}</span>
         </blockquote>
-        <div className={s.by} aria-label="DS2">
-          <span className={s.byDash} aria-hidden="true">—</span>
-          <DS2Mark className={s.byMark} />
-        </div>
       </div>
     </section>
   );
