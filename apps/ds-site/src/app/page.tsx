@@ -444,21 +444,17 @@ export default function HomePage() {
           ))}
         </ul>
 
-        {/* Bottom-right: book a call (opens the Telegram contact panel) */}
+        {/* Bottom-right: start the adaptive brief (/assistant) */}
         <div className="hero-book">
           <div className="hero-book__avatar" aria-hidden="true">
             <DS2Mark />
           </div>
           <div className="hero-book__body">
             <div className="hero-book__title">{t.hero.book.title}</div>
-            <button
-              type="button"
-              className="hero-book__cta"
-              onClick={() => openChat(t.hero.book.draft)}
-            >
+            <Link href="/assistant" className="hero-book__cta">
               {t.hero.book.cta}
               <span className="hero-book__arrow" aria-hidden="true">→</span>
-            </button>
+            </Link>
           </div>
         </div>
       </section>

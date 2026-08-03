@@ -2513,7 +2513,7 @@ footer { border-color: var(--hairline) !important; }
 }
 .hero-book__cta {
   margin-top: auto; display: inline-flex; align-items: center; justify-content: space-between; gap: 10px;
-  border: 0; cursor: pointer; font-family: inherit;
+  border: 0; cursor: pointer; font-family: inherit; text-decoration: none; /* it's an <a> to /assistant */
   padding: 11px 15px; border-radius: 10px; font-size: 14px; font-weight: 600;
   /* Same blue as the nav "Send a message" CTA (the single kept colour). */
   color: var(--cta-on); background: var(--cta);

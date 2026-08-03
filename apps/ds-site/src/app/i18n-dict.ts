@@ -252,7 +252,7 @@ const en: Dict = {
     tags: ["Websites & Online Shops", "Automation & AI", "Data & Forecasts", "Custom Builds"],
     build: ["Websites", "Automation", "AI Integration"],
     buildLabel: "What we build",
-    book: { title: "Talk with us", role: "Founders · Athens & London", cta: "Book a 15-min call", draft: "Hi, I'd like to book a 15-minute intro call." },
+    book: { title: "How can we help?", role: "Founders · Athens & London", cta: "Start your brief", draft: "Hi, I'd like to book a 15-minute intro call." },
   },
   services: {
     eyebrow: "What we build",
@@ -847,7 +847,7 @@ const el: Dict = {
     tags: ["Ιστοσελίδες & E-shops", "Αυτοματισμοί & ΤΝ", "Δεδομένα & Προβλέψεις", "Λύσεις κατά παραγγελία"],
     build: ["Ιστοσελίδες", "Αυτοματισμοί", "Ενσωμάτωση ΤΝ"],
     buildLabel: "Τι φτιάχνουμε",
-    book: { title: "Μιλήστε μαζί μας", role: "Ιδρυτές · Αθήνα & Λονδίνο", cta: "Κλείστε ραντεβού 15'", draft: "Γεια σας, θα ήθελα να κλείσω μια εισαγωγική κλήση 15 λεπτών." },
+    book: { title: "Πώς να βοηθήσουμε;", role: "Ιδρυτές · Αθήνα & Λονδίνο", cta: "Ξεκινήστε το brief", draft: "Γεια σας, θα ήθελα να κλείσω μια εισαγωγική κλήση 15 λεπτών." },
   },
   services: {
     eyebrow: "Τι φτιάχνουμε",
