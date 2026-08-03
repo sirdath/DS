@@ -12,10 +12,16 @@ export default function Preloader() {
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    // The wordmark draw+fill genuinely takes ~600ms (globals.css ds2-draw/ds2-fill)
-    // — the floor lets it finish; it is not padding.
-    const minMs = reduce ? 300 : 700;
-    const maxMs = 1600; // hard cap: never hold the curtain longer than this
+    // Original pacing restored: the mark draws, fills, and is allowed to sit for
+    // a beat before the reveal. Shortening this to 700ms made the entry feel
+    // rushed — the draw finishes at ~600ms and the curtain was already leaving.
+    // The wait is no longer dead time either: the hero film buffers behind it,
+    // so a longer hold means smoother playback on the reveal.
+    const minMs = reduce ? 500 : 2000;
+    // Safety cap. The original 9s risked leaving someone on a black screen for
+    // nine seconds if the film never reported ready; 5s is generous for a 1MB
+    // video and still bounded.
+    const maxMs = 5000;
     const start = performance.now();
     const timers: number[] = [];
     let done = false;

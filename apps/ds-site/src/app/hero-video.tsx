@@ -87,9 +87,10 @@ export default function HeroVideo() {
       return;
     }
 
-    // Play the intro (the DS2 logo reveal) at this fraction of full speed so the
-    // logo lingers, then resume full speed once the camera leaves it.
-    const LOGO_RATE = 0.55;
+    // The film plays at its native rate. It used to run the logo intro at 0.55x
+    // to make the logo linger, but the source is 23.98fps — at 0.55x that is
+    // 13.2 effective fps, which is what read as "laggy". The logo still ends up
+    // held indefinitely, because the film settles on that frame when it ends.
     let started = false;
     let settled = false; // film has finished and is holding the brand frame
     let raf = 0;
@@ -97,12 +98,9 @@ export default function HeroVideo() {
       if (caption) {
         const scale = (v.duration || cfg.ref) / cfg.ref;
         const t = v.currentTime;
-        const logoEnd = cfg.captionTo * scale;
-        const wantRate = t < logoEnd ? LOGO_RATE : 1;
-        if (v.playbackRate !== wantRate) v.playbackRate = wantRate;
         caption.classList.toggle(
           "is-shown",
-          t >= cfg.captionFrom * scale && t < logoEnd
+          t >= cfg.captionFrom * scale && t < cfg.captionTo * scale
         );
       }
       raf = requestAnimationFrame(tick);
