@@ -28,6 +28,10 @@ export default function QuoteSection() {
   return (
     <section ref={ref} className={`${s.quote}${shown ? ` ${s.revealed}` : ""}`}>
       <div className={s.aura} aria-hidden="true" />
+      {/* Faint DS2 mark behind the quote — the backdrop, not the attribution. */}
+      <div className={s.watermark} aria-hidden="true">
+        <DS2Mark />
+      </div>
       <div className={s.inner}>
         <DS2Mark className={s.mark} />
         <blockquote className={s.text}>

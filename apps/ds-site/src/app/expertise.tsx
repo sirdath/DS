@@ -35,7 +35,7 @@ function Logo({ slug, name }: { slug: string; name: string }) {
 
 const COPY = {
   en: {
-    eyebrow: "// Our expertise",
+    eyebrow: "What we do well",
     f1role: "Head of Engineering & Data",
     f1bg: "Business · Data science · Machine learning",
     f1city: "London",
@@ -44,7 +44,7 @@ const COPY = {
     f2city: "Athens",
   },
   el: {
-    eyebrow: "// Η εξειδίκευσή μας",
+    eyebrow: "Σε τι είμαστε καλοί",
     f1role: "Επικεφαλής Μηχανικής & Data",
     f1bg: "Business · Data science · Machine learning",
     f1city: "Λονδίνο",

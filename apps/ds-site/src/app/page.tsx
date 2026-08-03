@@ -444,19 +444,16 @@ export default function HomePage() {
           ))}
         </ul>
 
-        {/* Bottom-right: start the adaptive brief (/assistant) */}
-        <div className="hero-book">
-          <div className="hero-book__avatar" aria-hidden="true">
-            <DS2Mark />
-          </div>
-          <div className="hero-book__body">
-            <div className="hero-book__title">{t.hero.book.title}</div>
-            <Link href="/assistant" className="hero-book__cta">
-              {t.hero.book.cta}
-              <span className="hero-book__arrow" aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </div>
+        {/* Bottom-right: the brief CTA — the Mineral→Ice wipe button from the
+            redesign hero, kept as the single primary action. */}
+        <Link className="hero-cta" href="/assistant">
+          <span className="hero-cta__sheen" aria-hidden="true" />
+          <span className="hero-cta__main">
+            <span className="hero-cta__title">{t.hero.book.title}</span>
+            <span className="hero-cta__sub">{t.hero.book.sub}</span>
+          </span>
+          <span className="hero-cta__arrow" aria-hidden="true">→</span>
+        </Link>
       </section>
 
       {/* â”€â”€â”€ Selected work â€” real shipped projects + labelled concepts â”€â”€â”€ */}

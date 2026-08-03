@@ -111,19 +111,43 @@ export default function HeroVideo() {
     // The film plays once and settles on the DS2 logo + tagline rather than
     // hard-cutting back to frame 0 forever. A perpetual loop both looked abrupt
     // at the seam and kept a 1080p decode running for the whole visit.
-    const onEnded = () => {
-      const scale = (v.duration || cfg.ref) / cfg.ref;
+    const settle = () => {
+      if (settled) return;
       settled = true;
-      try {
-        v.currentTime = cfg.hold * scale;
-      } catch {
-        /* not seekable — leave it on the last frame */
-      }
+      const scale = (v.duration || cfg.ref) / cfg.ref;
+      const target = cfg.hold * scale;
       v.pause();
       stopLoop();
       caption?.classList.add("is-shown"); // hold the tagline with the logo
+
+      // Seeking can be refused while the browser is still finishing the stream,
+      // which used to strand the hero on the dark closing frame. Confirm the
+      // seek actually landed and retry briefly if it didn't.
+      let tries = 0;
+      const applySeek = () => {
+        try {
+          v.currentTime = target;
+        } catch {
+          /* retried below */
+        }
+        if (++tries < 12 && Math.abs(v.currentTime - target) > 0.08) {
+          window.setTimeout(applySeek, 100);
+        } else {
+          v.pause(); // a seek can nudge playback back on in some browsers
+        }
+      };
+      applySeek();
+    };
+
+    const onEnded = () => settle();
+    // Safari/Firefox don't always fire `ended` when the source is still
+    // buffering, so treat "within a frame of the end" as ended too.
+    const onTimeUpdate = () => {
+      const d = v.duration;
+      if (!settled && d && Number.isFinite(d) && d - v.currentTime <= 0.08) settle();
     };
     v.addEventListener("ended", onEnded);
+    v.addEventListener("timeupdate", onTimeUpdate);
     const runLoop = () => {
       if (!raf) raf = requestAnimationFrame(tick);
     };
@@ -183,6 +207,7 @@ export default function HeroVideo() {
       io.disconnect();
       stopLoop();
       v.removeEventListener("ended", onEnded);
+      v.removeEventListener("timeupdate", onTimeUpdate);
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("ds2:loaded", start);
     };

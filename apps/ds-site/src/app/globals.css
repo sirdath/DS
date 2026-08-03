@@ -2511,6 +2511,66 @@ footer { border-color: var(--hairline) !important; }
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ghost);
 }
+/* ── Hero brief CTA — the Mineral→Ice wipe button carried over from the
+      redesign hero (core-hero.module.css .cta), sitting where the book-a-call
+      card used to be. Single primary action in the hero. ── */
+.hero-cta {
+  position: absolute; right: 28px; bottom: clamp(18px, 3.5vw, 40px); z-index: 4;
+  overflow: hidden; display: inline-flex; align-items: center; gap: 22px;
+  height: 66px; padding: 0 14px 0 26px; border-radius: 16px;
+  white-space: nowrap; text-decoration: none;
+  background: linear-gradient(90deg, #f4f3f0 0%, #f4f3f0 50%, #8dcbff 50%, #8dcbff 100%);
+  background-size: 200% 100%; background-position: 0% 0;
+  color: #08090a;
+  box-shadow: 0 20px 40px -14px rgba(141,203,255,0.75), inset 0 0 0 1px rgba(255,255,255,0.5);
+  transition: background-position 0.52s cubic-bezier(0.2,0.8,0.2,1),
+    transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.22s ease;
+  animation: heroCtaBreathe 3.4s ease-in-out infinite;
+}
+.hero-cta:hover {
+  background-position: 100% 0; transform: translateY(-6px) scale(1.025); animation: none;
+  box-shadow: 0 42px 84px -16px rgba(141,203,255,1), 0 0 36px -2px rgba(141,203,255,0.9),
+    inset 0 0 0 1px rgba(255,255,255,0.65);
+}
+.hero-cta__sheen {
+  position: absolute; top: -14px; bottom: -14px; width: 52px; pointer-events: none;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.5), rgba(255,255,255,0));
+  animation: heroCtaSheen 4.2s ease-in-out infinite;
+}
+.hero-cta__main { position: relative; display: flex; flex-direction: column; gap: 6px; }
+.hero-cta__title { font-size: 16px; font-weight: 600; letter-spacing: -0.014em; }
+.hero-cta__sub {
+  font-family: "IBM Plex Mono", monospace; font-size: 9px; font-weight: 600;
+  letter-spacing: 0.16em; opacity: 0.72;
+}
+.hero-cta__arrow {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 42px; background: #08090a; color: #f4f3f0;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  font-family: "IBM Plex Mono", monospace; font-size: 15px;
+  transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
+}
+.hero-cta:hover .hero-cta__arrow { transform: translateX(4px) scale(1.06); }
+@keyframes heroCtaBreathe {
+  0%, 100% { box-shadow: 0 20px 40px -14px rgba(141,203,255,0.75), inset 0 0 0 1px rgba(255,255,255,0.5); }
+  50% { box-shadow: 0 26px 54px -14px rgba(141,203,255,0.95), 0 0 22px -6px rgba(141,203,255,0.55), inset 0 0 0 1px rgba(255,255,255,0.58); }
+}
+@keyframes heroCtaSheen {
+  0% { left: -80px; } 55%, 100% { left: 115%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-cta { animation: none; }
+  .hero-cta__sheen { display: none; }
+}
+@media (max-width: 760px) {
+  .hero-cta {
+    left: 16px; right: 16px; bottom: 16px; height: 60px;
+    justify-content: space-between; padding: 0 12px 0 18px;
+  }
+  .hero-cta__title { font-size: 15px; }
+  .hero-cta__sub { font-size: 8px; letter-spacing: 0.12em; }
+}
+
 .hero-book__cta {
   margin-top: auto; display: inline-flex; align-items: center; justify-content: space-between; gap: 10px;
   border: 0; cursor: pointer; font-family: inherit; text-decoration: none; /* it's an <a> to /assistant */

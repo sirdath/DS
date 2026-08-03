@@ -85,7 +85,7 @@ const PROJECTS: Project[] = [
 
 const COPY = {
   en: {
-    eyebrow: "// Selected work",
+    eyebrow: "Recent work",
     sub: "Real products and sites we've shipped. A couple are templates, ready to tailor to your business. The label tells you which.",
     concept: "Template",
     visit: "Visit ↗",
@@ -94,7 +94,7 @@ const COPY = {
     codaCta: "How can we help?",
   },
   el: {
-    eyebrow: "// Επιλεγμένα έργα",
+    eyebrow: "Πρόσφατα έργα",
     sub: "Πραγματικά προϊόντα και ιστοσελίδες που έχουμε παραδώσει. Κάποια είναι templates, έτοιμα να προσαρμοστούν στη δική σας επιχείρηση. Η ετικέτα σας λέει ποιο είναι ποιο.",
     concept: "Template",
     visit: "Επίσκεψη ↗",

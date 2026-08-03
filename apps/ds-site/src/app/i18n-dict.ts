@@ -56,7 +56,7 @@ export interface Dict {
     tags: string[];
     build: string[];
     buildLabel: string;
-    book: { title: string; role: string; cta: string; draft: string };
+    book: { title: string; role: string; cta: string; sub: string; draft: string };
   };
   services: {
     eyebrow: string;
@@ -252,7 +252,7 @@ const en: Dict = {
     tags: ["Websites & Online Shops", "Automation & AI", "Data & Forecasts", "Custom Builds"],
     build: ["Websites", "Automation", "AI Integration"],
     buildLabel: "What we build",
-    book: { title: "How can we help?", role: "Founders · Athens & London", cta: "Start your brief", draft: "Hi, I'd like to book a 15-minute intro call." },
+    book: { title: "How can we help?", role: "Founders · Athens & London", cta: "Start your brief", sub: "2 MINUTES · NO CALL · SAME-DAY REPLY", draft: "Hi, I'd like to book a 15-minute intro call." },
   },
   services: {
     eyebrow: "What we build",
@@ -425,7 +425,7 @@ const en: Dict = {
     ],
     statusDrafting: "Drafting · Athens / London",
     statusReady: "Ready to send · Athens / London",
-    caption: "// Founded 2026. Or just write us at ",
+    caption: "Founded 2026. Or just write us at ",
     tools: { attach: "Attach", format: "Format", image: "Image", sign: "Sign", stationery: "Stationery", send: "Send" },
   },
   footer: {
@@ -847,7 +847,7 @@ const el: Dict = {
     tags: ["Ιστοσελίδες & E-shops", "Αυτοματισμοί & ΤΝ", "Δεδομένα & Προβλέψεις", "Λύσεις κατά παραγγελία"],
     build: ["Ιστοσελίδες", "Αυτοματισμοί", "Ενσωμάτωση ΤΝ"],
     buildLabel: "Τι φτιάχνουμε",
-    book: { title: "Πώς να βοηθήσουμε;", role: "Ιδρυτές · Αθήνα & Λονδίνο", cta: "Ξεκινήστε το brief", draft: "Γεια σας, θα ήθελα να κλείσω μια εισαγωγική κλήση 15 λεπτών." },
+    book: { title: "Πώς μπορούμε να βοηθήσουμε;", role: "Ιδρυτές · Αθήνα & Λονδίνο", cta: "Ξεκινήστε το brief", sub: "2 ΛΕΠΤΑ · ΧΩΡΙΣ ΚΛΗΣΗ · ΑΠΑΝΤΗΣΗ ΑΥΘΗΜΕΡΟΝ", draft: "Γεια σας, θα ήθελα να κλείσω μια εισαγωγική κλήση 15 λεπτών." },
   },
   services: {
     eyebrow: "Τι φτιάχνουμε",
@@ -1020,7 +1020,7 @@ const el: Dict = {
     ],
     statusDrafting: "Σύνταξη · Αθήνα / Λονδίνο",
     statusReady: "Έτοιμο για αποστολή · Αθήνα / Λονδίνο",
-    caption: "// Ιδρύθηκε το 2026. Ή γράψτε μας απευθείας στο ",
+    caption: "Ιδρύθηκε το 2026. Ή γράψτε μας απευθείας στο ",
     tools: { attach: "Επισύναψη", format: "Μορφοποίηση", image: "Εικόνα", sign: "Υπογραφή", stationery: "Χαρτικά", send: "Αποστολή" },
   },
   footer: {

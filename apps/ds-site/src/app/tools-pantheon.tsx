@@ -96,13 +96,13 @@ const TOOLS: Tool[] = [
 
 const COPY = {
   en: {
-    eyebrow: "// The pantheon",
+    eyebrow: "The pantheon",
     sub: "Productized services named after the gods who would run them. You subscribe, we run the machinery. Hover a name to meet each one.",
     open: "Open tool",
     all: "See all nine tools",
   },
   el: {
-    eyebrow: "// Το πάνθεον",
+    eyebrow: "Το πάνθεον",
     sub: "Productized υπηρεσίες, με τα ονόματα των θεών που θα τις έτρεχαν. Εσείς εγγράφεστε, εμείς τρέχουμε τη μηχανή. Περάστε πάνω από ένα όνομα για να το γνωρίσετε.",
     open: "Άνοιγμα",
     all: "Δείτε και τα εννέα εργαλεία",
