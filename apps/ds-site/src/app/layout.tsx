@@ -20,9 +20,29 @@ const orbitron = Orbitron({
 });
 
 export const metadata: Metadata = {
+  // Without metadataBase + an og:image, link scrapers (WhatsApp, iMessage,
+  // LinkedIn) fell back to the first large <img> on the page — which was the
+  // Nodebook portfolio screenshot. Every share preview must carry the DS2 card.
+  metadataBase: new URL("https://www.ds2-consulting.com"),
   title: "DS2, Digital Solutions Consulting",
   description:
     "A senior team for strategy, engineering, and applied AI. Athens and London.",
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "DS2",
+    title: "DS2, Digital Solutions Consulting",
+    description:
+      "A senior team for strategy, engineering, and applied AI. Athens and London.",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "DS2 — Digital Solutions Consulting, Athens · London" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "DS2, Digital Solutions Consulting",
+    description:
+      "A senior team for strategy, engineering, and applied AI. Athens and London.",
+    images: ["/og.png"],
+  },
   icons: {
     icon: [
       { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
