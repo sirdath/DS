@@ -8,6 +8,30 @@ export type AssistantField = {
   required?: boolean;
   options?: readonly string[];
 };
+/** One tier band of an exact-count slider. */
+export type AssistantSliderTier = {
+  min: number;
+  max: number;
+  label: string;
+  range: string;
+};
+/** Opt-in upgrade from a 5-stop band slider to an exact per-person count.
+ *  Only the team step carries this, so timing and budget keep the plain band
+ *  slider and specialising the team UI cannot destabilise them. */
+export type AssistantSliderExact = {
+  min: number;
+  /** Sentinel one past the real maximum, rendered as `overflowLabel`. */
+  max: number;
+  defaultValue: number;
+  tiers: readonly AssistantSliderTier[];
+  personSingular: string;
+  personPlural: string;
+  overflowLabel: string;
+  overflowValueText: string;
+  sceneLabel: string;
+  scrollHint: string;
+  shortcutsLabel: string;
+};
 export type AssistantSlider = {
   min: number;
   max: number;
@@ -15,6 +39,10 @@ export type AssistantSlider = {
   values: readonly string[];
   labels: readonly string[];
   scene: "team" | "timing" | "budget";
+  exact?: AssistantSliderExact;
+  /** Localized delivery-layer names for the investment scene. Layer n comes into
+   *  scope at range n, so the list length matches the range count. */
+  sceneLayers?: readonly string[];
 };
 export type AssistantStep = {
   id: string;
@@ -169,20 +197,33 @@ export const assistantCopy = {
       },
     } satisfies Record<GoalKey, Branch>,
     common: {
-      business: { id: "business", eyebrow: "05 · Your business", title: "A little context changes the recommendation.", help: "Just the business name and industry are required.", summaryLabel: "Business context", type: "fields", fields: [
+      business: { id: "business", title: "A little context changes the recommendation.", help: "Just the business name and industry are required.", summaryLabel: "Business context", type: "fields", fields: [
         { id: "company", label: "Business or project name", type: "text", required: true },
         { id: "industry", label: "Industry", type: "text", required: true },
         { id: "website", label: "Current website", type: "url" },
       ] },
-      team: { id: "team", eyebrow: "06 · The people", title: "How many people will this need to work for?", help: "Move the slider. This helps us judge complexity, access and handover.", summaryLabel: "Team size", type: "slider", slider: { min: 0, max: 4, defaultValue: 1, values: ["Just me", "2–5 people", "6–15 people", "16–50 people", "More than 50"], labels: ["Solo", "Small team", "Growing team", "Established team", "Large organisation"], scene: "team" } },
-      timing: { id: "timing", eyebrow: "07 · The pace", title: "When would it feel useful to have this live?", help: "There is no wrong speed. Move the marker to what feels realistic.", summaryLabel: "Ideal timing", type: "slider", slider: { min: 0, max: 4, defaultValue: 1, values: ["Exploring — no deadline", "Within 3–6 months", "Within 1–3 months", "Within one month", "As soon as responsibly possible"], labels: ["Exploring", "This half-year", "This quarter", "This month", "Ready now"], scene: "timing" } },
-      budget: { id: "budget", eyebrow: "08 · The investment", title: "What investment range feels comfortable?", help: "This shapes the first useful scope. It is guidance, not a quote or commitment.", summaryLabel: "Investment range", type: "slider", slider: { min: 0, max: 5, defaultValue: 0, values: ["Not sure yet", "Under €5,000", "€5,000–€15,000", "€15,000–€30,000", "€30,000–€60,000", "€60,000+"], labels: ["Let’s scope it", "Focused start", "Solid build", "Ambitious build", "Major system", "Strategic platform"], scene: "budget" } },
+      team: { id: "team", title: "How many people are on your team?", help: "Move the slider. This helps us judge complexity, access and handover.", summaryLabel: "Team size", type: "slider", slider: { min: 0, max: 4, defaultValue: 1, values: ["Just me", "2–5 people", "6–15 people", "16–50 people", "More than 50"], labels: ["Solo", "Small team", "Growing team", "Established team", "Large organisation"], scene: "team", exact: {
+        min: 1, max: 51, defaultValue: 1,
+        tiers: [
+          { min: 1, max: 1, label: "Solo", range: "1" },
+          { min: 2, max: 5, label: "Small team", range: "2–5" },
+          { min: 6, max: 15, label: "Growing team", range: "6–15" },
+          { min: 16, max: 50, label: "Established team", range: "16–50" },
+          { min: 51, max: 51, label: "Large organisation", range: "50+" },
+        ],
+        personSingular: "person", personPlural: "people",
+        overflowLabel: "50+", overflowValueText: "50 or more people",
+        sceneLabel: "Your team", scrollHint: "Scroll here for an exact count",
+        shortcutsLabel: "Team-size shortcuts",
+      } } },
+      timing: { id: "timing", title: "When would it feel useful to have this live?", help: "There is no wrong speed. Move the marker to what feels realistic.", summaryLabel: "Ideal timing", type: "slider", slider: { min: 0, max: 4, defaultValue: 1, values: ["Exploring — no deadline", "Within 3 – 6 months", "Within 1 – 3 months", "Within one month", "As soon as responsibly possible"], labels: ["Exploring", "This half-year", "This quarter", "This month", "Ready now"], scene: "timing" } },
+      budget: { id: "budget", title: "What investment range feels comfortable?", help: "This shapes the first useful scope. It is guidance, not a quote or commitment.", summaryLabel: "Investment range", type: "slider", slider: { min: 0, max: 5, defaultValue: 0, values: ["Not sure yet", "Under €500", "€500 – €1,500", "€1,500 – €3,500", "€3,500 – €10,000", "€10,000+"], labels: ["Let’s scope it", "Focused start", "Solid build", "Ambitious build", "Major system", "Strategic platform"], scene: "budget", sceneLayers: ["Discovery", "Foundation", "Experience", "Automation", "Scale", "Stewardship"] } },
       contact: { id: "contact", eyebrow: "10 · The next step", title: "Where should we continue the conversation?", help: "We will use these details only to reply to this brief.", summaryLabel: "Contact", type: "fields", fields: [
         { id: "name", label: "Your name", type: "text", required: true },
         { id: "email", label: "Email", type: "email", required: true },
       ] },
     },
-    ui: { progress: "Your DS2 brief", step: "Step", complete: "complete", remaining: "remaining", back: "Back", next: "Continue", review: "Review brief", send: "Send", reset: "Start again", close: "Back to DS2", selected: "selected", required: "Required", optional: "Optional", choose: "Choose one", reviewEyebrow: "Your DS2 brief", reviewTitle: "Here is the shape of the opportunity.", reviewHelp: "Review what we understood before sending your brief.", error: "Choose an answer before continuing.", sliderHint: "Drag or use the arrow keys" },
+    ui: { progress: "Your DS2 brief", step: "Step", complete: "complete", remaining: "remaining", back: "Back", next: "Continue", review: "Review brief", send: "Send", reset: "Start again", close: "Back to DS2", selected: "selected", required: "Required", optional: "Optional", choose: "Choose one", reviewEyebrow: "Your DS2 brief", reviewTitle: "Here is the shape of the opportunity.", reviewHelp: "Review what we understood before sending your brief.", error: "Choose an answer before continuing.", errorFields: "Fill in the required fields before continuing.", errorEmail: "Enter a valid email before continuing.", sliderHint: "Drag or use the arrow keys" },
   },
   el: {
     goal: {
@@ -249,16 +290,29 @@ export const assistantCopy = {
       },
     } satisfies Record<GoalKey, Branch>,
     common: {
-      business: { id: "business", eyebrow: "05 · Η επιχείρηση", title: "Λίγο context αλλάζει την πρόταση.", help: "Μόνο το όνομα και ο κλάδος είναι υποχρεωτικά.", summaryLabel: "Στοιχεία επιχείρησης", type: "fields", fields: [
+      business: { id: "business", title: "Λίγο context αλλάζει την πρόταση.", help: "Μόνο το όνομα και ο κλάδος είναι υποχρεωτικά.", summaryLabel: "Στοιχεία επιχείρησης", type: "fields", fields: [
         { id: "company", label: "Επιχείρηση ή project", type: "text", required: true }, { id: "industry", label: "Κλάδος", type: "text", required: true }, { id: "website", label: "Τρέχουσα ιστοσελίδα", type: "url" },
       ] },
-      team: { id: "team", eyebrow: "06 · Οι άνθρωποι", title: "Για πόσα άτομα πρέπει να λειτουργεί;", help: "Μετακινήστε το slider. Μας βοηθά να κρίνουμε πολυπλοκότητα και handover.", summaryLabel: "Μέγεθος ομάδας", type: "slider", slider: { min: 0, max: 4, defaultValue: 1, values: ["Μόνο εγώ", "2–5 άτομα", "6–15 άτομα", "16–50 άτομα", "Πάνω από 50"], labels: ["Solo", "Μικρή ομάδα", "Αναπτυσσόμενη ομάδα", "Εδραιωμένη ομάδα", "Μεγάλος οργανισμός"], scene: "team" } },
-      timing: { id: "timing", eyebrow: "07 · Ο ρυθμός", title: "Πότε θα ήταν χρήσιμο να είναι live;", help: "Δεν υπάρχει λάθος ταχύτητα. Επιλέξτε το ρεαλιστικό.", summaryLabel: "Ιδανικό timing", type: "slider", slider: { min: 0, max: 4, defaultValue: 1, values: ["Διερεύνηση — χωρίς deadline", "Μέσα σε 3–6 μήνες", "Μέσα σε 1–3 μήνες", "Μέσα σε έναν μήνα", "Όσο πιο σύντομα γίνεται υπεύθυνα"], labels: ["Διερεύνηση", "Αυτό το εξάμηνο", "Αυτό το τρίμηνο", "Αυτόν τον μήνα", "Έτοιμοι τώρα"], scene: "timing" } },
-      budget: { id: "budget", eyebrow: "08 · Η επένδυση", title: "Ποιο εύρος επένδυσης νιώθετε άνετο;", help: "Καθορίζει το πρώτο χρήσιμο scope. Δεν είναι προσφορά ή δέσμευση.", summaryLabel: "Εύρος επένδυσης", type: "slider", slider: { min: 0, max: 5, defaultValue: 0, values: ["Δεν είμαι σίγουρος/η", "Κάτω από €5.000", "€5.000–€15.000", "€15.000–€30.000", "€30.000–€60.000", "€60.000+"], labels: ["Ας το ορίσουμε", "Εστιασμένη αρχή", "Πλήρες build", "Φιλόδοξο build", "Μεγάλο σύστημα", "Στρατηγική πλατφόρμα"], scene: "budget" } },
+      team: { id: "team", title: "Πόσα άτομα έχει η ομάδα σας;", help: "Μετακινήστε το slider. Μας βοηθά να κρίνουμε πολυπλοκότητα και handover.", summaryLabel: "Μέγεθος ομάδας", type: "slider", slider: { min: 0, max: 4, defaultValue: 1, values: ["Μόνο εγώ", "2–5 άτομα", "6–15 άτομα", "16–50 άτομα", "Πάνω από 50"], labels: ["Solo", "Μικρή ομάδα", "Αναπτυσσόμενη ομάδα", "Εδραιωμένη ομάδα", "Μεγάλος οργανισμός"], scene: "team", exact: {
+        min: 1, max: 51, defaultValue: 1,
+        tiers: [
+          { min: 1, max: 1, label: "Solo", range: "1" },
+          { min: 2, max: 5, label: "Μικρή ομάδα", range: "2–5" },
+          { min: 6, max: 15, label: "Αναπτυσσόμενη ομάδα", range: "6–15" },
+          { min: 16, max: 50, label: "Εδραιωμένη ομάδα", range: "16–50" },
+          { min: 51, max: 51, label: "Μεγάλος οργανισμός", range: "50+" },
+        ],
+        personSingular: "άτομο", personPlural: "άτομα",
+        overflowLabel: "50+", overflowValueText: "50 ή περισσότερα άτομα",
+        sceneLabel: "Η ομάδα σας", scrollHint: "Κυλήστε εδώ για ακριβή αριθμό",
+        shortcutsLabel: "Συντομεύσεις μεγέθους ομάδας",
+      } } },
+      timing: { id: "timing", title: "Πότε θα ήταν χρήσιμο να είναι live;", help: "Δεν υπάρχει λάθος ταχύτητα. Επιλέξτε το ρεαλιστικό.", summaryLabel: "Ιδανικό timing", type: "slider", slider: { min: 0, max: 4, defaultValue: 1, values: ["Διερεύνηση — χωρίς deadline", "Μέσα σε 3 – 6 μήνες", "Μέσα σε 1 – 3 μήνες", "Μέσα σε έναν μήνα", "Όσο πιο σύντομα γίνεται υπεύθυνα"], labels: ["Διερεύνηση", "Αυτό το εξάμηνο", "Αυτό το τρίμηνο", "Αυτόν τον μήνα", "Έτοιμοι τώρα"], scene: "timing" } },
+      budget: { id: "budget", title: "Ποιο εύρος επένδυσης νιώθετε άνετο;", help: "Καθορίζει το πρώτο χρήσιμο scope. Δεν είναι προσφορά ή δέσμευση.", summaryLabel: "Εύρος επένδυσης", type: "slider", slider: { min: 0, max: 5, defaultValue: 0, values: ["Δεν είμαι σίγουρος/η", "Κάτω από €500", "€500 – €1.500", "€1.500 – €3.500", "€3.500 – €10.000", "€10.000+"], labels: ["Ας το ορίσουμε", "Εστιασμένη αρχή", "Πλήρες build", "Φιλόδοξο build", "Μεγάλο σύστημα", "Στρατηγική πλατφόρμα"], scene: "budget", sceneLayers: ["Ανακάλυψη", "Θεμέλια", "Εμπειρία", "Αυτοματισμός", "Κλίμακα", "Διαχείριση"] } },
       contact: { id: "contact", eyebrow: "10 · Το επόμενο βήμα", title: "Πού να συνεχίσουμε τη συζήτηση;", help: "Θα χρησιμοποιήσουμε τα στοιχεία μόνο για να απαντήσουμε σε αυτό το brief.", summaryLabel: "Επικοινωνία", type: "fields", fields: [
         { id: "name", label: "Το όνομά σας", type: "text", required: true }, { id: "email", label: "Email", type: "email", required: true },
       ] },
     },
-    ui: { progress: "Το DS2 brief σας", step: "Βήμα", complete: "ολοκληρώθηκε", remaining: "απομένει", back: "Πίσω", next: "Συνέχεια", review: "Έλεγχος brief", send: "Αποστολή", reset: "Από την αρχή", close: "Πίσω στη DS2", selected: "επιλεγμένα", required: "Υποχρεωτικό", optional: "Προαιρετικό", choose: "Επιλέξτε", reviewEyebrow: "Το DS2 brief σας", reviewTitle: "Αυτή είναι η μορφή της ευκαιρίας.", reviewHelp: "Ελέγξτε τι καταλάβαμε πριν στείλετε το brief.", error: "Επιλέξτε μια απάντηση για να συνεχίσετε.", sliderHint: "Σύρετε ή χρησιμοποιήστε τα βελάκια" },
+    ui: { progress: "Το DS2 brief σας", step: "Βήμα", complete: "ολοκληρώθηκε", remaining: "απομένει", back: "Πίσω", next: "Συνέχεια", review: "Έλεγχος brief", send: "Αποστολή", reset: "Από την αρχή", close: "Πίσω στη DS2", selected: "επιλεγμένα", required: "Υποχρεωτικό", optional: "Προαιρετικό", choose: "Επιλέξτε", reviewEyebrow: "Το DS2 brief σας", reviewTitle: "Αυτή είναι η μορφή της ευκαιρίας.", reviewHelp: "Ελέγξτε τι καταλάβαμε πριν στείλετε το brief.", error: "Επιλέξτε μια απάντηση για να συνεχίσετε.", errorFields: "Συμπληρώστε τα υποχρεωτικά πεδία για να συνεχίσετε.", errorEmail: "Καταχωρίστε ένα έγκυρο email για να συνεχίσετε.", sliderHint: "Σύρετε ή χρησιμοποιήστε τα βελάκια" },
   },
 } as const;

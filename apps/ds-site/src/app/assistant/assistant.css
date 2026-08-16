@@ -1,6 +1,6 @@
 .assistant-shell {
   --a-ink: #f4f3f0;
-  --a-muted: #aeb8c2;
+  --a-muted: var(--a-muted);
   --a-blue: #8dcbff;
   --a-ice: #8dcbff;
   --a-violet: #2e7fd6; /* was violet — DS2 uses Ice/Action Deep only */
@@ -55,16 +55,19 @@
   backdrop-filter: blur(30px) saturate(1.35);
 }
 .assistant-brand { width: fit-content; }
+/* brightness(0) invert(1) forces the logo white for the dark theme. Light
+   theme needs the opposite: brightness(0) alone keeps it black, matching ink. */
 .assistant-brand img { display: block; width: 84px; filter: brightness(0) invert(1) opacity(.92); }
+html[data-assistant-theme="light"] .assistant-brand img { filter: brightness(0) opacity(.85); }
 .assistant-nav__actions { justify-self: end; display: flex; align-items: center; gap: 12px; }
-.assistant-voice { min-height: 38px; padding: 0 14px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,.14); border-radius: 999px; background: rgba(255,255,255,0.068); color: #aeb8c2; font: 600 12.5px/1 var(--font-inter), sans-serif; cursor: pointer; backdrop-filter: blur(18px); }
+.assistant-voice { min-height: 38px; padding: 0 14px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,.14); border-radius: 999px; background: rgba(255,255,255,0.068); color: var(--a-muted); font: 600 12.5px/1 var(--font-inter), sans-serif; cursor: pointer; backdrop-filter: blur(18px); }
 .assistant-voice span { color: var(--a-blue); font-size: 13px; }
 .assistant-voice.is-on { border-color: rgba(141, 203, 255, .28); color: #8dcbff; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.100), 0 8px 22px rgba(141, 203, 255, .09); }
 
 .assistant-progress { display: grid; gap: 9px; }
-.assistant-progress__copy { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 16px; color: #aeb8c2; font: 600 12px/1 "IBM Plex Mono", Consolas, monospace; letter-spacing: .08em; text-transform: uppercase; }
+.assistant-progress__copy { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 16px; color: var(--a-muted); font: 600 12px/1 "IBM Plex Mono", Consolas, monospace; letter-spacing: .08em; text-transform: uppercase; }
 .assistant-progress__copy strong { color: #8dcbff; font-weight: 700; }
-.assistant-progress__copy small { color: #9aa5b1; font-size: 12.5px; }
+.assistant-progress__copy small { color: var(--a-muted); font-size: 12.5px; }
 .assistant-progress__track { position: relative; height: 9px; display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; overflow: visible; border-radius: 99px; background: rgba(255,255,255,.08); box-shadow: inset 0 1px 3px rgba(0,0,0, .08); cursor: grab; touch-action: pan-y; }
 .assistant-progress__track.is-dragging { cursor: grabbing; }
 .assistant-progress__track > b { position: absolute; z-index: 0; inset: 0 auto 0 0; border-radius: inherit; background: linear-gradient(90deg, #8dcbff, #6fb8f0 58%, #2e7fd6); box-shadow: 0 0 24px rgba(141, 203, 255, .34); transition: width 650ms var(--a-ease); }
@@ -77,7 +80,12 @@
 /* `safe center` centres while content fits, then falls back to start-aligned
    instead of overflowing past the top edge — without it, a tall question
    slid up underneath the fixed nav. */
-.assistant-stage { position: relative; z-index: 2; width: min(1180px, 100%); height: calc(100svh - 156px); min-height: 0; margin: 0 auto; display: grid; place-items: safe center; overflow-y: auto; scrollbar-width: none; }
+/* padding-inline: the CSS overflow spec forces overflow-x to behave as 'auto'
+   (clipping) on any box that sets only overflow-y, even to 'auto'. Option-card
+   hover glow (56px blur) bled past this box's edge and got hard-clipped right
+   at the boundary — the "rectangular slab" artifact, worst in narrow/single-
+   column layouts where cards sit near-flush with the stage edge. */
+.assistant-stage { position: relative; z-index: 2; width: min(1180px, 100%); height: calc(100svh - 156px); min-height: 0; margin: 0 auto; padding-inline: clamp(8px, 3vw, 40px); display: grid; place-items: safe center; overflow-y: auto; scrollbar-width: none; }
 .assistant-stage::-webkit-scrollbar { width: 0; height: 0; }
 .assistant-screen { width: 100%; max-height: 100%; min-width: 0; animation: assistant-enter 480ms var(--a-ease) both; }
 @keyframes assistant-enter { from { opacity: 0; transform: translateY(12px) scale(.99); filter: blur(4px); } to { opacity: 1; transform: none; filter: blur(0); } }
@@ -86,8 +94,8 @@
 .assistant-question > header, .assistant-review > header { max-width: 960px; margin: 0 auto 6px; text-align: center; }
 .assistant-question header > p, .assistant-review header > p { margin: 0; color: #8dcbff; font: 700 12px/1.3 "IBM Plex Mono", Consolas, monospace; letter-spacing: .14em; text-transform: uppercase; }
 .assistant-question h1, .assistant-review h1 { max-width: 980px; margin: 8px auto 9px; font-size: clamp(36px, 4.2vw, 62px); font-weight: 400; line-height: .96; letter-spacing: -.06em; text-wrap: balance; }
-.assistant-help, .assistant-review header > span { display: block; max-width: 690px; margin: 0 auto; color: #aeb8c2; font-size: clamp(15px, 1.15vw, 18px); line-height: 1.4; }
-.assistant-context { width: fit-content; margin: 7px auto -1px; padding: 6px 11px; display: flex; align-items: center; gap: 9px; border: 1px solid rgba(255,255,255,0.130); border-radius: 999px; background: rgba(255,255,255,0.060); color: #aeb8c2; font: 600 12.5px/1 var(--font-inter), sans-serif; box-shadow: inset 0 1px 0 rgba(255,255,255,0.140); backdrop-filter: blur(20px); }
+.assistant-help, .assistant-review header > span { display: block; max-width: 690px; margin: 0 auto; color: var(--a-muted); font-size: clamp(15px, 1.15vw, 18px); line-height: 1.4; }
+.assistant-context { width: fit-content; margin: 7px auto -1px; padding: 6px 11px; display: flex; align-items: center; gap: 9px; border: 1px solid rgba(255,255,255,0.130); border-radius: 999px; background: rgba(255,255,255,0.060); color: var(--a-muted); font: 600 12.5px/1 var(--font-inter), sans-serif; box-shadow: inset 0 1px 0 rgba(255,255,255,0.140); backdrop-filter: blur(20px); }
 .assistant-context i { width: 7px; height: 7px; border-radius: 50%; background: #8dcbff; box-shadow: 0 0 0 5px rgba(141, 203, 255, .11); }
 
 .assistant-options { width: min(1080px, 100%); margin: 0 auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
@@ -151,13 +159,13 @@
 .assistant-option__check b { width: 7px; height: 7px; border-radius: 50%; background: #7d8fa2; opacity: .35; transition: transform 300ms var(--a-ease), opacity 300ms, background 300ms; }
 .assistant-options > button.is-selected .assistant-option__check { border-color: #8dcbff; background: #8dcbff; box-shadow: 0 0 0 6px rgba(141, 203, 255, .1); }
 .assistant-options > button.is-selected .assistant-option__check b { width: 9px; height: 5px; border: solid #fff; border-width: 0 0 2px 2px; border-radius: 0; opacity: 1; transform: translateY(-1px) rotate(-45deg); background: transparent; }
-.assistant-count { position: absolute; z-index: 2; right: 0; top: 0; width: fit-content; margin: 0; padding: 8px 12px; border: 1px solid rgba(255,255,255,0.124); border-radius: 999px; background: rgba(255,255,255,0.056); color: #9aa5b1; font: 700 12px/1 "IBM Plex Mono", Consolas, monospace; text-transform: uppercase; backdrop-filter: blur(18px); }
+.assistant-count { position: absolute; z-index: 2; right: 0; top: 0; width: fit-content; margin: 0; padding: 8px 12px; border: 1px solid rgba(255,255,255,0.124); border-radius: 999px; background: rgba(255,255,255,0.056); color: var(--a-muted); font: 700 12px/1 "IBM Plex Mono", Consolas, monospace; text-transform: uppercase; backdrop-filter: blur(18px); }
 .assistant-count span { color: #8dcbff; }
 
 .assistant-fields { width: min(900px, 100%); margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.assistant-fields label, .assistant-textarea { display: flex; flex-direction: column; gap: 10px; color: #9fb0c2; font: 700 12px/1 "IBM Plex Mono", Consolas, monospace; letter-spacing: .06em; text-transform: uppercase; }
+.assistant-fields label, .assistant-textarea { display: flex; flex-direction: column; gap: 10px; color: var(--a-muted); font: 700 12px/1 "IBM Plex Mono", Consolas, monospace; letter-spacing: .06em; text-transform: uppercase; }
 .assistant-fields label > span { padding: 0 10px; display: flex; justify-content: space-between; }
-.assistant-fields label small { color: #9aa5b1; font-size: 12.5px; }
+.assistant-fields label small { color: var(--a-muted); font-size: 12.5px; }
 .assistant-fields input, .assistant-fields select, .assistant-textarea textarea {
   width: 100%;
   min-height: 56px;
@@ -179,20 +187,77 @@
 .assistant-textarea > span { padding-left: 10px; }
 
 .assistant-slider { width: min(980px, 100%); margin: 0 auto; display: grid; gap: 14px; }
-.assistant-slider__scene { position: relative; min-height: 210px; padding: 20px; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(220px, .5fr); align-items: center; gap: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.144); border-radius: 34px; background: linear-gradient(145deg, rgba(255,255,255,0.086), rgba(255,255,255,0.028)); box-shadow: inset 0 1px 0 rgba(255,255,255,0.180), 0 25px 70px rgba(53, 88, 123, .12); backdrop-filter: blur(28px) saturate(1.35); }
+/* touch-action:none — the scene handles its own pointer drag (SliderQuestion
+   in page.tsx); without this, a touch drag also pans the page. */
+/* min-height: measured worst case is Greek's 4-line wrap of the reading value
+   at Step 6's last stop (172.8px of text vs. 129.6px for the worst English
+   case). First attempt raised the floor to 262px, which was still BELOW the
+   content's own natural height (measured 270.8px: min-height is a floor, not
+   a cap, so content taller than the floor still wins and the row grows to
+   fit it regardless). 300px sits clearly above the measured natural height,
+   so the floor actually governs and the row stops depending on content
+   length; overflow:hidden (already set) is the backstop beyond that. */
+.assistant-slider__scene { position: relative; min-height: 300px; padding: 20px; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(220px, .5fr); align-items: center; gap: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.144); border-radius: 34px; background: linear-gradient(145deg, rgba(255,255,255,0.086), rgba(255,255,255,0.028)); box-shadow: inset 0 1px 0 rgba(255,255,255,0.180), 0 25px 70px rgba(53, 88, 123, .12); backdrop-filter: blur(28px) saturate(1.35); touch-action: none; cursor: grab; }
+.assistant-slider__scene:active { cursor: grabbing; }
 .assistant-slider__scene::before { content: ""; position: absolute; inset: -40% auto auto -10%; width: 60%; aspect-ratio: 1; border-radius: 50%; background: rgba(141, 203, 255, .34); filter: blur(22px); }
 .assistant-slider__reading { position: relative; z-index: 2; align-self: stretch; padding: 16px; display: flex; flex-direction: column; justify-content: flex-end; border-left: 1px solid rgba(255,255,255,0.116); }
-.assistant-slider__reading span { color: #9fb0c2; font: 700 12px/1 "IBM Plex Mono", Consolas, monospace; letter-spacing: .08em; text-transform: uppercase; }
+.assistant-slider__reading span { color: var(--a-muted); font: 700 12px/1 "IBM Plex Mono", Consolas, monospace; letter-spacing: .08em; text-transform: uppercase; }
 .assistant-slider__reading strong { max-width: 350px; margin-top: 12px; font-size: clamp(28px, 3.6vw, 52px); line-height: 1; letter-spacing: -.05em; }
-.assistant-slider > label { display: grid; gap: 12px; color: #9fb0c2; font: 700 12px/1 "IBM Plex Mono", Consolas, monospace; letter-spacing: .08em; text-transform: uppercase; }
-.assistant-slider input[type="range"] { width: 100%; height: 12px; margin: 0; appearance: none; border: 1px solid rgba(255,255,255,0.140); border-radius: 99px; outline: none; background: linear-gradient(90deg, #8dcbff 0 var(--range-progress), rgba(255,255,255,0.084) var(--range-progress) 100%); box-shadow: inset 0 1px 3px rgba(30, 62, 94, .1), 0 8px 25px rgba(141, 203, 255, .08); }
-.assistant-slider input[type="range"]::-webkit-slider-thumb { width: 34px; height: 34px; appearance: none; border: 7px solid rgba(255,255,255,0.176); border-radius: 50%; background: #8dcbff; box-shadow: 0 5px 22px rgba(141, 203, 255, .35), 0 0 0 1px rgba(35, 89, 151, .2); cursor: grab; }
-.assistant-slider input[type="range"]::-moz-range-thumb { width: 22px; height: 22px; border: 6px solid rgba(255,255,255,0.176); border-radius: 50%; background: #8dcbff; box-shadow: 0 5px 22px rgba(141, 203, 255, .35); cursor: grab; }
-.assistant-slider__ticks { display: grid; grid-template-columns: repeat(6, 1fr); }
-.assistant-slider__ticks button { min-height: 30px; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; border: 0; background: transparent; color: #9aa5b1; font: 600 12.5px/1 var(--font-inter), sans-serif; cursor: pointer; }
-.assistant-slider__ticks button:nth-last-child(n+6):first-child, .assistant-slider__ticks button:nth-last-child(n+6):first-child ~ button { }
-.assistant-slider__ticks i { width: 5px; height: 5px; border-radius: 50%; background: rgba(68, 96, 124, .3); }
-.assistant-slider__ticks button.is-active i { background: #8dcbff; box-shadow: 0 0 0 5px rgba(141, 203, 255, .1); }
+.assistant-slider > label { display: grid; gap: 12px; color: var(--a-muted); font: 700 12px/1 "IBM Plex Mono", Consolas, monospace; letter-spacing: .08em; text-transform: uppercase; }
+/* Same architecture as .assistant-team's slider (Step 5): the input itself is
+   a tall (30px) transparent hit area, and a separate ::-webkit-slider-runnable-
+   track pseudo-element draws the thin (10px) visible rail centred inside it.
+   The previous version put the rail directly on a 10-12px input, so the 34px
+   thumb (needed to look right against that rail) had nowhere to overflow but
+   up — spilling into the hint text above it. A 30px input gives the thumb
+   room to sit centred without leaving its parent's box at all. */
+.assistant-slider input[type="range"] { width: 100%; height: 30px; margin: 0; appearance: none; background: transparent; cursor: grab; }
+.assistant-slider input[type="range"]:active { cursor: grabbing; }
+.assistant-slider input[type="range"]::-webkit-slider-runnable-track {
+  height: 10px; border: 1px solid rgba(255, 255, 255, .16); border-radius: 999px;
+  background: linear-gradient(90deg, #8dcbff 0 var(--range-progress), rgba(255, 255, 255, .085) var(--range-progress) 100%);
+}
+.assistant-slider input[type="range"]::-webkit-slider-thumb {
+  width: 28px; height: 28px; margin-top: -10px; appearance: none;
+  border: 7px solid rgba(255, 255, 255, .82); border-radius: 50%; background: #8dcbff;
+  box-shadow: 0 0 0 5px rgba(141, 203, 255, .15), 0 6px 18px rgba(0, 0, 0, .32);
+}
+.assistant-slider input[type="range"]::-moz-range-track {
+  height: 8px; border: 1px solid rgba(255, 255, 255, .16); border-radius: 999px;
+  background: rgba(255, 255, 255, .085);
+}
+.assistant-slider input[type="range"]::-moz-range-progress { height: 8px; border-radius: 999px; background: #8dcbff; }
+.assistant-slider input[type="range"]::-moz-range-thumb {
+  width: 16px; height: 16px; border: 7px solid rgba(255, 255, 255, .82); border-radius: 50%;
+  background: #8dcbff; box-shadow: 0 0 0 5px rgba(141, 203, 255, .15);
+}
+.assistant-slider input[type="range"]:focus-visible { outline: 2px solid #8dcbff; outline-offset: 5px; border-radius: 999px; }
+/* Pill row, same pattern as .assistant-team__tiers (Step 5): one button per
+   stop, the current value highlighted via aria-pressed. flex (not a fixed
+   grid-template-columns) because stop count varies by step — 5 for timing,
+   6 for budget — so pills always divide the row evenly either way. */
+.assistant-slider__tiers { display: flex; gap: 8px; margin-top: 4px; }
+.assistant-slider__tiers button {
+  flex: 1 1 0; min-height: 46px; padding: 9px 10px 8px; display: grid; place-items: center;
+  border: 1px solid rgba(159, 190, 215, .18); border-radius: 999px;
+  background: rgba(255, 255, 255, .018); box-shadow: inset 0 1px rgba(255, 255, 255, .025);
+  color: var(--a-muted); font: 600 11.5px/1.15 var(--font-inter), sans-serif; text-align: center; cursor: pointer;
+  touch-action: manipulation;
+  transition: transform .24s cubic-bezier(.2, .75, .2, 1), border-color .2s, background-color .2s, color .2s, box-shadow .2s;
+}
+.assistant-slider__tiers button:hover {
+  transform: translateY(-3px); border-color: rgba(141, 203, 255, .42);
+  background: rgba(141, 203, 255, .07); color: #e8eef5;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, .18), inset 0 1px rgba(255, 255, 255, .05);
+}
+.assistant-slider__tiers button[aria-pressed="true"] {
+  border-color: #8dcbff; background: rgba(141, 203, 255, .14); color: #cfe6ff;
+}
+.assistant-slider__tiers button:focus-visible { outline: 2px solid #8dcbff; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .assistant-slider__tiers button { transition: none; }
+  .assistant-slider__tiers button:hover { transform: none; }
+}
 
 .scene-team { position: relative; z-index: 1; min-height: 170px; display: grid; place-items: center; }
 .scene-team__room { position: absolute; inset: 14px; border: 1px solid rgba(53, 88, 123, .14); border-radius: 30px; background: linear-gradient(180deg, rgba(255,255,255,0.056), rgba(92, 159, 211, .08)); box-shadow: inset 0 -28px 45px rgba(61, 115, 167, .07); }
@@ -230,7 +295,7 @@
 .assistant-review article > span { color: #8dcbff; font: 700 12px/1 "IBM Plex Mono", Consolas, monospace; }
 .assistant-review article > button { position: absolute; right: 16px; top: 16px; padding: 7px 10px; border: 1px solid rgba(255,255,255,0.140); border-radius: 999px; background: rgba(255,255,255,0.052); color: #a3aebb; font: 700 12.5px/1 var(--font-inter), sans-serif; cursor: pointer; }
 .assistant-review h2 { margin: 14px 0 5px; font-size: 13px; letter-spacing: -.03em; }
-.assistant-review article p { margin: 0; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; color: #aeb8c2; font-size: 9px; line-height: 1.35; }
+.assistant-review article p { margin: 0; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; color: var(--a-muted); font-size: 9px; line-height: 1.35; }
 /* Validation error. Was dark red text on a barely-there light pink pill, which
    composited to ~1.6:1 on the dark ground — the one message a blocked visitor
    must be able to read was effectively invisible. Now a dark-theme alert. */
@@ -366,7 +431,10 @@
   gap: 10px;
 }
 .assistant-slider__scene {
-  min-height: 206px;
+  /* Measured directly at this exact breakpoint: content naturally needs
+     270.8px for the 4-line Greek case. 300px clears it with real margin so
+     this floor — not the content — governs the row's height. */
+  min-height: 300px;
   padding: 15px;
   grid-template-columns: minmax(0, 1.6fr) minmax(215px, .62fr);
   gap: 14px;
@@ -383,29 +451,6 @@
   text-wrap: balance;
 }
 .assistant-slider > label { gap: 9px; }
-.assistant-slider input[type="range"] { height: 10px; }
-.assistant-slider input[type="range"]::-webkit-slider-thumb {
-  width: 30px;
-  height: 30px;
-  border-width: 6px;
-}
-.assistant-slider__ticks { margin-top: -2px; }
-.assistant-slider__ticks button {
-  min-height: 34px;
-  gap: 6px;
-  color: #9aa5b1;
-  font-size: 12.5px;
-  line-height: 1.15;
-  transition: color 250ms, transform 300ms var(--a-ease);
-}
-.assistant-slider__ticks button span {
-  width: 100%;
-  max-width: 112px;
-  text-wrap: balance;
-}
-.assistant-slider__ticks button:hover,
-.assistant-slider__ticks button.is-active { color: #8dcbff; transform: translateY(-2px); }
-.assistant-slider__ticks button.is-passed i { background: rgba(141, 203, 255, .55); }
 
 .scene-team,
 .scene-budget,
@@ -665,7 +710,7 @@
   border: 1px solid rgba(141, 203, 255,.18);
   border-radius: 999px;
   background: rgba(255,255,255,0.104);
-  color: #9fb0c2;
+  color: var(--a-muted);
   font: 650 10px/1 var(--font-inter), sans-serif;
   cursor: pointer;
   box-shadow: inset 0 1px 0 #fff, 0 8px 20px rgba(141, 203, 255,.09);
@@ -771,7 +816,13 @@
   .scene-team__people > span { width: 20px; transform: translateY(14px) scale(.68); }
   .scene-budget { gap: 5px; }
   .scene-budget > div { min-width: 33px; }
-  .assistant-slider__ticks button span { display: none; }
+}
+
+/* Cards go single-column and sit close to the stage's clipped edge below
+   820px, so the hover glow needs to fit inside the smaller padding-inline
+   set on .assistant-stage (see the root-cause note there). */
+@media (max-width: 820px) {
+  .assistant-options > button:hover { box-shadow: inset 0 1px 0 #fff, 0 8px 20px rgba(141, 203, 255, .16); }
 }
 
 @media (max-width: 820px) and (max-height: 760px) {
@@ -797,6 +848,14 @@
   .assistant-question {
     grid-template-rows: 112px 48px minmax(0, auto);
   }
+  /* Absolute top-right placement (desktop) overlaps the centred eyebrow text
+     once the header is this narrow. Flowing it back into the DOM — it's the
+     last child, right after the options grid — puts it on its own line
+     instead of fighting the title for the same corner. */
+  .assistant-count {
+    position: static;
+    margin: 10px auto 0;
+  }
   .assistant-question > header {
     height: 112px;
     margin: 0 auto;
@@ -820,7 +879,8 @@
     grid-template-columns: minmax(0, 1.38fr) minmax(112px, .62fr);
   }
   .assistant-slider__reading { min-height: 148px; }
-  .assistant-slider__ticks button { font-size: 7px; }
+  .assistant-slider__tiers { gap: 5px; }
+  .assistant-slider__tiers button { min-height: 44px; padding: 7px 3px; font-size: 9.5px; border-radius: 14px; }
   .scene-team,
   .scene-budget,
   .scene-timing { min-height: 146px; }
@@ -842,7 +902,6 @@
   .scene-team,
   .scene-budget,
   .scene-timing { min-height: 118px; }
-  .assistant-slider__ticks { display: none; }
 }
 
 @media (min-width: 821px) and (max-height: 760px) {
@@ -867,7 +926,6 @@
   .scene-budget,
   .scene-timing { min-height: 120px; }
   .scene-budget__stacks { min-height: 112px; }
-  .assistant-slider__ticks button { min-height: 27px; }
   .assistant-fields input,
   .assistant-fields select { min-height: 50px; }
   .assistant-textarea textarea { min-height: 116px; }
@@ -875,7 +933,7 @@
 
 /* Language toggle: the global --ghost sits at ~4.2:1, just under AA. Scoped
    lift here rather than restyling every page that uses the token. */
-.assistant-nav .lang-opt { color: #9aa5b1; }
+.assistant-nav .lang-opt { color: var(--a-muted); }
 .assistant-nav .lang-opt.is-active { color: #ffffff; }
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -930,7 +988,7 @@
 .assistant-textarea .assistant-opt {
   border: 1px solid rgba(255,255,255,.14);
   background: rgba(255,255,255,.05);
-  color: #9aa5b1;
+  color: var(--a-muted);
 }
 
 /* the whole field lights up while it is the thing standing in your way */
@@ -947,3 +1005,478 @@
 @media (prefers-reduced-motion: reduce) {
   .assistant-req { animation: none; }
 }
+
+/* ── Step 5: exact team size, shown as a standing crowd ──────────────────────
+   Scoped entirely to .assistant-team. The generic .assistant-slider used by the
+   timing and budget steps is untouched, so specialising this one answer UI
+   cannot destabilise them. */
+.assistant-team {
+  --team-person-w: 18px;
+  --team-person-h: 23px;
+  width: min(1000px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 10px;
+}
+/* Sized to match .assistant-slider__scene (steps 6/7) exactly — same
+   min-height, radius and surface width — so the card doesn't visibly resize
+   when moving from this step into the next. */
+.assistant-team__display {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(172px, .45fr);
+  min-height: 300px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, .144);
+  border-radius: 34px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, .086), rgba(255, 255, 255, .028));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18), 0 25px 70px rgba(10, 25, 45, .28);
+  backdrop-filter: blur(28px) saturate(1.35);
+}
+.assistant-team__scene { position: relative; min-width: 0; min-height: 222px; }
+.assistant-team__scene-label {
+  position: absolute; left: 18px; top: 13px; z-index: 2;
+  color: var(--a-muted); font: 700 10px/1 "IBM Plex Mono", Consolas, monospace;
+  letter-spacing: .14em; text-transform: uppercase;
+}
+/* The stage is the positioning context the crowd coordinates resolve against.
+   No ground line: the brief calls for figures standing in open space. */
+/* touch-action:none — the stage now handles its own pointer drag (see
+   team-size-question.tsx); without this, a touch drag also pans the page. */
+.assistant-team__stage { position: absolute; left: 6%; right: 6%; top: 32px; bottom: 10px; touch-action: none; cursor: grab; }
+.assistant-team__stage:active { cursor: grabbing; }
+.assistant-team__crowd { position: absolute; inset: 0; }
+.assistant-team__person {
+  position: absolute;
+  left: calc(var(--px) * 1%);
+  top: calc(var(--py) * 1%);
+  width: var(--team-person-w);
+  height: var(--team-person-h);
+  opacity: .25;
+  transform: translate(-50%, -50%) scale(.88);
+  filter: grayscale(1) saturate(.15);
+  transition: opacity .2s ease, transform .34s cubic-bezier(.2, .8, .2, 1), filter .2s ease;
+}
+.assistant-team__person::before {
+  content: ""; position: absolute; left: 50%; top: 0;
+  width: calc(var(--team-person-w) * .43); height: calc(var(--team-person-w) * .43);
+  transform: translateX(-50%); border-radius: 50%; background: #80909e;
+}
+.assistant-team__person::after {
+  content: ""; position: absolute; left: 50%; top: calc(var(--team-person-w) * .5);
+  width: calc(var(--team-person-w) * .89); height: calc(var(--team-person-h) * .59);
+  transform: translateX(-50%); border-radius: 7px 7px 4px 4px; background: #687784;
+  clip-path: polygon(0 0, 100% 0, 100% 64%, 77% 64%, 72% 100%, 28% 100%, 23% 64%, 0 64%);
+}
+.assistant-team__person.is-on { opacity: 1; transform: translate(-50%, -50%) scale(1); filter: none; }
+.assistant-team__person.is-on::before { background: #c7e9ff; box-shadow: 0 0 10px rgba(141, 203, 255, .46); }
+.assistant-team__person.is-on::after {
+  background: linear-gradient(180deg, #8dcbff, #2e7fd6);
+  box-shadow: 0 0 14px rgba(141, 203, 255, .25);
+}
+
+.assistant-team__readout {
+  display: flex; flex-direction: column; justify-content: flex-end; gap: 10px;
+  padding: 16px 18px; border-left: 1px solid rgba(255, 255, 255, .116);
+}
+.assistant-team__tier {
+  margin: 0; color: var(--a-muted); font: 700 11px/1.2 "IBM Plex Mono", Consolas, monospace;
+  letter-spacing: .14em; text-transform: uppercase;
+}
+.assistant-team__count { display: flex; align-items: baseline; gap: 8px; white-space: nowrap; }
+.assistant-team__count strong {
+  font-size: clamp(32px, 3.9vw, 56px); font-weight: 400; line-height: .85;
+  letter-spacing: -.05em; font-variant-numeric: tabular-nums;
+}
+.assistant-team__count span { color: var(--a-muted); font-size: clamp(13px, 1.35vw, 19px); }
+
+.assistant-team__control { padding: 0 2px; touch-action: pan-y; }
+.assistant-team__hints {
+  display: flex; justify-content: space-between; gap: 14px; margin-bottom: 7px;
+  color: var(--a-muted); font: 700 12px/1 "IBM Plex Mono", Consolas, monospace;
+  letter-spacing: .08em; text-transform: uppercase;
+}
+.assistant-team__hints span:last-child { color: rgba(159, 176, 194, .62); text-align: right; }
+
+.assistant-team input[type="range"] {
+  width: 100%; height: 30px; margin: 0; appearance: none; background: transparent; cursor: grab;
+}
+.assistant-team input[type="range"]:active { cursor: grabbing; }
+.assistant-team input[type="range"]::-webkit-slider-runnable-track {
+  height: 10px; border: 1px solid rgba(255, 255, 255, .16); border-radius: 999px;
+  background: linear-gradient(90deg, #8dcbff 0 var(--team-progress), rgba(255, 255, 255, .085) var(--team-progress) 100%);
+}
+.assistant-team input[type="range"]::-webkit-slider-thumb {
+  width: 28px; height: 28px; margin-top: -10px; appearance: none;
+  border: 7px solid rgba(255, 255, 255, .82); border-radius: 50%; background: #8dcbff;
+  box-shadow: 0 0 0 5px rgba(141, 203, 255, .15), 0 6px 18px rgba(0, 0, 0, .32);
+}
+.assistant-team input[type="range"]::-moz-range-track {
+  height: 8px; border: 1px solid rgba(255, 255, 255, .16); border-radius: 999px;
+  background: rgba(255, 255, 255, .085);
+}
+.assistant-team input[type="range"]::-moz-range-progress { height: 8px; border-radius: 999px; background: #8dcbff; }
+.assistant-team input[type="range"]::-moz-range-thumb {
+  width: 16px; height: 16px; border: 7px solid rgba(255, 255, 255, .82); border-radius: 50%;
+  background: #8dcbff; box-shadow: 0 0 0 5px rgba(141, 203, 255, .15);
+}
+.assistant-team input[type="range"]:focus-visible { outline: 2px solid #8dcbff; outline-offset: 5px; border-radius: 999px; }
+
+.assistant-team__tiers { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+.assistant-team__tiers button {
+  min-height: 46px; padding: 9px 8px 8px; display: grid; gap: 3px; justify-items: center;
+  border: 1px solid rgba(159, 190, 215, .18); border-radius: 999px;
+  background: rgba(255, 255, 255, .018); box-shadow: inset 0 1px rgba(255, 255, 255, .025);
+  color: var(--a-muted); font: 600 11.5px/1.15 var(--font-inter), sans-serif; cursor: pointer;
+  touch-action: manipulation;
+  transition: transform .24s cubic-bezier(.2, .75, .2, 1), border-color .2s, background-color .2s, color .2s, box-shadow .2s;
+}
+.assistant-team__tiers small { color: rgba(159, 176, 194, .6); font-size: 9.5px; font-weight: 500; }
+.assistant-team__tiers button:hover {
+  transform: translateY(-3px); border-color: rgba(141, 203, 255, .42);
+  background: rgba(141, 203, 255, .07); color: #e8eef5;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, .18), inset 0 1px rgba(255, 255, 255, .05);
+}
+.assistant-team__tiers button[aria-pressed="true"] {
+  border-color: #8dcbff; background: rgba(141, 203, 255, .14); color: #cfe6ff;
+}
+.assistant-team__tiers button[aria-pressed="true"] small { color: rgba(207, 230, 255, .75); }
+.assistant-team__tiers button:focus-visible { outline: 2px solid #8dcbff; outline-offset: 2px; }
+
+/* Mobile: same side-by-side shape as .assistant-slider__scene at this
+   breakpoint (min-height, grid proportions, radius all copied from there)
+   instead of team's old stacked layout, which made this card ~130px taller
+   than steps 6/7's on a phone. */
+@media (max-width: 820px) {
+  .assistant-team { --team-person-w: 15px; --team-person-h: 19px; gap: 9px; }
+  .assistant-team__display {
+    min-height: 174px;
+    grid-template-columns: minmax(0, 1.38fr) minmax(112px, .62fr);
+    border-radius: 24px;
+  }
+  .assistant-team__scene { min-height: 168px; }
+  .assistant-team__readout {
+    padding: 10px 14px 12px; border-left: 1px solid rgba(255, 255, 255, .116); border-top: 0;
+  }
+  .assistant-team__count strong { font-size: 30px; }
+  .assistant-team__tiers { gap: 5px; }
+  .assistant-team__tiers button { min-height: 44px; padding: 7px 3px; font-size: 9.5px; border-radius: 14px; }
+  .assistant-team__tiers small { font-size: 8px; }
+  .assistant-team__hints span:last-child { display: none; }
+}
+@media (max-width: 520px) {
+  .assistant-team { --team-person-w: 13px; --team-person-h: 17px; }
+  .assistant-team__scene { min-height: 150px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .assistant-team__person { transition: opacity .01ms linear, filter .01ms linear; transform: translate(-50%, -50%) scale(1); }
+  .assistant-team__tiers button { transition: none; }
+  .assistant-team__tiers button:hover { transform: none; }
+}
+
+/* ── Step 7 investment scene: delivery-layers x build-horizon hybrid ─────────
+   Replaces the euro coin stacks. Scope is expressed as how many delivery layers
+   are in play and how far along the horizon each one reaches, so no answer reads
+   as "more money" and the lowest answer is a survey state rather than an empty
+   one. Scoped to .scene-invest; the legacy .scene-budget rules are untouched. */
+.scene-invest {
+  position: relative; z-index: 1; width: 100%; min-height: 165px;
+  display: grid; grid-template-rows: 1fr auto; gap: 10px; align-content: center;
+  padding: 4px clamp(6px, 1.4vw, 16px) 0;
+}
+.scene-invest__stack { display: grid; gap: 5px; align-content: center; }
+.scene-invest__layer {
+  display: grid; grid-template-columns: clamp(72px, 9vw, 104px) minmax(0, 1fr);
+  align-items: center; gap: 10px; opacity: .34;
+  transition: opacity 420ms var(--a-ease);
+}
+.scene-invest__layer.is-on, .scene-invest__layer.is-explore { opacity: 1; }
+.scene-invest__layer em {
+  font-style: normal; color: var(--a-muted); text-align: right;
+  font: 700 9px/1.1 "IBM Plex Mono", Consolas, monospace;
+  letter-spacing: .1em; text-transform: uppercase;
+  overflow-wrap: anywhere; transition: color 300ms;
+}
+.scene-invest__layer.is-on em { color: #cfe6ff; }
+.scene-invest__layer.is-explore em { color: var(--a-muted); }
+.scene-invest__track {
+  position: relative; height: 13px; border-radius: 7px; overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, .10); background: rgba(255, 255, 255, .05);
+}
+.scene-invest__track i {
+  display: block; height: 100%; border-radius: 7px; width: 0;
+  background: linear-gradient(90deg, #2e7fd6, #8dcbff);
+  transition: width 520ms var(--a-ease);
+}
+.scene-invest__layer.is-on .scene-invest__track { border-color: rgba(141, 203, 255, .34); }
+/* The survey state: hatched rather than solid, so it reads as measured, not filled. */
+.scene-invest__layer.is-explore .scene-invest__track {
+  border-style: dashed; border-color: rgba(141, 203, 255, .65);
+}
+.scene-invest__layer.is-explore .scene-invest__track i {
+  background: repeating-linear-gradient(115deg, rgba(141, 203, 255, .55) 0 5px, rgba(141, 203, 255, .14) 5px 10px);
+}
+/* Shared horizon ruler: one milestone per range, lit up to the current answer. */
+.scene-invest__horizon {
+  display: grid; grid-auto-flow: column; justify-content: space-between; align-items: center;
+  margin-left: calc(clamp(72px, 9vw, 104px) + 10px); padding-top: 2px;
+  border-top: 1px solid rgba(255, 255, 255, .07);
+}
+.scene-invest__horizon b {
+  width: 6px; height: 6px; margin-top: -3.5px; border-radius: 50%;
+  background: #33506b; transition: background 300ms, box-shadow 300ms;
+}
+.scene-invest__horizon b.is-on { background: #8dcbff; box-shadow: 0 0 9px rgba(141, 203, 255, .6); }
+
+@media (max-width: 820px) {
+  .scene-invest { min-height: 130px; gap: 7px; }
+  .scene-invest__stack { gap: 4px; }
+  .scene-invest__layer { grid-template-columns: 62px minmax(0, 1fr); gap: 7px; }
+  .scene-invest__layer em { font-size: 7.5px; letter-spacing: .06em; }
+  .scene-invest__track { height: 10px; }
+  .scene-invest__horizon { margin-left: 69px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene-invest__layer, .scene-invest__track i { transition: none; }
+}
+
+/* ── Step 6 route constellation (approved prototype c01, depth field) ───────── */
+.scene-route { position: relative; z-index: 1; width: 100%; min-height: 165px; display: grid; place-items: center; }
+.scene-route svg { width: 100%; height: 100%; max-height: 210px; overflow: visible; }
+.scene-route__dust circle { fill: rgba(255, 255, 255, .13); }
+.scene-route__bloom { transition: cx 500ms var(--a-ease), cy 500ms var(--a-ease); }
+.scene-route__links line {
+  stroke: rgba(141, 203, 255, .18); stroke-width: 1.2;
+  transition: stroke 350ms, stroke-width 350ms;
+}
+.scene-route__links line.is-on {
+  stroke: #8dcbff; stroke-width: 2;
+  filter: drop-shadow(0 0 6px rgba(141, 203, 255, .55));
+}
+.scene-route__halo {
+  fill: none; stroke: rgba(141, 203, 255, .28);
+  transition: cx 350ms var(--a-ease), cy 350ms var(--a-ease), r 350ms var(--a-ease);
+}
+.scene-route__stars circle {
+  fill: #33506b;
+  transition: fill 300ms, r 350ms var(--a-ease), opacity 350ms, filter 300ms;
+}
+.scene-route__stars circle.is-on { fill: #8dcbff; }
+.scene-route__stars circle.is-here { fill: #eaf6ff; filter: drop-shadow(0 0 13px rgba(141, 203, 255, .95)); }
+.scene-route__caps text {
+  fill: #6f7d8c; font: 700 8.5px "IBM Plex Mono", Consolas, monospace;
+  letter-spacing: .1em; text-transform: uppercase;
+  transition: fill 300ms, opacity 300ms;
+}
+.scene-route__caps text.is-here { fill: #8dcbff; }
+.scene-route__spark { fill: #eaf6ff; opacity: 0; filter: drop-shadow(0 0 7px rgba(141, 203, 255, .75)); }
+
+@media (max-width: 820px) {
+  .scene-route { min-height: 130px; }
+  .scene-route svg { max-height: 150px; }
+  .scene-route__caps text { font-size: 9.5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene-route__bloom, .scene-route__halo, .scene-route__stars circle,
+  .scene-route__links line, .scene-route__caps text { transition: none; }
+}
+
+/* ── Step 6 panel: remove the decorative haze ────────────────────────────────
+   .assistant-slider__scene::before paints a 60%-wide blurred rgba(141,203,255,.34)
+   circle in the top-left. Dense scenes hid it; the sparse route constellation does
+   not, so it read as white fog over the artwork. The approved c01 prototype had no
+   such blob. Scoped to the timing scene so the other sliders keep their look. */
+.assistant-slider__scene--timing::before { content: none; }
+.assistant-slider__scene--timing {
+  background: linear-gradient(145deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, .016));
+  backdrop-filter: blur(20px) saturate(1.1);
+}
+
+/* ── Step 7: rising columns (approved variant v4) ────────────────────────────
+   Replaces the stacked bars and the horizon dot rule. Six columns, one per
+   delivery layer, filling from the bottom: a wider range means more columns in
+   scope AND more of each. Overrides the earlier .scene-invest grid, which the
+   removed stack/horizon rows no longer need. */
+.scene-invest {
+  display: grid;
+  grid-template-rows: none;
+  place-content: center;
+  gap: 0;
+  padding: 6px clamp(4px, 1vw, 12px);
+}
+.scene-invest__cols {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: clamp(6px, 1.1vw, 14px);
+  align-items: end;
+  justify-items: stretch;
+}
+.scene-invest__col { display: grid; gap: 7px; justify-items: center; opacity: .34; transition: opacity 420ms var(--a-ease); }
+.scene-invest__col.is-on, .scene-invest__col.is-explore { opacity: 1; }
+.scene-invest__meter {
+  position: relative; width: 100%; height: clamp(74px, 15vh, 122px);
+  display: flex; align-items: flex-end; overflow: hidden;
+  border-radius: 10px 10px 5px 5px;
+  border: 1px solid rgba(255, 255, 255, .09); background: rgba(255, 255, 255, .04);
+}
+.scene-invest__meter i {
+  display: block; width: 100%; height: 0; border-radius: 8px 8px 4px 4px;
+  background: linear-gradient(180deg, #8dcbff, #2e7fd6);
+  transition: height 520ms var(--a-ease);
+}
+.scene-invest__col.is-on .scene-invest__meter { border-color: rgba(141, 203, 255, .34); }
+/* Survey state: hatched rather than solid, so "Not sure yet" reads as measured. */
+.scene-invest__col.is-explore .scene-invest__meter { border-style: dashed; border-color: rgba(141, 203, 255, .65); }
+.scene-invest__col.is-explore .scene-invest__meter i {
+  background: repeating-linear-gradient(115deg, rgba(141, 203, 255, .55) 0 5px, rgba(141, 203, 255, .14) 5px 10px);
+}
+.scene-invest__col em {
+  font-style: normal; color: var(--a-muted); text-align: center;
+  font: 700 8px/1.15 "IBM Plex Mono", Consolas, monospace;
+  letter-spacing: .08em; text-transform: uppercase;
+  overflow-wrap: anywhere; transition: color 300ms;
+}
+.scene-invest__col.is-on em { color: #cfe6ff; }
+
+@media (max-width: 820px) {
+  .scene-invest { padding: 4px 2px; }
+  .scene-invest__cols { gap: 5px; }
+  .scene-invest__meter { height: clamp(56px, 11vh, 84px); border-radius: 7px 7px 4px 4px; }
+  .scene-invest__col em { font-size: 6.5px; letter-spacing: .04em; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene-invest__col, .scene-invest__meter i { transition: none; }
+}
+
+/* Stretch, do not shrink-wrap: place-content:center sized the grid to max-content,
+   which parked the columns left of centre with dead space on the right. */
+.scene-invest {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  place-content: normal;
+}
+.scene-invest__cols { width: 100%; }
+/* Same decorative haze that was removed from Step 6. */
+.assistant-slider__scene--budget::before { content: none; }
+.assistant-slider__scene--budget {
+  background: linear-gradient(145deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, .016));
+  backdrop-filter: blur(20px) saturate(1.1);
+}
+
+/* ── Light/dark theme toggle ─────────────────────────────────────────────────
+   Attribute lives on <html> (set pre-hydration by assistant/layout.tsx, no
+   flash) but every rule below is scoped through .assistant-shell so nothing
+   outside the survey route is touched. Light values are 4181's real light
+   design, not an inverted dark palette. */
+.assistant-theme {
+  position: relative; width: 38px; height: 38px; min-height: 38px; padding: 0; flex: none;
+  display: inline-flex; align-items: center; justify-content: center; overflow: hidden;
+  border: 1px solid rgba(255,255,255,.14); border-radius: 999px;
+  background: rgba(255,255,255,0.068); color: var(--a-blue); font-size: 15px;
+  cursor: pointer; backdrop-filter: blur(18px); transition: border-color .2s, background-color .2s;
+}
+.assistant-theme:hover { border-color: rgba(141,203,255,.4); background: rgba(141,203,255,.08); }
+.assistant-theme:focus-visible { outline: 2px solid var(--a-blue); outline-offset: 2px; }
+
+/* Sun and moon glyphs are solid-black PNGs, recoloured via mask so they pick up
+   the button's own colour (and therefore the theme) automatically, the same
+   technique the DS2 logo already uses in this file. Both icons are always
+   present and cross-fade + rotate between each other on toggle, rather than
+   swapping instantly, so the switch reads as one continuous motion. */
+.assistant-theme__icon {
+  position: absolute; inset: 0; margin: auto; width: 18px; height: 18px;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center; mask-position: center;
+  -webkit-mask-size: contain; mask-size: contain;
+  transition: opacity 480ms var(--a-ease), transform 480ms var(--a-ease);
+}
+.assistant-theme__icon--moon { -webkit-mask-image: url("/icons/assistant-theme-moon.png"); mask-image: url("/icons/assistant-theme-moon.png"); }
+.assistant-theme__icon--sun { -webkit-mask-image: url("/icons/assistant-theme-sun.png"); mask-image: url("/icons/assistant-theme-sun.png"); }
+
+/* Dark shows the moon centred/settled; the sun waits rotated out of frame and
+   faded, ready to spin in. Light is the mirror of that. */
+.assistant-theme.is-dark .assistant-theme__icon--moon { opacity: 1; transform: rotate(0deg) scale(1); }
+.assistant-theme.is-dark .assistant-theme__icon--sun { opacity: 0; transform: rotate(-90deg) scale(.4); }
+.assistant-theme.is-light .assistant-theme__icon--moon { opacity: 0; transform: rotate(90deg) scale(.4); }
+.assistant-theme.is-light .assistant-theme__icon--sun { opacity: 1; transform: rotate(0deg) scale(1); }
+@media (prefers-reduced-motion: reduce) {
+  .assistant-theme__icon { transition: opacity 480ms linear; }
+  .assistant-theme.is-dark .assistant-theme__icon--sun,
+  .assistant-theme.is-light .assistant-theme__icon--moon { transform: none; }
+}
+
+html[data-assistant-theme="light"] .assistant-shell {
+  --a-ink: #142238;
+  --a-muted: #5e6f84;
+  --a-blue: #347fd1;
+  --a-ice: #8dcbff;
+  --a-violet: #8574ff;
+  --a-glass: rgba(255, 255, 255, 0.34);
+  --a-glass-strong: rgba(255, 255, 255, 0.58);
+  --a-line: rgba(255, 255, 255, 0.62);
+  color-scheme: light;
+  background:
+    radial-gradient(80vw 58vw at 5% 8%, rgba(179, 216, 255, .78), transparent 68%),
+    radial-gradient(66vw 55vw at 94% 88%, rgba(199, 187, 255, .68), transparent 70%),
+    radial-gradient(55vw 42vw at 52% 102%, rgba(248, 226, 151, .52), transparent 72%),
+    linear-gradient(145deg, #eef7fb 0%, #e9f2f7 42%, #f4eefb 100%);
+}
+html[data-assistant-theme="light"] .assistant-aurora i:nth-child(1) { background: rgba(82, 171, 247, .55); }
+html[data-assistant-theme="light"] .assistant-aurora i:nth-child(2) { background: rgba(133, 116, 255, .43); }
+html[data-assistant-theme="light"] .assistant-aurora i:nth-child(3) { background: rgba(242, 211, 112, .46); }
+html[data-assistant-theme="light"] .assistant-theme { border-color: rgba(20,34,56,.12); background: rgba(255,255,255,.5); color: #347fd1; }
+html[data-assistant-theme="light"] .assistant-theme:hover { border-color: rgba(52,127,209,.4); background: rgba(52,127,209,.1); }
+/* LangToggle is a shared site-wide component (i18n.tsx / globals.css); its
+   --ghost/--white tokens are tuned for the marketing site's ink-on-light pages
+   and read as low-contrast inside the assistant's own dark shell too. Scoped
+   here rather than touching the shared tokens, which would affect every page. */
+html[data-assistant-theme="light"] .assistant-shell .lang-opt { color: var(--a-muted); }
+html[data-assistant-theme="light"] .assistant-shell .lang-opt:hover { color: var(--a-ink); }
+html[data-assistant-theme="light"] .assistant-shell .lang-opt.is-active { color: var(--a-ink); }
+html[data-assistant-theme="light"] .assistant-shell .lang-sep { color: var(--a-muted); }
+
+/* ── Light-theme fixes: real invisible-content bugs, not polish ──────────────
+   Several rules used near-white/very-low-alpha-white values that assumed a
+   dark backdrop: on the light pastel background they render invisible or
+   unreadable (slider rails vanish, selected/hover pill text disappears). */
+html[data-assistant-theme="light"] .assistant-shell {
+  --a-rail: rgba(20, 34, 56, .14);
+  --a-rail-line: rgba(20, 34, 56, .20);
+}
+html[data-assistant-theme="light"] .assistant-slider input[type="range"]::-webkit-slider-runnable-track {
+  border-color: var(--a-rail-line);
+  background: linear-gradient(90deg, #347fd1 0 var(--range-progress), var(--a-rail) var(--range-progress) 100%);
+}
+html[data-assistant-theme="light"] .assistant-slider input[type="range"]::-moz-range-track {
+  border-color: var(--a-rail-line); background: var(--a-rail);
+}
+html[data-assistant-theme="light"] .assistant-team input[type="range"]::-webkit-slider-runnable-track {
+  border-color: var(--a-rail-line);
+  background: linear-gradient(90deg, #347fd1 0 var(--team-progress), var(--a-rail) var(--team-progress) 100%);
+}
+html[data-assistant-theme="light"] .assistant-team input[type="range"]::-moz-range-track {
+  border-color: var(--a-rail-line); background: var(--a-rail);
+}
+html[data-assistant-theme="light"] .assistant-team__tiers button:hover { color: var(--a-ink); }
+html[data-assistant-theme="light"] .assistant-team__tiers button[aria-pressed="true"] { color: #1a5da8; }
+html[data-assistant-theme="light"] .assistant-team__tiers button[aria-pressed="true"] small { color: #347fd1; }
+html[data-assistant-theme="light"] .assistant-slider__tiers button:hover { color: var(--a-ink); }
+html[data-assistant-theme="light"] .assistant-slider__tiers button[aria-pressed="true"] { color: #1a5da8; }
+html[data-assistant-theme="light"] .scene-invest__layer.is-on em,
+html[data-assistant-theme="light"] .scene-invest__col.is-on em { color: #1a5da8; }
+
+/* ── Whole-screen theme wipe (View Transitions API) ──────────────────────────
+   Chrome's default view-transition is a crossfade on both the old and new
+   snapshots. That fights with the expanding-circle animation applied in
+   toggleTheme() (page.tsx), producing a double effect. Disabling the default
+   here leaves the old screen static underneath while the new one wipes in as
+   a circle from the click point — a "screen swipe", not a crossfade. */
+::view-transition-old(root), ::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) { z-index: 1; }
+::view-transition-new(root) { z-index: 2; }

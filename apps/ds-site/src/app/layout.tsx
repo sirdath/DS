@@ -60,8 +60,12 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // suppressHydrationWarning on <html>: the /assistant route sets
+  // data-assistant-theme via an inline script before hydration (no-flash
+  // theme). Without it, React treats the server/client attribute diff as a
+  // mismatch and strips the attribute back out right after hydrating.
   return (
-    <html lang="en" className={`${inter.variable} ${orbitron.variable}`}>
+    <html lang="en" className={`${inter.variable} ${orbitron.variable}`} suppressHydrationWarning>
       {/* data-logo sets the hero logo treatment; data-scheme drives the colour scheme. */}
       <body data-logo="gradient" suppressHydrationWarning>
         <script

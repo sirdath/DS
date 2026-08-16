@@ -18,15 +18,15 @@ varying vec3 vN;
 varying vec3 vP;
 uniform float u_time, u_energy, u_ribbon, u_bright, u_cool, u_amp;
 
-// Ice-blue family (DS2 brand): Ice #8dcbff, Action Deep #173b67. The orb was
-// violet/magenta, which is outside the palette — every stop now sits on the
-// blue axis so it reads as the same accent as the hero and the rest of the site.
-const vec3 IV_LIGHT = vec3(0.878, 0.945, 1.000);
-const vec3 IV       = vec3(0.553, 0.796, 1.000);
-const vec3 IB       = vec3(0.310, 0.580, 0.910);
-const vec3 IC       = vec3(0.729, 0.898, 1.000);
-const vec3 IM       = vec3(0.451, 0.702, 0.965);
-const vec3 DEEP     = vec3(0.090, 0.231, 0.404);
+// Arya's colour is deliberately off the site's ice-blue brand axis: violet
+// through pink to magenta, matching the original 4181 brief. Stays pink in
+// both light and dark themes, so this constant set does not vary with theme.
+const vec3 IV_LIGHT = vec3(0.898, 0.851, 1.000);
+const vec3 IV       = vec3(0.773, 0.714, 1.000);
+const vec3 IB       = vec3(0.490, 0.639, 1.000);
+const vec3 IC       = vec3(0.627, 0.878, 1.000);
+const vec3 IM       = vec3(0.835, 0.643, 0.898);
+const vec3 DEEP     = vec3(0.286, 0.262, 0.510);
 
 vec3 mod289(vec3 x) { return x - floor(x * (1.0/289.0)) * 289.0; }
 vec2 mod289(vec2 x) { return x - floor(x * (1.0/289.0)) * 289.0; }
@@ -95,9 +95,9 @@ function haloTexture() {
   canvas.width = canvas.height = 256;
   const context = canvas.getContext("2d")!;
   const gradient = context.createRadialGradient(128, 128, 24, 128, 128, 128);
-  gradient.addColorStop(0, "rgba(206,232,255,.82)");
-  gradient.addColorStop(0.45, "rgba(141,203,255,.28)");
-  gradient.addColorStop(1, "rgba(90,169,230,0)");
+  gradient.addColorStop(0, "rgba(197,182,255,.82)");
+  gradient.addColorStop(0.45, "rgba(125,190,255,.28)");
+  gradient.addColorStop(1, "rgba(125,163,255,0)");
   context.fillStyle = gradient;
   context.fillRect(0, 0, 256, 256);
   return new THREE.CanvasTexture(canvas);
@@ -126,14 +126,15 @@ function webglAvailable(): boolean {
 }
 
 /** Static CSS orb shown when WebGL is unavailable or the visitor prefers reduced
- *  motion. Same Ice-blue palette as the shader; no render loop, no crash. */
+ *  motion. Same violet/pink/magenta palette as the shader; no render loop, no
+ *  crash. Same gradient/shadow structure 4182 introduced, recoloured to match. */
 function createFallbackOrb(container: HTMLElement): AryaOrbHandle {
   const el = document.createElement("div");
   el.setAttribute("aria-hidden", "true");
   el.style.cssText =
     "width:100%;height:100%;border-radius:50%;" +
-    "background:radial-gradient(circle at 38% 30%,rgba(240,249,255,.96),rgba(174,220,255,.92) 30%,rgba(141,203,255,.86) 56%,rgba(70,140,205,.72) 78%,rgba(23,59,103,.58));" +
-    "box-shadow:0 0 22px 3px rgba(141,203,255,.32),inset 0 0 16px rgba(255,255,255,.22);";
+    "background:radial-gradient(circle at 38% 30%,rgba(245,240,255,.96),rgba(229,217,255,.92) 30%,rgba(197,182,255,.86) 56%,rgba(213,164,229,.72) 78%,rgba(73,67,130,.58));" +
+    "box-shadow:0 0 22px 3px rgba(197,182,255,.35),inset 0 0 16px rgba(255,255,255,.22);";
   container.appendChild(el);
   return { setState() {}, destroy() { el.remove(); } };
 }

@@ -2,10 +2,11 @@
 
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from "react";
 import { LangToggle, useLang } from "../i18n";
 import { assistantCopy, type AssistantField, type AssistantOption, type AssistantStep, type GoalKey } from "./assistant-data";
 import { createAryaOrb, type AryaOrbHandle } from "./arya-orb";
+import TeamSizeQuestion from "./team-size-question";
 import "./assistant.css";
 
 type Answers = Record<string, string | string[]>;
@@ -99,6 +100,20 @@ function valueList(value: string | string[] | undefined) {
   return Array.isArray(value) ? value : value ? [value] : [];
 }
 
+/** Loose sanity check, not a strict RFC validator — this only exists to catch
+ *  someone typing plain text into a website field, e.g. "not-a-valid-url".
+ *  Bare domains without a scheme ("acme.com") are accepted by assuming https. */
+function looksLikeUrl(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return true;
+  const withScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  try {
+    return /\.[a-z]{2,}$/i.test(new URL(withScheme).hostname);
+  } catch {
+    return false;
+  }
+}
+
 function prioritizedStep(step: AssistantStep, order?: string[], context?: string): AssistantStep {
   if (!order?.length || !step.options) return context ? { ...step, context } : step;
   const rank = new Map(order.map((value, index) => [value, index]));
@@ -113,6 +128,15 @@ function prioritizedStep(step: AssistantStep, order?: string[], context?: string
 
 function answerLabel(step: AssistantStep, answers: Answers) {
   if (step.slider) {
+    const { exact } = step.slider;
+    if (exact) {
+      // Exact-count sliders report the number itself, so the review screen and
+      // the emailed brief read "7 people" rather than a band label.
+      const raw = Number(answers[step.id] ?? exact.defaultValue);
+      const count = Math.max(exact.min, Math.min(exact.max, Math.round(raw) || exact.defaultValue));
+      if (count >= exact.max) return `${exact.overflowLabel} ${exact.personPlural}`;
+      return `${count} ${count === 1 ? exact.personSingular : exact.personPlural}`;
+    }
     const index = Number(answers[step.id] ?? step.slider.defaultValue);
     return step.slider.values[index] || step.slider.values[step.slider.defaultValue];
   }
@@ -137,6 +161,49 @@ export default function AssistantPage() {
   const [error, setError] = useState("");
   const [voiceOn, setVoiceOn] = useState(true);
   const [replay, setReplay] = useState(0);
+  // Must start at the same value the server rendered ("dark"), or the button's
+  // icon mismatches between SSR and the client's first paint — a real,
+  // findable bug: it forced React's hydration-mismatch recovery, which also
+  // broke the click handler on the next render. The actual background/colours
+  // never depended on this; those are set by the layout's pre-hydration script
+  // straight onto <html>, so they stay flash-free regardless. This just
+  // corrects the toggle's own icon/aria-pressed once, right after mount.
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  useEffect(() => {
+    if (document.documentElement.getAttribute("data-assistant-theme") === "light") setTheme("light");
+  }, []);
+  const toggleTheme = useCallback((event: ReactMouseEvent<HTMLButtonElement>) => {
+    const applyTheme = () => {
+      setTheme((current) => {
+        const next = current === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-assistant-theme", next);
+        try { localStorage.setItem("ds2-assistant-theme", next); } catch { /* private mode */ }
+        return next;
+      });
+    };
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // A screen-wide wipe expanding from the click point, using the View
+    // Transitions API: it snapshots the page before/after applyTheme() runs,
+    // then this animates only the "new" snapshot growing in as a circle, so
+    // the switch reads as one continuous sweep rather than a hard cut.
+    if (reduceMotion || typeof document.startViewTransition !== "function") {
+      applyTheme();
+      return;
+    }
+    const x = event.clientX;
+    const y = event.clientY;
+    const transition = document.startViewTransition(applyTheme);
+    void transition.ready.then(() => {
+      const endRadius = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y),
+      );
+      document.documentElement.animate(
+        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`] },
+        { duration: 620, easing: "cubic-bezier(.32,.72,0,1)", pseudoElement: "::view-transition-new(root)" },
+      );
+    });
+  }, []);
   const [furthestScreen, setFurthestScreen] = useState(0);
   const [progressDrag, setProgressDrag] = useState(0);
   const [validationCue, setValidationCue] = useState<{ type: ValidationCue; nonce: number } | null>(null);
@@ -166,7 +233,7 @@ export default function AssistantPage() {
       DIAGNOSIS_OUTCOME_PRIORITY[goalKey][selectedDiagnosis],
       outcomeContext,
     );
-    const numbered = (step: AssistantStep, number: string, labelEn: string, labelEl: string): AssistantStep => ({
+    const numbered = (step: Omit<AssistantStep, "eyebrow">, number: string, labelEn: string, labelEl: string): AssistantStep => ({
       ...step,
       eyebrow: `${number} · ${lang === "el" ? labelEl : labelEn}`,
     });
@@ -175,10 +242,10 @@ export default function AssistantPage() {
       branch.services as AssistantStep,
       diagnosis,
       outcomes,
-      numbered(c.common.team as AssistantStep, "05", "The people", "Οι άνθρωποι"),
-      numbered(c.common.timing as AssistantStep, "06", "The pace", "Ο ρυθμός"),
-      numbered(c.common.budget as AssistantStep, "07", "The investment", "Η επένδυση"),
-      numbered(c.common.business as AssistantStep, "08", "Your business", "Η επιχείρηση"),
+      numbered(c.common.team as Omit<AssistantStep, "eyebrow">, "05", "The people", "Οι άνθρωποι"),
+      numbered(c.common.timing as Omit<AssistantStep, "eyebrow">, "06", "The pace", "Ο ρυθμός"),
+      numbered(c.common.budget as Omit<AssistantStep, "eyebrow">, "07", "The investment", "Η επένδυση"),
+      numbered(c.common.business as Omit<AssistantStep, "eyebrow">, "08", "Your business", "Η επιχείρηση"),
       {
         id: "details", eyebrow: lang === "el" ? "09 · Με δικά σας λόγια" : "09 · In your words",
         title: branch.detailsTitle, help: branch.detailsHelp, summaryLabel: lang === "el" ? "Επιπλέον context" : "Additional context",
@@ -192,16 +259,36 @@ export default function AssistantPage() {
   const step = isReview ? null : steps[screen];
   const visibleStep = isReview ? steps.length : screen + 1;
   const completedThrough = isReview ? steps.length : Math.min(steps.length, Math.max(visibleStep, furthestScreen + 1));
+  // percent stays keyed to furthest-ever-reached: jumping back from the
+  // review screen to fix an earlier answer shouldn't make the bar look like
+  // it lost progress. "remaining" is keyed to visibleStep instead — it's
+  // read alongside the current step number, so it needs to agree with it
+  // ("Step 1 of 10" next to "0 remaining" was the inconsistency).
   const percent = Math.round((completedThrough / steps.length) * 100);
-  const remaining = Math.max(0, steps.length - completedThrough);
+  const remaining = isReview ? 0 : Math.max(0, steps.length - visibleStep);
 
   useEffect(() => {
     try { setAnswers(JSON.parse(localStorage.getItem(STORAGE) || "{}")); } catch { /* clean start */ }
     try { setVoiceOn(localStorage.getItem(`${STORAGE}-voice`) !== "off"); } catch { /* voice stays on */ }
+    // Restoring answers alone meant a reload (or an accidental refresh)
+    // silently bounced you back to step 1 — everything you'd typed was still
+    // there, but you had to click back through steps you'd already answered
+    // to see it. furthestScreen is restored alongside screen so the progress
+    // bar's "never looks like it regressed" behaviour survives the reload too.
+    try {
+      const savedScreen = Number(localStorage.getItem(`${STORAGE}-screen`));
+      if (Number.isInteger(savedScreen) && savedScreen > 0) setScreen(savedScreen);
+    } catch { /* clean start */ }
+    try {
+      const savedFurthest = Number(localStorage.getItem(`${STORAGE}-furthest`));
+      if (Number.isInteger(savedFurthest) && savedFurthest > 0) setFurthestScreen(savedFurthest);
+    } catch { /* clean start */ }
   }, []);
 
   useEffect(() => { localStorage.setItem(STORAGE, JSON.stringify(answers)); }, [answers]);
   useEffect(() => { localStorage.setItem(`${STORAGE}-voice`, voiceOn ? "on" : "off"); }, [voiceOn]);
+  useEffect(() => { localStorage.setItem(`${STORAGE}-screen`, String(screen)); }, [screen]);
+  useEffect(() => { localStorage.setItem(`${STORAGE}-furthest`, String(furthestScreen)); }, [furthestScreen]);
   useEffect(() => {
     setError("");
     setValidationCue(null);
@@ -280,15 +367,24 @@ export default function AssistantPage() {
     }
     if (step.fields) {
       if (step.fields.some((field) => field.required && !String(answers[field.id] || "").trim())) return "required";
+      if (step.fields.some((field) => field.type === "url" && !looksLikeUrl(String(answers[field.id] || "")))) return "required";
       if (step.id === "contact" && !/^\S+@\S+\.\S+$/.test(String(answers.email || ""))) return "email";
     }
     return null;
   };
 
+  // "required"/"email" get their own copy — telling someone staring at empty
+  // text boxes to "choose an answer" reads like it was written for the
+  // button-choice steps, because it was.
+  const ERROR_COPY: Record<ValidationCue, string> = {
+    one: c.ui.error, two: c.ui.error, three: c.ui.error,
+    required: c.ui.errorFields, email: c.ui.errorEmail,
+  };
+
   const next = () => {
     const issue = validationIssue();
     if (issue) {
-      setError(c.ui.error);
+      setError(ERROR_COPY[issue]);
       setValidationCue({ type: issue, nonce: Date.now() });
       return;
     }
@@ -310,6 +406,8 @@ export default function AssistantPage() {
     setScreen(0);
     setFurthestScreen(0);
     localStorage.removeItem(STORAGE);
+    localStorage.removeItem(`${STORAGE}-screen`);
+    localStorage.removeItem(`${STORAGE}-furthest`);
   };
 
   const voiceKey = isReview
@@ -369,7 +467,7 @@ export default function AssistantPage() {
             })}
           </div>
         </div>
-        <div className="assistant-nav__actions"><button type="button" className={`assistant-voice${voiceOn ? " is-on" : ""}`} onClick={() => setVoiceOn((current) => !current)} aria-pressed={voiceOn}><span aria-hidden="true">{voiceOn ? "◖))" : "◖×"}</span>{voiceOn ? "Arya on" : "Arya off"}</button><LangToggle /></div>
+        <div className="assistant-nav__actions"><button type="button" className={`assistant-theme is-${theme}`} onClick={toggleTheme} aria-pressed={theme === "light"} aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"} title={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}><i className="assistant-theme__icon assistant-theme__icon--moon" aria-hidden="true" /><i className="assistant-theme__icon assistant-theme__icon--sun" aria-hidden="true" /></button>{lang === "el" ? <button type="button" className="assistant-voice is-unavailable" aria-disabled="true" title="Η φωνή της Arya δεν είναι ακόμη διαθέσιμη στα Ελληνικά — English voice model only, for now"><span aria-hidden="true">◖×</span>Φωνή μη διαθέσιμη</button> : <button type="button" className={`assistant-voice${voiceOn ? " is-on" : ""}`} onClick={() => setVoiceOn((current) => !current)} aria-pressed={voiceOn}><span aria-hidden="true">{voiceOn ? "◖))" : "◖×"}</span>{voiceOn ? "Arya on" : "Arya off"}</button>}<LangToggle /></div>
       </header>
 
       <section className="assistant-stage">
@@ -396,7 +494,9 @@ export default function AssistantPage() {
 
             {step.fields && <div className="assistant-fields">{step.fields.map((field) => <Field key={field.id} field={field} value={String(answers[field.id] || "")} onChange={(value) => setAnswer(field.id, value)} ui={c.ui} />)}</div>}
 
-            {step.slider && <SliderQuestion step={step} value={Number(answers[step.id] ?? step.slider.defaultValue)} onChange={(value) => setAnswer(step.id, String(value))} hint={c.ui.sliderHint} />}
+            {step.slider?.exact
+              ? <TeamSizeQuestion exact={step.slider.exact} value={Number(answers[step.id] ?? step.slider.exact.defaultValue)} onChange={(value) => setAnswer(step.id, String(value))} hint={c.ui.sliderHint} />
+              : step.slider && <SliderQuestion step={step} value={Number(answers[step.id] ?? step.slider.defaultValue)} onChange={(value) => setAnswer(step.id, String(value))} hint={c.ui.sliderHint} />}
 
             {step.type === "textarea" && <DetailsInput lang={lang} value={String(answers.details || "")} onChange={(value) => setAnswer("details", value)} placeholder={step.placeholder || ""} />}
 
@@ -489,10 +589,17 @@ function AryaGuide({
     return () => orbRef.current?.destroy();
   }, []);
 
+  // Arya's recorded/model voice has no Greek pack yet — see AGENTS/handoff
+  // notes. Rather than fall back to a browser TTS voice or ship no voice at
+  // all silently, output audio is suppressed outright while lang is "el": the
+  // orb never claims to be speaking, and switching back to English resumes
+  // normally from the user's persisted enabled/disabled preference untouched.
+  const audioSuppressed = lang === "el";
+
   useEffect(() => {
     audioRef.current?.pause();
     audioRef.current = null;
-    if (!enabled || typeof window === "undefined") {
+    if (!enabled || audioSuppressed || typeof window === "undefined") {
       orbRef.current?.setState("idle");
       return;
     }
@@ -513,10 +620,10 @@ function AryaGuide({
       if (audioRef.current === audio) audioRef.current = null;
       orbRef.current?.setState("idle");
     };
-  }, [enabled, voiceSrc]);
+  }, [enabled, voiceSrc, audioSuppressed]);
 
   useEffect(() => {
-    if (!enabled || !cueSrc || !cueNonce || typeof window === "undefined") return;
+    if (!enabled || audioSuppressed || !cueSrc || !cueNonce || typeof window === "undefined") return;
     audioRef.current?.pause();
     const audio = new Audio(cueSrc);
     audioRef.current = audio;
@@ -528,7 +635,7 @@ function AryaGuide({
       audio.pause();
       if (audioRef.current === audio) audioRef.current = null;
     };
-  }, [cueNonce, cueSrc, enabled]);
+  }, [cueNonce, cueSrc, enabled, audioSuppressed]);
 
   return <aside className="arya-guide">
     <button type="button" className="arya-orb" onClick={onReplay} aria-label={lang === "el" ? "Επανάληψη ερώτησης" : "Repeat Arya’s question"} title={lang === "el" ? "Πατήστε για να ακούσετε την Arya" : "Click to hear Arya"}><span ref={mountRef} /></button>
@@ -538,15 +645,104 @@ function AryaGuide({
 function SliderQuestion({ step, value, onChange, hint }: { step: AssistantStep; value: number; onChange: (value: number) => void; hint: string }) {
   const slider = step.slider!;
   const progress = ((value - slider.min) / Math.max(1, slider.max - slider.min)) * 100;
-  return <div className="assistant-slider" style={{ "--range-progress": `${progress}%` } as CSSProperties}>
-    <div className="assistant-slider__scene">
+  const surfaceRef = useRef<HTMLDivElement>(null);
+  const sceneRef = useRef<HTMLDivElement>(null);
+  const rangeRef = useRef<HTMLInputElement>(null);
+
+  // Same shape as the team crowd's fix: one wheel listener over the whole
+  // component (visual + native input + ticks), not just the thin range
+  // track, so scrolling over the constellation (step 6) or the investment
+  // columns (step 7) also steps the value — previously only the input
+  // itself, a few pixels tall, ever received wheel events.
+  useEffect(() => {
+    const surface = surfaceRef.current;
+    if (!surface) return;
+    let accumulated = 0;
+    let lastStep = 0;
+    const onWheel = (event: WheelEvent) => {
+      const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+      if (!delta) return;
+      event.preventDefault();
+      accumulated += delta;
+      const threshold = event.deltaMode === 1 ? 1 : 12;
+      const now = performance.now();
+      if (Math.abs(accumulated) >= threshold && now - lastStep > 24) {
+        const next = Number(rangeRef.current?.value ?? value) + Math.sign(accumulated);
+        onChange(Math.max(slider.min, Math.min(slider.max, next)));
+        accumulated = 0;
+        lastStep = now;
+      }
+    };
+    surface.addEventListener("wheel", onWheel, { passive: false });
+    return () => surface.removeEventListener("wheel", onWheel);
+  }, [value, slider.min, slider.max, onChange]);
+
+  // Drag/swipe on the scene visual itself, scoped there so it never fights
+  // the native input's own thumb-drag or the tick buttons' clicks.
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!scene) return;
+    let dragging = false;
+    let accumulated = 0;
+    let lastStep = 0;
+    const STEP_PX = 26;
+    const onPointerDown = (event: PointerEvent) => {
+      dragging = true;
+      accumulated = 0;
+      scene.setPointerCapture(event.pointerId);
+    };
+    const onPointerMove = (event: PointerEvent) => {
+      if (!dragging) return;
+      accumulated += event.movementX;
+      const now = performance.now();
+      if (Math.abs(accumulated) >= STEP_PX && now - lastStep > 24) {
+        const steps = Math.trunc(accumulated / STEP_PX);
+        const next = Number(rangeRef.current?.value ?? value) + steps;
+        onChange(Math.max(slider.min, Math.min(slider.max, next)));
+        accumulated -= steps * STEP_PX;
+        lastStep = now;
+      }
+    };
+    const onPointerUp = (event: PointerEvent) => {
+      dragging = false;
+      accumulated = 0;
+      if (scene.hasPointerCapture(event.pointerId)) scene.releasePointerCapture(event.pointerId);
+    };
+    scene.addEventListener("pointerdown", onPointerDown);
+    scene.addEventListener("pointermove", onPointerMove);
+    scene.addEventListener("pointerup", onPointerUp);
+    scene.addEventListener("pointercancel", onPointerUp);
+    return () => {
+      scene.removeEventListener("pointerdown", onPointerDown);
+      scene.removeEventListener("pointermove", onPointerMove);
+      scene.removeEventListener("pointerup", onPointerUp);
+      scene.removeEventListener("pointercancel", onPointerUp);
+    };
+  }, [value, slider.min, slider.max, onChange]);
+
+  return <div className="assistant-slider" style={{ "--range-progress": `${progress}%` } as CSSProperties} ref={surfaceRef}>
+    <div className={`assistant-slider__scene assistant-slider__scene--${slider.scene}`} ref={sceneRef}>
       {slider.scene === "team" && <TeamScene value={value} />}
-      {slider.scene === "budget" && <BudgetScene value={value} />}
-      {slider.scene === "timing" && <TimingScene value={value} max={slider.max} />}
+      {slider.scene === "budget" && <BudgetScene value={value} layers={slider.sceneLayers} />}
+      {slider.scene === "timing" && <TimingScene value={value} labels={slider.labels} />}
       <div className="assistant-slider__reading"><span>{slider.labels[value]}</span><strong>{slider.values[value]}</strong></div>
     </div>
-    <label><span>{hint}</span><input type="range" min={slider.min} max={slider.max} step="1" value={value} onChange={(event) => onChange(Number(event.target.value))} aria-valuetext={slider.values[value]} /></label>
-    <div className="assistant-slider__ticks" style={{ gridTemplateColumns: `repeat(${slider.values.length}, 1fr)` }}>{slider.values.map((_, index) => <button type="button" key={index} className={`${index === value ? "is-active" : ""}${index < value ? " is-passed" : ""}`} onClick={() => onChange(index)} aria-label={slider.values[index]}><i /><span>{slider.labels[index]}</span></button>)}</div>
+    <label><span>{hint}</span><input ref={rangeRef} type="range" min={slider.min} max={slider.max} step="1" value={value} onChange={(event) => onChange(Number(event.target.value))} aria-valuetext={slider.values[value]} /></label>
+    <div className="assistant-slider__tiers" role="group">
+      {slider.values.map((_, index) => (
+        <button
+          type="button"
+          key={index}
+          aria-pressed={index === value}
+          onClick={() => {
+            onChange(index);
+            rangeRef.current?.focus({ preventScroll: true });
+          }}
+        >
+          {slider.labels[index]}
+        </button>
+      ))}
+    </div>
   </div>;
 }
 
@@ -559,19 +755,119 @@ function TeamScene({ value }: { value: number }) {
   </div>;
 }
 
-function BudgetScene({ value }: { value: number }) {
-  return <div className="scene-budget" data-level={value} aria-hidden="true">
-    <div className={`scene-budget__unknown${value === 0 ? " is-active" : ""}`}><span>?</span></div>
-    <div className="scene-budget__stacks">{Array.from({ length: 5 }, (_, stack) => <div className={stack < value ? "is-active" : ""} style={{ "--stack": stack } as CSSProperties} key={stack}>{Array.from({ length: stack + 2 }, (_, coin) => <i style={{ "--coin": coin } as CSSProperties} key={coin}>€</i>)}</div>)}</div>
+const INVEST_LAYERS_FALLBACK = ["Discovery", "Foundation", "Experience", "Automation", "Scale", "Stewardship"] as const;
+
+/** Investment scene: the approved hybrid of the delivery-layers and build-horizon
+ *  prototypes. The stack gives the readable "what work this buys" structure; the
+ *  per-layer fill and the milestone ruler give the horizon progression, so a wider
+ *  range reads as more layers AND more of each layer, never as more money.
+ *  "Not sure yet" is a deliberate survey state, not an empty one. */
+function BudgetScene({ value, layers }: { value: number; layers?: readonly string[] }) {
+  const names = layers && layers.length ? layers : INVEST_LAYERS_FALLBACK;
+  const exploring = value === 0;
+  return <div className="scene-invest" data-level={value} aria-hidden="true">
+    <div className="scene-invest__cols">
+      {names.map((name, index) => {
+        // Nearest layers are fully in scope; the newest one is partially filled,
+        // which is what makes the range read as progression rather than a step.
+        const fill = exploring ? (index === 0 ? 34 : 0) : Math.max(0, Math.min(100, (value - index + 1) * 55));
+        const state = exploring ? (index === 0 ? " is-explore" : "") : index <= value ? " is-on" : "";
+        return <div className={`scene-invest__col${state}`} key={name} style={{ "--layer": index } as CSSProperties}>
+          <span className="scene-invest__meter"><i style={{ height: `${fill}%` }} /></span>
+          <em>{name}</em>
+        </div>;
+      })}
+    </div>
   </div>;
 }
 
-function TimingScene({ value, max }: { value: number; max: number }) {
-  const progress = value / max;
-  return <div className="scene-timing" style={{ "--pace": progress } as CSSProperties} data-level={value} aria-hidden="true">
-    <div className="scene-timing__orbit"><i /><i /><i /></div>
-    <div className="scene-timing__line">{Array.from({ length: 5 }, (_, index) => <i className={`${index === value ? "is-active" : ""}${index < value ? " is-passed" : ""}`} key={index}><b /></i>)}</div>
-    <span className="scene-timing__comet"><i /></span>
+/* Approved Step 6 visual: the depth-field constellation (prototype c01). Stars
+   grow toward the nearest deadline, the traversed route lights, a soft bloom and
+   halo mark the choice, and a spark travels from the first star to the selected
+   one, slowing as the timeline lengthens. */
+const ROUTE_POINTS = [[54, 168], [168, 104], [282, 146], [396, 66], [506, 118]] as const;
+const ROUTE_RADII = [3.2, 4.2, 5.4, 6.8, 8.6] as const;
+const ROUTE_SPARK_SECONDS = [5.6, 4.6, 3.6, 2.8, 2.0] as const;
+
+function TimingScene({ value, labels }: { value: number; labels: readonly string[] }) {
+  const sparkRef = useRef<SVGCircleElement>(null);
+  const index = Math.max(0, Math.min(ROUTE_POINTS.length - 1, value));
+
+  // Cumulative segment lengths so the spark lands exactly on a star rather than
+  // at a fraction of the whole polyline, whose segments are not equal length.
+  const { cumulative, pointAt } = useMemo(() => {
+    const cum = [0];
+    for (let i = 0; i < ROUTE_POINTS.length - 1; i += 1) {
+      const [ax, ay] = ROUTE_POINTS[i]!;
+      const [bx, by] = ROUTE_POINTS[i + 1]!;
+      cum.push(cum[i]! + Math.hypot(bx - ax, by - ay));
+    }
+    const at = (distance: number) => {
+      if (distance <= 0) return { x: ROUTE_POINTS[0]![0], y: ROUTE_POINTS[0]![1] };
+      for (let i = 0; i < ROUTE_POINTS.length - 1; i += 1) {
+        if (distance <= cum[i + 1]!) {
+          const t = (distance - cum[i]!) / (cum[i + 1]! - cum[i]!);
+          const [ax, ay] = ROUTE_POINTS[i]!;
+          const [bx, by] = ROUTE_POINTS[i + 1]!;
+          return { x: ax + (bx - ax) * t, y: ay + (by - ay) * t };
+        }
+      }
+      const last = ROUTE_POINTS[ROUTE_POINTS.length - 1]!;
+      return { x: last[0], y: last[1] };
+    };
+    return { cumulative: cum, pointAt: at };
+  }, []);
+
+  useEffect(() => {
+    const spark = sparkRef.current;
+    if (!spark) return;
+    const end = cumulative[index] ?? 0;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const parked = pointAt(end);
+      spark.setAttribute("cx", String(parked.x));
+      spark.setAttribute("cy", String(parked.y));
+      spark.style.opacity = index > 0 ? "1" : "0";
+      return;
+    }
+    if (end <= 0) { spark.style.opacity = "0"; return; }
+    const duration = (ROUTE_SPARK_SECONDS[index] ?? 4.6) * 1000;
+    let start = 0;
+    let raf = 0;
+    const tick = (now: number) => {
+      if (!start) start = now;
+      const phase = ((now - start) % duration) / duration;
+      const at = pointAt(end * phase);
+      spark.setAttribute("cx", at.x.toFixed(2));
+      spark.setAttribute("cy", at.y.toFixed(2));
+      spark.style.opacity = String(0.35 + 0.65 * Math.sin(phase * Math.PI));
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [index, cumulative, pointAt]);
+
+  const here = ROUTE_POINTS[index]!;
+  return <div className="scene-route" data-level={index} aria-hidden="true">
+    <svg viewBox="0 0 560 224" preserveAspectRatio="xMidYMid meet">
+      <defs><radialGradient id="ds2-route-bloom">
+        <stop offset="0" stopColor="rgba(141,203,255,.18)" /><stop offset="1" stopColor="rgba(141,203,255,0)" />
+      </radialGradient></defs>
+      <g className="scene-route__dust">
+        {Array.from({ length: 54 }, (_, i) => <circle key={i} cx={((i * 97) % 548) + 6} cy={((i * 53) % 212) + 6} r={i % 4 === 0 ? 1.4 : 0.75} />)}
+      </g>
+      <circle className="scene-route__bloom" cx={here[0]} cy={here[1]} r={58} fill="url(#ds2-route-bloom)" />
+      <g className="scene-route__links">
+        {ROUTE_POINTS.slice(0, -1).map((point, i) => <line key={i} x1={point[0]} y1={point[1]} x2={ROUTE_POINTS[i + 1]![0]} y2={ROUTE_POINTS[i + 1]![1]} className={i < index ? "is-on" : ""} />)}
+      </g>
+      <circle className="scene-route__halo" cx={here[0]} cy={here[1]} r={(ROUTE_RADII[index] ?? 5) + 13} />
+      <g className="scene-route__stars">
+        {ROUTE_POINTS.map((point, i) => <circle key={i} cx={point[0]} cy={point[1]} r={i === index ? (ROUTE_RADII[i] ?? 5) + 2.6 : ROUTE_RADII[i] ?? 5} className={`${i <= index ? "is-on" : ""}${i === index ? " is-here" : ""}`} style={{ opacity: i <= index ? 1 : 0.42 }} />)}
+      </g>
+      <g className="scene-route__caps">
+        {ROUTE_POINTS.map((point, i) => <text key={i} x={point[0]} y={point[1] - ((ROUTE_RADII[i] ?? 5) + 22)} textAnchor="middle" className={i === index ? "is-here" : ""} style={{ opacity: i === index ? 1 : 0.55 }}>{labels[i] ?? ""}</text>)}
+      </g>
+      <circle className="scene-route__spark" ref={sparkRef} r={4.2} />
+    </svg>
   </div>;
 }
 
@@ -589,8 +885,8 @@ function Field({ field, value, onChange, ui }: { field: AssistantField; value: s
         : <small className="assistant-opt">{ui.optional}</small>}
     </span>
     {field.type === "select"
-      ? <select value={value} onChange={(event) => onChange(event.target.value)}><option value="">{ui.choose}</option>{field.options?.map((option) => <option key={option}>{option}</option>)}</select>
-      : <input type={field.type} value={value} onChange={(event) => onChange(event.target.value)} autoComplete={field.id === "email" ? "email" : field.id === "name" ? "name" : "off"} />}
+      ? <select required={field.required} value={value} onChange={(event) => onChange(event.target.value)}><option value="">{ui.choose}</option>{field.options?.map((option) => <option key={option}>{option}</option>)}</select>
+      : <input type={field.type} required={field.required} value={value} onChange={(event) => onChange(event.target.value)} autoComplete={field.id === "email" ? "email" : field.id === "name" ? "name" : "off"} />}
   </label>;
 }
 
