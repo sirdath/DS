@@ -132,9 +132,10 @@ export default function HeroVideo() {
           window.setTimeout(applySeek, 100);
         } else {
           v.pause(); // a seek can nudge playback back on in some browsers
-          // Held frame gets a very slow drift so the sky keeps breathing without
-          // replaying the film — a GPU-composited transform, no decode cost.
-          v.classList.add("is-drifting");
+          // The held frame stays still. It used to get a 44s drift so the sky
+          // kept breathing, but a slow transform on a PAUSED video re-samples
+          // the same texture every frame at a fractionally different scale,
+          // which shimmers on the logo's edges instead of reading as motion.
         }
       };
       applySeek();

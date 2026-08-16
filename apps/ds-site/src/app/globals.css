@@ -2428,21 +2428,13 @@ footer { border-color: var(--hairline) !important; }
 .hero-glass { position: absolute; inset: 0; overflow: hidden; }
 .hero-glass__canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .hero-glass__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
-/* Once the film has settled on the logo frame, the plate drifts very slowly
-   so the sky still feels alive. Pure transform (GPU-composited, no video
-   decode), 44s per pass, and small enough that the logo reads as a gentle
-   push-in rather than movement. */
-.hero-glass__video.is-drifting {
-  animation: heroPlateDrift 44s ease-in-out infinite alternate;
-  will-change: transform;
-}
-@keyframes heroPlateDrift {
-  from { transform: scale(1.0) translate3d(0, 0, 0); }
-  to   { transform: scale(1.055) translate3d(-0.9%, -0.7%, 0); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-glass__video.is-drifting { animation: none; will-change: auto; }
-}
+/* The settled logo frame holds still. It previously ran a 44s scale/translate
+   drift, but the video is PAUSED by then, so each frame re-sampled the same
+   texture at a fractionally different scale: a ~0.0012px per-frame step, well
+   under one device pixel. Nothing appeared to move, yet every high-contrast
+   edge in the logo shimmered, and the scale crept to 1.055 over 44s and read
+   as an unexplained zoom. If the plate should feel alive again, animate a
+   separate overlay rather than the video itself. */
 
 /* ── Entry preloader: DS2 wordmark draws itself, fills, then reveals the site ── */
 .preloader {
