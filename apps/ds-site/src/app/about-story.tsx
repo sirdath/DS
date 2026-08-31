@@ -1,7 +1,5 @@
 "use client";
 import { useT } from "./i18n";
-import { ContactCTA } from "./contact-panel";
-import { useOpenContact } from "./_site-chrome";
 
 type Page = { id: string; eyebrow: string; title: string; body: string };
 
@@ -12,17 +10,11 @@ type FounderLogo = { label: string; img?: string; bg?: "light" | "dark" };
 const FOUNDERS: Record<string, { img: string; logos: FounderLogo[] }> = {
   dimitris: {
     img: "/founders/london.webp",
-    logos: [
-      { label: "UCL" },
-      { label: "Intelmatix", img: "/founders/logos/intelmatix.jpg", bg: "dark" },
-    ],
+    logos: [],
   },
   stelios: {
     img: "/founders/athens.webp",
-    logos: [
-      { label: "Big 4" },
-      { label: "Netherlands" },
-    ],
+    logos: [],
   },
 };
 
@@ -64,35 +56,46 @@ function FounderRow({ p, flip }: { p: Page; flip: boolean }) {
 /** About — bold Mission & Vision first (side-by-side), then the story (the gap,
  *  the two founders with their images + logos, and what DS2 is). Calm fade-up
  *  reveals only (the page chrome drives `.reveal`); no pinning or camera. */
+// Hidden for now, not deleted -- flip back on whenever Mission/Vision should
+// lead the page again. While it's off, "the gap" becomes the first section,
+// so its title takes over as the page's <h1> (a page should have exactly one).
+const SHOW_MISSION_VISION = false;
+
 export default function AboutStory() {
   const t = useT();
-  const open = useOpenContact();
   const sb = t.about.scrollbook;
   const get = (id: string) => sb.find((p) => p.id === id)!;
   const mission = get("mission");
   const vision = get("vision");
   const gap = get("gap");
+  const ds2 = get("ds2");
+  const GapTitle = SHOW_MISSION_VISION ? "h2" : "h1";
 
   return (
     <main className="abs">
       {/* Mission / Vision — side-by-side, bold, the first thing you read */}
-      <section className="abs-mv wrap" aria-label={`${mission.eyebrow}, ${vision.eyebrow}`}>
-        <article className="abs-mv__panel reveal">
-          <span className="abs-mv__label">{mission.eyebrow}</span>
-          <h1 className="abs-mv__statement">{mission.title}</h1>
-          <p className="abs-mv__sub">{mission.body}</p>
-        </article>
-        <article className="abs-mv__panel reveal">
-          <span className="abs-mv__label">{vision.eyebrow}</span>
-          <h2 className="abs-mv__statement">{vision.title}</h2>
-          <p className="abs-mv__sub">{vision.body}</p>
-        </article>
-      </section>
+      {SHOW_MISSION_VISION && (
+        <section className="abs-mv wrap" aria-label={`${mission.eyebrow}, ${vision.eyebrow}`}>
+          <article className="abs-mv__panel reveal">
+            <span className="abs-mv__label">{mission.eyebrow}</span>
+            <h1 className="abs-mv__statement">{mission.title}</h1>
+            <p className="abs-mv__sub">{mission.body}</p>
+          </article>
+          <article className="abs-mv__panel reveal">
+            <span className="abs-mv__label">{vision.eyebrow}</span>
+            <h2 className="abs-mv__statement">{vision.title}</h2>
+            <p className="abs-mv__sub">{vision.body}</p>
+          </article>
+        </section>
+      )}
 
       {/* The gap */}
-      <section className="abs-gap wrap reveal" aria-label={gap.eyebrow}>
+      <section
+        className={`abs-gap wrap reveal${SHOW_MISSION_VISION ? "" : " abs-gap--first"}`}
+        aria-label={gap.eyebrow}
+      >
         <span className="abs-eyebrow">{gap.eyebrow}</span>
-        <h2 className="abs-gap__title">{gap.title}</h2>
+        <GapTitle className="abs-gap__title">{gap.title}</GapTitle>
         <p className="abs-gap__body">{gap.body}</p>
       </section>
 
@@ -103,11 +106,10 @@ export default function AboutStory() {
       </section>
 
       {/* What DS2 is */}
-      <section className="abs-ds2 wrap reveal" aria-label={get("ds2").eyebrow}>
-        <span className="abs-eyebrow">{get("ds2").eyebrow}</span>
-        <h2 className="abs-ds2__title">{get("ds2").title}</h2>
-        <p className="abs-ds2__body">{get("ds2").body}</p>
-        <ContactCTA label={t.cta.send} onOpen={open} />
+      <section className="abs-ds2 wrap reveal" aria-label={ds2.eyebrow}>
+        <span className="abs-eyebrow">{ds2.eyebrow}</span>
+        <h2 className="abs-ds2__title">{ds2.title}</h2>
+        <p className="abs-ds2__body">{ds2.body}</p>
       </section>
     </main>
   );
