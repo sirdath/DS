@@ -8,7 +8,7 @@ import './blog.css'
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: 'Blog · DS2, Digital Solutions Consulting',
+  title: 'Blogs · DS2, Digital Solutions Consulting',
   description:
     'Practical, honest articles on websites, applied AI and running a business online, from a senior team in Athens and London.',
   alternates: { canonical: `${SITE_URL}/blog` },

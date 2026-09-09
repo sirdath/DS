@@ -238,7 +238,7 @@ export interface Dict {
 }
 
 const en: Dict = {
-  nav: { portfolio: "Projects", about: "About", tools: "Tools", blog: "Blog", services: "Services" },
+  nav: { portfolio: "Projects", about: "About", tools: "Tools", blog: "Blogs", services: "Services" },
   cta: { send: "Book a call" },
   poweredBy: "Powered by",
   a11y: { home: "DS2, home", openMenu: "Open menu", closeMenu: "Close menu", language: "Language", loading: "DS2 loading", logo: "DS2 logo", background: "Background" },
