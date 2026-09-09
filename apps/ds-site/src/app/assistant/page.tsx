@@ -421,6 +421,9 @@ export default function AssistantPage() {
         : step?.id || "goal";
   const voiceSrc = `/audio/arya/${lang}/${voiceKey}.mp3`;
   const validationVoiceSrc = validationCue ? `/audio/arya/${lang}/validation-${validationCue.type}.mp3` : undefined;
+  const themeToggleLabel = theme === "dark"
+    ? (lang === "el" ? "Εναλλαγή σε φωτεινό θέμα" : "Switch to light theme")
+    : (lang === "el" ? "Εναλλαγή σε σκούρο θέμα" : "Switch to dark theme");
 
   return (
     <main className="assistant-shell">
@@ -469,7 +472,7 @@ export default function AssistantPage() {
             })}
           </div>
         </div>
-        <div className="assistant-nav__actions"><button type="button" className={`assistant-theme is-${theme}`} onClick={toggleTheme} aria-pressed={theme === "light"} aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"} title={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}><i className="assistant-theme__icon assistant-theme__icon--moon" aria-hidden="true" /><i className="assistant-theme__icon assistant-theme__icon--sun" aria-hidden="true" /></button>{lang === "el" ? <button type="button" className="assistant-voice is-unavailable" aria-disabled="true" title="Η φωνή της Arya δεν είναι ακόμη διαθέσιμη στα Ελληνικά — English voice model only, for now"><span aria-hidden="true">◖×</span>Φωνή μη διαθέσιμη</button> : <button type="button" className={`assistant-voice${voiceOn ? " is-on" : ""}`} onClick={() => setVoiceOn((current) => !current)} aria-pressed={voiceOn}><span aria-hidden="true">{voiceOn ? "◖))" : "◖×"}</span>{voiceOn ? "Arya on" : "Arya off"}</button>}<LangToggle /></div>
+        <div className="assistant-nav__actions"><button type="button" className={`assistant-theme is-${theme}`} onClick={toggleTheme} aria-pressed={theme === "light"} aria-label={themeToggleLabel} title={themeToggleLabel}><i className="assistant-theme__icon assistant-theme__icon--moon" aria-hidden="true" /><i className="assistant-theme__icon assistant-theme__icon--sun" aria-hidden="true" /></button>{lang === "el" ? <button type="button" className="assistant-voice is-unavailable" aria-disabled="true" title="Η φωνή της Arya δεν είναι ακόμη διαθέσιμη στα ελληνικά. Προς το παρόν υπάρχει μόνο αγγλικό μοντέλο φωνής."><span aria-hidden="true">◖×</span>Φωνή μη διαθέσιμη</button> : <button type="button" className={`assistant-voice${voiceOn ? " is-on" : ""}`} onClick={() => setVoiceOn((current) => !current)} aria-pressed={voiceOn}><span aria-hidden="true">{voiceOn ? "◖))" : "◖×"}</span>{voiceOn ? "Arya on" : "Arya off"}</button>}<LangToggle /></div>
       </header>
 
       <section className="assistant-stage">
@@ -907,6 +910,10 @@ function Field({ field, value, onChange, ui }: { field: AssistantField; value: s
   </label>;
 }
 
+/** Only one DetailsInput is mounted at a time (it is a single wizard step), so a
+ *  fixed id is safe and keeps the button's aria-describedby stable. */
+const DICTATION_NOTE_ID = "assistant-dictation-note";
+
 function DetailsInput({ lang, value, onChange, placeholder }: { lang: "en" | "el"; value: string; onChange: (value: string) => void; placeholder: string }) {
   const [listening, setListening] = useState(false);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
@@ -951,10 +958,23 @@ function DetailsInput({ lang, value, onChange, placeholder }: { lang: "en" | "el
       <span>{lang === "el" ? "Προαιρετικό — γράψτε ή μιλήστε ελεύθερα" : "Optional — type or speak freely"}</span>
       <span>{value.length} / {DETAILS_LIMIT}</span>
     </span>
-    <textarea maxLength={DETAILS_LIMIT} value={value} onChange={(event) => onChange(event.target.value)} placeholder={placeholder} />
-    <button type="button" className={`assistant-dictate${listening ? " is-listening" : ""}`} onClick={toggleDictation} disabled={!supported} title={!supported ? (lang === "el" ? "Η υπαγόρευση δεν υποστηρίζεται σε αυτόν τον browser" : "Dictation is not supported in this browser") : undefined}>
-      <span aria-hidden="true"><i /></span>
-      {listening ? (lang === "el" ? "Ακούω…" : "Listening…") : (lang === "el" ? "Υπαγόρευση" : "Talk instead")}
-    </button>
+    {/* The dictate pill is positioned against this wrapper, not the whole
+        label, so the note below cannot push it out of the field. */}
+    <span className="assistant-textarea__field">
+      <textarea maxLength={DETAILS_LIMIT} value={value} onChange={(event) => onChange(event.target.value)} placeholder={placeholder} />
+      <button type="button" className={`assistant-dictate${listening ? " is-listening" : ""}`} onClick={toggleDictation} disabled={!supported} aria-describedby={supported ? DICTATION_NOTE_ID : undefined} title={!supported ? (lang === "el" ? "Η υπαγόρευση δεν υποστηρίζεται σε αυτόν τον browser" : "Dictation is not supported in this browser") : undefined}>
+        <span aria-hidden="true"><i /></span>
+        {listening ? (lang === "el" ? "Ακούω…" : "Listening…") : (lang === "el" ? "Υπαγόρευση" : "Talk instead")}
+      </button>
+    </span>
+    {/* Dictation runs on the browser's own speech service (in Chrome that means
+        the audio is transcribed on Google's servers), so say so plainly next to
+        the button rather than letting someone dictate confidential project
+        detail without knowing where it goes. */}
+    {supported && <small id={DICTATION_NOTE_ID} className="assistant-dictate-note">
+      {lang === "el"
+        ? "Η υπαγόρευση χρησιμοποιεί την υπηρεσία φωνής του browser, οπότε ο ήχος στέλνεται εκεί για μεταγραφή."
+        : "Dictation uses your browser’s speech service, so the audio is sent there to be transcribed."}
+    </small>}
   </label>;
 }
