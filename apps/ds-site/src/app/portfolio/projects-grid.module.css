@@ -11,7 +11,21 @@
   display: block;
   text-decoration: none;
   color: inherit;
-  outline: none;
+  /* 18px, not .shot's 14px: the ring is drawn 4px outside the card, so the two
+     radii stay concentric (web-interface.md, "child border-radius <= parent"). */
+  border-radius: 18px;
+}
+/* A real, motion-independent focus ring. This used to be `outline: none`, with
+   focus expressed only as the 6% image scale and the revealed .open chip below
+   -- which is both easy to miss on a card that already animates on hover, and
+   gone entirely under prefers-reduced-motion, where the transform is set to
+   `none` at the bottom of this file. Every other route on the site shows an
+   outline on every focus stop; this brings /portfolio in line. The hover
+   scale + chip reveal are untouched, so mouse users see exactly what they saw
+   before. */
+.card:focus-visible {
+  outline: 2px solid #8dcbff;
+  outline-offset: 4px;
 }
 .shot {
   position: relative;

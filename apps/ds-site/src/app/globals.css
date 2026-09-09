@@ -185,7 +185,16 @@ nav.top .cta { height: 33px; padding-top: 0; padding-bottom: 0; box-sizing: bord
 }
 /* Sanjaya-style vertical text-roll on hover: a duplicate (::after) sits one line
    below; on hover the text rolls up to reveal it. */
-.nav-roll { display: inline-block; overflow: hidden; vertical-align: middle; line-height: 1.45; }
+/* line-height carries the hit target here, not padding. The roll effect works
+   by clipping this box to exactly one line box and parking the duplicate at
+   `top: 100%`, so any vertical padding would open a strip of the padding box
+   for that duplicate to show through -- it has to grow as a line box or not at
+   all. 26px against the 13px font is 2.0, up from 1.45 (18.84px measured),
+   clearing web-interface.md's >=24px minimum. 768px matters most: the burger is
+   hidden there and this row is the only navigation on the page. The duplicate
+   still lands exactly on the original after translateY(-100%), because both
+   line boxes are the same height and centre their text the same way. */
+.nav-roll { display: inline-block; overflow: hidden; vertical-align: middle; line-height: 26px; }
 .nav-roll > span {
   display: block; position: relative;
   transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
@@ -230,8 +239,17 @@ nav.top .cta { height: 33px; padding-top: 0; padding-bottom: 0; box-sizing: bord
 
 /* ── Language toggle (EN / ΕΛ) ── */
 .lang-toggle { display: inline-flex; align-items: center; gap: 5px; }
+/* min-width/min-height rather than a pseudo-element hit pad: EN and EL sit ~5px
+   apart, so pads big enough to reach 24px would overlap each other and a click
+   meant for one could land on the other -- the worst failure mode for a
+   two-option toggle. Growing the boxes themselves keeps the targets disjoint,
+   and there is nothing visible to grow with them (no background, no border),
+   so the only change on screen is a little more air around the two labels.
+   Measured before: 17x22px at 768px and up, 21x30px on phones. */
 .lang-opt {
   background: none; border: 0; cursor: pointer; padding: 2px 1px;
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 24px; min-height: 24px;
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-size: 12px; letter-spacing: 0.06em; color: var(--ghost);
   transition: color 0.2s ease;
@@ -1495,8 +1513,12 @@ footer { margin: 0; max-width: none; padding: 0; border-top: 1px solid var(--hai
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ghost);
 }
+/* Measured 22.5px tall, just under web-interface.md's 24px floor, everywhere.
+   inline-flex + min-height rather than padding so the box grows around the
+   text without the hover translateX picking up a new origin. */
 .sf-link {
   color: var(--silver); text-decoration: none; font-size: 15px; width: fit-content;
+  display: inline-flex; align-items: center; min-height: 26px;
   transition: color 0.2s ease, transform 0.2s ease;
 }
 .sf-link:hover { color: var(--white); transform: translateX(3px); }
@@ -2038,7 +2060,12 @@ footer { margin: 0; max-width: none; padding: 0; border-top: 1px solid var(--hai
   .nav-right { gap: 12px; }
   .nav-links { display: none; }
   .nav-mark img { height: 22px; }
-  .lang-opt { padding: 6px 3px; }
+  /* Phone widths get the full 44px web-interface.md asks for on touch. There is
+     room for it here that there isn't on desktop: this toggle renders in the
+     nav sheet's foot and in the assistant header, both of which lay it out in a
+     row with space to spare, and the two targets stay disjoint because they are
+     separate flex items with the separator between them. */
+  .lang-opt { padding: 6px 3px; min-width: 44px; min-height: 44px; }
   .section { padding: 72px 0; }
   .wrap { padding: 0 22px; }
   h1.section-title,

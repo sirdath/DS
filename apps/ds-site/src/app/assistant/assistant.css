@@ -75,6 +75,27 @@ html[data-assistant-theme="light"] .assistant-brand img { filter: brightness(0) 
 .assistant-progress__track > button.is-done { opacity: .88; }
 .assistant-progress__track > button.is-current { background: rgba(255,255,255,0.104); opacity: 1; transform: translateX(calc(var(--progress-drag, 0px) * .08)) scaleY(1.3); box-shadow: 0 0 12px rgba(141, 203, 255, .18); }
 .assistant-progress__track > button:not(:disabled) { cursor: pointer; }
+/* These really are navigation -- clicking a visited segment jumps to that step
+   through moveTo(index) in page.tsx -- so they stay <button>s and keep the
+   aria-label they already carry ("Step N: <step title>", bilingual via c.ui).
+   What they lacked was a pointer area: the bar is 9px tall (7px on short
+   screens) and has to stay that way to read as a progress track, so the target
+   is decoupled from the visual with a transparent pad, the same pattern as
+   .thumb::before in scroll-affordance.module.css. The height sits on the pad
+   rather than being added as padding, so it is exactly 24px whichever of the
+   two track heights is in play. Deliberately not widened: the segments measure
+   29px across at 375px, already over the floor, and expanding them sideways
+   would put each step's target on top of its neighbour's -- the one failure
+   mode this is meant to avoid. */
+.assistant-progress__track > button::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 24px;
+  transform: translateY(-50%);
+}
 .assistant-progress__track > button:not(:disabled):hover, .assistant-progress__track > button:not(:disabled):focus-visible { z-index: 2; opacity: 1; transform: translateX(calc(var(--progress-drag, 0px) * .08)) translateY(-1px) scale(1.04, 1.7); background: rgba(255,255,255,0.124); box-shadow: 0 4px 13px rgba(0,0,0, .18); }
 
 /* `safe center` centres while content fits, then falls back to start-aligned
