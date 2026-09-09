@@ -1,7 +1,8 @@
 /**
- * Shared guards for the /api/plutus/* routes: same-origin, per-IP rate limit, and
- * an auth resolver that returns the RLS-scoped Supabase client + the caller's
- * user id. Persistence routes need real storage, so they refuse the keyless dev
+ * Shared route guards. `rateLimited`, `clientIp` and `sameOrigin` carry no
+ * plutus-specific logic and are reused across the API surface (/api/plutus/*,
+ * /api/fama/*, /api/client-auth); the Supabase session helpers below are still
+ * specific to the storage-backed plutus routes, which refuse the keyless dev
  * path (the read-only demo render covers that case without writes).
  */
 
@@ -14,13 +15,31 @@ const IP_WINDOW_MS = 60_000
 const IP_MAX = 30 // requests / minute / IP / instance
 const ipHits = new Map<string, number[]>()
 
-export function rateLimited(ip: string): boolean {
+export interface RateLimitOptions {
+  /** Requests allowed per IP in the 60s window. Defaults to the general 30/min. */
+  max?: number
+  /**
+   * Counter namespace. Callers that need a tighter ceiling (a login endpoint,
+   * say) must pass their own scope, otherwise unrelated traffic from the same
+   * IP would burn through their smaller budget and lock out real users.
+   */
+  scope?: string
+}
+
+/**
+ * In-memory sliding-window limiter. Honest limitation: counters are per
+ * instance, so the effective global ceiling is higher under serverless
+ * scale-out. A hard global limit would need Upstash/Supabase.
+ */
+export function rateLimited(ip: string, options: RateLimitOptions = {}): boolean {
+  const { max = IP_MAX, scope = 'default' } = options
   const now = Date.now()
   if (ipHits.size > 5000) ipHits.clear()
-  const arr = (ipHits.get(ip) ?? []).filter((t) => now - t < IP_WINDOW_MS)
+  const key = `${scope}:${ip}`
+  const arr = (ipHits.get(key) ?? []).filter((t) => now - t < IP_WINDOW_MS)
   arr.push(now)
-  ipHits.set(ip, arr)
-  return arr.length > IP_MAX
+  ipHits.set(key, arr)
+  return arr.length > max
 }
 
 export function clientIp(req: Request): string {
