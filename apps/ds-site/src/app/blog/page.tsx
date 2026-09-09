@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import PageChrome from '../_site-chrome'
+import { BlogIndexView, type BlogIndexItem } from './blog-index-view'
 import { formatArticleDate, loadPublishedArticles, SITE_URL } from './lib/blog-source'
-import { NewsletterForm } from './newsletter-form'
 import './blog.css'
 
 export const revalidate = 3600
@@ -16,46 +15,20 @@ export const metadata: Metadata = {
 
 export default async function BlogIndexPage() {
   const articles = await loadPublishedArticles()
+  // Dates are formatted here, not in the view: blog-source.ts is `server-only`,
+  // and the view has to be a client component to follow the EN/ΕΛ toggle.
+  const items: BlogIndexItem[] = articles.map((a) => ({
+    id: a.id,
+    slug: a.slug,
+    lang: a.lang,
+    title: a.title,
+    description: a.description,
+    topic: a.topic,
+    date: formatArticleDate(a.publishedAt, a.lang),
+  }))
   return (
     <PageChrome>
-      <main className="section section--first blog">
-        <div className="wrap">
-          <div className="section-head reveal">
-            <div className="eyebrow">DS2 · Blog</div>
-            <h2 className="section-title">
-              Notes that hold up<em> in practice</em>
-            </h2>
-            <p className="section-sub">
-              What things really cost, what creates risk, and what we would do differently, for websites, applied AI
-              and running a business online. In Greek and English.
-            </p>
-          </div>
-
-          {articles.length === 0 ? (
-            <p className="blog-empty">Nothing published yet, the first articles are on their way.</p>
-          ) : (
-            <div className="blog-list">
-              {articles.map((a) => (
-                <article className="blog-row reveal" key={a.id}>
-                  <div className="blog-row__meta">
-                    <span className="blog-row__date">{formatArticleDate(a.publishedAt, a.lang)}</span>
-                    {a.topic ? <span className="blog-tag">{a.topic}</span> : null}
-                    <span className="blog-tag blog-tag--lang">{a.lang === 'el' ? 'EL' : 'EN'}</span>
-                  </div>
-                  <h3 className="blog-row__title">
-                    <Link href={`/blog/${a.slug}`}>{a.title}</Link>
-                  </h3>
-                  {a.description ? <p className="blog-row__desc">{a.description}</p> : null}
-                </article>
-              ))}
-            </div>
-          )}
-
-          <div className="reveal">
-            <NewsletterForm lang="en" />
-          </div>
-        </div>
-      </main>
+      <BlogIndexView items={items} />
     </PageChrome>
   )
 }
