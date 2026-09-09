@@ -102,7 +102,7 @@ export default async function BlogArticlePage({ params }: Params) {
           <aside className="blog-cta">
             <div className="eyebrow">{t.eyebrow}</div>
             <p className="blog-cta__body">{t.body}</p>
-            <Link className="blog-cta__btn" href="/#contact">
+            <Link className="blog-cta__btn" href="/">
               {t.button}
             </Link>
           </aside>
