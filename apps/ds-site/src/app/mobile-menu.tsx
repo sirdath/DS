@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useT, LangToggle } from "./i18n";
 import { ContactCTA } from "./contact-panel";
 import { DS2Mark } from "./ds2-mark";
+import { acquireScrollLock } from "./scroll-lock";
 
 /** Mobile-only nav: a hamburger that opens a full-screen sheet with the primary
  *  links, language toggle and contact CTA. The sheet is portalled to <body> so
@@ -18,15 +19,16 @@ export function MobileMenu({ onContact }: { onContact: () => void }) {
 
   useEffect(() => { setMounted(true); }, []);
 
-  // Lock body scroll + close on Escape while the sheet is open.
+  // Lock page scroll + close on Escape while the sheet is open.
   useEffect(() => {
     if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    // Shared, reference-counted lock — the contact panel can be open behind the
+    // sheet, and whoever lets go last is the one that restores the page.
+    const unlockScroll = acquireScrollLock();
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
     window.addEventListener("keydown", onKey);
     return () => {
-      document.body.style.overflow = prev;
+      unlockScroll();
       window.removeEventListener("keydown", onKey);
     };
   }, [open]);

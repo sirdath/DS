@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { acquireScrollLock } from "./scroll-lock";
 
 /** Entry preloader: the DS2 wordmark draws itself (SVG stroke), fills in, then
  *  the curtain fades to reveal the site with the hero film starting from frame 0.
@@ -26,15 +27,11 @@ export default function Preloader() {
     const timers: number[] = [];
     let done = false;
 
-    // Lock scrolling while the loading screen is up.
-    const prevHtmlOverflow = document.documentElement.style.overflow;
-    const prevBodyOverflow = document.body.style.overflow;
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-    const unlockScroll = () => {
-      document.documentElement.style.overflow = prevHtmlOverflow;
-      document.body.style.overflow = prevBodyOverflow;
-    };
+    // Lock scrolling while the loading screen is up. The shared lock counts
+    // holders, so this never fights the contact panel or the nav sheet; the
+    // release it hands back is idempotent, so calling it on reveal AND again in
+    // the cleanup is safe.
+    const unlockScroll = acquireScrollLock();
 
     const reveal = () => {
       if (done) return;
