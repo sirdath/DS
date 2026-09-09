@@ -97,7 +97,7 @@ const TOOLS: Tool[] = [
 const COPY = {
   en: {
     eyebrow: "The pantheon",
-    sub: "Productized services named after the gods who would run them. You subscribe, we run the machinery. Hover a name to meet each one.",
+    sub: "Nine tools we run for clients, each solving one problem well and tailored to your industry when needed. Hover a tool to see how it works.",
     open: "Open tool",
     all: "See all nine tools",
   },
@@ -123,9 +123,9 @@ export default function ToolsPantheon() {
         <div className={s.eyebrow}>{c.eyebrow}</div>
         <h2 className={s.title}>
           {lang === "el" ? (
-            <>Εννέα εργαλεία, <em>πάντα ενεργά</em>.</>
+            <>Εννέα εργαλεία, <em>διαφορετικές λύσεις</em>.</>
           ) : (
-            <>Nine tools, <em>always on</em>.</>
+            <>Nine tools, <em>different solutions</em>.</>
           )}
         </h2>
         <p className={s.sub}>{c.sub}</p>
