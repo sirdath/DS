@@ -14,10 +14,10 @@ const TOOLS: Tool[] = [
   {
     god: "Xenia",
     slug: "ai-receptionist",
-    role: { en: "AI receptionist", el: "AI ρεσεψιονίστ" },
+    role: { en: "AI receptionist", el: "Ψηφιακή υποδοχή με ΤΝ" },
     line: {
       en: "Answers enquiries and books appointments, in Greek and English, around the clock.",
-      el: "Απαντά και κλείνει ραντεβού, στα ελληνικά και τα αγγλικά, όλο το 24ωρο.",
+      el: "Απαντά σε αιτήματα και κλείνει ραντεβού, στα ελληνικά και τα αγγλικά, όλο το 24ωρο.",
     },
   },
   {
@@ -68,10 +68,10 @@ const TOOLS: Tool[] = [
   {
     god: "NeuroVault",
     slug: "ai-memory",
-    role: { en: "AI memory", el: "Μνήμη AI" },
+    role: { en: "AI memory", el: "Μνήμη ΤΝ" },
     line: {
       en: "A durable, private memory layer that any AI agent can recall from. Open source.",
-      el: "Ένα ανθεκτικό, ιδιωτικό επίπεδο μνήμης που κάθε AI agent μπορεί να ανακαλέσει. Open source.",
+      el: "Ένα ανθεκτικό, ιδιωτικό επίπεδο μνήμης από το οποίο κάθε πράκτορας ΤΝ μπορεί να ανακαλεί. Open source.",
     },
   },
   {
@@ -80,7 +80,7 @@ const TOOLS: Tool[] = [
     role: { en: "Interactive newsletters", el: "Διαδραστικά newsletter" },
     line: {
       en: "Newsletters your customers open, tap and reply to: polls, bookings and offers, in Greek and English.",
-      el: "Newsletter που οι πελάτες ανοίγουν, πατούν και απαντούν: ψηφοφορίες, κρατήσεις και προσφορές, στα ελληνικά και τα αγγλικά.",
+      el: "Newsletter που οι πελάτες ανοίγουν, πατούν και στα οποία απαντούν: ψηφοφορίες, κρατήσεις και προσφορές, στα ελληνικά και τα αγγλικά.",
     },
   },
   {
@@ -89,7 +89,7 @@ const TOOLS: Tool[] = [
     role: { en: "Data extraction", el: "Εξαγωγή δεδομένων" },
     line: {
       en: "Turns any website, even one with no export, into a clean, verified table with a source for every value.",
-      el: "Μετατρέπει οποιονδήποτε ιστότοπο, ακόμη κι αυτόν χωρίς εξαγωγή, σε έναν καθαρό, επαληθευμένο πίνακα, με πηγή για κάθε τιμή.",
+      el: "Μετατρέπει οποιονδήποτε ιστότοπο, ακόμη κι έναν που δεν έχει δυνατότητα εξαγωγής, σε έναν καθαρό, επαληθευμένο πίνακα, με πηγή για κάθε τιμή.",
     },
   },
 ];
@@ -103,8 +103,8 @@ const COPY = {
   },
   el: {
     eyebrow: "Το πάνθεον",
-    sub: "Productized υπηρεσίες, με τα ονόματα των θεών που θα τις έτρεχαν. Εσείς εγγράφεστε, εμείς τρέχουμε τη μηχανή. Περάστε πάνω από ένα όνομα για να το γνωρίσετε.",
-    open: "Άνοιγμα",
+    sub: "Εννέα εργαλεία που τρέχουμε για τους πελάτες μας, καθένα από τα οποία λύνει ένα συγκεκριμένο πρόβλημα και προσαρμόζεται στον κλάδο σας όταν χρειαστεί. Περάστε τον δείκτη πάνω από ένα εργαλείο για να δείτε πώς λειτουργεί.",
+    open: "Άνοιγμα εργαλείου",
     all: "Δείτε και τα εννέα εργαλεία",
   },
 } as const;

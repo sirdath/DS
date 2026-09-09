@@ -431,7 +431,7 @@ export default function AssistantPage() {
       <header className="assistant-nav">
         <Link href="/" className="assistant-brand" aria-label={c.ui.close}><img src="/logos/ds2-white.png" alt="DS2" /></Link>
         <div className="assistant-progress" aria-label={`${c.ui.progress}: ${percent}%`}>
-          <div className="assistant-progress__copy"><span>{c.ui.step} {visibleStep} / {steps.length}</span><strong>{percent}% {c.ui.complete}</strong><small>{remaining} {c.ui.remaining}</small></div>
+          <div className="assistant-progress__copy"><span>{c.ui.step} {visibleStep} / {steps.length}</span><strong>{percent}% {c.ui.complete}</strong><small>{remaining} {remaining === 1 ? c.ui.remainingOne : c.ui.remaining}</small></div>
           <div
             className={`assistant-progress__track${progressDragStart.current !== null ? " is-dragging" : ""}`}
             style={{ "--progress-drag": `${progressDrag}px` } as CSSProperties}
