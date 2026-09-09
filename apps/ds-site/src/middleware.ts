@@ -19,6 +19,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { adminLabel } from '@/app/admin/lib/sites'
 
 // ── MegaGym constants (unchanged) ────────────────────────────────────────────
 
@@ -33,6 +34,86 @@ function getBlockedIds(): string[] {
   } catch {
     return []
   }
+}
+
+// ── Visit attribution: client_id sanitising ──────────────────────────────────
+// The mgym_client cookie is set by us (/api/client-auth on a correct password,
+// /admin/open/[site] for an authenticated admin) but arrives from the browser,
+// so it is caller-supplied data. Its value is POSTed to Supabase `visits` with
+// the SERVICE-ROLE key, which bypasses RLS — an unchecked value lets anyone
+// attribute traffic to any client, or impersonate `<admin>-admin`, and makes
+// the visit log useless as evidence of who saw what.
+
+/** Hard ceiling, applied before anything else. Real ids are short slugs. */
+const CLIENT_ID_MAX = 64
+
+/**
+ * Recorded instead of an unrecognised cookie value. Deliberately a sentinel
+ * rather than `null`/omitted: a null client_id already means "no cookie was
+ * presented", so dropping the column would hide a forged cookie inside normal
+ * traffic. The angle brackets cannot occur in a real id (password-entry slugs,
+ * and adminLabel() strips every non-alphanumeric), so it can never collide.
+ */
+const UNKNOWN_CLIENT_ID = '<unrecognised>'
+
+/** Shape of one CLIENT_PASSWORDS entry — mirrors PasswordEntry in api/client-auth. */
+interface ClientPasswordEntry {
+  id?: unknown
+}
+
+/**
+ * Every client_id this app itself ever issues:
+ *  - the `id` of each CLIENT_PASSWORDS entry (parsed exactly as
+ *    api/client-auth/route.ts parses it, legacy var included), set on a
+ *    successful password entry;
+ *  - `<label>-admin` for each configured admin/staff email, set by
+ *    admin/(app)/open/[site]/route.ts.
+ *
+ * MEGAGYM_BLOCKED is folded in too: an operator only blocks an id that was
+ * issued at some point, and without it a revoked client's blocked-attempt log
+ * would lose the very id it is meant to record.
+ */
+function getKnownClientIds(): Set<string> {
+  const known = new Set<string>(getBlockedIds().filter(id => typeof id === 'string'))
+
+  const raw = process.env.CLIENT_PASSWORDS ?? process.env.MEGAGYM_PASSWORDS ?? '[]'
+  try {
+    const parsed: unknown = JSON.parse(raw)
+    if (Array.isArray(parsed)) {
+      for (const entry of parsed as ClientPasswordEntry[]) {
+        if (typeof entry?.id === 'string' && entry.id) known.add(entry.id)
+      }
+    }
+  } catch {
+    // Malformed env var — fall through with whatever we have.
+  }
+
+  const emails = `${process.env.ADMIN_ALLOWED_EMAILS ?? ''},${process.env.STAFF_EMAILS ?? ''}`
+  for (const email of emails.split(',').map(e => e.trim()).filter(Boolean)) {
+    known.add(`${adminLabel(email)}-admin`)
+  }
+
+  return known
+}
+
+/**
+ * Accept a client_id only if this app could have issued it; otherwise record
+ * the sentinel. `null` in (no cookie) stays `null` out.
+ *
+ * If the known list is EMPTY the environment is not configured for the gate at
+ * all (keyless local dev — neither CLIENT_PASSWORDS nor ADMIN_ALLOWED_EMAILS is
+ * set), and rejecting everything would blank out attribution rather than
+ * protect it. In that case fall back to a syntactic check: a short slug, which
+ * still removes the "arbitrary attacker string" property the finding is about.
+ */
+function safeClientId(raw: string | null | undefined): string | null {
+  if (!raw) return null
+  if (raw.length > CLIENT_ID_MAX) return UNKNOWN_CLIENT_ID
+
+  const known = getKnownClientIds()
+  if (known.size > 0) return known.has(raw) ? raw : UNKNOWN_CLIENT_ID
+
+  return /^[a-z0-9][a-z0-9._-]*$/i.test(raw) ? raw : UNKNOWN_CLIENT_ID
 }
 
 // ── Admin allowlist check (inline — cannot import server-only module here) ───
@@ -117,7 +198,7 @@ export async function middleware(request: NextRequest) {
                 ?.country ?? null,
             user_agent: request.headers.get('user-agent') ?? null,
             visitor_id: request.cookies.get(VISITOR_COOKIE)?.value ?? null,
-            client_id: `${clientId} [blocked]`,
+            client_id: `${safeClientId(clientId) ?? UNKNOWN_CLIENT_ID} [blocked]`,
           }),
         }).catch(() => {})
       }
@@ -166,7 +247,7 @@ export async function middleware(request: NextRequest) {
               ?.country ?? null,
           user_agent: request.headers.get('user-agent') ?? null,
           visitor_id: visitorId,
-          client_id: request.cookies.get(CLIENT_COOKIE)?.value ?? null,
+          client_id: safeClientId(request.cookies.get(CLIENT_COOKIE)?.value),
         }),
       }).catch(() => {})
     }
