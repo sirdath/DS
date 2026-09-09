@@ -27,6 +27,7 @@ export const metadata: Metadata = {
   title: "DS2, Digital Solutions Consulting",
   description:
     "A senior team for strategy, engineering, and applied AI. Athens and London.",
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     url: "/",
