@@ -191,9 +191,9 @@ export const assistantCopy = {
           { value: "marketing", label: "What marketing is producing", note: "Connect activity to leads and sales" },
           { value: "market", label: "How we compare to the market", note: "Competitors, pricing and movement" },
         ] },
-        detailsTitle: "What decision do you wish the numbers made easier?",
-        detailsHelp: "Describe the question you ask repeatedly but cannot answer quickly.",
-        detailsPlaceholder: "For example: every Friday we combine three spreadsheets to understand next month’s bookings, but the answer is already out of date…",
+        detailsTitle: "What's the question that never gets a straight answer?",
+        detailsHelp: "A specific, real example is more useful than a general description.",
+        detailsPlaceholder: "For example: the team has four meetings a week just to decide what to do next, and half of them end with “let’s sync again later”…",
       },
     } satisfies Record<GoalKey, Branch>,
     common: {
