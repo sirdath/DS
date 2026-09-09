@@ -74,12 +74,17 @@
   transform: translateY(30px);
   transition: opacity 0.6s ease, transform 0.75s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
+/* The emphasised phrase is one span per word now (three words in both EN and
+   EL), so the inter-word gap has to survive; only its final word closes up
+   against the closing quote mark. */
 .em {
   font-family: "Instrument Serif", Georgia, serif;
   font-style: italic;
   font-weight: 400;
   color: #8dcbff;
   letter-spacing: -0.01em;
+}
+.emLast {
   margin-right: 0;
 }
 .qmark {
