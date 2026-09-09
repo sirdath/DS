@@ -20,7 +20,36 @@ export default function SiteFooter({ onContact }: { onContact: () => void }) {
 
         <nav className="sf-col" aria-label={t.footer.navLabel}>
           <div className="sf-label">{t.footer.navLabel}</div>
-          <Link className="sf-link" href="/#top">{t.footer.home}</Link>
+          <Link
+            className="sf-link"
+            href="/#top"
+            onClick={(event) => {
+              // Let the browser keep every native link affordance: React fires
+              // onClick for Cmd/Ctrl/Shift/Alt-click too, so calling
+              // preventDefault() unconditionally swallowed "open in a new
+              // tab/window" and gave the visitor nothing at all. Bail out
+              // before any custom handling for those, and for non-primary
+              // buttons, so the default action runs.
+              if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+              // Same-page hash navigation through next/link's router goes
+              // through a full client-side transition before it scrolls --
+              // measured at ~800ms before the browser even fires a scroll
+              // event, versus ~24ms for a direct scrollTo. That's most of
+              // where "the nav takes a moment to reappear" (a separate bug,
+              // just fixed) was coming from. Skip the router entirely when
+              // already on the page it points to.
+              if (window.location.pathname === "/") {
+                event.preventDefault();
+                window.scrollTo(0, 0);
+                // preventDefault() also cancels the hash the href carries, so
+                // push it manually -- otherwise the address bar keeps whatever
+                // hash it had and /#top is never reachable from this link.
+                window.history.pushState(null, "", "/#top");
+              }
+            }}
+          >
+            {t.footer.home}
+          </Link>
           <Link className="sf-link" href="/#services">{t.footer.services}</Link>
           <Link className="sf-link" href="/about">{t.footer.about}</Link>
           <Link className="sf-link" href="/tools">{t.footer.tools}</Link>
@@ -30,6 +59,13 @@ export default function SiteFooter({ onContact }: { onContact: () => void }) {
 
         <div className="sf-col sf-reach">
           <div className="sf-label">{t.footer.reachLabel}</div>
+          {/* No <wbr/> after the "@" any more. It was an explicit break
+              opportunity, and paired with .sf-email's `word-break: break-word`
+              it was the reason the address split across two lines from 880px
+              up -- "ds2consulting.contact@" over "gmail.com" at 1920px, where
+              there is no shortage of room. An address is one token to read, so
+              .sf-email now keeps it on one line and the footer's grid column
+              sizes itself to fit (see globals.css). */}
           <a className="sf-email" href={`mailto:${t.footer.email}`}>{t.footer.email}</a>
           <div className="sf-place">
             <span className="sf-label sf-based">{t.footer.basedLabel}</span>

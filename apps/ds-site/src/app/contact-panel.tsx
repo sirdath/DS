@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useT } from "./i18n";
+import { acquireScrollLock } from "./scroll-lock";
 
 type Status = "idle" | "sending" | "sent" | "error";
 type Thread = { id: number; sig: string };
@@ -94,11 +95,10 @@ export default function ContactPanel({
 
   // Visible by default via CSS; GSAP only adds polish, never gates visibility.
   useEffect(() => {
-    if (!open || minimized) {
-      document.body.style.overflow = "";
-      return;
-    }
-    document.body.style.overflow = "hidden";
+    if (!open || minimized) return;
+    // Shared, reference-counted lock — the nav sheet can be open behind the
+    // panel, and unlocking here must not wipe out a lock it still holds.
+    const unlockScroll = acquireScrollLock();
     const t = window.setTimeout(() => textareaRef.current?.focus(), 120);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onCloseRef.current();
@@ -127,7 +127,7 @@ export default function ContactPanel({
       killed = true;
       window.clearTimeout(t);
       window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
+      unlockScroll();
     };
   }, [open, minimized]);
 

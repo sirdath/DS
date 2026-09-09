@@ -3,17 +3,31 @@ import { loadPublishedArticles, SITE_URL } from './blog/lib/blog-source'
 
 export const revalidate = 3600
 
+/**
+ * next.config.mjs sets `trailingSlash: true`, so the canonical form of every
+ * route on this site ends in a slash. /about 308-redirects to /about/, and the
+ * `alternates.canonical` values in the route layouts (written slashless, e.g.
+ * "/about") are resolved by Next into `https://www.ds2-consulting.com/about/`
+ * in the rendered <link rel="canonical">. Listing the slashless form here sent
+ * crawlers to a redirect hop instead of the URL the page declares as canonical,
+ * so every entry below carries the slash.
+ *
+ * The home page is the one exception: it is already `${SITE_URL}/`, and
+ * appending another slash would make `${SITE_URL}//`, a different URL that
+ * itself 308-redirects back to `/`.
+ */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/`, changeFrequency: 'weekly', priority: 1 },
-    { url: `${SITE_URL}/about`, changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${SITE_URL}/portfolio`, changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${SITE_URL}/tools`, changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${SITE_URL}/blog`, changeFrequency: 'daily', priority: 0.8 },
+    { url: `${SITE_URL}/about/`, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${SITE_URL}/portfolio/`, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${SITE_URL}/tools/`, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${SITE_URL}/assistant/`, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${SITE_URL}/blog/`, changeFrequency: 'daily', priority: 0.8 },
   ]
   const articles = await loadPublishedArticles(1000)
   const articleRoutes: MetadataRoute.Sitemap = articles.map((a) => ({
-    url: `${SITE_URL}/blog/${a.slug}`,
+    url: `${SITE_URL}/blog/${a.slug}/`,
     lastModified: a.updatedAt || a.publishedAt || undefined,
     changeFrequency: 'monthly',
     priority: 0.6,

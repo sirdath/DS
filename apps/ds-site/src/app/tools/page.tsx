@@ -15,9 +15,9 @@ function ToolsBody() {
       <div className="wrap">
         <div className="section-head reveal">
           <div className="eyebrow">{T.eyebrow}</div>
-          <h2 className="section-title">
+          <h1 className="section-title">
             {T.title}<em>{T.titleEm}</em>
-          </h2>
+          </h1>
           <p className="section-sub">{T.sub}</p>
         </div>
 

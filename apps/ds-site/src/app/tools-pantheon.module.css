@@ -189,10 +189,14 @@
 .open:hover {
   transform: translateY(-3px);
 }
+/* min-height, not padding: the link is centred by `margin: ... auto 0` and a
+   padding box would move the text off the baseline it shares with the section
+   above. Measured 20px tall, under web-interface.md's 24px floor. */
 .all {
   position: relative;
   display: inline-flex;
   align-items: center;
+  min-height: 26px;
   gap: 9px;
   margin: clamp(34px, 5vh, 52px) auto 0;
   max-width: 1240px;

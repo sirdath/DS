@@ -27,6 +27,16 @@ export interface BlogArticle {
 
 const LIST_COLUMNS = 'id, slug, lang, title, description, body_md, topic, published_at, updated_at'
 
+/**
+ * Hard ceiling on every blog read, so an unreachable or slow Supabase can't stall
+ * a render. postgrest-js retries idempotent GETs 3x with 1s/2s/4s backoff, so an
+ * unbounded failure costs ~7s; this signal covers the whole retry chain (it also
+ * short-circuits the pending backoff sleep). 4s still leaves room for two of those
+ * retries to finish, enough to ride out a transient 503/520, while capping the
+ * worst case at ~4s instead of 7s+.
+ */
+const QUERY_TIMEOUT_MS = 4000
+
 /** "12 Mar 2026" / "12 Μαρ 2026" — locale follows the article's language. */
 export function formatArticleDate(iso: string | null, lang: 'el' | 'en'): string {
   if (!iso) return ''
@@ -74,6 +84,7 @@ export async function loadPublishedArticles(limit = 100): Promise<BlogArticle[]>
       .eq('status', 'published')
       .order('published_at', { ascending: false })
       .limit(limit)
+      .abortSignal(AbortSignal.timeout(QUERY_TIMEOUT_MS))
     if (error || !data) return []
     return (data as Row[]).map(toArticle)
   } catch {
@@ -91,6 +102,8 @@ export async function getPublishedArticle(slug: string): Promise<BlogArticle | n
       .select(LIST_COLUMNS)
       .eq('status', 'published')
       .eq('slug', slug)
+      // Must precede maybeSingle(): that returns a PostgrestBuilder, which has no abortSignal().
+      .abortSignal(AbortSignal.timeout(QUERY_TIMEOUT_MS))
       .maybeSingle()
     if (error || !data) return null
     return toArticle(data as Row)
@@ -113,6 +126,7 @@ export async function loadRelatedArticles(topic: string, excludeId: string, limi
       .neq('id', excludeId)
       .order('published_at', { ascending: false })
       .limit(limit)
+      .abortSignal(AbortSignal.timeout(QUERY_TIMEOUT_MS))
     if (error || !data) return []
     return (data as Row[]).map(toArticle)
   } catch {

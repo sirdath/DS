@@ -35,6 +35,10 @@ Thumbs.db
 *.log
 npm-debug.log*
 pnpm-debug.log*
+logs/
+
+# Local session notes (working record, not deliverable)
+Session-Summary/
 
 # Client-specific + ephemeral assets (CDN'd, not committed)
 assets/motion-sequences/generated/

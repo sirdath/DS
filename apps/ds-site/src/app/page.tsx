@@ -7,12 +7,11 @@ import { DS2Mark } from "./ds2-mark";
 import HeroVideo from "./hero-video";
 import SelectedWork from "./selected-work";
 import ToolsPantheon from "./tools-pantheon";
-import QuoteSection from "./quote-section";
+import DesktopPortal from "./desktop-portal";
 import Expertise from "./expertise";
 import Preloader from "./preloader";
 import SiteFooter from "./site-footer";
 import { MobileMenu } from "./mobile-menu";
-import HomeStory from "./home-story";
 
 export default function HomePage() {
   const [chatOpen, setChatOpen] = useState(false);
@@ -424,6 +423,12 @@ export default function HomePage() {
 
       {/* â”€â”€â”€ Hero â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="hero hero--glass" data-tint="color-mix(in oklab, var(--accent) 26%, transparent)">
+        {/* The page's real <h1>. The visible tagline below lives inside the
+            aria-hidden caption, because that block is decorative and is timed to
+            the film by hero-video.tsx, so it must not be read progressively by
+            assistive tech. This carries the same words to screen readers and
+            search engines without touching the caption's animation. */}
+        <h1 className="sr-only">{t.hero.tag1} {t.hero.tag2}</h1>
         {/* The DS2 film: poster paints instantly, WebM streams in behind the
             preloader, which holds its curtain for ds2:videoready (capped). */}
         <HeroVideo />
@@ -452,7 +457,6 @@ export default function HomePage() {
             <span className="hero-cta__title">{t.hero.book.title}</span>
             <span className="hero-cta__sub">{t.hero.book.sub}</span>
           </span>
-          <span className="hero-cta__arrow" aria-hidden="true">→</span>
         </Link>
       </section>
 
@@ -462,20 +466,24 @@ export default function HomePage() {
       {/* â”€â”€â”€ The pantheon â€” hover-preview of the seven tools â”€â”€â”€ */}
       <ToolsPantheon />
 
-      {/* â”€â”€â”€ DS2 statement quote â”€â”€â”€ */}
-      <QuoteSection />
-
       {/* â”€â”€â”€ Our expertise â€” credibility strip + team â”€â”€â”€ */}
       <Expertise />
 
+      {/* ─── The DS2 desktop, scroll-driven laptop into a live desktop ─── */}
+      <DesktopPortal onContact={() => openChat()} />
+
       {/* â”€â”€ Other sections set aside while we rebuild from a clean base. â”€â”€ */}
-      {/* <HomeStory /> */}
+      {/* HomeStory is parked, not deleted: home-story.tsx and home-story.css
+          are both still on disk, just unreferenced. Bringing it back needs
+          its import restored at the top of this file as well as the element
+          here, so it is written out rather than left as commented-out JSX
+          that would not compile if someone simply uncommented it. */}
 
       {/* â”€â”€â”€ Founders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {/* Founders / team section now lives on the About page. */}
 
       {/* â”€â”€â”€ Contact â€” macOS Mail compose â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <section className="section" id="contact" data-surface="ink aurora" data-tint="color-mix(in oklab, var(--hue-2) 18%, transparent)">
+      <section hidden aria-hidden="true" className="section" id="contact" data-surface="ink aurora" data-tint="color-mix(in oklab, var(--hue-2) 18%, transparent)">
         <div className="wrap">
           <div className="section-head">
             <div className="eyebrow">{t.contact.eyebrow}</div>

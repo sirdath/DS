@@ -46,7 +46,17 @@
 html, body { background: var(--black); }
 /* clip (not hidden) so decorative pseudo-elements that bleed past the viewport
    (e.g. the portfolio smoke clouds) can't create phantom horizontal scrolling */
-html { overflow-x: clip; }
+html {
+  overflow-x: clip;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
 body {
   font-family: var(--font-inter), ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
   color: var(--white);
@@ -121,6 +131,12 @@ nav.top {
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid var(--hairline);
+  transition: transform .48s cubic-bezier(.2,.8,.2,1), opacity .3s ease;
+}
+body.desktop-immersed nav.top {
+  transform: translateY(calc(-100% - 2px));
+  opacity: 0;
+  pointer-events: none;
 }
 .nav-inner { width: 100%; max-width: none; padding: 0 28px; display: flex; align-items: center; justify-content: space-between; }
 .nav-mark { display: flex; align-items: center; height: 28px; }
@@ -169,7 +185,16 @@ nav.top .cta { height: 33px; padding-top: 0; padding-bottom: 0; box-sizing: bord
 }
 /* Sanjaya-style vertical text-roll on hover: a duplicate (::after) sits one line
    below; on hover the text rolls up to reveal it. */
-.nav-roll { display: inline-block; overflow: hidden; vertical-align: middle; line-height: 1.45; }
+/* line-height carries the hit target here, not padding. The roll effect works
+   by clipping this box to exactly one line box and parking the duplicate at
+   `top: 100%`, so any vertical padding would open a strip of the padding box
+   for that duplicate to show through -- it has to grow as a line box or not at
+   all. 26px against the 13px font is 2.0, up from 1.45 (18.84px measured),
+   clearing web-interface.md's >=24px minimum. 768px matters most: the burger is
+   hidden there and this row is the only navigation on the page. The duplicate
+   still lands exactly on the original after translateY(-100%), because both
+   line boxes are the same height and centre their text the same way. */
+.nav-roll { display: inline-block; overflow: hidden; vertical-align: middle; line-height: 26px; }
 .nav-roll > span {
   display: block; position: relative;
   transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
@@ -214,8 +239,17 @@ nav.top .cta { height: 33px; padding-top: 0; padding-bottom: 0; box-sizing: bord
 
 /* ── Language toggle (EN / ΕΛ) ── */
 .lang-toggle { display: inline-flex; align-items: center; gap: 5px; }
+/* min-width/min-height rather than a pseudo-element hit pad: EN and EL sit ~5px
+   apart, so pads big enough to reach 24px would overlap each other and a click
+   meant for one could land on the other -- the worst failure mode for a
+   two-option toggle. Growing the boxes themselves keeps the targets disjoint,
+   and there is nothing visible to grow with them (no background, no border),
+   so the only change on screen is a little more air around the two labels.
+   Measured before: 17x22px at 768px and up, 21x30px on phones. */
 .lang-opt {
   background: none; border: 0; cursor: pointer; padding: 2px 1px;
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 24px; min-height: 24px;
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-size: 12px; letter-spacing: 0.06em; color: var(--ghost);
   transition: color 0.2s ease;
@@ -532,13 +566,33 @@ nav.top .cta { height: 33px; padding-top: 0; padding-bottom: 0; box-sizing: bord
   .cpanel, .cpanel--max { border-radius: 0; max-height: 100dvh; }
 }
 
+/* Screen-reader-only utility — text present for AT, removed from the visual flow.
+   Mirrors .ws-sr-only in products/workspace.css, which is scoped to the products
+   route and so is not available on the marketing pages. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
 .section-head { max-width: 760px; margin: 0 auto 56px; text-align: center; }
 .eyebrow { font-size: 12px; color: var(--ghost); font-weight: 500; margin-bottom: 14px; }
+/* Tag-qualified on purpose (keeps specificity at 0,1,1). h1 is listed alongside h2
+   because the top heading of /tools and /blog is the page's <h1>, while every
+   in-page section heading stays an <h2>. */
+h1.section-title,
 h2.section-title {
   font-size: clamp(34px, 4vw, 52px); font-weight: 600;
   letter-spacing: -0.03em; line-height: 1.12; color: var(--white); text-wrap: balance;
 }
+h1.section-title em,
 h2.section-title em { font-style: normal; color: var(--silver); }
 .section-sub { margin-top: 16px; font-size: 18px; color: var(--silver); line-height: 1.5; text-wrap: pretty; }
 
@@ -1457,10 +1511,17 @@ footer { margin: 0; max-width: none; padding: 0; border-top: 1px solid var(--hai
 .sf-col { display: flex; flex-direction: column; gap: 14px; }
 .sf-label {
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ghost);
+  /* 12px is the floor for readable body-adjacent text; these eyebrows were
+     11px on every route at every width. Colour and letter-spacing still keep
+     them subordinate to the links underneath. */
+  font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ghost);
 }
+/* Measured 22.5px tall, just under web-interface.md's 24px floor, everywhere.
+   inline-flex + min-height rather than padding so the box grows around the
+   text without the hover translateX picking up a new origin. */
 .sf-link {
   color: var(--silver); text-decoration: none; font-size: 15px; width: fit-content;
+  display: inline-flex; align-items: center; min-height: 26px;
   transition: color 0.2s ease, transform 0.2s ease;
 }
 .sf-link:hover { color: var(--white); transform: translateX(3px); }
@@ -1468,7 +1529,13 @@ footer { margin: 0; max-width: none; padding: 0; border-top: 1px solid var(--hai
 .sf-email {
   color: var(--white); text-decoration: none; font-weight: 500;
   font-size: clamp(17px, 1.9vw, 24px); letter-spacing: -0.01em; transition: color 0.2s ease;
-  word-break: break-word;
+  /* was `word-break: break-word`, which let the address break at an arbitrary
+     character. Keeping it whole also raises the sf-top grid track's min-content
+     floor to the address's own width, so the `1.1fr` column widens to hold it
+     instead of the address folding inside a column that was too narrow for it.
+     At the narrowest tested width (375px, single column) the address measures
+     well inside the column, so nothing overflows there. */
+  white-space: nowrap;
 }
 .sf-email:hover { color: var(--cta); }
 .sf-place { display: flex; flex-direction: column; gap: 5px; margin-top: 8px; }
@@ -2002,9 +2069,15 @@ footer { margin: 0; max-width: none; padding: 0; border-top: 1px solid var(--hai
   .nav-right { gap: 12px; }
   .nav-links { display: none; }
   .nav-mark img { height: 22px; }
-  .lang-opt { padding: 6px 3px; }
+  /* Phone widths get the full 44px web-interface.md asks for on touch. There is
+     room for it here that there isn't on desktop: this toggle renders in the
+     nav sheet's foot and in the assistant header, both of which lay it out in a
+     row with space to spare, and the two targets stay disjoint because they are
+     separate flex items with the separator between them. */
+  .lang-opt { padding: 6px 3px; min-width: 44px; min-height: 44px; }
   .section { padding: 72px 0; }
   .wrap { padding: 0 22px; }
+  h1.section-title,
   h2.section-title { font-size: clamp(26px, 7.2vw, 34px); }
   .section-sub { font-size: 16px; }
   .section-head { margin-bottom: 40px; }
@@ -2055,7 +2128,7 @@ nav.top { background: rgba(255,255,255,0.72) !important; }
 .btn-ghost:hover { border-color: var(--accent); background: #fff; }
 
 /* accent text accents */
-.eyebrow, h2.section-title em, .tagline-2, .svc-cell-icon, .case-tag,
+.eyebrow, h1.section-title em, h2.section-title em, .tagline-2, .svc-cell-icon, .case-tag,
 .about-mv-k, .about-block-k, .thesis-eyebrow, .thesis blockquote em { color: var(--accent) !important; }
 
 /* glass cards → white surfaces */
@@ -2530,68 +2603,107 @@ footer { border-color: var(--hairline) !important; }
       card used to be. Single primary action in the hero. ── */
 .hero-cta {
   position: absolute; right: 28px; bottom: clamp(18px, 3.5vw, 40px); z-index: 4;
-  overflow: hidden; display: inline-flex; align-items: center; gap: 22px;
-  height: 66px; padding: 0 14px 0 26px; border-radius: 16px;
+  isolation: isolate; overflow: hidden; display: inline-flex; align-items: center;
+  height: 70px; padding: 0 27px; border-radius: 23px;
   white-space: nowrap; text-decoration: none;
-  background: linear-gradient(90deg, #f4f3f0 0%, #f4f3f0 50%, #8dcbff 50%, #8dcbff 100%);
-  background-size: 200% 100%; background-position: 0% 0;
-  color: #08090a;
-  box-shadow: 0 20px 40px -14px rgba(141,203,255,0.75), inset 0 0 0 1px rgba(255,255,255,0.5);
-  transition: background-position 0.52s cubic-bezier(0.2,0.8,0.2,1),
-    transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.22s ease;
-  animation: heroCtaBreathe 3.4s ease-in-out infinite;
+  color: #f7fbff;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.24), rgba(213,232,255,.08) 45%, rgba(141,203,255,.14)),
+    rgba(8,13,20,.62);
+  border: 1px solid rgba(255,255,255,.38);
+  backdrop-filter: blur(26px) saturate(185%) contrast(108%);
+  -webkit-backdrop-filter: blur(26px) saturate(185%) contrast(108%);
+  box-shadow:
+    0 24px 58px -18px rgba(71,155,255,.72),
+    0 7px 24px rgba(0,0,0,.24),
+    inset 0 1.5px 0 rgba(255,255,255,.78),
+    inset 0 -13px 26px rgba(83,150,235,.12),
+    inset 0 0 0 1px rgba(255,255,255,.08);
+  text-shadow: 0 1px 10px rgba(0,0,0,.55), 0 0 3px rgba(0,0,0,.4);
+  transition: transform .38s cubic-bezier(.2,.9,.2,1), border-color .3s ease, box-shadow .35s ease, background .35s ease;
+  animation: heroCtaBreathe 4.2s ease-in-out infinite;
+}
+.hero-cta::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 1px 3px auto;
+  height: 46%;
+  border-radius: 20px 20px 52% 52%;
+  background: linear-gradient(180deg, rgba(255,255,255,.52), rgba(255,255,255,.08));
+  filter: blur(.2px);
+  opacity: .74;
+  pointer-events: none;
+}
+.hero-cta::after {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  left: 14%; right: 14%; bottom: -10px; height: 22px;
+  border-radius: 50%;
+  background: rgba(141,203,255,.64);
+  filter: blur(15px);
+  opacity: .5;
+  pointer-events: none;
 }
 .hero-cta:hover {
-  background-position: 100% 0; transform: translateY(-6px) scale(1.025); animation: none;
-  box-shadow: 0 42px 84px -16px rgba(141,203,255,1), 0 0 36px -2px rgba(141,203,255,0.9),
-    inset 0 0 0 1px rgba(255,255,255,0.65);
+  transform: translateY(-7px) scale(1.035); animation: none;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.3), rgba(203,228,255,.12) 45%, rgba(123,194,255,.2)),
+    rgba(8,13,20,.68);
+  border-color: rgba(255,255,255,.58);
+  box-shadow:
+    0 36px 82px -20px rgba(77,170,255,.95),
+    0 0 34px rgba(141,203,255,.22),
+    inset 0 1.5px 0 rgba(255,255,255,.92),
+    inset 0 -15px 30px rgba(93,165,255,.2),
+    inset 0 0 0 1px rgba(255,255,255,.12);
 }
 .hero-cta__sheen {
-  position: absolute; top: -14px; bottom: -14px; width: 52px; pointer-events: none;
-  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.5), rgba(255,255,255,0));
-  animation: heroCtaSheen 4.2s ease-in-out infinite;
+  position: absolute; z-index: 0; top: -24px; bottom: -24px; width: 72px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.48), transparent);
+  filter: blur(2px);
+  transform: skewX(-18deg);
+  animation: heroCtaSheen 5.2s ease-in-out infinite;
 }
-.hero-cta__main { position: relative; display: flex; flex-direction: column; gap: 6px; }
-.hero-cta__title { font-size: 16px; font-weight: 600; letter-spacing: -0.014em; }
+.hero-cta__main { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 6px; }
+.hero-cta__title { font-size: 16px; font-weight: 600; letter-spacing: -0.014em; color:#fff; }
+/* 12px, not 9px. At 9px (8.5px under 760px) this line was texture rather than
+   copy -- it reads "CLICK ME . QUICK RESPONSE" and is the only thing telling a
+   visitor the pill is clickable. It stays subordinate to the 16px title above
+   it through weight, colour and letter-spacing instead of through size. */
 .hero-cta__sub {
-  font-family: "IBM Plex Mono", monospace; font-size: 9px; font-weight: 600;
-  letter-spacing: 0.16em; opacity: 0.72;
+  font-family: "IBM Plex Mono", monospace; font-size: 12px; font-weight: 600;
+  letter-spacing: 0.16em; color:rgba(222,239,255,.72);
 }
-.hero-cta__arrow {
-  position: relative; display: inline-flex; align-items: center; justify-content: center;
-  width: 36px; height: 42px; background: #08090a; color: #f4f3f0;
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  font-family: "IBM Plex Mono", monospace; font-size: 15px;
-  transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
-}
-.hero-cta:hover .hero-cta__arrow { transform: translateX(4px) scale(1.06); }
 @keyframes heroCtaBreathe {
-  0%, 100% { box-shadow: 0 20px 40px -14px rgba(141,203,255,0.75), inset 0 0 0 1px rgba(255,255,255,0.5); }
-  50% { box-shadow: 0 26px 54px -14px rgba(141,203,255,0.95), 0 0 22px -6px rgba(141,203,255,0.55), inset 0 0 0 1px rgba(255,255,255,0.58); }
+  0%,100% { box-shadow:0 24px 58px -18px rgba(71,155,255,.62),0 7px 24px rgba(0,0,0,.24),inset 0 1.5px rgba(255,255,255,.78),inset 0 -13px 26px rgba(83,150,235,.12); }
+  50% { box-shadow:0 31px 70px -18px rgba(71,165,255,.82),0 0 28px rgba(141,203,255,.12),inset 0 1.5px rgba(255,255,255,.9),inset 0 -15px 29px rgba(83,150,235,.17); }
 }
 @keyframes heroCtaSheen {
-  0% { left: -80px; } 55%, 100% { left: 115%; }
+  0% { left:-100px;opacity:0 } 15%{opacity:.9} 48%{left:118%;opacity:.4} 49%,100%{left:118%;opacity:0}
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-cta { animation: none; }
   .hero-cta__sheen { display: none; }
 }
 @media (max-width: 760px) {
-  /* Mirrors the desktop button — same pill, sheen, glow and hex arrow, just
-     sized for a thumb and clear of the home indicator. Anchored right like
-     desktop rather than stretched edge to edge. */
+  /* Mirrors the desktop button — same pill, sheen and glow, just sized for a
+     thumb and clear of the home indicator. Anchored right like desktop
+     rather than stretched edge to edge. */
   .hero-cta {
     left: auto; right: 16px;
     bottom: calc(18px + env(safe-area-inset-bottom, 0px));
-    height: 62px; gap: 16px; padding: 0 12px 0 20px; border-radius: 15px;
+    height: 64px; padding: 0 20px; border-radius: 20px;
   }
   .hero-cta__title { font-size: 15px; }
-  .hero-cta__sub { font-size: 8.5px; letter-spacing: 0.11em; }
-  .hero-cta__arrow { width: 33px; height: 39px; font-size: 14px; }
+  /* keeps the tighter tracking that stops the line running past the pill on a
+     phone, but no longer drops the size below the 12px floor to do it. */
+  .hero-cta__sub { letter-spacing: 0.11em; }
 }
 /* very narrow phones: go full width so the label never truncates */
 @media (max-width: 400px) {
-  .hero-cta { left: 14px; right: 14px; justify-content: space-between; padding: 0 10px 0 16px; }
+  .hero-cta { left: 14px; right: 14px; padding: 0 16px; }
 }
 
 .hero-book__cta {
@@ -3004,15 +3116,43 @@ body[data-logo="laser"] .laser-beam {
   letter-spacing: 0.22em; text-transform: uppercase; color: var(--cta); font-weight: 600;
 }
 .abs-eyebrow::before { content: ""; width: 24px; height: 2px; background: var(--cta); border-radius: 2px; box-shadow: 0 0 9px -1px var(--cta); }
+/* DS2 section only: it's centered (the others aren't), so the eyebrow needs a
+   matching line after the text too, or the single leading line reads lopsided. */
+.abs-ds2 .abs-eyebrow::after { content: ""; width: 24px; height: 2px; background: var(--cta); border-radius: 2px; box-shadow: 0 0 9px -1px var(--cta); }
 
 /* The gap */
 .abs-gap { padding-block: clamp(64px, 10vh, 128px); border-top: 1px solid var(--hairline); }
-.abs-gap__title { margin: 18px 0 0; font-size: clamp(26px, 3.2vw, 42px); font-weight: 600; line-height: 1.12; letter-spacing: -0.025em; color: var(--white); text-wrap: balance; max-width: 18ch; }
+/* When Mission/Vision is hidden (SHOW_MISSION_VISION in about-story.tsx),
+   the gap becomes the page's first section: it needs the same nav-clearing
+   top padding .abs-mv used to provide, and the top border (meant to divide it
+   from the section above) has nothing above it to divide from. */
+/* The clearance is written as "the nav, plus room" so the 56px it has to clear
+   stays visible in the value (NAV_HEIGHT_PX in scroll-affordance.tsx is the
+   same 56px, measured on the fixed bar). It was clamp(116px, 17vh, 200px),
+   which is keyed to viewport HEIGHT only -- so it resolved to the same 153px on
+   a 375px phone as on a 1920px desktop, and opened a 375px screen with 141px of
+   nothing under the nav. Keyed to width instead it gives ~40px of air below the
+   nav on a phone and lands back on ~150px at 1440px, where the old value was
+   tuned. */
+.abs-gap--first { padding-top: clamp(96px, 56px + 6.5vw, 160px); border-top: none; }
+/* The middle term is `1.6vw + 18px`, not a bare vw: a plain 3.2vw sat under the
+   26px floor until 813px, so 375px, 430px and 768px all rendered the same 26px
+   heading -- and at 768px that 26px line sits directly above a 718px-wide
+   founder photograph. The +18px constant lifts the ramp so it starts doing
+   work at tablet widths (30.3px at 768px, 32.1px at 880px) while still
+   resolving to ~41px at 1440px, within a pixel of what it did before. */
+.abs-gap__title { margin: 18px 0 0; font-size: clamp(26px, 1.6vw + 18px, 42px); font-weight: 600; line-height: 1.12; letter-spacing: -0.025em; color: var(--white); text-wrap: balance; max-width: 18ch; }
 .abs-gap__body { margin: 20px 0 0; font-size: clamp(16px, 1.4vw, 19px); line-height: 1.65; color: var(--silver); max-width: 62ch; text-wrap: pretty; }
 
-/* Founders — image + name + role + logos */
+/* Founders — image + name + role */
 .abs-founders { display: flex; flex-direction: column; gap: clamp(56px, 9vh, 112px); padding-block: clamp(40px, 6vh, 80px); }
 .abs-founder { display: grid; grid-template-columns: 0.92fr 1.08fr; gap: clamp(32px, 4.5vw, 72px); align-items: center; }
+/* Flipping swaps which column the media sits in (via order), so the column
+   widths need to swap with it -- otherwise the media keeps column 1's width
+   (0.92fr) in the normal row but inherits column 2's width (1.08fr) once
+   order pushes it there in the flipped row, and the two founder photos render
+   at visibly different sizes despite sharing the same aspect-ratio. */
+.abs-founder--flip { grid-template-columns: 1.08fr 0.92fr; }
 .abs-founder--flip .abs-founder__media { order: 2; }
 .abs-founder__media {
   position: relative; aspect-ratio: 4 / 3; border-radius: 18px; overflow: hidden;
@@ -3022,24 +3162,11 @@ body[data-logo="laser"] .laser-beam {
 .abs-founder__media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(120deg, transparent 42%, color-mix(in srgb, var(--ink-bg) 55%, transparent)); }
 .abs-founder__name { margin: 14px 0 0; font-size: clamp(30px, 3.4vw, 46px); font-weight: 600; letter-spacing: -0.03em; line-height: 1; color: var(--white); }
 .abs-founder__bio { margin: 18px 0 0; font-size: clamp(15px, 1.35vw, 18px); line-height: 1.65; color: var(--silver); max-width: 48ch; text-wrap: pretty; }
-.abs-founder__logos { margin: 24px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
-.abs-logo {
-  display: inline-flex; align-items: center; height: 34px; padding: 0 16px; border-radius: 9px;
-  font-size: 13px; font-weight: 600; letter-spacing: 0.01em; color: var(--silver);
-  background: color-mix(in srgb, var(--white) 5%, transparent); border: 1px solid var(--hairline-strong);
-}
-/* real brand marks — chip background matches the logo's own (PwC ships on white,
-   Intelmatix on black) so neither mark gets recoloured */
-.abs-logo--img { padding: 0 14px; }
-.abs-logo--img img { height: 20px; width: auto; display: block; }
-.abs-logo--light { background: #fff; border-color: rgba(255,255,255,0.85); }
-.abs-logo--dark { background: #000; border-color: var(--hairline-strong); }
 
 /* What DS2 is */
-.abs-ds2 { padding-block: clamp(64px, 10vh, 128px) clamp(80px, 12vh, 150px); border-top: 1px solid var(--hairline); }
-.abs-ds2__title { margin: 18px 0 0; font-size: clamp(28px, 3.6vw, 48px); font-weight: 600; line-height: 1.1; letter-spacing: -0.03em; color: var(--white); text-wrap: balance; max-width: 20ch; }
-.abs-ds2__body { margin: 20px 0 0; font-size: clamp(16px, 1.4vw, 19px); line-height: 1.65; color: var(--silver); max-width: 58ch; text-wrap: pretty; }
-.abs-ds2 .cta { margin-top: 30px; }
+.abs-ds2 { padding-block: clamp(64px, 10vh, 128px) clamp(80px, 12vh, 150px); border-top: 1px solid var(--hairline); text-align: center; }
+.abs-ds2__title { margin: 18px auto 0; font-size: clamp(28px, 3.6vw, 48px); font-weight: 600; line-height: 1.1; letter-spacing: -0.03em; color: var(--white); text-wrap: balance; max-width: 20ch; }
+.abs-ds2__body { margin: 20px auto 0; font-size: clamp(16px, 1.4vw, 19px); line-height: 1.65; color: var(--silver); max-width: 58ch; text-wrap: pretty; }
 
 /* Tablets (iPad portrait) and below: stack Mission/Vision as premium glass cards
    (the side-by-side + divider doesn't survive a single column, so the cards carry
@@ -3076,9 +3203,16 @@ body[data-logo="laser"] .laser-beam {
 }
 .tcard__row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 6px; }
 .tcard__name { font-size: clamp(20px, 2vw, 25px); font-weight: 600; letter-spacing: -0.02em; color: var(--white); }
+/* 12px type in a 28px pill, with the side padding pulled from 12px to 10px to
+   pay for it. The pill shares a `space-between` row with .tcard__name, so its
+   width is charged directly to the name's: at 12px/12px it measured 122.5px
+   and pushed the longest tool name onto a third line at 430px, which it did
+   not do before. 10px brings it to 118.5px and the name wraps exactly as it
+   did at the old 11px. (The three-line names at 375px are older than this
+   change -- they wrap identically at 11px.) */
 .tcard__status {
-  flex: none; display: inline-flex; align-items: center; height: 26px; padding: 0 12px; border-radius: 999px;
-  font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  flex: none; display: inline-flex; align-items: center; height: 28px; padding: 0 10px; border-radius: 999px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
 }
 .tcard__status--early { color: var(--cta); border: 1px solid color-mix(in srgb, var(--cta) 48%, transparent); background: color-mix(in srgb, var(--cta) 10%, transparent); }
 .tcard__status--soon { color: var(--ghost); border: 1px solid var(--hairline-strong); background: color-mix(in srgb, var(--white) 4%, transparent); }
@@ -3187,7 +3321,9 @@ body[data-logo="laser"] .laser-beam {
   color: var(--silver); background: color-mix(in srgb, var(--cta) 8%, transparent);
   border: 1px solid color-mix(in srgb, var(--cta) 26%, transparent);
 }
-.tcard__stat strong { font-size: 14px; font-weight: 700; color: var(--cta); font-variant-numeric: tabular-nums; }
+/* nowrap: the value is a single token to the eye ("1st-party", "4 scores"), so a
+   break at its hyphen/space turned one pill 37px -> 58px and broke the grid rhythm */
+.tcard__stat strong { font-size: 14px; font-weight: 700; color: var(--cta); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 /* rotating gradient border on hover (frontendmaxxing border-gradient-rotate,
    ported to the DS2 blue family; only animates while hovered) */
@@ -3245,7 +3381,7 @@ body[data-logo="laser"] .laser-beam {
 }
 
 /* mythic product names carry a small descriptive role line */
-.tcard__role { display: block; margin-top: 3px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ghost); font-weight: 500; }
+.tcard__role { display: block; margin-top: 3px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ghost); font-weight: 500; }
 .tdetail__role { margin-top: 20px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cta); font-weight: 600; }
 .tdetail__role + .tdetail__name { margin-top: 8px; }
 

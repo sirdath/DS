@@ -59,6 +59,28 @@ const nextConfig = {
         source: "/portals/:path*",
         headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
       },
+      // Baseline security headers on every route. HSTS is already added by the
+      // host, so it is deliberately not repeated here.
+      //
+      // No CSP yet: the no-flash bootstrap scripts (layout.tsx,
+      // assistant/layout.tsx) are inline and GSAP/three are loaded dynamically,
+      // so an enforcing policy needs nonce plumbing that does not exist yet.
+      // X-Frame-Options carries the clickjacking protection on its own.
+      // frame-ancestors is IGNORED in a report-only CSP, so a report-only
+      // policy would have bought nothing here.
+      //
+      // Permissions-Policy: microphone stays at its default `self` allowlist
+      // ON PURPOSE, because /assistant uses the Web Speech API for dictation
+      // and locking it down would silently break that button.
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "Permissions-Policy", value: "geolocation=(), camera=(), microphone=(self)" },
+        ],
+      },
     ];
   },
 };

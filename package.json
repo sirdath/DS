@@ -25,5 +25,10 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "pnpm": {
+    "overrides": {
+      "sharp": "^0.35.4"
+    }
   }
 }

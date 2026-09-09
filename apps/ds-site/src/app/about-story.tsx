@@ -3,29 +3,19 @@ import { useT } from "./i18n";
 
 type Page = { id: string; eyebrow: string; title: string; body: string };
 
-/** Founder visual config: portrait/place image + the logos that come with them.
- *  A logo with `img` renders as the real mark on a chip matching its baked
- *  background (`bg`); without `img` it stays a text chip. */
-type FounderLogo = { label: string; img?: string; bg?: "light" | "dark" };
-const FOUNDERS: Record<string, { img: string; logos: FounderLogo[] }> = {
-  dimitris: {
-    img: "/founders/london.webp",
-    logos: [],
-  },
-  stelios: {
-    img: "/founders/athens.webp",
-    logos: [],
-  },
+/** Founder visual config: the portrait/place image each founder is shown with.
+ *  Rows used to carry a strip of previous-employer logo chips underneath the
+ *  bio; those marks are client-confidential and were removed for good, so the
+ *  chip rendering and its `.abs-logo*` CSS went with them rather than staying
+ *  behind as an always-empty element. */
+const FOUNDERS: Record<string, { img: string }> = {
+  dimitris: { img: "/founders/london.webp" },
+  stelios: { img: "/founders/athens.webp" },
 };
 
 function FounderRow({ p, flip }: { p: Page; flip: boolean }) {
-  const t = useT();
   const meta = FOUNDERS[p.id];
   if (!meta) return null;
-  // Logos are brand names (kept as-is) except the country, which translates.
-  const logos = meta.logos.map((l) =>
-    l.label === "Netherlands" ? { ...l, label: t.about.cityNetherlands } : l,
-  );
   return (
     <article className={`abs-founder reveal${flip ? " abs-founder--flip" : ""}`}>
       <div className="abs-founder__media">
@@ -36,25 +26,13 @@ function FounderRow({ p, flip }: { p: Page; flip: boolean }) {
         <span className="abs-eyebrow">{p.eyebrow}</span>
         <h3 className="abs-founder__name">{p.title}</h3>
         <p className="abs-founder__bio">{p.body}</p>
-        <div className="abs-founder__logos" aria-label={t.a11y.background}>
-          {logos.map((l) =>
-            l.img ? (
-              <span className={`abs-logo abs-logo--img abs-logo--${l.bg ?? "dark"}`} key={l.label}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={l.img} alt={l.label} loading="lazy" />
-              </span>
-            ) : (
-              <span className="abs-logo" key={l.label}>{l.label}</span>
-            ),
-          )}
-        </div>
       </div>
     </article>
   );
 }
 
 /** About — bold Mission & Vision first (side-by-side), then the story (the gap,
- *  the two founders with their images + logos, and what DS2 is). Calm fade-up
+ *  the two founders with their images, and what DS2 is). Calm fade-up
  *  reveals only (the page chrome drives `.reveal`); no pinning or camera. */
 // Hidden for now, not deleted -- flip back on whenever Mission/Vision should
 // lead the page again. While it's off, "the gap" becomes the first section,
@@ -99,7 +77,7 @@ export default function AboutStory() {
         <p className="abs-gap__body">{gap.body}</p>
       </section>
 
-      {/* Founders, each with their image + logos */}
+      {/* Founders, each with their image */}
       <section className="abs-founders wrap">
         <FounderRow p={get("dimitris")} flip={false} />
         <FounderRow p={get("stelios")} flip={true} />
