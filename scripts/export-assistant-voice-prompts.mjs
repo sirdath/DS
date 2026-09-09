@@ -3,8 +3,33 @@ import { assistantCopy } from "../apps/ds-site/src/app/assistant/assistant-data.
 const goals = ["customers", "time", "product", "clarity"];
 const prompts = [];
 
+// A few English words are heteronyms that Kokoro's G2P sometimes reads with
+// the wrong pronunciation for how they're used here -- e.g. "live" defaulting
+// to the verb reading ("to live", rhymes with "give") when the copy means the
+// status adjective ("the site is live", rhymes with "five"). Rather than
+// baking IPA markup into the on-screen copy itself, the fix is applied only
+// to the text piped into the voice generator, keyed by prompt id, so the
+// displayed copy in assistant-data.ts stays exactly as written.
+// A Map rather than an object literal: keys here are prompt ids, and a plain
+// object would resolve ids like "constructor" or "toString" to inherited
+// Object.prototype members, which are truthy and so survive a `|| []` fallback
+// only to blow up as "is not iterable" in the loop below. No current id hits
+// that, so this is guarding a latent trap, not fixing a live break.
+// Each pattern is global: String.replace with a non-global regex substitutes
+// only the first match, which is right for today's copy ("live" appears once)
+// but would silently skip a second occurrence the day one is added.
+const PRONUNCIATION_FIXES = new Map([
+  ["timing", [[/\blive\b/gi, "[live](/lˈaɪv/)"]]],
+]);
+
 function add(lang, key, title, help) {
-  prompts.push({ lang, key, text: `${title}. ${help}` });
+  let text = `${title}. ${help}`;
+  if (lang === "en") {
+    for (const [pattern, replacement] of PRONUNCIATION_FIXES.get(key) ?? []) {
+      text = text.replace(pattern, replacement);
+    }
+  }
+  prompts.push({ lang, key, text });
 }
 
 for (const lang of ["en", "el"]) {
