@@ -3321,7 +3321,9 @@ body[data-logo="laser"] .laser-beam {
   color: var(--silver); background: color-mix(in srgb, var(--cta) 8%, transparent);
   border: 1px solid color-mix(in srgb, var(--cta) 26%, transparent);
 }
-.tcard__stat strong { font-size: 14px; font-weight: 700; color: var(--cta); font-variant-numeric: tabular-nums; }
+/* nowrap: the value is a single token to the eye ("1st-party", "4 scores"), so a
+   break at its hyphen/space turned one pill 37px -> 58px and broke the grid rhythm */
+.tcard__stat strong { font-size: 14px; font-weight: 700; color: var(--cta); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 /* rotating gradient border on hover (frontendmaxxing border-gradient-rotate,
    ported to the DS2 blue family; only animates while hovered) */
