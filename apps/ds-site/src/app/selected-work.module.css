@@ -113,7 +113,7 @@
   background: rgba(0, 0, 0, 0.28);
   border: 1px solid rgba(255, 255, 255, 0.06);
   font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 11px;
+  font-size: 12px;
   color: #8f8d87;
   white-space: nowrap;
   overflow: hidden;
@@ -126,8 +126,11 @@
   border-color: rgba(141, 203, 255, 0.28);
   background: rgba(141, 203, 255, 0.06);
 }
+/* The url / tag / lock / badge / open set is this card's metadata line, and it
+   was rendering at 9-11px. All of it is at the 12px floor now; it stays
+   subordinate to the 20px .name through colour and tracking, not size. */
 .lock {
-  font-size: 9px;
+  font-size: 12px;
   opacity: 0.7;
   flex: none;
 }
@@ -161,18 +164,21 @@
 .tags {
   display: flex;
   align-items: center;
+  /* the tags run ~25% wider at 12px than they did at 9.5px, so the row is
+     allowed to wrap rather than push the badge out of a narrow card. */
+  flex-wrap: wrap;
   gap: 9px;
 }
 .tag {
   font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 9.5px;
+  font-size: 12px;
   letter-spacing: 0.12em;
   color: #8f8d87;
   text-transform: uppercase;
 }
 .badge {
   font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 0.12em;
   color: #8dcbff;
   border: 1px solid rgba(141, 203, 255, 0.4);
@@ -195,7 +201,7 @@
 .open {
   margin-top: 4px;
   font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.06em;
   color: #8dcbff;
 }

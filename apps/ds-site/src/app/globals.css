@@ -1511,7 +1511,10 @@ footer { margin: 0; max-width: none; padding: 0; border-top: 1px solid var(--hai
 .sf-col { display: flex; flex-direction: column; gap: 14px; }
 .sf-label {
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ghost);
+  /* 12px is the floor for readable body-adjacent text; these eyebrows were
+     11px on every route at every width. Colour and letter-spacing still keep
+     them subordinate to the links underneath. */
+  font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ghost);
 }
 /* Measured 22.5px tall, just under web-interface.md's 24px floor, everywhere.
    inline-flex + min-height rather than padding so the box grows around the
@@ -3179,9 +3182,16 @@ body[data-logo="laser"] .laser-beam {
 }
 .tcard__row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 6px; }
 .tcard__name { font-size: clamp(20px, 2vw, 25px); font-weight: 600; letter-spacing: -0.02em; color: var(--white); }
+/* 12px type in a 28px pill, with the side padding pulled from 12px to 10px to
+   pay for it. The pill shares a `space-between` row with .tcard__name, so its
+   width is charged directly to the name's: at 12px/12px it measured 122.5px
+   and pushed the longest tool name onto a third line at 430px, which it did
+   not do before. 10px brings it to 118.5px and the name wraps exactly as it
+   did at the old 11px. (The three-line names at 375px are older than this
+   change -- they wrap identically at 11px.) */
 .tcard__status {
-  flex: none; display: inline-flex; align-items: center; height: 26px; padding: 0 12px; border-radius: 999px;
-  font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  flex: none; display: inline-flex; align-items: center; height: 28px; padding: 0 10px; border-radius: 999px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
 }
 .tcard__status--early { color: var(--cta); border: 1px solid color-mix(in srgb, var(--cta) 48%, transparent); background: color-mix(in srgb, var(--cta) 10%, transparent); }
 .tcard__status--soon { color: var(--ghost); border: 1px solid var(--hairline-strong); background: color-mix(in srgb, var(--white) 4%, transparent); }
@@ -3348,7 +3358,7 @@ body[data-logo="laser"] .laser-beam {
 }
 
 /* mythic product names carry a small descriptive role line */
-.tcard__role { display: block; margin-top: 3px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ghost); font-weight: 500; }
+.tcard__role { display: block; margin-top: 3px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ghost); font-weight: 500; }
 .tdetail__role { margin-top: 20px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cta); font-weight: 600; }
 .tdetail__role + .tdetail__name { margin-top: 8px; }
 
