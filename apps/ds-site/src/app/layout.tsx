@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Orbitron } from "next/font/google";
+import { Inter, Orbitron, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import "./themes.css";
 import "./schemes.css";
@@ -17,6 +17,18 @@ const orbitron = Orbitron({
   subsets: ["latin"],
   variable: "--font-orbitron",
   weight: ["500", "600", "700"],
+  display: "swap",
+});
+
+/** The mono stacks across the stylesheets asked for "IBM Plex Mono" but nothing
+ *  ever loaded it, so every visitor without it installed silently got their OS
+ *  monospace instead. Weights are the three the stylesheets actually use (400,
+ *  600, 700) — IBM Plex Mono is a static family on Google Fonts, so each weight
+ *  is a separate file and asking for more than we use is wasted bytes. */
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  weight: ["400", "600", "700"],
   display: "swap",
 });
 
@@ -67,7 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   // theme). Without it, React treats the server/client attribute diff as a
   // mismatch and strips the attribute back out right after hydrating.
   return (
-    <html lang="en" className={`${inter.variable} ${orbitron.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${orbitron.variable} ${ibmPlexMono.variable}`} suppressHydrationWarning>
       {/* data-logo sets the hero logo treatment; data-scheme drives the colour scheme. */}
       <body data-logo="gradient" suppressHydrationWarning>
         <script
