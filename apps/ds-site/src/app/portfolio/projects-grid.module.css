@@ -2,9 +2,46 @@
    category tags, quiet hover zoom + reveal. Dark, minimal, high contrast. */
 
 .grid {
+  /* The column gap is used twice, in `gap` and in the track-sizing math below,
+     so it lives in one custom property rather than being written out twice. */
+  --grid-gap-x: clamp(20px, 2.6vw, 40px);
+  /* The widest min-content width a card actually needs while .meta is a single
+     row, measured in the browser across both EN and EL copy: 391.58px. It comes
+     from the longest card, "dataportfolio.co.uk" (name 173.42px, unbreakable at
+     20px) + .meta's 16px gap + its `white-space: nowrap` tags (198.16px).
+     Rounded up to 400px for headroom. Re-measure if project names or category
+     tags get longer. */
+  --card-min: 400px;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: clamp(24px, 3.4vw, 56px) clamp(20px, 2.6vw, 40px);
+  /* Intrinsically responsive, and capped at two columns.
+       max(--card-min, (100% - gap) / 2) floors every track at half the
+         container, so at most two tracks can ever fit (no 3-up at 1440px, no
+         4-up at 1920px, which plain auto-fill/auto-fit would give with three or
+         more cards), while never letting a track sit below what a card's
+         content genuinely needs.
+       min(100%, ...) lets that floor collapse to the container's own width once
+         the container is narrower than --card-min, so the last remaining column
+         can never be forced wider than the space it has.
+     Net effect: exactly two columns whenever two cards of at least --card-min
+     really fit, otherwise exactly one, with the switch derived from the
+     container's real width instead of a hardcoded viewport breakpoint that has
+     to be hand-synced with the copy. The old `max-width: 720px` breakpoint
+     fired far too late: two columns do not actually fit until roughly 900px
+     (915px in Greek, whose category tags run a little longer), so the
+     right-hand column spilled past the viewport edge in that gap, unreachable
+     because the site hides scrollbars site-wide.
+     auto-fill, not auto-fit: with fewer cards than tracks (the portfolio
+     filters can leave exactly one match, e.g. "Websites"), auto-fit collapses
+     the unused track to 0 and lets the single remaining card stretch to fill
+     the whole row -- up to a 1.76x upscale of a 1200px source image at 1920px.
+     auto-fill keeps the empty track's width reserved instead, so a lone card
+     still renders at its normal single-column width. Both keywords produce
+     identical track sizes whenever the card count actually fills the grid. */
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(min(100%, max(var(--card-min), (100% - var(--grid-gap-x)) / 2)), 1fr)
+  );
+  gap: clamp(24px, 3.4vw, 56px) var(--grid-gap-x);
   width: 100%;
 }
 .card {
@@ -126,10 +163,10 @@
   color: #5f5e59;
 }
 
+/* Card-internal stacking only. The grid's own column count is no longer set
+   here: .grid's auto-fill track sizing already resolves to a single column well
+   before this width. */
 @media (max-width: 720px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
   .meta {
     flex-direction: column;
     gap: 6px;

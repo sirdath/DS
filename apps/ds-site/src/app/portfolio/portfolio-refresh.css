@@ -5,7 +5,15 @@
 .projects-hero__shade { background: linear-gradient(180deg, rgba(5,6,7,.5) 0%, rgba(5,6,7,.62) 45%, #050607 100%); }
 .projects-hero__copy { position: relative; z-index: 2; width: min(1280px,100%); margin: 0 auto; }
 .projects-hero__copy > p, .projects-row__number, .projects-row__type, .projects-row__year { font: 10px/1.4 "IBM Plex Mono",Consolas,monospace; letter-spacing: .11em; text-transform: uppercase; color: var(--p-muted); }
-.projects-hero h1 { max-width: 1040px; margin: 24px 0 48px; font-size: clamp(58px,9vw,142px); font-weight: 300; line-height: .9; letter-spacing: -.065em; text-wrap: balance; }
+/* line-height is calc(.9em + 15px), not a flat px add-on: font-size is
+   responsive (clamp), so a fixed px line-height would look right only at the
+   one viewport it was measured on. The `em` term keeps the original 0.9
+   proportion scaling with font-size at every width; +15px is the fixed
+   per-line gap from the layout editor, matching what stopped the title's
+   wrapped lines colliding (an ascender on one line touching a descender on
+   the line above) at the reference viewport, and it stays exactly 15px at
+   every other width too. */
+.projects-hero h1 { max-width: 1040px; margin: 24px 0 48px; font-size: clamp(58px,9vw,142px); font-weight: 300; line-height: calc(.9em + 15px); letter-spacing: -.065em; text-wrap: balance; }
 .projects-hero__copy > div { max-width: 760px; margin-left: auto; padding-top: 22px; display: grid; grid-template-columns: 190px 1fr; gap: 30px; border-top: 1px solid var(--p-line); }
 .projects-hero__copy > div span { color: var(--p-ice); font: 9px/1.5 "IBM Plex Mono",Consolas,monospace; text-transform: uppercase; letter-spacing: .1em; }
 .projects-hero__copy > div p { color: var(--p-muted); font-size: 17px; line-height: 1.6; }
