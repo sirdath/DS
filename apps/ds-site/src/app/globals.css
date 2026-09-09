@@ -46,7 +46,17 @@
 html, body { background: var(--black); }
 /* clip (not hidden) so decorative pseudo-elements that bleed past the viewport
    (e.g. the portfolio smoke clouds) can't create phantom horizontal scrolling */
-html { overflow-x: clip; }
+html {
+  overflow-x: clip;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
 body {
   font-family: var(--font-inter), ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
   color: var(--white);
@@ -121,6 +131,12 @@ nav.top {
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid var(--hairline);
+  transition: transform .48s cubic-bezier(.2,.8,.2,1), opacity .3s ease;
+}
+body.desktop-immersed nav.top {
+  transform: translateY(calc(-100% - 2px));
+  opacity: 0;
+  pointer-events: none;
 }
 .nav-inner { width: 100%; max-width: none; padding: 0 28px; display: flex; align-items: center; justify-content: space-between; }
 .nav-mark { display: flex; align-items: center; height: 28px; }

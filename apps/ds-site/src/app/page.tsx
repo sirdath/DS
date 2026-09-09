@@ -7,12 +7,11 @@ import { DS2Mark } from "./ds2-mark";
 import HeroVideo from "./hero-video";
 import SelectedWork from "./selected-work";
 import ToolsPantheon from "./tools-pantheon";
-import QuoteSection from "./quote-section";
+import DesktopPortal from "./desktop-portal";
 import Expertise from "./expertise";
 import Preloader from "./preloader";
 import SiteFooter from "./site-footer";
 import { MobileMenu } from "./mobile-menu";
-import HomeStory from "./home-story";
 
 export default function HomePage() {
   const [chatOpen, setChatOpen] = useState(false);
@@ -462,11 +461,11 @@ export default function HomePage() {
       {/* â”€â”€â”€ The pantheon â€” hover-preview of the seven tools â”€â”€â”€ */}
       <ToolsPantheon />
 
-      {/* â”€â”€â”€ DS2 statement quote â”€â”€â”€ */}
-      <QuoteSection />
-
       {/* â”€â”€â”€ Our expertise â€” credibility strip + team â”€â”€â”€ */}
       <Expertise />
+
+      {/* ─── The DS2 desktop, scroll-driven laptop into a live desktop ─── */}
+      <DesktopPortal onContact={() => openChat()} />
 
       {/* â”€â”€ Other sections set aside while we rebuild from a clean base. â”€â”€ */}
       {/* <HomeStory /> */}
@@ -475,7 +474,7 @@ export default function HomePage() {
       {/* Founders / team section now lives on the About page. */}
 
       {/* â”€â”€â”€ Contact â€” macOS Mail compose â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <section className="section" id="contact" data-surface="ink aurora" data-tint="color-mix(in oklab, var(--hue-2) 18%, transparent)">
+      <section hidden aria-hidden="true" className="section" id="contact" data-surface="ink aurora" data-tint="color-mix(in oklab, var(--hue-2) 18%, transparent)">
         <div className="wrap">
           <div className="section-head">
             <div className="eyebrow">{t.contact.eyebrow}</div>
