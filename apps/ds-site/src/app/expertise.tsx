@@ -291,16 +291,38 @@ function EditableFounderTile({
 }) {
   const { editing, setEditing, rects, order, selected, setSelected, locked, toggleLock, moveLayer, resizeLayer, reorder, zIndexOf, reset } = useLayerEditor(initialLocked, initialRects);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const tileRef = useRef<HTMLElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  // The founder loops are a couple of MB each and sit well below the fold.
+  // Loading them on mount made every homepage visit pay for both files even
+  // when nobody scrolled this far, which defeated the video's own
+  // preload="none". The load/play now waits until the tile is near the
+  // viewport, using the same once-style IntersectionObserver as the
+  // featured-work touch reveal in page.tsx. The margin starts the fetch a
+  // little before the tile is actually visible so fast scrollers land on a
+  // playing figure rather than a bare poster.
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video || !founder.video) return;
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedMotion) return;
-    video.src = founder.video;
-    video.load();
-    void video.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
+    const tile = tileRef.current;
+    const src = founder.video;
+    if (!tile || !src) return;
+    // Reduced motion: never load or play. No point watching scroll either.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const io = new IntersectionObserver(
+      (entries, observer) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        observer.disconnect();
+        const video = videoRef.current;
+        if (!video) return;
+        video.src = src;
+        video.load();
+        void video.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
+      },
+      { rootMargin: "300px 0px", threshold: 0 },
+    );
+    io.observe(tile);
+    return () => io.disconnect();
   }, [founder.video]);
 
   const layerProps = (id: LayerId) => ({
@@ -316,7 +338,7 @@ function EditableFounderTile({
   });
 
   return (
-    <article className={`${s.founder} ${s[founder.tone]} ${s.editCard}`} tabIndex={0}>
+    <article ref={tileRef} className={`${s.founder} ${s[founder.tone]} ${s.editCard}`} tabIndex={0}>
       <LayerBox {...layerProps("group")} className={s.editLayerPlain}>
         <div className={s.editLayerPlain} style={rectStyle(GROUP_MEMBERS.character.rect, GROUP_MEMBERS.character.zIndex)}>
           <video

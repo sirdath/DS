@@ -5,7 +5,9 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from "react";
 import { LangToggle, useLang } from "../i18n";
 import { assistantCopy, type AssistantField, type AssistantOption, type AssistantStep, type GoalKey } from "./assistant-data";
-import { createAryaOrb, type AryaOrbHandle } from "./arya-orb";
+// Type-only: erased at compile, so it pulls no three.js into this chunk. The
+// value import lives in the mount effect below, on purpose.
+import type { AryaOrbHandle } from "./arya-orb";
 import TeamSizeQuestion from "./team-size-question";
 import "./assistant.css";
 
@@ -583,10 +585,25 @@ function AryaGuide({
   const orbRef = useRef<AryaOrbHandle | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // arya-orb.ts pulls in the whole of three.js for one small decorative orb.
+  // Loading it dynamically keeps it out of the entry chunk for this route,
+  // which is the lead-capture form -- the same treatment desktop-portal.tsx:204
+  // gives the (much heavier) homepage laptop scene.
   useEffect(() => {
-    if (!mountRef.current) return;
-    orbRef.current = createAryaOrb(mountRef.current);
-    return () => orbRef.current?.destroy();
+    const mount = mountRef.current;
+    if (!mount) return;
+    let cancelled = false;
+    void import("./arya-orb").then(({ createAryaOrb }) => {
+      // The component can unmount before this resolves; without the guard the
+      // orb would attach to a detached node and never be destroyed.
+      if (cancelled) return;
+      orbRef.current = createAryaOrb(mount);
+    });
+    return () => {
+      cancelled = true;
+      orbRef.current?.destroy();
+      orbRef.current = null;
+    };
   }, []);
 
   // Arya's recorded/model voice has no Greek pack yet — see AGENTS/handoff
