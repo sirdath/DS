@@ -1529,7 +1529,13 @@ footer { margin: 0; max-width: none; padding: 0; border-top: 1px solid var(--hai
 .sf-email {
   color: var(--white); text-decoration: none; font-weight: 500;
   font-size: clamp(17px, 1.9vw, 24px); letter-spacing: -0.01em; transition: color 0.2s ease;
-  word-break: break-word;
+  /* was `word-break: break-word`, which let the address break at an arbitrary
+     character. Keeping it whole also raises the sf-top grid track's min-content
+     floor to the address's own width, so the `1.1fr` column widens to hold it
+     instead of the address folding inside a column that was too narrow for it.
+     At the narrowest tested width (375px, single column) the address measures
+     well inside the column, so nothing overflows there. */
+  white-space: nowrap;
 }
 .sf-email:hover { color: var(--cta); }
 .sf-place { display: flex; flex-direction: column; gap: 5px; margin-top: 8px; }
@@ -3113,12 +3119,37 @@ body[data-logo="laser"] .laser-beam {
 
 /* The gap */
 .abs-gap { padding-block: clamp(64px, 10vh, 128px); border-top: 1px solid var(--hairline); }
-.abs-gap__title { margin: 18px 0 0; font-size: clamp(26px, 3.2vw, 42px); font-weight: 600; line-height: 1.12; letter-spacing: -0.025em; color: var(--white); text-wrap: balance; max-width: 18ch; }
+/* When Mission/Vision is hidden (SHOW_MISSION_VISION in about-story.tsx),
+   the gap becomes the page's first section: it needs the same nav-clearing
+   top padding .abs-mv used to provide, and the top border (meant to divide it
+   from the section above) has nothing above it to divide from. */
+/* The clearance is written as "the nav, plus room" so the 56px it has to clear
+   stays visible in the value (NAV_HEIGHT_PX in scroll-affordance.tsx is the
+   same 56px, measured on the fixed bar). It was clamp(116px, 17vh, 200px),
+   which is keyed to viewport HEIGHT only -- so it resolved to the same 153px on
+   a 375px phone as on a 1920px desktop, and opened a 375px screen with 141px of
+   nothing under the nav. Keyed to width instead it gives ~40px of air below the
+   nav on a phone and lands back on ~150px at 1440px, where the old value was
+   tuned. */
+.abs-gap--first { padding-top: clamp(96px, 56px + 6.5vw, 160px); border-top: none; }
+/* The middle term is `1.6vw + 18px`, not a bare vw: a plain 3.2vw sat under the
+   26px floor until 813px, so 375px, 430px and 768px all rendered the same 26px
+   heading -- and at 768px that 26px line sits directly above a 718px-wide
+   founder photograph. The +18px constant lifts the ramp so it starts doing
+   work at tablet widths (30.3px at 768px, 32.1px at 880px) while still
+   resolving to ~41px at 1440px, within a pixel of what it did before. */
+.abs-gap__title { margin: 18px 0 0; font-size: clamp(26px, 1.6vw + 18px, 42px); font-weight: 600; line-height: 1.12; letter-spacing: -0.025em; color: var(--white); text-wrap: balance; max-width: 18ch; }
 .abs-gap__body { margin: 20px 0 0; font-size: clamp(16px, 1.4vw, 19px); line-height: 1.65; color: var(--silver); max-width: 62ch; text-wrap: pretty; }
 
 /* Founders — image + name + role + logos */
 .abs-founders { display: flex; flex-direction: column; gap: clamp(56px, 9vh, 112px); padding-block: clamp(40px, 6vh, 80px); }
 .abs-founder { display: grid; grid-template-columns: 0.92fr 1.08fr; gap: clamp(32px, 4.5vw, 72px); align-items: center; }
+/* Flipping swaps which column the media sits in (via order), so the column
+   widths need to swap with it -- otherwise the media keeps column 1's width
+   (0.92fr) in the normal row but inherits column 2's width (1.08fr) once
+   order pushes it there in the flipped row, and the two founder photos render
+   at visibly different sizes despite sharing the same aspect-ratio. */
+.abs-founder--flip { grid-template-columns: 1.08fr 0.92fr; }
 .abs-founder--flip .abs-founder__media { order: 2; }
 .abs-founder__media {
   position: relative; aspect-ratio: 4 / 3; border-radius: 18px; overflow: hidden;

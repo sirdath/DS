@@ -30,6 +30,13 @@ export default function SiteFooter({ onContact }: { onContact: () => void }) {
 
         <div className="sf-col sf-reach">
           <div className="sf-label">{t.footer.reachLabel}</div>
+          {/* No <wbr/> after the "@" any more. It was an explicit break
+              opportunity, and paired with .sf-email's `word-break: break-word`
+              it was the reason the address split across two lines from 880px
+              up -- "ds2consulting.contact@" over "gmail.com" at 1920px, where
+              there is no shortage of room. An address is one token to read, so
+              .sf-email now keeps it on one line and the footer's grid column
+              sizes itself to fit (see globals.css). */}
           <a className="sf-email" href={`mailto:${t.footer.email}`}>{t.footer.email}</a>
           <div className="sf-place">
             <span className="sf-label sf-based">{t.footer.basedLabel}</span>
