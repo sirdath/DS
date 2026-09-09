@@ -3116,6 +3116,9 @@ body[data-logo="laser"] .laser-beam {
   letter-spacing: 0.22em; text-transform: uppercase; color: var(--cta); font-weight: 600;
 }
 .abs-eyebrow::before { content: ""; width: 24px; height: 2px; background: var(--cta); border-radius: 2px; box-shadow: 0 0 9px -1px var(--cta); }
+/* DS2 section only: it's centered (the others aren't), so the eyebrow needs a
+   matching line after the text too, or the single leading line reads lopsided. */
+.abs-ds2 .abs-eyebrow::after { content: ""; width: 24px; height: 2px; background: var(--cta); border-radius: 2px; box-shadow: 0 0 9px -1px var(--cta); }
 
 /* The gap */
 .abs-gap { padding-block: clamp(64px, 10vh, 128px); border-top: 1px solid var(--hairline); }
@@ -3141,7 +3144,7 @@ body[data-logo="laser"] .laser-beam {
 .abs-gap__title { margin: 18px 0 0; font-size: clamp(26px, 1.6vw + 18px, 42px); font-weight: 600; line-height: 1.12; letter-spacing: -0.025em; color: var(--white); text-wrap: balance; max-width: 18ch; }
 .abs-gap__body { margin: 20px 0 0; font-size: clamp(16px, 1.4vw, 19px); line-height: 1.65; color: var(--silver); max-width: 62ch; text-wrap: pretty; }
 
-/* Founders — image + name + role + logos */
+/* Founders — image + name + role */
 .abs-founders { display: flex; flex-direction: column; gap: clamp(56px, 9vh, 112px); padding-block: clamp(40px, 6vh, 80px); }
 .abs-founder { display: grid; grid-template-columns: 0.92fr 1.08fr; gap: clamp(32px, 4.5vw, 72px); align-items: center; }
 /* Flipping swaps which column the media sits in (via order), so the column
@@ -3159,24 +3162,11 @@ body[data-logo="laser"] .laser-beam {
 .abs-founder__media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(120deg, transparent 42%, color-mix(in srgb, var(--ink-bg) 55%, transparent)); }
 .abs-founder__name { margin: 14px 0 0; font-size: clamp(30px, 3.4vw, 46px); font-weight: 600; letter-spacing: -0.03em; line-height: 1; color: var(--white); }
 .abs-founder__bio { margin: 18px 0 0; font-size: clamp(15px, 1.35vw, 18px); line-height: 1.65; color: var(--silver); max-width: 48ch; text-wrap: pretty; }
-.abs-founder__logos { margin: 24px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
-.abs-logo {
-  display: inline-flex; align-items: center; height: 34px; padding: 0 16px; border-radius: 9px;
-  font-size: 13px; font-weight: 600; letter-spacing: 0.01em; color: var(--silver);
-  background: color-mix(in srgb, var(--white) 5%, transparent); border: 1px solid var(--hairline-strong);
-}
-/* real brand marks — chip background matches the logo's own (PwC ships on white,
-   Intelmatix on black) so neither mark gets recoloured */
-.abs-logo--img { padding: 0 14px; }
-.abs-logo--img img { height: 20px; width: auto; display: block; }
-.abs-logo--light { background: #fff; border-color: rgba(255,255,255,0.85); }
-.abs-logo--dark { background: #000; border-color: var(--hairline-strong); }
 
 /* What DS2 is */
-.abs-ds2 { padding-block: clamp(64px, 10vh, 128px) clamp(80px, 12vh, 150px); border-top: 1px solid var(--hairline); }
-.abs-ds2__title { margin: 18px 0 0; font-size: clamp(28px, 3.6vw, 48px); font-weight: 600; line-height: 1.1; letter-spacing: -0.03em; color: var(--white); text-wrap: balance; max-width: 20ch; }
-.abs-ds2__body { margin: 20px 0 0; font-size: clamp(16px, 1.4vw, 19px); line-height: 1.65; color: var(--silver); max-width: 58ch; text-wrap: pretty; }
-.abs-ds2 .cta { margin-top: 30px; }
+.abs-ds2 { padding-block: clamp(64px, 10vh, 128px) clamp(80px, 12vh, 150px); border-top: 1px solid var(--hairline); text-align: center; }
+.abs-ds2__title { margin: 18px auto 0; font-size: clamp(28px, 3.6vw, 48px); font-weight: 600; line-height: 1.1; letter-spacing: -0.03em; color: var(--white); text-wrap: balance; max-width: 20ch; }
+.abs-ds2__body { margin: 20px auto 0; font-size: clamp(16px, 1.4vw, 19px); line-height: 1.65; color: var(--silver); max-width: 58ch; text-wrap: pretty; }
 
 /* Tablets (iPad portrait) and below: stack Mission/Vision as premium glass cards
    (the side-by-side + divider doesn't survive a single column, so the cards carry
