@@ -473,7 +473,11 @@ export default function HomePage() {
       <DesktopPortal onContact={() => openChat()} />
 
       {/* â”€â”€ Other sections set aside while we rebuild from a clean base. â”€â”€ */}
-      {/* <HomeStory /> */}
+      {/* HomeStory is parked, not deleted: home-story.tsx and home-story.css
+          are both still on disk, just unreferenced. Bringing it back needs
+          its import restored at the top of this file as well as the element
+          here, so it is written out rather than left as commented-out JSX
+          that would not compile if someone simply uncommented it. */}
 
       {/* â”€â”€â”€ Founders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {/* Founders / team section now lives on the About page. */}
