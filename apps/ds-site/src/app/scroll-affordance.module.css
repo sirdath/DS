@@ -1,0 +1,62 @@
+/* ── Floating overlay scroll thumb ─────────────────────────────────────────
+   globals.css hides the native html/body scrollbar site-wide (a deliberate
+   aesthetic call). That removed the one thing a user who can't wheel/gesture
+   scroll could drag. This is a custom, invisible-at-rest replacement for that
+   single missing affordance. Wheel and keyboard scrolling are untouched.
+
+   z-index 60: above the fixed nav (50), and below the nav sheet (90) and the
+   contact panel (300), which cover it and which lock page scroll anyway, at
+   which point the JS marks the thumb inert. The track itself now starts below
+   the 56px nav (TOP_INSET_PX in scroll-affordance.tsx), so the two no longer
+   overlap; 60 stays as the guard that keeps the thumb grabbable regardless.
+
+   Only `transform` and `opacity` animate. Colour comes from --white (the ink
+   token) so every scheme in schemes.css / themes.css re-tints it for free.
+   ──────────────────────────────────────────────────────────────────────── */
+.thumb {
+  position: fixed;
+  top: 0;
+  right: 6px;
+  z-index: 60;
+  width: 4px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--white, #e9ecef) 55%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  cursor: grab;
+  touch-action: none;
+  will-change: transform;
+  transition: opacity 0.35s ease, background-color 0.18s ease;
+}
+
+/* A 4px-wide drag target is unusable for the exact people this exists for, so
+   the pill keeps its 4px look while an invisible pad widens the hit area to
+   24px (web-interface.md: hit targets >= 24px). Only live while visible. */
+.thumb::before {
+  content: "";
+  position: absolute;
+  inset: -6px -10px;
+}
+
+.thumb[data-visible="true"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.thumb[data-visible="true"]:hover,
+.thumb[data-dragging="true"] {
+  background: color-mix(in srgb, var(--white, #e9ecef) 88%, transparent);
+}
+
+.thumb[data-dragging="true"] {
+  cursor: grabbing;
+}
+
+/* Reduced motion: keep the affordance and its show/hide behaviour, drop only
+   the animated fade. Removing it outright would break scrolling for the users
+   it was added for, a group that overlaps with reduced-motion users. */
+@media (prefers-reduced-motion: reduce) {
+  .thumb {
+    transition: none;
+  }
+}

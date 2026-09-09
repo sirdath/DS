@@ -4,6 +4,7 @@ import "./globals.css";
 import "./themes.css";
 import "./schemes.css";
 import { LanguageProvider } from "./i18n";
+import ScrollAffordance from "./scroll-affordance";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -76,6 +77,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
         <LanguageProvider>{children}</LanguageProvider>
+        {/* Draggable overlay scroll thumb. The native scrollbar is hidden
+            site-wide, so this restores the one affordance that removal took
+            away. It has no copy, so it sits outside LanguageProvider. */}
+        <ScrollAffordance />
       </body>
     </html>
   );
