@@ -548,13 +548,33 @@ nav.top .cta { height: 33px; padding-top: 0; padding-bottom: 0; box-sizing: bord
   .cpanel, .cpanel--max { border-radius: 0; max-height: 100dvh; }
 }
 
+/* Screen-reader-only utility — text present for AT, removed from the visual flow.
+   Mirrors .ws-sr-only in products/workspace.css, which is scoped to the products
+   route and so is not available on the marketing pages. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
 .section-head { max-width: 760px; margin: 0 auto 56px; text-align: center; }
 .eyebrow { font-size: 12px; color: var(--ghost); font-weight: 500; margin-bottom: 14px; }
+/* Tag-qualified on purpose (keeps specificity at 0,1,1). h1 is listed alongside h2
+   because the top heading of /tools and /blog is the page's <h1>, while every
+   in-page section heading stays an <h2>. */
+h1.section-title,
 h2.section-title {
   font-size: clamp(34px, 4vw, 52px); font-weight: 600;
   letter-spacing: -0.03em; line-height: 1.12; color: var(--white); text-wrap: balance;
 }
+h1.section-title em,
 h2.section-title em { font-style: normal; color: var(--silver); }
 .section-sub { margin-top: 16px; font-size: 18px; color: var(--silver); line-height: 1.5; text-wrap: pretty; }
 
@@ -2021,6 +2041,7 @@ footer { margin: 0; max-width: none; padding: 0; border-top: 1px solid var(--hai
   .lang-opt { padding: 6px 3px; }
   .section { padding: 72px 0; }
   .wrap { padding: 0 22px; }
+  h1.section-title,
   h2.section-title { font-size: clamp(26px, 7.2vw, 34px); }
   .section-sub { font-size: 16px; }
   .section-head { margin-bottom: 40px; }
@@ -2071,7 +2092,7 @@ nav.top { background: rgba(255,255,255,0.72) !important; }
 .btn-ghost:hover { border-color: var(--accent); background: #fff; }
 
 /* accent text accents */
-.eyebrow, h2.section-title em, .tagline-2, .svc-cell-icon, .case-tag,
+.eyebrow, h1.section-title em, h2.section-title em, .tagline-2, .svc-cell-icon, .case-tag,
 .about-mv-k, .about-block-k, .thesis-eyebrow, .thesis blockquote em { color: var(--accent) !important; }
 
 /* glass cards → white surfaces */

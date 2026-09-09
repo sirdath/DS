@@ -423,6 +423,12 @@ export default function HomePage() {
 
       {/* â”€â”€â”€ Hero â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="hero hero--glass" data-tint="color-mix(in oklab, var(--accent) 26%, transparent)">
+        {/* The page's real <h1>. The visible tagline below lives inside the
+            aria-hidden caption, because that block is decorative and is timed to
+            the film by hero-video.tsx, so it must not be read progressively by
+            assistive tech. This carries the same words to screen readers and
+            search engines without touching the caption's animation. */}
+        <h1 className="sr-only">{t.hero.tag1} {t.hero.tag2}</h1>
         {/* The DS2 film: poster paints instantly, WebM streams in behind the
             preloader, which holds its curtain for ds2:videoready (capped). */}
         <HeroVideo />
