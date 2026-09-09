@@ -451,7 +451,6 @@ export default function HomePage() {
             <span className="hero-cta__title">{t.hero.book.title}</span>
             <span className="hero-cta__sub">{t.hero.book.sub}</span>
           </span>
-          <span className="hero-cta__arrow" aria-hidden="true">→</span>
         </Link>
       </section>
 

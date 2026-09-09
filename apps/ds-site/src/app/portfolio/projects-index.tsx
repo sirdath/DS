@@ -2,6 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 import { useState } from "react";
+import Link from "next/link";
 import { useLang } from "../i18n";
 import g from "./projects-grid.module.css";
 
@@ -17,8 +18,8 @@ const projects = [
 ];
 
 const copy = {
-  en: { eyebrow: "Selected work and working directions", title: "Projects that make the value visible.", sub: "Real client work sits beside ready-to-tailor directions. The label always tells you which is which.", filters: { all: "All", website: "Websites", product: "Products", concept: "Templates" }, contact: "Have a project in mind?", contactLink: "How can we help?" },
-  el: { eyebrow: "Επιλεγμένα έργα και δημιουργικές κατευθύνσεις", title: "Έργα που κάνουν την αξία ορατή.", sub: "Πραγματική δουλειά πελατών μαζί με κατευθύνσεις έτοιμες για προσαρμογή. Η ετικέτα ξεκαθαρίζει πάντα τι βλέπετε.", filters: { all: "Όλα", website: "Ιστοσελίδες", product: "Προϊόντα", concept: "Templates" }, contact: "Έχετε ένα έργο στο μυαλό σας;", contactLink: "Πώς μπορούμε να βοηθήσουμε;" },
+  en: { eyebrow: "Selected work and working directions", title: "Projects that make the value visible.", sub: "Real client work sits beside ready-to-tailor directions. The label always tells you which is which.", filters: { all: "All", website: "Websites", product: "Products", concept: "Templates" }, filtersLabel: "Project filters", contact: "Have a project in mind?", contactLink: "How can we help?", contactSub: "CLICK ME · QUICK RESPONSE" },
+  el: { eyebrow: "Επιλεγμένα έργα και δημιουργικές κατευθύνσεις", title: "Έργα που κάνουν την αξία ορατή.", sub: "Πραγματική δουλειά πελατών μαζί με κατευθύνσεις έτοιμες για προσαρμογή. Η ετικέτα ξεκαθαρίζει πάντα τι βλέπετε.", filters: { all: "Όλα", website: "Ιστοσελίδες", product: "Προϊόντα", concept: "Templates" }, filtersLabel: "Φίλτρα έργων", contact: "Έχετε ένα έργο στο μυαλό σας;", contactLink: "Πώς μπορούμε να βοηθήσουμε;", contactSub: "ΚΑΝΤΕ ΚΛΙΚ · ΓΡΗΓΟΡΗ ΑΠΑΝΤΗΣΗ" },
 } as const;
 
 export default function ProjectsIndex() {
@@ -61,7 +62,14 @@ export default function ProjectsIndex() {
     </section>
 
     <section className="projects-coda">
-      <p>{c.contact}</p><a href="/assistant">{c.contactLink}<span>→</span></a>
+      <p>{c.contact}</p>
+      <Link className="hero-cta hero-cta--inline" href="/assistant">
+        <span className="hero-cta__sheen" aria-hidden="true" />
+        <span className="hero-cta__main">
+          <span className="hero-cta__title">{c.contactLink}</span>
+          <span className="hero-cta__sub">{c.contactSub}</span>
+        </span>
+      </Link>
     </section>
   </main>;
 }
