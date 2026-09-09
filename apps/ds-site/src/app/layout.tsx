@@ -73,6 +73,24 @@ export const viewport: Viewport = {
   themeColor: "#050607",
 };
 
+/** Sets the colour scheme / glass look on <body> before hydration, so the page
+ *  never flashes the default theme first.
+ *
+ *  `?scheme=` and `?glass=` come from the URL (and `ds2-glass` from
+ *  localStorage), so every value is checked against the real set defined in
+ *  schemes.css (body[data-scheme="…"]) and hero-glass-logo.tsx (GlassId) before
+ *  it reaches the DOM — a crafted link can no longer render the site in a
+ *  half-broken theme. Anything unknown falls back to the defaults.
+ *  Keep these two lists in sync with those files. */
+const SCHEME_SCRIPT =
+  "(function(){var S=['mono','obsidian','azure','emerald'],G=['smoked','frosted','obsidian'];" +
+  "function pick(list,v,fb){return list.indexOf(v)>-1?v:fb}" +
+  "try{var q=new URLSearchParams(location.search);" +
+  "document.body.setAttribute('data-scheme',pick(S,q.get('scheme'),'mono'));" +
+  "document.body.setAttribute('data-glass',pick(G,q.get('glass')||localStorage.getItem('ds2-glass'),'smoked'));" +
+  "if(localStorage.getItem('ds-theme')==='light')document.documentElement.setAttribute('data-theme','light');}" +
+  "catch(e){document.body.setAttribute('data-scheme','mono');document.body.setAttribute('data-glass','smoked');}})();";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   // suppressHydrationWarning on <html>: the /assistant route sets
   // data-assistant-theme via an inline script before hydration (no-flash
@@ -82,12 +100,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${inter.variable} ${orbitron.variable} ${ibmPlexMono.variable}`} suppressHydrationWarning>
       {/* data-logo sets the hero logo treatment; data-scheme drives the colour scheme. */}
       <body data-logo="gradient" suppressHydrationWarning>
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "(function(){try{var q=new URLSearchParams(location.search);var s=q.get('scheme')||'mono';document.body.setAttribute('data-scheme',s);var g=q.get('glass')||localStorage.getItem('ds2-glass')||'smoked';document.body.setAttribute('data-glass',g);if(localStorage.getItem('ds-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){document.body.setAttribute('data-scheme','mono');document.body.setAttribute('data-glass','smoked');}})();",
-          }}
-        />
+        <script dangerouslySetInnerHTML={{ __html: SCHEME_SCRIPT }} />
         <LanguageProvider>{children}</LanguageProvider>
         {/* Draggable overlay scroll thumb. The native scrollbar is hidden
             site-wide, so this restores the one affordance that removal took
